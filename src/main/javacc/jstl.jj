@@ -1,0 +1,76 @@
+
+options {
+  STATIC = false;
+  BUILD_PARSER = true;
+  BUILD_TOKEN_MANAGER = true;
+  SANITY_CHECK = true;
+  TRACK_TOKENS = true;
+}
+
+PARSER_BEGIN(JstlParser)
+
+package com.schibsted.spt.data.jstl2;
+
+public class JstlParser {
+
+}
+
+PARSER_END(JstlParser)
+
+/* WHITE SPACE */
+SPECIAL_TOKEN :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+| "\f"
+}
+
+TOKEN :
+{
+  < NULL: "null" > |
+  < INTEGER: ("-")? (["0"-"9"])+ > |
+  < DECIMAL: ("-")? (["0"-"9"])+ "." (["0"-"9"])+ > |
+  < STRING: "\"" (~["\""])* "\"" > |
+  < LBRACKET: "[" > |
+  < RBRACKET: "]" > |
+  < COMMA: "," > |
+  < COLON: ":" > |
+  < LCURLY: "{" > |
+  < RCURLY: "}" > |
+  < TRUE: "true" > |
+  < FALSE: "false" >
+}
+
+/** Root production. */
+void Start() :
+{}
+{
+  Expr() <EOF>
+}
+
+void Expr() :
+{}
+{
+  (<NULL> | <INTEGER> | <DECIMAL> | <STRING> | <TRUE> | <FALSE> |
+   Array() | Object())
+}
+
+void Array() :
+{}
+{
+  <LBRACKET> (Expr() (<COMMA> Expr())*)? <RBRACKET>
+}
+
+void Object() :
+{}
+{
+  <LCURLY> (Pair() (<COMMA> Pair())*)? <RCURLY>
+}
+
+void Pair() :
+{}
+{
+  <STRING> <COLON> Expr()
+}

@@ -1,0 +1,59 @@
+
+buildscript {
+  repositories {
+    mavenLocal()
+    jcenter()
+    mavenCentral()
+  }
+  dependencies {
+    classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.2'
+    classpath 'com.kncept.junit5.reporter:junit-reporter:1.0.1'
+  }
+}
+
+apply plugin: 'java'
+apply plugin: 'org.junit.platform.gradle.plugin'
+apply plugin: 'com.kncept.junit5.reporter'
+
+repositories {
+  mavenLocal()
+  jcenter()
+  mavenCentral()
+}
+
+dependencies {
+  compile "com.fasterxml.jackson.core:jackson-databind:2.9.2"
+  //compile "net.java.dev.javacc:javacc:7.0.3"
+
+  testCompile("org.junit.jupiter:junit-jupiter-api:5.0.2")
+  testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.2")
+}
+
+// java jjtree -OUTPUT_DIRECTORY=build/javacc/com/schibsted/spt/data/jstl2 src/main/javacc/jstl.jj
+// java javacc -OUTPUT_DIRECTORY=build/javacc/com/schibsted/spt/data/jstl2 build/javacc/com/schibsted/spt/data/jstl2/jstl.jj.jj
+
+sourceSets {
+    main {
+        java {
+            srcDirs 'src/main/java'
+            srcDirs 'build/javacc'
+        }
+    }
+ }
+
+task jjtree (type: Exec) {
+  commandLine 'java', '-cp', 'javacc-7.0.3/bootstrap/javacc.jar', 'jjtree', '-OUTPUT_DIRECTORY=build/javacc/com/schibsted/spt/data/jstl2', 'src/main/javacc/jstl.jj'
+}
+
+
+task javacc (type: Exec) {
+  commandLine 'java', '-cp', 'javacc-7.0.3/bootstrap/javacc.jar', 'javacc', '-OUTPUT_DIRECTORY=build/javacc/com/schibsted/spt/data/jstl2', 'build/javacc/com/schibsted/spt/data/jstl2/jstl.jj.jj'
+}
+compileJava.dependsOn 'javacc'
+javacc.dependsOn 'jjtree'
+
+jar {
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
