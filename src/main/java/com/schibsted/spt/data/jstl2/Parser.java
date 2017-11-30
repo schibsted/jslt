@@ -59,7 +59,14 @@ public class Parser {
     else if (kind == JstlParserConstants.FALSE)
       return new LiteralExpression(BooleanNode.FALSE);
 
-    else if (kind == JstlParserConstants.LBRACKET) {
+    else if (kind == JstlParserConstants.DOT) {
+      Token last = node.jjtGetLastToken();
+      if (last.kind == JstlParserConstants.KEY)
+        return new DotExpression(last.image);
+      else
+        return new DotExpression();
+
+    } else if (kind == JstlParserConstants.LBRACKET) {
       Expression[] children = new Expression[node.jjtGetNumChildren()];
       for (int ix = 0; ix < node.jjtGetNumChildren(); ix++)
         children[ix] = node2expr((SimpleNode) node.jjtGetChild(ix));

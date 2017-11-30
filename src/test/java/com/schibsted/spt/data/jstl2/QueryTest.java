@@ -20,6 +20,21 @@ public class QueryTest {
     check("{}", ".", "{}");
   }
 
+  @Test
+  public void testDotKey() {
+    check("{\"foo\" : 2}", ".foo", "2");
+  }
+
+  @Test
+  public void testDotNoSuchKey() {
+    check("{\"foo\" : 2}", ".bar", "null");
+  }
+
+  @Test
+  public void testTemplate() {
+    check("{\"foo\" : 2}", "{\"bar\" : .foo}", "{\"bar\" : 2}");
+  }
+
   private void check(String input, String query, String result) {
     try {
       JsonNode context = mapper.readTree(input);
