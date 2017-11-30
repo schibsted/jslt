@@ -97,8 +97,8 @@ public class JsonParseTest {
   }
 
   @Test
-  public void testNestedEmptyObject() {
-    check("{\"empty\" : {}}");
+  public void testNestedSmallObject() {
+    check("{\"empty\" : {\"id\" : 1}}");
   }
 
   @Test

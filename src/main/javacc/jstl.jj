@@ -42,7 +42,11 @@ TOKEN :
   < TRUE: "true" > |
   < FALSE: "false" > |
   < DOT: "." > |
-  < KEY: (["A"-"Z"] | ["a"-"z"] | ["0"-"9"] | "_" | "-")+ >
+  < IF: "if" > |
+  < ELSE: "else" > |
+  < LPAREN: "(" > |
+  < RPAREN: ")" > |
+  < IDENT: (["A"-"Z"] | ["a"-"z"] | ["0"-"9"] | "_" | "-")+ >
 }
 
 /** Root production. */
@@ -57,6 +61,7 @@ void Expr() :
 {
   (<NULL> | <INTEGER> | <DECIMAL> | <STRING> | <TRUE> | <FALSE> |
    DotKey() |
+   IfStatement() | FunctionCall() |
    Array() | Object())
 }
 
@@ -81,5 +86,18 @@ void Pair() :
 void DotKey() :
 {}
 {
-  <DOT> (<KEY>)?
+  <DOT> (<IDENT>)?
+}
+
+void IfStatement() :
+{}
+{
+  <IF> <LPAREN> Expr() <RPAREN> Expr()
+    (<ELSE> Expr())?
+}
+
+void FunctionCall() :
+{}
+{
+  <IDENT> <LPAREN> (Expr())? <RPAREN>
 }

@@ -2,6 +2,8 @@
 package com.schibsted.spt.data.jstl2;
 
 import java.io.StringReader;
+import java.util.Map;
+import java.util.HashMap;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.DoubleNode;
@@ -13,6 +15,13 @@ import com.schibsted.spt.data.jstl2.impl.*;
 
 public class Parser {
   private static ObjectMapper mapper = new ObjectMapper();
+
+  // this will be replaced with a proper Context. need to figure out
+  // relationship between compile-time and run-time context first.
+  private static Map<String, Function> functions = new HashMap();
+  static {
+    functions.put("number", new BuiltinFunctions.Number());
+  }
 
   public static Expression compile(String jstl) {
     try {
@@ -31,9 +40,11 @@ public class Parser {
   private static Expression node2expr(SimpleNode node) {
     Token token = node.jjtGetFirstToken();
     if (token.kind == JstlParserConstants.LBRACKET ||
-        token.kind == JstlParserConstants.LCURLY)
-      // it's an array or object, so we ditch the Expr node and go down to
-      // the Array node
+        token.kind == JstlParserConstants.LCURLY ||
+        token.kind == JstlParserConstants.IF ||
+        token.kind == JstlParserConstants.IDENT /* function call */)
+      // it's not a token but a production, so we ditch the Expr node
+      // and go down to the level below, which is the detail production
       node = (SimpleNode) node.jjtGetChild(0);
 
     token = node.jjtGetFirstToken();
@@ -61,18 +72,35 @@ public class Parser {
 
     else if (kind == JstlParserConstants.DOT) {
       Token last = node.jjtGetLastToken();
-      if (last.kind == JstlParserConstants.KEY)
+      if (last.kind == JstlParserConstants.IDENT)
         return new DotExpression(last.image);
       else
         return new DotExpression();
 
-    } else if (kind == JstlParserConstants.LBRACKET) {
-      Expression[] children = new Expression[node.jjtGetNumChildren()];
-      for (int ix = 0; ix < node.jjtGetNumChildren(); ix++)
-        children[ix] = node2expr((SimpleNode) node.jjtGetChild(ix));
-      return new ArrayExpression(mapper, children);
+    } else if (kind == JstlParserConstants.IF) {
+      // 2 children: if ($1) $2
+      // 3 children: if ($1) $2 else $3
+      Expression theelse = null;
+      if (node.jjtGetNumChildren() == 3)
+        theelse = node2expr((SimpleNode) node.jjtGetChild(2));
 
-    } else if (kind == JstlParserConstants.LCURLY) {
+      return new IfExpression(
+        node2expr((SimpleNode) node.jjtGetChild(0)),
+        node2expr((SimpleNode) node.jjtGetChild(1)),
+        theelse
+      );
+
+    } else if (kind == JstlParserConstants.IDENT) {
+      // function call, where the children are the parameters
+      Function func = functions.get(token.image);
+      if (func == null)
+        throw new JstlException("No such function: '" + token.image + "'");
+      return new FunctionExpression(func, children2Exprs(node));
+
+    } else if (kind == JstlParserConstants.LBRACKET)
+      return new ArrayExpression(mapper, children2Exprs(node));
+
+    else if (kind == JstlParserConstants.LCURLY) {
       PairExpression[] children = new PairExpression[node.jjtGetNumChildren()];
       for (int ix = 0; ix < node.jjtGetNumChildren(); ix++) {
         SimpleNode pair = (SimpleNode) node.jjtGetChild(ix);
@@ -88,5 +116,12 @@ public class Parser {
 
   private static String makeString(Token literal) {
     return literal.image.substring(1, literal.image.length() - 1);
+  }
+
+  private static Expression[] children2Exprs(SimpleNode node) {
+    Expression[] children = new Expression[node.jjtGetNumChildren()];
+    for (int ix = 0; ix < node.jjtGetNumChildren(); ix++)
+      children[ix] = node2expr((SimpleNode) node.jjtGetChild(ix));
+    return children;
   }
 }

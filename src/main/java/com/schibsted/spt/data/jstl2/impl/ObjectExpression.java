@@ -17,9 +17,17 @@ public class ObjectExpression implements Expression {
 
   public JsonNode apply(JsonNode input) {
     ObjectNode object = mapper.createObjectNode();
-    for (int ix = 0; ix < children.length; ix++)
-      object.put(children[ix].getKey(), children[ix].apply(input));
+    for (int ix = 0; ix < children.length; ix++) {
+      JsonNode value = children[ix].apply(input);
+      if (isValue(value))
+        object.put(children[ix].getKey(), value);
+    }
     return object;
   }
 
+  private boolean isValue(JsonNode value) {
+    return !value.isNull() &&
+      !(value.isObject() && value.size() == 0) &&
+      !(value.isArray() && value.size() == 0);
+  }
 }

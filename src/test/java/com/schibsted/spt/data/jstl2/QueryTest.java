@@ -3,17 +3,20 @@ package com.schibsted.spt.data.jstl2;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NullNode;
+
+// FIXME: nested if else ambiguity -> no way to handle for user
+//  -> solve by introducing parentheses
 
 /**
  * Test cases verifying queries against an input.
  */
-public class QueryTest {
-  private ObjectMapper mapper = new ObjectMapper();
+public class QueryTest extends TestBase {
 
   @Test
   public void testDot() {
@@ -31,23 +34,33 @@ public class QueryTest {
   }
 
   @Test
-  public void testTemplate() {
-    check("{\"foo\" : 2}", "{\"bar\" : .foo}", "{\"bar\" : 2}");
+  public void testIfNoElse() {
+    check("{}", "if (true) 320", "320");
   }
 
-  private void check(String input, String query, String result) {
-    try {
-      JsonNode context = mapper.readTree(input);
+  @Test
+  public void testIfAndElse() {
+    check("{}", "if (true) 320 else 240", "320");
+  }
 
-      Expression expr = Parser.compile(query);
-      JsonNode actual = expr.apply(context);
+  @Test
+  public void testIfFalseAndElse() {
+    check("{}", "if (false) 320 else 240", "240");
+  }
 
-      JsonNode expected = mapper.readTree(result);
+  @Test
+  public void testNullIsFalse() {
+    check("{}", "if (null) 320 else 240", "240");
+  }
 
-      assertEquals(expected, actual, "actual class " + actual.getClass() + ", expected class " + expected.getClass());
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+  @Test
+  public void testFunctionCall() {
+    check("{}", "number(\"22\")", "22");
+  }
+
+  @Test
+  public void testNonExistentFunction() {
+    error("blurgle(\"22\")", "blurgle");
   }
 
 }
