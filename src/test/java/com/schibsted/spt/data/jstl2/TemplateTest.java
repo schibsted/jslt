@@ -45,4 +45,25 @@ public class TemplateTest extends TestBase {
                            "\"bar\" : $foo}", "{\"bar\" : 2}");
   }
 
+  @Test
+  public void testIfLet() {
+    check("{\"foo\" : 2}",
+          "{\"bar\" : if (.foo) " +
+          "             let var = .foo " +
+          "             $var " +
+          "           else .bar }",
+          "{\"bar\" : 2}");
+  }
+
+  @Test
+  public void testIfElseLet() {
+    check("{\"bar\" : 2}",
+          "{\"bar\" : if (.foo) " +
+          "             .foo " +
+          "           else " +
+          "             let var = 234 " +
+          "             $var }",
+          "{\"bar\" : 234}");
+  }
+
 }

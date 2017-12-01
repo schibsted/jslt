@@ -118,8 +118,19 @@ void DotKey() :
 void IfStatement() :
 {}
 {
-  <IF> <LPAREN> Expr() <RPAREN> Expr()
-    (<ELSE> Expr())?
+  <IF> <LPAREN> Expr() <RPAREN>
+    (Let())*
+    Expr()
+    (ElseBranch())?
+}
+
+// not necessary, but makes it easier to walk the parse tree
+void ElseBranch() :
+{}
+{
+  <ELSE>
+    (Let())*
+    Expr()
 }
 
 void FunctionCall() :

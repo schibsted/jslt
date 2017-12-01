@@ -1,7 +1,6 @@
 
 package com.schibsted.spt.data.jstl2.impl;
 
-import java.util.Collections;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -20,11 +19,7 @@ public class ObjectExpression implements ExpressionNode {
   }
 
   public JsonNode apply(Scope scope, JsonNode input) {
-    for (int ix = 0; ix < lets.length; ix++) {
-      String var = lets[ix].getVariable();
-      JsonNode val = lets[ix].apply(scope, input);
-      scope = Scope.makeScope(Collections.singletonMap(var, val), scope);
-    }
+    scope = NodeUtils.evalLets(scope, input, lets);
 
     ObjectNode object = mapper.createObjectNode();
     for (int ix = 0; ix < children.length; ix++) {

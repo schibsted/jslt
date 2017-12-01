@@ -76,7 +76,6 @@ cleanup):
 ```
 
 To make this work we need to add:
-  * `let` inside `if`.
   * The `capture` function.
   * Boolean comparators.
   * Expression chains (variable dotkey).

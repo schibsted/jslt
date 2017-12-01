@@ -2,7 +2,6 @@
 package com.schibsted.spt.data.jstl2.impl;
 
 import java.util.Map;
-import java.util.Collections;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NullNode;
@@ -23,21 +22,12 @@ public class ExpressionImpl implements Expression {
   }
 
   public JsonNode apply(Map<String, JsonNode> variables, JsonNode input) {
-    Scope scope = buildScope(Scope.makeScope(variables), input);
+    Scope scope = NodeUtils.evalLets(Scope.makeScope(variables), input, lets);
     return actual.apply(scope, input);
   }
 
   public JsonNode apply(JsonNode input) {
-    Scope scope = buildScope(Scope.getRoot(), input);
+    Scope scope = NodeUtils.evalLets(Scope.getRoot(), input, lets);
     return actual.apply(scope, input);
-  }
-
-  private Scope buildScope(Scope scope, JsonNode input) {
-    for (int ix = 0; ix < lets.length; ix++) {
-      String var = lets[ix].getVariable();
-      JsonNode val = lets[ix].apply(scope, input);
-      scope = Scope.makeScope(Collections.singletonMap(var, val), scope);
-    }
-    return scope;
   }
 }

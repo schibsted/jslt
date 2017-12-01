@@ -47,9 +47,8 @@ public class Parser {
       // the start production always contains an expr, so we just ditch it
       SimpleNode start = (SimpleNode) parser.jjtree.rootNode();
 
-      int lastIx = start.jjtGetNumChildren() - 1;
-      LetExpression[] lets = buildLets(start, lastIx);
-      SimpleNode expr = (SimpleNode) start.jjtGetChild(lastIx);
+      LetExpression[] lets = buildLets(start);
+      SimpleNode expr = (SimpleNode) start.jjtGetChild(lets.length);
       return new ExpressionImpl(lets, node2expr(expr));
     } catch (ParseException e) {
       throw new RuntimeException(e);
@@ -97,15 +96,22 @@ public class Parser {
       return new VariableExpression(token.image.substring(1));
 
     else if (kind == JstlParserConstants.IF) {
-      // 2 children: if ($1) $2
-      // 3 children: if ($1) $2 else $3
+      LetExpression[] letelse = null;
       ExpressionNode theelse = null;
-      if (node.jjtGetNumChildren() == 3)
-        theelse = node2expr((SimpleNode) node.jjtGetChild(2));
+      SimpleNode maybeelse = getLastChild(node);
+      if (maybeelse.jjtGetFirstToken().kind == JstlParserConstants.ELSE) {
+        SimpleNode elseexpr = getLastChild(maybeelse);
+        theelse = node2expr(elseexpr);
+        letelse = buildLets(maybeelse);
+      }
+
+      LetExpression[] thenelse = buildLets(node);
 
       return new IfExpression(
         node2expr((SimpleNode) node.jjtGetChild(0)),
-        node2expr((SimpleNode) node.jjtGetChild(1)),
+        thenelse,
+        node2expr((SimpleNode) node.jjtGetChild(thenelse.length + 1)),
+        letelse,
         theelse
       );
 
@@ -122,8 +128,10 @@ public class Parser {
     else if (kind == JstlParserConstants.LCURLY)
       return buildObject(node);
 
-    else
-      throw new RuntimeException("I'm confused now: " + node.jjtGetNumChildren());
+    else {
+      node.dump(">");
+      throw new RuntimeException("I'm confused now: " + node.jjtGetNumChildren() + " " + kind);
+    }
   }
 
   private static String makeString(Token literal) {
@@ -160,13 +168,27 @@ public class Parser {
     return dot;
   }
 
-  private static LetExpression[] buildLets(SimpleNode parent, int lastIx) {
-    LetExpression[] lets = new LetExpression[lastIx];
-    for (int ix = 0; ix < lastIx; ix++) {
+  // collects all the 'let' statements as children of this node
+  private static LetExpression[] buildLets(SimpleNode parent) {
+    // figure out how many lets there are
+    int letCount = 0;
+    for (int ix = 0; ix < parent.jjtGetNumChildren(); ix++) {
+      SimpleNode child = (SimpleNode) parent.jjtGetChild(ix);
+      if (child.firstToken.kind == JstlParserConstants.LET)
+        letCount++;
+    }
+
+    // collect the lets
+    int pos = 0;
+    LetExpression[] lets = new LetExpression[letCount];
+    for (int ix = 0; ix < parent.jjtGetNumChildren(); ix++) {
       SimpleNode node = (SimpleNode) parent.jjtGetChild(ix);
+      if (node.firstToken.kind != JstlParserConstants.LET)
+        continue;
+
       Token ident = node.jjtGetFirstToken().next;
       SimpleNode expr = (SimpleNode) node.jjtGetChild(0);
-      lets[ix] = new LetExpression(ident.image, node2expr(expr));
+      lets[pos++] = new LetExpression(ident.image, node2expr(expr));
     }
     return lets;
   }
@@ -174,25 +196,21 @@ public class Parser {
   private static ObjectExpression buildObject(SimpleNode node) {
     int childCount = node.jjtGetNumChildren();
 
-    // figure out how many lets there are
-    int letCount = 0;
-    for (; letCount < childCount; letCount++) {
-      SimpleNode child = (SimpleNode) node.jjtGetChild(letCount);
-      if (child.firstToken.kind != JstlParserConstants.LET)
-        break;
-    }
-
     // collect the lets
-    LetExpression[] lets = buildLets(node, letCount);
+    LetExpression[] lets = buildLets(node);
 
     // build object content
-    PairExpression[] children = new PairExpression[childCount - letCount];
-    for (int ix = letCount; ix < childCount; ix++) {
+    PairExpression[] children = new PairExpression[childCount - lets.length];
+    for (int ix = lets.length; ix < childCount; ix++) {
       SimpleNode pair = (SimpleNode) node.jjtGetChild(ix);
       String key = makeString(pair.jjtGetFirstToken());
       ExpressionNode val = node2expr((SimpleNode) pair.jjtGetChild(0));
-      children[ix - letCount] = new PairExpression(key, val);
+      children[ix - lets.length] = new PairExpression(key, val);
     }
     return new ObjectExpression(mapper, lets, children);
+  }
+
+  private static SimpleNode getLastChild(SimpleNode node) {
+    return (SimpleNode) node.jjtGetChild(node.jjtGetNumChildren() - 1);
   }
 }
