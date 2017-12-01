@@ -125,7 +125,7 @@ void IfStatement() :
 void FunctionCall() :
 {}
 {
-  <IDENT> <LPAREN> (Expr())? <RPAREN>
+  <IDENT> <LPAREN> (Expr() (<COMMA> Expr())*)? <RPAREN>
 }
 
 void Let() :

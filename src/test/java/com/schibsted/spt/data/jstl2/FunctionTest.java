@@ -53,4 +53,20 @@ public class FunctionTest extends TestBase {
     error("number()", "argument");
   }
 
+  // ===== TEST
+
+  @Test
+  public void testTestMatches() {
+    check("{}", "test(\"abc\", \"abc\")", "true");
+  }
+
+  @Test
+  public void testTestMatchesNot() {
+    check("{}", "test(\"cba\", \"abc\")", "false");
+  }
+
+  @Test
+  public void testTestString() {
+    check("{}", "test(23123, \"\\d+\")", "true");
+  }
 }

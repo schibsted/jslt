@@ -24,6 +24,7 @@ public class Parser {
   private static Map<String, Function> functions = new HashMap();
   static {
     functions.put("number", new BuiltinFunctions.Number());
+    functions.put("test", new BuiltinFunctions.Test());
   }
 
   public static Expression compile(File jstl) {
