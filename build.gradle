@@ -27,7 +27,10 @@ repositories {
 
 dependencies {
   compile "com.fasterxml.jackson.core:jackson-databind:2.9.2"
-  //compile "net.java.dev.javacc:javacc:7.0.3"
+
+  // the java regex library has an API so incredibly deficient that we
+  // can't use it, so we have to depend on this for now (seriously?!?!)
+  compile "org.jruby.joni:joni:2.1.11"
 
   testCompile("org.junit.jupiter:junit-jupiter-api:5.0.2")
   testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.2")

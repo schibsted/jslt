@@ -7,7 +7,6 @@ import java.io.StringReader;
 import java.io.FileNotFoundException;
 import java.util.Map;
 import java.util.HashMap;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.DoubleNode;
 import com.fasterxml.jackson.databind.node.NullNode;
@@ -17,7 +16,6 @@ import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.schibsted.spt.data.jstl2.impl.*;
 
 public class Parser {
-  private static ObjectMapper mapper = new ObjectMapper();
 
   // this will be replaced with a proper Context. need to figure out
   // relationship between compile-time and run-time context first.
@@ -25,6 +23,7 @@ public class Parser {
   static {
     functions.put("number", new BuiltinFunctions.Number());
     functions.put("test", new BuiltinFunctions.Test());
+    functions.put("capture", new BuiltinFunctions.Capture());
   }
 
   public static Expression compile(File jstl) {
@@ -123,7 +122,7 @@ public class Parser {
       return new FunctionExpression(func, children2Exprs(node));
 
     } else if (kind == JstlParserConstants.LBRACKET)
-      return new ArrayExpression(mapper, children2Exprs(node));
+      return new ArrayExpression(children2Exprs(node));
 
     else if (kind == JstlParserConstants.LCURLY)
       return buildObject(node);
@@ -207,7 +206,7 @@ public class Parser {
       ExpressionNode val = node2expr((SimpleNode) pair.jjtGetChild(0));
       children[ix - lets.length] = new PairExpression(key, val);
     }
-    return new ObjectExpression(mapper, lets, children);
+    return new ObjectExpression(lets, children);
   }
 
   private static SimpleNode getLastChild(SimpleNode node) {

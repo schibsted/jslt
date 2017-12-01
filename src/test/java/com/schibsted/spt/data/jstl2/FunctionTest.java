@@ -69,4 +69,31 @@ public class FunctionTest extends TestBase {
   public void testTestString() {
     check("{}", "test(23123, \"\\d+\")", "true");
   }
+
+  // ===== CAPTURE
+
+  @Test
+  public void testCaptureNoMatch() {
+    check("{}", "capture(\"abc\", \"(?<foo>\\d+)\")", "{}");
+  }
+
+  @Test
+  public void testCaptureMatch() {
+    check("{}", "capture(\"abc\", \"(?<foo>[a-z]+)\")", "{\"foo\":\"abc\"}");
+  }
+
+  @Test
+  public void testCaptureNotAString() {
+    check("{}", "capture(123456, \"(?<foo>\\d+)\")", "{\"foo\":\"123456\"}");
+  }
+
+  @Test
+  public void testCaptureNotAtStart() {
+    check("{}", "capture(\"abc123456def\", \"(?<foo>\\d+)\")", "{\"foo\":\"123456\"}");
+  }
+
+  @Test
+  public void testCaptureNull() {
+    check("{}", "capture(null, \"(?<foo>\\d+)\")", "null");
+  }
 }
