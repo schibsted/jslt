@@ -24,6 +24,7 @@ What is working:
  * Simple dot key accessors.
  * Function calls.
  * `if` statements.
+ * Variables.
 
 Next goal is to have this transform working (a part of
 `pulse-cleanup.jstl`):
