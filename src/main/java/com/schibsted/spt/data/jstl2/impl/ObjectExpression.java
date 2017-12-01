@@ -4,9 +4,8 @@ package com.schibsted.spt.data.jstl2.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.schibsted.spt.data.jstl2.Expression;
 
-public class ObjectExpression implements Expression {
+public class ObjectExpression implements ExpressionNode {
   private ObjectMapper mapper;
   private PairExpression[] children;
 
@@ -15,10 +14,10 @@ public class ObjectExpression implements Expression {
     this.children = children;
   }
 
-  public JsonNode apply(JsonNode input) {
+  public JsonNode apply(Scope scope, JsonNode input) {
     ObjectNode object = mapper.createObjectNode();
     for (int ix = 0; ix < children.length; ix++) {
-      JsonNode value = children[ix].apply(input);
+      JsonNode value = children[ix].apply(scope, input);
       if (isValue(value))
         object.put(children[ix].getKey(), value);
     }

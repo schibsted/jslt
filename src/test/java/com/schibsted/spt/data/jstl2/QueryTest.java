@@ -63,4 +63,19 @@ public class QueryTest extends TestBase {
     error("blurgle(\"22\")", "blurgle");
   }
 
+  @Test
+  public void testVariable() {
+    check("{}", "$foo", "42", makeVars("foo", "42"));
+  }
+
+  @Test
+  public void testNonExistentVariable() {
+    error("$blurgle", "blurgle");
+  }
+
+  @Test
+  public void testFunctionCallVariableParam() {
+    check("{}", "number( $num )", "22", makeVars("num", "\"22\""));
+  }
+
 }

@@ -3,9 +3,8 @@ package com.schibsted.spt.data.jstl2.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.NullNode;
-import com.schibsted.spt.data.jstl2.Expression;
 
-public class DotExpression implements Expression {
+public class DotExpression implements ExpressionNode {
   private String key;
 
   public DotExpression() {
@@ -15,7 +14,7 @@ public class DotExpression implements Expression {
     this.key = key;
   }
 
-  public JsonNode apply(JsonNode input) {
+  public JsonNode apply(Scope scope, JsonNode input) {
     if (key == null)
       return input; // FIXME: should we make a copy?
 

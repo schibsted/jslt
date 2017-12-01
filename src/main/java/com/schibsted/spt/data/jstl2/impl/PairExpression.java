@@ -2,16 +2,15 @@
 package com.schibsted.spt.data.jstl2.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.schibsted.spt.data.jstl2.Expression;
 
 /**
  * Represents a "key" : <expr> pair inside a JSON object.
  */
-public class PairExpression implements Expression {
+public class PairExpression implements ExpressionNode {
   private String key;
-  private Expression expr;
+  private ExpressionNode expr;
 
-  public PairExpression(String key, Expression expr) {
+  public PairExpression(String key, ExpressionNode expr) {
     this.key = key;
     this.expr = expr;
   }
@@ -20,8 +19,8 @@ public class PairExpression implements Expression {
     return key;
   }
 
-  public JsonNode apply(JsonNode input) {
-    return expr.apply(input);
+  public JsonNode apply(Scope scope, JsonNode input) {
+    return expr.apply(scope, input);
   }
 
 }

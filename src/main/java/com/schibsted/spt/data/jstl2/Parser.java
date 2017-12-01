@@ -31,20 +31,20 @@ public class Parser {
       // the start production always contains an expr, so we just ditch it
       SimpleNode start = (SimpleNode) parser.jjtree.rootNode();
       SimpleNode expr = (SimpleNode) start.jjtGetChild(0);
-      return node2expr(expr);
+      return new ExpressionImpl(node2expr(expr));
     } catch (ParseException e) {
       throw new RuntimeException(e);
     }
   }
 
-  private static Expression node2expr(SimpleNode node) {
+  private static ExpressionNode node2expr(SimpleNode node) {
     Token token = node.jjtGetFirstToken();
     if (token.kind == JstlParserConstants.LBRACKET ||
         token.kind == JstlParserConstants.LCURLY ||
         token.kind == JstlParserConstants.IF ||
         token.kind == JstlParserConstants.IDENT /* function call */)
       // it's not a token but a production, so we ditch the Expr node
-      // and go down to the level below, which is the detail production
+      // and go down to the level below, which holds the actual info
       node = (SimpleNode) node.jjtGetChild(0);
 
     token = node.jjtGetFirstToken();
@@ -77,10 +77,13 @@ public class Parser {
       else
         return new DotExpression();
 
-    } else if (kind == JstlParserConstants.IF) {
+    } else if (kind == JstlParserConstants.VARIABLE)
+      return new VariableExpression(token.image.substring(1));
+
+    else if (kind == JstlParserConstants.IF) {
       // 2 children: if ($1) $2
       // 3 children: if ($1) $2 else $3
-      Expression theelse = null;
+      ExpressionNode theelse = null;
       if (node.jjtGetNumChildren() == 3)
         theelse = node2expr((SimpleNode) node.jjtGetChild(2));
 
@@ -105,7 +108,7 @@ public class Parser {
       for (int ix = 0; ix < node.jjtGetNumChildren(); ix++) {
         SimpleNode pair = (SimpleNode) node.jjtGetChild(ix);
         String key = makeString(pair.jjtGetFirstToken());
-        Expression val = node2expr((SimpleNode) pair.jjtGetChild(0));
+        ExpressionNode val = node2expr((SimpleNode) pair.jjtGetChild(0));
         children[ix] = new PairExpression(key, val);
       }
       return new ObjectExpression(mapper, children);
@@ -118,8 +121,8 @@ public class Parser {
     return literal.image.substring(1, literal.image.length() - 1);
   }
 
-  private static Expression[] children2Exprs(SimpleNode node) {
-    Expression[] children = new Expression[node.jjtGetNumChildren()];
+  private static ExpressionNode[] children2Exprs(SimpleNode node) {
+    ExpressionNode[] children = new ExpressionNode[node.jjtGetNumChildren()];
     for (int ix = 0; ix < node.jjtGetNumChildren(); ix++)
       children[ix] = node2expr((SimpleNode) node.jjtGetChild(ix));
     return children;

@@ -5,26 +5,25 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
-import com.schibsted.spt.data.jstl2.Expression;
 
-public class IfExpression implements Expression {
-  private Expression test;
-  private Expression then;
-  private Expression orelse;
+public class IfExpression implements ExpressionNode {
+  private ExpressionNode test;
+  private ExpressionNode then;
+  private ExpressionNode orelse;
 
-  public IfExpression(Expression test, Expression then, Expression orelse) {
+  public IfExpression(ExpressionNode test, ExpressionNode then, ExpressionNode orelse) {
     this.test = test;
     this.then = then;
     this.orelse = orelse;
   }
 
-  public JsonNode apply(JsonNode input) {
-    if (isTrue(test.apply(input)))
-      return then.apply(input);
+  public JsonNode apply(Scope scope, JsonNode input) {
+    if (isTrue(test.apply(scope, input)))
+      return then.apply(scope, input);
 
     // test was false, so return null or else
     if (orelse != null)
-      return orelse.apply(input);
+      return orelse.apply(scope, input);
     else
       return NullNode.instance;
   }

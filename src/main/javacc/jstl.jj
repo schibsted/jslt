@@ -46,7 +46,8 @@ TOKEN :
   < ELSE: "else" > |
   < LPAREN: "(" > |
   < RPAREN: ")" > |
-  < IDENT: (["A"-"Z"] | ["a"-"z"] | ["0"-"9"] | "_" | "-")+ >
+  < IDENT: (["A"-"Z"] | ["a"-"z"] | ["0"-"9"] | "_" | "-")+ > |
+  < VARIABLE: "$" (["A"-"Z"] | ["a"-"z"] | ["0"-"9"] | "_" | "-")+ >
 }
 
 /** Root production. */
@@ -60,9 +61,10 @@ void Expr() :
 {}
 {
   (<NULL> | <INTEGER> | <DECIMAL> | <STRING> | <TRUE> | <FALSE> |
-   DotKey() |
-   IfStatement() | FunctionCall() |
-   Array() | Object())
+  FunctionCall() | <VARIABLE> |
+  DotKey() |
+  IfStatement() |
+  Array() | Object())
 }
 
 void Array() :

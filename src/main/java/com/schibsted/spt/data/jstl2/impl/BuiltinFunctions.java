@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.DoubleNode;
 import com.schibsted.spt.data.jstl2.Function;
-import com.schibsted.spt.data.jstl2.Expression;
 import com.schibsted.spt.data.jstl2.JstlException;
 
 public class BuiltinFunctions {
@@ -43,25 +42,22 @@ public class BuiltinFunctions {
       super("number", 1, 1);
     }
 
-    public JsonNode call(JsonNode input, Expression[] arguments) {
-      // get the argument value
-      JsonNode value = arguments[0].apply(input);
-
-      // check what type this is before moving on
-      if (value.isNumber())
-        return value;
-      else if (!value.isTextual())
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      // check what type this is
+      if (arguments[0].isNumber())
+        return arguments[0];
+      else if (!arguments[0].isTextual())
         return NullNode.instance;
 
       // let's look at this number
-      String number = value.asText();
+      String number = arguments[0].asText();
       try {
         if (number.indexOf('.') != -1)
           return new DoubleNode(Double.parseDouble(number));
         else
           return new IntNode(Integer.parseInt(number));
       } catch (NumberFormatException e) {
-        throw new JstlException("number(" + value + ") failed: not a number");
+        throw new JstlException("number(" + number + ") failed: not a number");
       }
     }
   }

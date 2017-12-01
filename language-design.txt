@@ -1,0 +1,66 @@
+
+---------------------------------------------------------------------------
+LANGUAGE DESIGN
+
+.       -> input
+.foo    -> key in object
+.[2]    -> index in array
+.[1:2]  -> array slicing (just copy from Python)
+
+==, !=, ... -> comparison
+
+and, or, not(...)
+
++ * % / -   -> numeric operators
+  string + string -> concat
+  string * number -> repeat
+
+$foo       -> variable reference
+foo( ... ) -> function call
+
+if (condition) <expr> else <expr>
+let ...
+for (<expr>) <expr>
+
+[...]      -> array literal
+{...}      -> object literal
+"..."      -> string literal
+34834      -> number literal
+true|false -> boolean literal
+null       -> what it says
+
+*          -> matcher
+
+----- ADD LATER, if at all
+
+.foo [ condition ] -> FIXME: multiple results? how to deal with?
+  inside condition we change the context node
+
+  .foo .[*] .bar -> traverse array? how to deal with this?
+
+can we do this by supporting
+  for (<expr>) <expr> if <expr> ?
+
+alternative:
+  .[*] returns entire array
+  .foo on array of objects = for (...) .foo
+
+----- OPEN QUESTIONS
+
+how to do fallback for missing values?
+  function?
+  operator?
+
+----- FUNCTION LIBRARY
+
+boolean(.)
+string(.)
+number(.)
+not(.)
+
+test(., regexp)
+capture(., regexp)
+split(., splitter)
+join(., joiner)
+
+size(.) <- string, object, array
