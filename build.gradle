@@ -1,4 +1,8 @@
 
+// We are deliberately not using the Schibsted JVM, because then we don't
+// have to deal with Artifactory and we don't need username/password in
+// Travis, so repo forks will work.
+
 buildscript {
   repositories {
     mavenLocal()
@@ -42,12 +46,12 @@ sourceSets {
  }
 
 task jjtree (type: Exec) {
-  commandLine 'java', '-cp', 'javacc-7.0.3/bootstrap/javacc.jar', 'jjtree', '-OUTPUT_DIRECTORY=build/javacc/com/schibsted/spt/data/jstl2', 'src/main/javacc/jstl.jj'
+  commandLine 'java', '-cp', 'javacc.jar', 'jjtree', '-OUTPUT_DIRECTORY=build/javacc/com/schibsted/spt/data/jstl2', 'src/main/javacc/jstl.jj'
 }
 
 
 task javacc (type: Exec) {
-  commandLine 'java', '-cp', 'javacc-7.0.3/bootstrap/javacc.jar', 'javacc', '-OUTPUT_DIRECTORY=build/javacc/com/schibsted/spt/data/jstl2', 'build/javacc/com/schibsted/spt/data/jstl2/jstl.jj.jj'
+  commandLine 'java', '-cp', 'javacc.jar', 'javacc', '-OUTPUT_DIRECTORY=build/javacc/com/schibsted/spt/data/jstl2', 'build/javacc/com/schibsted/spt/data/jstl2/jstl.jj.jj'
 }
 compileJava.dependsOn 'javacc'
 javacc.dependsOn 'jjtree'
