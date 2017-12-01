@@ -46,6 +46,8 @@ TOKEN :
   < ELSE: "else" > |
   < LPAREN: "(" > |
   < RPAREN: ")" > |
+  < LET: "let" > |
+  < ASSIGN: "=" > |
   < IDENT: (["A"-"Z"] | ["a"-"z"] | ["0"-"9"] | "_" | "-")+ > |
   < VARIABLE: "$" (["A"-"Z"] | ["a"-"z"] | ["0"-"9"] | "_" | "-")+ >
 }
@@ -72,6 +74,7 @@ MORE :
 void Start() :
 {}
 {
+  (Let())*
   Expr() <EOF>
 }
 
@@ -94,7 +97,10 @@ void Array() :
 void Object() :
 {}
 {
-  <LCURLY> (Pair() (<COMMA> Pair())*)? <RCURLY>
+  <LCURLY>
+    (Let())*
+    (Pair() (<COMMA> Pair())*)?
+  <RCURLY>
 }
 
 void Pair() :
@@ -120,4 +126,10 @@ void FunctionCall() :
 {}
 {
   <IDENT> <LPAREN> (Expr())? <RPAREN>
+}
+
+void Let() :
+{}
+{
+  <LET> <IDENT> <ASSIGN> Expr()
 }

@@ -26,6 +26,7 @@ What is working:
  * Function calls.
  * `if` statements.
  * Variables.
+ * `let` statements.
 
 ## Working example
 
@@ -35,9 +36,9 @@ This transform now works (a part of `pulse-cleanup.jstl`):
 {
   "location" : {
     "latitude" : number( if (.location.latitude)
-                           .location.latitude else .latitude)),
+                           .location.latitude else .latitude),
     "longitude" : number( if (.location.longitude)
-                            .location.longitude else .longitude)),
+                            .location.longitude else .longitude),
     "accuracy" : number(.location.accuracy)
   }
 }
@@ -74,7 +75,6 @@ cleanup):
 ```
 
 To make this work we need to add:
-  * `let`.
   * Quoted dot key accessors.
   * The `test` function.
   * Boolean comparators.

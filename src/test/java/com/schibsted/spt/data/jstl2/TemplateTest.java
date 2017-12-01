@@ -33,4 +33,16 @@ public class TemplateTest extends TestBase {
                            "{\"bar\" : .foo}", "{\"bar\" : 2}");
   }
 
+  @Test
+  public void testTopLevelLet() {
+    check("{\"foo\" : 2}", "let foo = 2 " +
+                           "{\"bar\" : $foo}", "{\"bar\" : 2}");
+  }
+
+  @Test
+  public void testObjectLet() {
+    check("{\"foo\" : 2}", "{let foo = 2 " +
+                           "\"bar\" : $foo}", "{\"bar\" : 2}");
+  }
+
 }

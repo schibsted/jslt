@@ -17,6 +17,10 @@ public class Scope {
     return new Scope(variables, null);
   }
 
+  public static Scope makeScope(Map<String, JsonNode> variables, Scope parent) {
+    return new Scope(variables, parent);
+  }
+
   private Scope parent;
   private Map<String, JsonNode> variables;
 
