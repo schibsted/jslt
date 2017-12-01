@@ -75,7 +75,6 @@ cleanup):
 ```
 
 To make this work we need to add:
-  * Quoted dot key accessors.
   * The `test` function.
   * Boolean comparators.
   * Expression chains (variable dotkey).

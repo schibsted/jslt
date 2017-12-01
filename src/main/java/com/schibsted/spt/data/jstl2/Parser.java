@@ -142,10 +142,15 @@ public class Parser {
 
     // first make an expression for us
     ExpressionNode dot;
-    if (node.kind != JstlParserConstants.IDENT) // there was just a DOT
+    if (node.kind != JstlParserConstants.IDENT &&
+        node.kind != JstlParserConstants.STRING) // there was just a DOT
       return new DotExpression();
-    else
-      dot = new DotExpression(node.image, parent);
+    else {
+      String key = node.image; // works fine for IDENT, but not STRING
+      if (node.kind == JstlParserConstants.STRING)
+        key = makeString(node);
+      dot = new DotExpression(key, parent);
+    }
 
     // check if there is more, if so, build
     if (node.next.kind == JstlParserConstants.DOT)

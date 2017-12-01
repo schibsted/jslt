@@ -29,6 +29,11 @@ public class QueryTest extends TestBase {
   }
 
   @Test
+  public void testQuotedDotKey() {
+    check("{\"@foo\" : 2}", ".\"@foo\"", "2");
+  }
+
+  @Test
   public void testDotNoSuchKey() {
     check("{\"foo\" : 2}", ".bar", "null");
   }

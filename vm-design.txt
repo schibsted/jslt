@@ -1,0 +1,68 @@
+
+---------------------------------------------------------------------------
+VM DESIGN
+
+The VM internally contains:
+  Variables[][] =
+    first level is scope
+    second level is variables indexed by number
+
+  Map = variable -> index number
+
+  Literals[] = JsonNode objects indexed by number
+  Functions[] = Function objects indexed by number
+
+  Code[] = VM bytecode on the format (array of ints)
+    instr op (first instr is 0 and 1, second 2 and 3, ...)
+    instr op
+    instr op
+
+  pc -> pointer into Code[] to next instruction
+
+  Stack[] -> stack of JsonNode objects
+    this includes object keys as StringNode objects (to make ev'thing the same)
+
+  stp -> pointer into Stack[] to top
+  scp -> pointer into Variables[] stack frame
+
+  Input = the JSON object we're operating on
+
+OPCODES:
+  PUSHO _   create new object, put on stack
+  PUSHL ix  push Literals[ix] on the stack
+  PUSHV ix  push Variables[scp][ix] on the stack
+  PUSHI _   push Input on stack
+  DOT   ix  pop object/array from stack, index w/ Literals[ix], push result
+  STORE ix  pop from stack, store to Variables[scp][ix]
+  PUSHS _   increment scp, add new stack frame
+  POPS  _   decrement scp (discard stack frame)
+
+PULSE-CLEANUP BYTECODE
+  PUSHO 0
+  PUSHL "actor" (really index of this literal)
+  PUSHO 0
+  PUSHS 0
+  PUSHI 0
+  DOT   "actor" (index of literal)
+  DOT   "@id"
+  PUSHL that long regexp
+  CALL  test (not sure how to communicate how many args to pop)
+  JNOT  else:
+  PUSHI 0
+  DOT   "actor"
+  DOT   "@id"
+  JUMP  assign:
+else:
+  PUSHI 0
+  DOT   "actor"
+  DOT   "spt:userId"
+assign:
+  STORE $userid
+
+  PUSHV $userid
+  PUSHL long regexp
+  CALL  test (args?!)
+  JNOT  else2:
+  PUSHL null
+else2:
+  ...
