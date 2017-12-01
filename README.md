@@ -21,6 +21,7 @@ like feature-complete. So don't even think about using it.
 
 What is working:
  * JSON parsing.
+ * Comments.
  * Dot key accessors.
  * Function calls.
  * `if` statements.
@@ -73,7 +74,6 @@ cleanup):
 ```
 
 To make this work we need to add:
-  * Comments.
   * `let`.
   * Quoted dot key accessors.
   * The `test` function.

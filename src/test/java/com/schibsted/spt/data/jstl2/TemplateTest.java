@@ -27,4 +27,10 @@ public class TemplateTest extends TestBase {
     check("{\"baz\" : 2}", template, "{}");
   }
 
+  @Test
+  public void testComment() {
+    check("{\"foo\" : 2}", "// tuut tuut\n" +
+                           "{\"bar\" : .foo}", "{\"bar\" : 2}");
+  }
+
 }

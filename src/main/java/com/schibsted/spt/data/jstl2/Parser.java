@@ -1,7 +1,10 @@
 
 package com.schibsted.spt.data.jstl2;
 
+import java.io.File;
+import java.io.FileReader;
 import java.io.StringReader;
+import java.io.FileNotFoundException;
 import java.util.Map;
 import java.util.HashMap;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,9 +26,21 @@ public class Parser {
     functions.put("number", new BuiltinFunctions.Number());
   }
 
-  public static Expression compile(String jstl) {
+  public static Expression compile(File jstl) {
+    // FIXME: character encoding bug
     try {
-      JstlParser parser = new JstlParser(new StringReader(jstl));
+      return compile(new JstlParser(new FileReader(jstl)));
+    } catch (FileNotFoundException e) {
+      throw new JstlException("Couldn't find file " + jstl);
+    }
+  }
+
+  public static Expression compile(String jstl) {
+    return compile(new JstlParser(new StringReader(jstl)));
+  }
+
+  private static Expression compile(JstlParser parser) {
+    try {
       parser.Start();
 
       // the start production always contains an expr, so we just ditch it
