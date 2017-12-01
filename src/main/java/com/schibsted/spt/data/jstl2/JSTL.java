@@ -14,8 +14,8 @@ public class JSTL {
 
     JsonNode output = expr.apply(input);
 
-    mapper.writerWithDefaultPrettyPrinter()
-      .writeValueAsString(output);
+    System.out.println(mapper.writerWithDefaultPrettyPrinter()
+                       .writeValueAsString(output));
   }
 
 }

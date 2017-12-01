@@ -88,7 +88,7 @@ void Pair() :
 void DotKey() :
 {}
 {
-  <DOT> (<IDENT>)?
+  <DOT> (<IDENT>)? (<DOT> <IDENT>)*
 }
 
 void IfStatement() :

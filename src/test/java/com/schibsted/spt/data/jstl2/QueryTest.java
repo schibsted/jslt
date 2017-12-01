@@ -34,6 +34,21 @@ public class QueryTest extends TestBase {
   }
 
   @Test
+  public void testDotKeyDotKey() {
+    check("{\"foo\" : {\"bar\" : 22}}", ".foo.bar", "22");
+  }
+
+  @Test
+  public void testDotKeyDotKeyWithNull() {
+    check("{\"foo\" : {\"bar\" : 22}}", ".bar.bar", "null");
+  }
+
+  @Test
+  public void testDotKeyDotKeyDotKey() {
+    check("{\"foo\" : {\"bar\" : {\"baz\" : 221}}}", ".foo.bar.baz", "221");
+  }
+
+  @Test
   public void testIfNoElse() {
     check("{}", "if (true) 320", "320");
   }

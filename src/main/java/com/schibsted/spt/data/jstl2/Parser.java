@@ -71,11 +71,8 @@ public class Parser {
       return new LiteralExpression(BooleanNode.FALSE);
 
     else if (kind == JstlParserConstants.DOT) {
-      Token last = node.jjtGetLastToken();
-      if (last.kind == JstlParserConstants.IDENT)
-        return new DotExpression(last.image);
-      else
-        return new DotExpression();
+      node = (SimpleNode) node.jjtGetChild(0); // step to DotKey node
+      return recursivelyBuildDotChain(node.jjtGetFirstToken(), null);
 
     } else if (kind == JstlParserConstants.VARIABLE)
       return new VariableExpression(token.image.substring(1));
@@ -126,5 +123,23 @@ public class Parser {
     for (int ix = 0; ix < node.jjtGetNumChildren(); ix++)
       children[ix] = node2expr((SimpleNode) node.jjtGetChild(ix));
     return children;
+  }
+
+  // the token is the DOT, after which there may or may not be an IDENT
+  private static ExpressionNode recursivelyBuildDotChain(Token node, ExpressionNode parent) {
+    node = node.next; // step to the IDENT, if any
+
+    // first make an expression for us
+    ExpressionNode dot;
+    if (node.kind != JstlParserConstants.IDENT) // there was just a DOT
+      return new DotExpression();
+    else
+      dot = new DotExpression(node.image, parent);
+
+    // check if there is more, if so, build
+    if (node.next.kind == JstlParserConstants.DOT)
+      dot = recursivelyBuildDotChain(node.next, dot);
+
+    return dot;
   }
 }
