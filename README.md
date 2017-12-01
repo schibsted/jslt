@@ -27,7 +27,7 @@ What is working:
  * `if` statements.
  * Variables.
  * `let` statements.
- * The `number`, `test`, and `capture` functions.
+ * The `number`, `test`, `capture`, and `split` functions.
 
 ## Working example
 
@@ -79,7 +79,6 @@ To make this work we need to add:
   * Expression chains (variable dotkey).
   * Boolean comparators.
   * Arithmetic operations.
-  * The `split` function.
   * Array indexing.
 
 ## Possible extensions

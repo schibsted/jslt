@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.DoubleNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
 // used for the capture() function
 import org.jcodings.specific.UTF8Encoding;
@@ -72,10 +73,19 @@ public class BuiltinFunctions {
       return BooleanNode.FALSE;
   }
 
+  public static JsonNode toJson(String[] array) {
+    ArrayNode node = NodeUtils.mapper.createArrayNode();
+    for (int ix = 0; ix < array.length; ix++)
+      node.add(array[ix]);
+    return node;
+  }
+
   public static String toString(JsonNode value) {
     // check what type this is
     if (value.isTextual())
       return value.asText();
+    else if (value.isNull())
+      return null; // FIXME: do we always want this? not clear
 
     // not sure how well this works in practice, but let's try
     return value.toString();
@@ -115,6 +125,8 @@ public class BuiltinFunctions {
 
       String string = BuiltinFunctions.toString(arguments[0]);
       String regexp = BuiltinFunctions.toString(arguments[1]);
+      if (regexp == null)
+        throw new JstlException("test() can't test null regexp");
 
       return toJson(Pattern.matches(regexp, string));
     }
@@ -139,7 +151,10 @@ public class BuiltinFunctions {
         return arguments[0]; // null
 
       byte[] string = BuiltinFunctions.toString(arguments[0]).getBytes(UTF_8);
-      byte[] regexp = BuiltinFunctions.toString(arguments[1]).getBytes(UTF_8);
+      String regexps = BuiltinFunctions.toString(arguments[1]);
+      if (regexps == null)
+        throw new JstlException("capture() can't match against null regexp");
+      byte[] regexp = regexps.getBytes(UTF_8);
 
       Regex regex = new Regex(regexp, 0, regexp.length, Option.NONE, UTF8Encoding.INSTANCE);
       Matcher matcher = regex.matcher(string);
@@ -162,6 +177,28 @@ public class BuiltinFunctions {
       }
 
       return node;
+    }
+  }
+
+  // ===== SPLIT
+
+  public static class Split extends AbstractFunction {
+
+    public Split() {
+      super("split", 2, 2);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      // if input string is missing then we're doing nothing
+      if (arguments[0].isNull())
+        return arguments[0]; // null
+
+      String string = BuiltinFunctions.toString(arguments[0]);
+      String split = BuiltinFunctions.toString(arguments[1]);
+      if (split == null)
+        throw new JstlException("split() can't split on null");
+
+      return toJson(string.split(split));
     }
   }
 }

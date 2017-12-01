@@ -24,6 +24,7 @@ public class Parser {
     functions.put("number", new BuiltinFunctions.Number());
     functions.put("test", new BuiltinFunctions.Test());
     functions.put("capture", new BuiltinFunctions.Capture());
+    functions.put("split", new BuiltinFunctions.Split());
   }
 
   public static Expression compile(File jstl) {
