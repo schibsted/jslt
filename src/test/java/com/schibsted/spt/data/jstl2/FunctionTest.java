@@ -143,4 +143,21 @@ public class FunctionTest extends TestBase {
   public void testSplitOnNull() {
     error("split(\"1,2,3\", null)", "null");
   }
+
+  // ===== NOT
+
+  @Test
+  public void testNotNull() {
+    check("{}", "not(null)", "true");
+  }
+
+  @Test
+  public void testNotFalse() {
+    check("{}", "not(false)", "true");
+  }
+
+  @Test
+  public void testNotTrue() {
+    check("{}", "not(true)", "false");
+  }
 }

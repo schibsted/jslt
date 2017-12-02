@@ -4,7 +4,6 @@ package com.schibsted.spt.data.jstl2.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.BooleanNode;
 
 public class IfExpression implements ExpressionNode {
   private ExpressionNode test;
@@ -26,7 +25,7 @@ public class IfExpression implements ExpressionNode {
   }
 
   public JsonNode apply(Scope scope, JsonNode input) {
-    if (isTrue(test.apply(scope, input)))
+    if (NodeUtils.isTrue(test.apply(scope, input)))
       return then.apply(NodeUtils.evalLets(scope, input, thenlets), input);
 
     // test was false, so return null or else
@@ -34,14 +33,6 @@ public class IfExpression implements ExpressionNode {
       return orelse.apply(NodeUtils.evalLets(scope, input, elselets), input);
     else
       return NullNode.instance;
-  }
-
-  private boolean isTrue(JsonNode value) {
-    return value != BooleanNode.FALSE &&
-      !(value.isObject() && value.size() == 0) &&
-      !(value.isTextual() && value.asText().length() == 0) &&
-      !(value.isArray() && value.size() == 0) &&
-      !value.isNull();
   }
 
   public void dump(int level) {

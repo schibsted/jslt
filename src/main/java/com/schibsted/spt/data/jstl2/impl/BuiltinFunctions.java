@@ -152,4 +152,17 @@ public class BuiltinFunctions {
       return NodeUtils.toJson(string.split(split));
     }
   }
+
+  // ===== NOT
+
+  public static class Not extends AbstractFunction {
+
+    public Not() {
+      super("not", 1, 1);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      return NodeUtils.toJson(!NodeUtils.isTrue(arguments[0]));
+    }
+  }
 }

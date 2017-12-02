@@ -23,6 +23,14 @@ public class NodeUtils {
     return scope;
   }
 
+  public static boolean isTrue(JsonNode value) {
+    return value != BooleanNode.FALSE &&
+      !(value.isObject() && value.size() == 0) &&
+      !(value.isTextual() && value.asText().length() == 0) &&
+      !(value.isArray() && value.size() == 0) &&
+      !value.isNull();
+  }
+
   public static JsonNode toJson(boolean value) {
     if (value)
       return BooleanNode.TRUE;
