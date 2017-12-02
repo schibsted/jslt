@@ -133,4 +133,9 @@ public class QueryTest extends TestBase {
     check("{\"foo\" : {\"bar\" : 123}}", "123 == .foo.bar", "true");
   }
 
+  @Test
+  public void testPlusForStrings() {
+    check("{}", "\"foo\" + \"bar\"", "\"foobar\"");
+  }
+
 }

@@ -65,17 +65,6 @@ public class BuiltinFunctions {
 
   // ===== CONVERTERS
 
-  public static String toString(JsonNode value) {
-    // check what type this is
-    if (value.isTextual())
-      return value.asText();
-    else if (value.isNull())
-      return null; // FIXME: do we always want this? not clear
-
-    // not sure how well this works in practice, but let's try
-    return value.toString();
-  }
-
   public static JsonNode number(JsonNode value) {
     // check what type this is
     if (value.isNumber())
@@ -108,8 +97,8 @@ public class BuiltinFunctions {
       if (arguments[0].isNull())
         return BooleanNode.FALSE;
 
-      String string = BuiltinFunctions.toString(arguments[0]);
-      String regexp = BuiltinFunctions.toString(arguments[1]);
+      String string = NodeUtils.toString(arguments[0], false);
+      String regexp = NodeUtils.toString(arguments[1], true);
       if (regexp == null)
         throw new JstlException("test() can't test null regexp");
 
@@ -135,8 +124,8 @@ public class BuiltinFunctions {
       if (arguments[0].isNull())
         return arguments[0]; // null
 
-      byte[] string = BuiltinFunctions.toString(arguments[0]).getBytes(UTF_8);
-      String regexps = BuiltinFunctions.toString(arguments[1]);
+      byte[] string = NodeUtils.toString(arguments[0], false).getBytes(UTF_8);
+      String regexps = NodeUtils.toString(arguments[1], true);
       if (regexps == null)
         throw new JstlException("capture() can't match against null regexp");
       byte[] regexp = regexps.getBytes(UTF_8);
@@ -178,8 +167,8 @@ public class BuiltinFunctions {
       if (arguments[0].isNull())
         return arguments[0]; // null
 
-      String string = BuiltinFunctions.toString(arguments[0]);
-      String split = BuiltinFunctions.toString(arguments[1]);
+      String string = NodeUtils.toString(arguments[0], false);
+      String split = NodeUtils.toString(arguments[1], true);
       if (split == null)
         throw new JstlException("split() can't split on null");
 

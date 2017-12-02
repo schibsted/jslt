@@ -45,5 +45,19 @@ public class IfExpression implements ExpressionNode {
   }
 
   public void dump(int level) {
+    System.out.println(NodeUtils.indent(level) + "if (");
+    test.dump(level + 1);
+    System.out.println(NodeUtils.indent(level) + ")");
+
+    for (int ix = 0; ix < thenlets.length; ix++)
+      thenlets[ix].dump(level + 1);
+    then.dump(level + 1);
+
+    if (orelse != null) {
+      System.out.println(NodeUtils.indent(level) + "else");
+      for (int ix = 0; ix < elselets.length; ix++)
+        elselets[ix].dump(level + 1);
+      orelse.dump(level + 1);
+    }
   }
 }

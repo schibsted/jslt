@@ -15,5 +15,6 @@ public class LiteralExpression implements ExpressionNode {
   }
 
   public void dump(int level) {
+    System.out.println(NodeUtils.indent(level) + value);
   }
 }

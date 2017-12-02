@@ -25,6 +25,7 @@ public class LetExpression implements ExpressionNode {
 
   public void dump(int level) {
     System.out.println(NodeUtils.indent(level) +
-                       "let " + variable + " = " + value.toString());
+                       "let " + variable + " =");
+    value.dump(level + 1);
   }
 }

@@ -49,6 +49,7 @@ TOKEN :
   < LET: "let" > |
   < ASSIGN: "=" > |
   < EQUALS: "==" > |
+  < PLUS: "+" > |
   < IDENT: (["A"-"Z"] | ["a"-"z"] | ["0"-"9"] | "_" | "-")+ > |
   < VARIABLE: "$" (["A"-"Z"] | ["a"-"z"] | ["0"-"9"] | "_" | "-")+ >
 }
@@ -82,7 +83,7 @@ void Start() :
 void Expr() :
 {}
 {
-  BaseExpr() (Comparator() BaseExpr())?
+  AdditiveExpr() (Comparator() AdditiveExpr())?
 }
 
 // not necessary, but makes the tree easier to traverse
@@ -90,6 +91,19 @@ void Comparator() :
 {}
 {
   <EQUALS>
+}
+
+void AdditiveExpr() :
+{}
+{
+  BaseExpr() (AdditiveOperator() BaseExpr())?
+}
+
+// not necessary, but makes the tree easier to traverse
+void AdditiveOperator() :
+{}
+{
+  <PLUS>
 }
 
 void BaseExpr() :

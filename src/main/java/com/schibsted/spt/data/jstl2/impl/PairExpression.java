@@ -24,5 +24,7 @@ public class PairExpression implements ExpressionNode {
   }
 
   public void dump(int level) {
+    System.out.println(NodeUtils.indent(level) + '"' + key + '"' + " :");
+    expr.dump(level + 1);
   }
 }

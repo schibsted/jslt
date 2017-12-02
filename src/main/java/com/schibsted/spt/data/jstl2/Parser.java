@@ -59,16 +59,31 @@ public class Parser {
   private static ExpressionNode node2expr(SimpleNode node) {
     // top is comparison expression
 
+    ExpressionNode first = node2addexpr(getChild(node, 0));
+    if (node.jjtGetNumChildren() == 1) // it's just the base
+      return first;
+
+    ExpressionNode second = node2addexpr(getChild(node, 2));
+
+    // get the comparator
+    Token comp = getChild(node, 1).jjtGetFirstToken();
+    if (comp.kind == JstlParserConstants.EQUALS)
+      return new EqualsComparison(first, second);
+    else
+      throw new RuntimeException("What kind of comparison is this?");
+  }
+
+  private static ExpressionNode node2addexpr(SimpleNode node) {
     ExpressionNode first = node2baseExpr(getChild(node, 0));
     if (node.jjtGetNumChildren() == 1) // it's just the base
       return first;
 
     ExpressionNode second = node2baseExpr(getChild(node, 2));
 
-    // get the comparator
+    // get the operator
     Token comp = getChild(node, 1).jjtGetFirstToken();
-    if (comp.kind == JstlParserConstants.EQUALS)
-      return new EqualsComparison(first, second);
+    if (comp.kind == JstlParserConstants.PLUS)
+      return new PlusOperator(first, second);
     else
       throw new RuntimeException("What kind of comparison is this?");
   }

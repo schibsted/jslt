@@ -33,6 +33,17 @@ public class NodeUtils {
     return node;
   }
 
+  public static String toString(JsonNode value, boolean nullok) {
+    // check what type this is
+    if (value.isTextual())
+      return value.asText();
+    else if (value.isNull() && nullok)
+      return null;
+
+    // not sure how well this works in practice, but let's try
+    return value.toString();
+  }
+
   public static String indent(int level) {
     char[] indent = new char[level * 2];
     for (int ix = 0; ix < indent.length; ix++)

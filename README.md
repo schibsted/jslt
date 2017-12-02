@@ -28,6 +28,7 @@ What is working:
  * `if` and `let` statements.
  * Variables.
  * Boolean comparator `==`.
+ * Arithmetic operator `+`.
  * The `number`, `test`, `capture`, and `split` functions.
 
 ## Working example
@@ -69,7 +70,8 @@ cleanup):
         let site = if ( $parts.site == "spid.se" ) "schibsted.com" else $parts.site
 
         // Split the ID by : and pick the last element
-        "sdrn:" + $site + ":user:" + split($parts.id, ":")[-1]
+        if ($parts.id)
+          "sdrn:" + $site + ":user:" + split($parts.id, ":")[-1]
 
     "@id" : $good_user_id,
     "spt:userId" : $good_user_id
@@ -77,7 +79,6 @@ cleanup):
 ```
 
 To make this work we need to add:
-  * Arithmetic operations.
   * Array indexing.
 
 ## Possible extensions

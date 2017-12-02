@@ -33,5 +33,11 @@ public class ObjectExpression implements ExpressionNode {
   }
 
   public void dump(int level) {
+    System.out.println(NodeUtils.indent(level) + '{');
+    for (int ix = 0; ix < lets.length; ix++)
+      lets[ix].dump(level + 1);
+    for (int ix = 0; ix < children.length; ix++)
+      children[ix].dump(level + 1);
+    System.out.println(NodeUtils.indent(level) + '}');
   }
 }
