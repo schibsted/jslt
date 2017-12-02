@@ -25,9 +25,9 @@ What is working:
  * Comments.
  * Dot key accessors.
  * Function calls.
- * `if` statements.
+ * `if` and `let` statements.
  * Variables.
- * `let` statements.
+ * Boolean comparator `==`.
  * The `number`, `test`, `capture`, and `split` functions.
 
 ## Working example
@@ -77,7 +77,6 @@ cleanup):
 ```
 
 To make this work we need to add:
-  * Boolean comparators.
   * Arithmetic operations.
   * Array indexing.
 

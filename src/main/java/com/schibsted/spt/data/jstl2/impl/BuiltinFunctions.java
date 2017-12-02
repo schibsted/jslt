@@ -12,7 +12,6 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.DoubleNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 
 // used for the capture() function
 import org.jcodings.specific.UTF8Encoding;
@@ -66,20 +65,6 @@ public class BuiltinFunctions {
 
   // ===== CONVERTERS
 
-  public static JsonNode toJson(boolean value) {
-    if (value)
-      return BooleanNode.TRUE;
-    else
-      return BooleanNode.FALSE;
-  }
-
-  public static JsonNode toJson(String[] array) {
-    ArrayNode node = NodeUtils.mapper.createArrayNode();
-    for (int ix = 0; ix < array.length; ix++)
-      node.add(array[ix]);
-    return node;
-  }
-
   public static String toString(JsonNode value) {
     // check what type this is
     if (value.isTextual())
@@ -128,7 +113,7 @@ public class BuiltinFunctions {
       if (regexp == null)
         throw new JstlException("test() can't test null regexp");
 
-      return toJson(Pattern.matches(regexp, string));
+      return NodeUtils.toJson(Pattern.matches(regexp, string));
     }
   }
 
@@ -198,7 +183,7 @@ public class BuiltinFunctions {
       if (split == null)
         throw new JstlException("split() can't split on null");
 
-      return toJson(string.split(split));
+      return NodeUtils.toJson(string.split(split));
     }
   }
 }

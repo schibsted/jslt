@@ -113,4 +113,24 @@ public class QueryTest extends TestBase {
     check("{}", "let obj = {\"foo\" : {\"bar\":321}} $obj.foo.bar", "321");
   }
 
+  @Test
+  public void testEqualsFalse() {
+    check("{}", "123 == 321", "false");
+  }
+
+  @Test
+  public void testEqualsTrue() {
+    check("{}", "123 == 123", "true");
+  }
+
+  @Test
+  public void testEqualsBitMoreComplex() {
+    check("{\"foo\" : {\"bar\" : 123}}", ".foo.bar == 123", "true");
+  }
+
+  @Test
+  public void testEqualsBitMoreComplex2() {
+    check("{\"foo\" : {\"bar\" : 123}}", "123 == .foo.bar", "true");
+  }
+
 }

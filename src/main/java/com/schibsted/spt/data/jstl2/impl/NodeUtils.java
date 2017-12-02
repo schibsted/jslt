@@ -3,6 +3,8 @@ package com.schibsted.spt.data.jstl2.impl;
 
 import java.util.Collections;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.BooleanNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class NodeUtils {
@@ -15,6 +17,20 @@ public class NodeUtils {
       scope = Scope.makeScope(Collections.singletonMap(var, val), scope);
     }
     return scope;
+  }
+
+  public static JsonNode toJson(boolean value) {
+    if (value)
+      return BooleanNode.TRUE;
+    else
+      return BooleanNode.FALSE;
+  }
+
+  public static JsonNode toJson(String[] array) {
+    ArrayNode node = NodeUtils.mapper.createArrayNode();
+    for (int ix = 0; ix < array.length; ix++)
+      node.add(array[ix]);
+    return node;
   }
 
   public static String indent(int level) {

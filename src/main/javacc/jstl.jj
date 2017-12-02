@@ -48,6 +48,7 @@ TOKEN :
   < RPAREN: ")" > |
   < LET: "let" > |
   < ASSIGN: "=" > |
+  < EQUALS: "==" > |
   < IDENT: (["A"-"Z"] | ["a"-"z"] | ["0"-"9"] | "_" | "-")+ > |
   < VARIABLE: "$" (["A"-"Z"] | ["a"-"z"] | ["0"-"9"] | "_" | "-")+ >
 }
@@ -79,6 +80,19 @@ void Start() :
 }
 
 void Expr() :
+{}
+{
+  BaseExpr() (Comparator() BaseExpr())?
+}
+
+// not necessary, but makes the tree easier to traverse
+void Comparator() :
+{}
+{
+  <EQUALS>
+}
+
+void BaseExpr() :
 {}
 {
   (<NULL> | <INTEGER> | <DECIMAL> | <STRING> | <TRUE> | <FALSE> |
