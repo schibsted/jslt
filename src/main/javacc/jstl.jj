@@ -82,18 +82,17 @@ void Expr() :
 {}
 {
   (<NULL> | <INTEGER> | <DECIMAL> | <STRING> | <TRUE> | <FALSE> |
-  FunctionCall() | <VARIABLE> | DotKey() |
-  //Chainable() |
+  Chainable() |
   IfStatement() |
   Array() | Object())
 }
 
-//void Chainable() :
-//{}
-//{
-//  (FunctionCall() | <VARIABLE> | DotKey())
-//  (Chainable())?
-//}
+void Chainable() :
+{}
+{
+  (FunctionCall() | <VARIABLE> | <DOT> (<IDENT> | <STRING>)?)
+  (DotKey())*
+}
 
 void Array() :
 {}
@@ -119,7 +118,7 @@ void Pair() :
 void DotKey() :
 {}
 {
-  <DOT> (<IDENT> | <STRING>)? (<DOT> (<IDENT> | <STRING>))*
+  <DOT> (<IDENT> | <STRING>)
 }
 
 void IfStatement() :

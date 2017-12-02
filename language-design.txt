@@ -20,6 +20,20 @@ foo( ... ) -> function call
 
 if (condition) <expr> else <expr>
 let ...
+  ISSUE: must be terminated somehow because with chainable expressions,
+  how do you make clear that in
+    let foo = $foo.bar
+    .baz
+  .baz is the actual expression and not part of the let?
+  (this is an issue inside if and at toplevel, will also be inside functions)
+
+  possible solutions:
+    let var = ( expr )
+    let var = expr;
+    expr as $var <-- how is this now recognizable as let rather than expr?
+
+  could require per let, or just at the end of the let block
+
 for (<expr>) <expr>
 
 [...]      -> array literal

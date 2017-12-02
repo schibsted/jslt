@@ -31,4 +31,7 @@ public class ObjectExpression implements ExpressionNode {
       !(value.isObject() && value.size() == 0) &&
       !(value.isArray() && value.size() == 0);
   }
+
+  public void dump(int level) {
+  }
 }

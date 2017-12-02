@@ -44,4 +44,6 @@ public class IfExpression implements ExpressionNode {
       !value.isNull();
   }
 
+  public void dump(int level) {
+  }
 }

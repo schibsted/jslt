@@ -33,4 +33,6 @@ public class FunctionExpression implements ExpressionNode {
     return function.call(input, params);
   }
 
+  public void dump(int level) {
+  }
 }

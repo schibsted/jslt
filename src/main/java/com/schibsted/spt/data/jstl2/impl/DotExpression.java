@@ -32,4 +32,6 @@ public class DotExpression implements ExpressionNode {
     return value;
   }
 
+  public void dump(int level) {
+  }
 }

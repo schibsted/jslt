@@ -17,4 +17,11 @@ public class ArrayExpression implements ExpressionNode {
       array.add(children[ix].apply(scope, input));
     return array;
   }
+
+  public void dump(int level) {
+    System.out.println(NodeUtils.indent(level) + '[');
+    for (int ix = 0; ix < children.length; ix++)
+      children[ix].dump(level + 1);
+    System.out.println(NodeUtils.indent(level) + ']');
+  }
 }

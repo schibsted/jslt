@@ -8,7 +8,8 @@ language in one.
 This has the following benefits:
  * better handling of missing data,
  * no more ugly `${ ... }` wrappers around the jq queries,
- * much faster implementation by compiling to Java bytecode,
+ * much faster implementation (first by byte-compiling to a custom
+   virtual machine, later by compiling to Java bytecode),
  * no dependencies on the Scala runtime library,
  * no dependencies on the parser generator,
  * sane syntax for `not`,
@@ -76,7 +77,6 @@ cleanup):
 ```
 
 To make this work we need to add:
-  * Expression chains (variable dotkey).
   * Boolean comparators.
   * Arithmetic operations.
   * Array indexing.

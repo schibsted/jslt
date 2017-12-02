@@ -14,4 +14,6 @@ public class LiteralExpression implements ExpressionNode {
     return value;
   }
 
+  public void dump(int level) {
+  }
 }

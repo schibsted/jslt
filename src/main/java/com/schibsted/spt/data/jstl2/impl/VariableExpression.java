@@ -13,4 +13,7 @@ public class VariableExpression implements ExpressionNode {
   public JsonNode apply(Scope scope, JsonNode input) {
     return scope.getValue(variable);
   }
+
+  public void dump(int level) {
+  }
 }

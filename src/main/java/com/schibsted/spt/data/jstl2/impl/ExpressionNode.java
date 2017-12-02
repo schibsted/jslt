@@ -14,4 +14,7 @@ public interface ExpressionNode {
 
   public JsonNode apply(Scope scope, JsonNode input);
 
+  // writes debug info to stdout
+  public void dump(int level);
+
 }

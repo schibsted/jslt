@@ -23,4 +23,6 @@ public class PairExpression implements ExpressionNode {
     return expr.apply(scope, input);
   }
 
+  public void dump(int level) {
+  }
 }

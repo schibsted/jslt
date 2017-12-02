@@ -30,4 +30,10 @@ public class ExpressionImpl implements Expression {
     Scope scope = NodeUtils.evalLets(Scope.getRoot(), input, lets);
     return actual.apply(scope, input);
   }
+
+  public void dump() {
+    for (int ix = 0; ix < lets.length; ix++)
+      lets[ix].dump(0);
+    actual.dump(0);
+  }
 }

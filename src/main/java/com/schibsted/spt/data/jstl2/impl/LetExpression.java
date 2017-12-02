@@ -22,4 +22,9 @@ public class LetExpression implements ExpressionNode {
   public JsonNode apply(Scope scope, JsonNode input) {
     return value.apply(scope, input);
   }
+
+  public void dump(int level) {
+    System.out.println(NodeUtils.indent(level) +
+                       "let " + variable + " = " + value.toString());
+  }
 }

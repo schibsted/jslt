@@ -17,4 +17,10 @@ public class NodeUtils {
     return scope;
   }
 
+  public static String indent(int level) {
+    char[] indent = new char[level * 2];
+    for (int ix = 0; ix < indent.length; ix++)
+      indent[ix] = ' ';
+    return new String(indent, 0, indent.length);
+  }
 }

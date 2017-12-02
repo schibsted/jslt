@@ -98,4 +98,19 @@ public class QueryTest extends TestBase {
     check("{}", "number( $num )", "22", makeVars("num", "\"22\""));
   }
 
+  @Test
+  public void testVariableDotKey() {
+    check("{}", "let obj = {\"foo\" : 321} $obj.foo", "321");
+  }
+
+  @Test
+  public void testVariableDotKeyDotKey() {
+    check("{}", "let obj = {\"foo\" : 321} $obj.foo.bar", "null");
+  }
+
+  @Test
+  public void testVariableDotKeyDotKey2() {
+    check("{}", "let obj = {\"foo\" : {\"bar\":321}} $obj.foo.bar", "321");
+  }
+
 }
