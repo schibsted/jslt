@@ -144,6 +144,11 @@ public class QueryTest extends TestBase {
   }
 
   @Test
+  public void testPlusThree() {
+    check("{}", "\"foo\" + \"bar\" + \"baz\"", "\"foobarbaz\"");
+  }
+
+  @Test
   public void testIfAddPrecedence() {
     check("{}", "if (false) \"5\" else \"foo\" + \"bar\"", "\"foobar\"");
   }
@@ -156,5 +161,10 @@ public class QueryTest extends TestBase {
   @Test
   public void testParentheses() {
     check("{}", "(if (true) \"5\" else \"foo\") + \"bar\"", "\"5bar\"");
+  }
+
+  @Test
+  public void testParenthesesInLet() {
+    check("{}", "let foo = (5)\n2", "2");
   }
 }

@@ -82,14 +82,14 @@ public class Parser {
     if (node.jjtGetNumChildren() == 1) // it's just the base
       return first;
 
-    ExpressionNode second = node2baseExpr(getChild(node, 2));
+    ExpressionNode second = node2addexpr(getChild(node, 2));
 
     // get the operator
     Token comp = getChild(node, 1).jjtGetFirstToken();
     if (comp.kind == JstlParserConstants.PLUS)
       return new PlusOperator(first, second);
     else
-      throw new RuntimeException("What kind of comparison is this?");
+      throw new RuntimeException("What kind of operator is this?");
   }
 
   private static ExpressionNode node2baseExpr(SimpleNode node) {
