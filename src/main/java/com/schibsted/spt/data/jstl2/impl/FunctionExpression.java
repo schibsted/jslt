@@ -34,5 +34,9 @@ public class FunctionExpression implements ExpressionNode {
   }
 
   public void dump(int level) {
+    System.out.println(NodeUtils.indent(level) + function.getName() + "(");
+    for (int ix = 0; ix < arguments.length; ix++)
+      arguments[ix].dump(level + 1);
+    System.out.println(NodeUtils.indent(level) + ')');
   }
 }

@@ -33,5 +33,14 @@ public class DotExpression implements ExpressionNode {
   }
 
   public void dump(int level) {
+    System.out.println(NodeUtils.indent(level) + this);
+  }
+
+  public String toString() {
+    String me = " ." + (key == null ? "<nothing>" : key);
+    if (parent != null)
+      return "" + parent + me;
+    else
+      return me;
   }
 }

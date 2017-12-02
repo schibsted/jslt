@@ -93,11 +93,13 @@ public class Parser {
   }
 
   private static ExpressionNode node2baseExpr(SimpleNode node) {
+    if (node.id != JstlParserTreeConstants.JJTBASEEXPR)
+      throw new RuntimeException("Wrong type of node: " + node);
+
     Token token = node.jjtGetFirstToken();
     if (token.kind == JstlParserConstants.LBRACKET ||
         token.kind == JstlParserConstants.LCURLY ||
-        token.kind == JstlParserConstants.IF ||
-        token.kind == JstlParserConstants.IDENT /* function call */)
+        token.kind == JstlParserConstants.IF)
       // it's not a token but a production, so we ditch the Expr node
       // and go down to the level below, which holds the actual info
       node = (SimpleNode) node.jjtGetChild(0);
@@ -128,7 +130,7 @@ public class Parser {
     else if (kind == JstlParserConstants.DOT ||
              kind == JstlParserConstants.VARIABLE ||
              kind == JstlParserConstants.IDENT)
-      return chainable2Expr(node);
+      return chainable2Expr(getChild(node, 0));
 
     else if (kind == JstlParserConstants.IF) {
       LetExpression[] letelse = null;
@@ -170,19 +172,11 @@ public class Parser {
   }
 
   private static ExpressionNode chainable2Expr(SimpleNode node) {
-    // node: chainable
+    if (node.id != JstlParserTreeConstants.JJTCHAINABLE)
+      throw new RuntimeException("Wrong type of node: " + node);
+
     Token token = node.jjtGetFirstToken();
     int kind = token.kind;
-
-    // if we start with a dot we can just do the whole thing now
-    if (kind == JstlParserConstants.DOT) {
-      if (token.next.kind != JstlParserConstants.IDENT &&
-          token.next.kind != JstlParserConstants.STRING)
-        return new DotExpression(); // there was only a dot
-
-      // ok, there was a key
-      return recursivelyBuildDotChain(token, null);
-    }
 
     // need to special-case the first node
     ExpressionNode start;
@@ -190,42 +184,69 @@ public class Parser {
       start = new VariableExpression(token.image.substring(1));
 
     else if (kind == JstlParserConstants.IDENT) {
-      node = descendTo(node, JstlParserTreeConstants.JJTFUNCTIONCALL);
+      SimpleNode fnode = descendTo(node, JstlParserTreeConstants.JJTFUNCTIONCALL);
 
       // function call, where the children are the parameters
       Function func = functions.get(token.image);
       if (func == null)
         throw new JstlException("No such function: '" + token.image + "'");
-      start = new FunctionExpression(func, children2Exprs(node));
+      start = new FunctionExpression(func, children2Exprs(fnode));
 
+    } else if (kind == JstlParserConstants.DOT) {
+      token = token.next;
+      if (token.kind != JstlParserConstants.IDENT &&
+          token.kind != JstlParserConstants.STRING &&
+          token.kind != JstlParserConstants.LBRACKET)
+        return new DotExpression(); // there was only a dot
+
+      // ok, there was a key or array slicer
+      start = buildChainLink(node, null);
     } else
       throw new RuntimeException("Now I'm *really* confused!");
 
-    // INVARIANT: at this point token is the last token in the first part
-    token = token.next; // step to next part of chain
-
-    // then tack on the rest of the chain
-    if (token.kind == JstlParserConstants.DOT)
-      return recursivelyBuildDotChain(token, start);
+    // then tack on the rest of the chain, if there is any
+    if (node.jjtGetNumChildren() > 0 &&
+        getLastChild(node).id == JstlParserTreeConstants.JJTCHAINLINK)
+      return buildDotChain(getLastChild(node), start);
     else
       return start;
   }
 
-  // the token is the DOT, after which there must be an IDENT
-  private static ExpressionNode recursivelyBuildDotChain(Token token, ExpressionNode parent) {
-    token = token.next; // step to the IDENT
+  private static ExpressionNode buildDotChain(SimpleNode chainLink,
+                                              ExpressionNode parent) {
+    if (chainLink.id != JstlParserTreeConstants.JJTCHAINLINK)
+      throw new RuntimeException("Wrong type of node: " + chainLink);
 
-    // first make an expression for us
-    String key = token.image; // works fine for IDENT, but not STRING
-    if (token.kind == JstlParserConstants.STRING)
-      key = makeString(token);
-    ExpressionNode dot = new DotExpression(key, parent);
+    ExpressionNode dot = buildChainLink(chainLink, parent);
 
     // check if there is more, if so, build
-    if (token.next.kind == JstlParserConstants.DOT)
-      dot = recursivelyBuildDotChain(token.next, dot);
+    if (chainLink.jjtGetNumChildren() == 2)
+      dot = buildDotChain(getChild(chainLink, 1), dot);
 
     return dot;
+  }
+
+  private static ExpressionNode buildChainLink(SimpleNode node,
+                                               ExpressionNode parent) {
+    Token token = node.jjtGetFirstToken();
+
+    if (token.kind == JstlParserConstants.DOT) {
+      // it's a dotkey
+      token = token.next; // step to token after DOT
+
+      if (token.kind == JstlParserConstants.LBRACKET)
+        return new DotExpression(); // it's .[...]
+
+      String key = token.image; // works fine for IDENT, but not STRING
+      if (token.kind == JstlParserConstants.STRING)
+        key = makeString(token);
+      return new DotExpression(key, parent);
+    } else {
+      // it's an array slicer
+      SimpleNode arraySlicing = getChild(node, 0);
+      ExpressionNode slicer = node2expr(getChild(arraySlicing, 0));
+      return new ArraySlicer(slicer, parent);
+    }
   }
 
   private static String makeString(Token literal) {

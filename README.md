@@ -31,27 +31,11 @@ What is working:
  * Arithmetic operator `+`.
  * The `number`, `test`, `capture`, and `split` functions.
  * `(` Parenthetical expressions `)`.
+  * Array indexing.
 
 ## Working example
 
 This transform now works (a part of `pulse-cleanup.jstl`):
-
-```
-{
-  "location" : {
-    "latitude" : number( if (.location.latitude)
-                           .location.latitude else .latitude),
-    "longitude" : number( if (.location.longitude)
-                            .location.longitude else .longitude),
-    "accuracy" : number(.location.accuracy)
-  }
-}
-```
-
-## Next step
-
-The next step is to have this transform working (from the same
-cleanup):
 
 ```
   "actor" : {
@@ -79,8 +63,9 @@ cleanup):
   }
 ```
 
-To make this work we need to add:
-  * Array indexing.
+## Next step
+
+The next step is to have object matchers (`*`) working.
 
 ## Possible extensions
 

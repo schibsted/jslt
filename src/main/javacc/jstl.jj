@@ -110,22 +110,42 @@ void BaseExpr() :
 {}
 {
   (<NULL> | <INTEGER> | <DECIMAL> | <STRING> | <TRUE> | <FALSE> |
-  Chainable() | Parenthesis() |
-  IfStatement() |
-  Array() | Object())
+   Chainable() | Parenthesis() |
+   IfStatement() |
+   Array() | Object()
+  )
 }
 
 void Chainable() :
 {}
 {
   (FunctionCall() | <VARIABLE> | <DOT> (<IDENT> | <STRING>)?)
-  (DotKey())*
+  (ChainLink())?
+}
+
+void ChainLink() :
+{}
+{
+  (DotKey() | ArraySlicing())
+  (ChainLink())*
 }
 
 void Parenthesis() :
 {}
 {
   <LPAREN> Expr() <RPAREN>
+}
+
+void DotKey() :
+{}
+{
+  <DOT> (<IDENT> | <STRING>)
+}
+
+void ArraySlicing() :
+{}
+{
+  <LBRACKET> Expr() <RBRACKET>
 }
 
 void Array() :
@@ -147,12 +167,6 @@ void Pair() :
 {}
 {
   <STRING> <COLON> Expr()
-}
-
-void DotKey() :
-{}
-{
-  <DOT> (<IDENT> | <STRING>)
 }
 
 void IfStatement() :

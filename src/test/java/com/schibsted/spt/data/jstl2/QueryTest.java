@@ -172,4 +172,14 @@ public class QueryTest extends TestBase {
   public void testParenthesesInLet() {
     check("{}", "let foo = (5)\n2", "2");
   }
+
+  @Test
+  public void testArrayIndexing() {
+    check("[1,2,3,4,5]", ".[0]", "1");
+  }
+
+  @Test
+  public void testFunctionArrayIndexing() {
+    check("[]", "split(\"a,b,c,d\", \",\")[0]", "\"a\"");
+  }
 }

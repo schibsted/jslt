@@ -7,9 +7,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.TextNode;
-import com.fasterxml.jackson.databind.node.DoubleNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -59,28 +57,7 @@ public class BuiltinFunctions {
     }
 
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      return BuiltinFunctions.number(arguments[0]);
-    }
-  }
-
-  // ===== CONVERTERS
-
-  public static JsonNode number(JsonNode value) {
-    // check what type this is
-    if (value.isNumber())
-      return value;
-    else if (!value.isTextual())
-      return NullNode.instance;
-
-    // let's look at this number
-    String number = value.asText();
-    try {
-      if (number.indexOf('.') != -1)
-        return new DoubleNode(Double.parseDouble(number));
-      else
-        return new IntNode(Integer.parseInt(number));
-    } catch (NumberFormatException e) {
-      throw new JstlException("number(" + number + ") failed: not a number");
+      return NodeUtils.number(arguments[0]);
     }
   }
 
