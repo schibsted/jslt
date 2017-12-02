@@ -25,5 +25,8 @@ public class PlusOperator implements ExpressionNode {
   }
 
   public void dump(int level) {
+    left.dump(level + 1);
+    System.out.println(NodeUtils.indent(level) + "+");
+    right.dump(level + 1);
   }
 }

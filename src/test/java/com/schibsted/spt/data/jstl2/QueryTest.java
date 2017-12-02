@@ -138,4 +138,23 @@ public class QueryTest extends TestBase {
     check("{}", "\"foo\" + \"bar\"", "\"foobar\"");
   }
 
+  @Test
+  public void testPlusStringNumber() {
+    check("{}", "\"foo\" + 5", "\"foo5\"");
+  }
+
+  @Test
+  public void testIfAddPrecedence() {
+    check("{}", "if (false) \"5\" else \"foo\" + \"bar\"", "\"foobar\"");
+  }
+
+  @Test
+  public void testIfAddPrecedence2() {
+    check("{}", "if (true) \"5\" else \"foo\" + \"bar\"", "\"5\"");
+  }
+
+  @Test
+  public void testParentheses() {
+    check("{}", "(if (true) \"5\" else \"foo\") + \"bar\"", "\"5bar\"");
+  }
 }

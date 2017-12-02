@@ -30,6 +30,7 @@ What is working:
  * Boolean comparator `==`.
  * Arithmetic operator `+`.
  * The `number`, `test`, `capture`, and `split` functions.
+ * `(` Parenthetical expressions `)`.
 
 ## Working example
 

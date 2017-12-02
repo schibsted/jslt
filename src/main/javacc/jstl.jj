@@ -110,7 +110,7 @@ void BaseExpr() :
 {}
 {
   (<NULL> | <INTEGER> | <DECIMAL> | <STRING> | <TRUE> | <FALSE> |
-  Chainable() |
+  Chainable() | Parenthesis() |
   IfStatement() |
   Array() | Object())
 }
@@ -120,6 +120,12 @@ void Chainable() :
 {
   (FunctionCall() | <VARIABLE> | <DOT> (<IDENT> | <STRING>)?)
   (DotKey())*
+}
+
+void Parenthesis() :
+{}
+{
+  <LPAREN> Expr() <RPAREN>
 }
 
 void Array() :

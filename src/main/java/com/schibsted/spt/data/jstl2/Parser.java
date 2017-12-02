@@ -57,7 +57,8 @@ public class Parser {
   }
 
   private static ExpressionNode node2expr(SimpleNode node) {
-    // top is comparison expression
+    if (node.id != JstlParserTreeConstants.JJTEXPR)
+      throw new RuntimeException("Wrong type of node: " + node);
 
     ExpressionNode first = node2addexpr(getChild(node, 0));
     if (node.jjtGetNumChildren() == 1) // it's just the base
@@ -70,10 +71,13 @@ public class Parser {
     if (comp.kind == JstlParserConstants.EQUALS)
       return new EqualsComparison(first, second);
     else
-      throw new RuntimeException("What kind of comparison is this?");
+      throw new RuntimeException("What kind of comparison is this? " + node);
   }
 
   private static ExpressionNode node2addexpr(SimpleNode node) {
+    if (node.id != JstlParserTreeConstants.JJTADDITIVEEXPR)
+      throw new RuntimeException("Wrong type of node: " + node);
+
     ExpressionNode first = node2baseExpr(getChild(node, 0));
     if (node.jjtGetNumChildren() == 1) // it's just the base
       return first;
@@ -151,6 +155,13 @@ public class Parser {
 
     else if (kind == JstlParserConstants.LCURLY)
       return buildObject(node);
+
+    else if (kind == JstlParserConstants.LPAREN) {
+      // we don't need a node for the parentheses - so just build the
+      // child as a single node and use that instead
+      SimpleNode parens = descendTo(node, JstlParserTreeConstants.JJTPARENTHESIS);
+      return node2expr(getChild(parens, 0));
+    }
 
     else {
       node.dump(">");
