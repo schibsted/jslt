@@ -149,6 +149,11 @@ public class QueryTest extends TestBase {
   }
 
   @Test
+  public void testPlusFunction() {
+    check("{}", "\"foo\" + number(5)", "\"foo5\"");
+  }
+
+  @Test
   public void testIfAddPrecedence() {
     check("{}", "if (false) \"5\" else \"foo\" + \"bar\"", "\"foobar\"");
   }

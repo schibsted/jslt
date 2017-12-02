@@ -58,6 +58,11 @@ public class FunctionTest extends TestBase {
     check("{}", "number(null)", "null");
   }
 
+  @Test
+  public void testNumberObject() {
+    check("{}", "number({})", "null");
+  }
+
   // ===== TEST
 
   @Test
