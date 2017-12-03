@@ -4,7 +4,7 @@ package com.schibsted.spt.data.jstl2.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 
-public class DotExpression implements ExpressionNode {
+public class DotExpression extends AbstractNode {
   private String key;
   private ExpressionNode parent;
 

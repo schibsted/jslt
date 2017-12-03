@@ -4,7 +4,7 @@ package com.schibsted.spt.data.jstl2.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
-public class ArrayExpression implements ExpressionNode {
+public class ArrayExpression extends AbstractNode {
   private ExpressionNode[] children;
 
   public ArrayExpression(ExpressionNode[] children) {

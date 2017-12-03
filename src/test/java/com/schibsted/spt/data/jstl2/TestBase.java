@@ -51,8 +51,13 @@ public class TestBase {
 
   // result must be contained in the error message
   void error(String query, String result) {
+    error("{}", query, result);
+  }
+
+  // result must be contained in the error message
+  void error(String input, String query, String result) {
     try {
-      JsonNode context = mapper.readTree("{}");
+      JsonNode context = mapper.readTree(input);
 
       Expression expr = Parser.compile(query);
       JsonNode actual = expr.apply(context);

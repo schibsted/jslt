@@ -19,6 +19,9 @@ public class ExpressionImpl implements Expression {
   public ExpressionImpl(LetExpression[] lets, ExpressionNode actual) {
     this.lets = lets;
     this.actual = actual;
+
+    // traverse tree and set up context queries
+    actual.computeMatchContexts(new DotExpression());
   }
 
   public JsonNode apply(Map<String, JsonNode> variables, JsonNode input) {

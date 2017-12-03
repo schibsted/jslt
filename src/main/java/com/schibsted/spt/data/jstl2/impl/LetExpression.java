@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
 
-public class LetExpression implements ExpressionNode {
+public class LetExpression extends AbstractNode {
   private String variable;
   private ExpressionNode value;
 
@@ -21,6 +21,10 @@ public class LetExpression implements ExpressionNode {
 
   public JsonNode apply(Scope scope, JsonNode input) {
     return value.apply(scope, input);
+  }
+
+  public void computeMatchContexts(DotExpression parent) {
+    value.computeMatchContexts(parent);
   }
 
   public void dump(int level) {

@@ -3,7 +3,7 @@ package com.schibsted.spt.data.jstl2.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class LiteralExpression implements ExpressionNode {
+public class LiteralExpression extends AbstractNode {
   private JsonNode value;
 
   public LiteralExpression(JsonNode value) {

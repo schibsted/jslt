@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.schibsted.spt.data.jstl2.JstlException;
 
-public class ArraySlicer implements ExpressionNode {
+public class ArraySlicer extends AbstractNode {
   private ExpressionNode slicer;
   private ExpressionNode parent;
 

@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.schibsted.spt.data.jstl2.Function;
 import com.schibsted.spt.data.jstl2.JstlException;
 
-public class FunctionExpression implements ExpressionNode {
+public class FunctionExpression extends AbstractNode {
   private Function function;
   private ExpressionNode[] arguments;
 

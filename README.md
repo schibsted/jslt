@@ -31,7 +31,8 @@ What is working:
  * Arithmetic operator `+`.
  * The `number`, `not`, `test`, `capture`, and `split` functions.
  * `(` Parenthetical expressions `)`.
-  * Array indexing.
+ * Array indexing.
+ * Object matching (`* : .`).
 
 ## Working example
 
@@ -59,13 +60,15 @@ This transform now works (a part of `pulse-cleanup.jstl`):
           "sdrn:" + $site + ":user:" + split($parts.id, ":")[-1]
 
     "@id" : $good_user_id,
-    "spt:userId" : $good_user_id
+    "spt:userId" : $good_user_id,
+    * : .
   }
 ```
 
 ## Next step
 
-The next step is to have object matchers (`*`) working.
+The next step is to finish translating all the matcher (`* : .`) test
+cases from JSTL 1.0 to the JSTL 2.0 test suite.
 
 ## Possible extensions
 
@@ -77,7 +80,8 @@ so that it becomes possible to write the `location` cleanup as:
   "location" : {
     "latitude" : number( fallback(.location.latitude, .latitude) ),
     "longitude" : number( fallback(.location.longitude, .longitude) ),
-    "accuracy" : number(.location.accuracy)
+    "accuracy" : number(.location.accuracy),
+    * : .
   }
 }
 ```

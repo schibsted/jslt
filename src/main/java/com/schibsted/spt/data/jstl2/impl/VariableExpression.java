@@ -3,7 +3,7 @@ package com.schibsted.spt.data.jstl2.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class VariableExpression implements ExpressionNode {
+public class VariableExpression extends AbstractNode {
   private String variable;
 
   public VariableExpression(String variable) {

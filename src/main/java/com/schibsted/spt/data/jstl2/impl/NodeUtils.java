@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.schibsted.spt.data.jstl2.JstlException;
 
 public class NodeUtils {
-  public static ObjectMapper mapper = new ObjectMapper();
+  public static final ObjectMapper mapper = new ObjectMapper();
 
   public static Scope evalLets(Scope scope, JsonNode input, LetExpression[] lets) {
     for (int ix = 0; ix < lets.length; ix++) {

@@ -1,12 +1,14 @@
 
 package com.schibsted.spt.data.jstl2;
 
+import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.io.File;
 import java.io.FileReader;
 import java.io.StringReader;
 import java.io.FileNotFoundException;
-import java.util.Map;
-import java.util.HashMap;
 import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.DoubleNode;
 import com.fasterxml.jackson.databind.node.NullNode;
@@ -264,12 +266,7 @@ public class Parser {
   // collects all the 'let' statements as children of this node
   private static LetExpression[] buildLets(SimpleNode parent) {
     // figure out how many lets there are
-    int letCount = 0;
-    for (int ix = 0; ix < parent.jjtGetNumChildren(); ix++) {
-      SimpleNode child = (SimpleNode) parent.jjtGetChild(ix);
-      if (child.firstToken.kind == JstlParserConstants.LET)
-        letCount++;
-    }
+    int letCount = countChildren(parent, JstlParserTreeConstants.JJTLET);
 
     // collect the lets
     int pos = 0;
@@ -287,20 +284,49 @@ public class Parser {
   }
 
   private static ObjectExpression buildObject(SimpleNode node) {
-    int childCount = node.jjtGetNumChildren();
-
-    // collect the lets
     LetExpression[] lets = buildLets(node);
 
-    // build object content
-    PairExpression[] children = new PairExpression[childCount - lets.length];
-    for (int ix = lets.length; ix < childCount; ix++) {
-      SimpleNode pair = (SimpleNode) node.jjtGetChild(ix);
+    SimpleNode last = getLastChild(node);
+
+    ExpressionNode matcher = collectMatcher(last);
+    List<PairExpression> pairs = collectPairs(last);
+    PairExpression[] children = new PairExpression[pairs.size()];
+    children = pairs.toArray(children);
+    return new ObjectExpression(lets, children, matcher);
+  }
+
+  private static ExpressionNode collectMatcher(SimpleNode node) {
+    if (node == null)
+      return null;
+
+    SimpleNode last = getLastChild(node);
+    if (node.id == JstlParserTreeConstants.JJTPAIR) {
+      if (node.jjtGetNumChildren() == 1)
+        return null; // last in chain was a pair
+
+      return collectMatcher(last);
+    } else if (node.id == JstlParserTreeConstants.JJTMATCHER)
+      return node2expr(last);
+    else
+      throw new RuntimeException("This is wrong");
+  }
+
+  private static List<PairExpression> collectPairs(SimpleNode pair) {
+    if (pair != null && pair.id == JstlParserTreeConstants.JJTPAIR) {
       String key = makeString(pair.jjtGetFirstToken());
       ExpressionNode val = node2expr((SimpleNode) pair.jjtGetChild(0));
-      children[ix - lets.length] = new PairExpression(key, val);
-    }
-    return new ObjectExpression(lets, children);
+
+      List<PairExpression> pairs;
+      if (pair.jjtGetNumChildren() == 1)
+        pairs = new ArrayList(); // no more pairs
+      else
+        pairs = collectPairs(getLastChild(pair));
+
+      pairs.add(new PairExpression(key, val));
+      return pairs;
+    } else
+      // has to be a matcher, so we're done
+      return new ArrayList();
   }
 
   private static SimpleNode getChild(SimpleNode node, int ix) {
@@ -308,6 +334,8 @@ public class Parser {
   }
 
   private static SimpleNode getLastChild(SimpleNode node) {
+    if (node.jjtGetNumChildren() == 0)
+      return null;
     return (SimpleNode) node.jjtGetChild(node.jjtGetNumChildren() - 1);
   }
 
@@ -316,5 +344,13 @@ public class Parser {
       return node;
 
     return descendTo((SimpleNode) node.jjtGetChild(0), type);
+  }
+
+  private static int countChildren(SimpleNode node, int type) {
+    int count = 0;
+    for (int ix = 0; ix < node.jjtGetNumChildren(); ix++)
+      if (getChild(node, ix).id == type)
+        count++;
+    return count;
   }
 }

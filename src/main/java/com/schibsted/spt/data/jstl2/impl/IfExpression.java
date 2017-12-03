@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NullNode;
 
-public class IfExpression implements ExpressionNode {
+public class IfExpression extends AbstractNode {
   private ExpressionNode test;
   private LetExpression[] thenlets;
   private ExpressionNode then;
@@ -33,6 +33,17 @@ public class IfExpression implements ExpressionNode {
       return orelse.apply(NodeUtils.evalLets(scope, input, elselets), input);
     else
       return NullNode.instance;
+  }
+
+  public void computeMatchContexts(DotExpression parent) {
+    for (int ix = 0; ix < thenlets.length; ix++)
+      thenlets[ix].computeMatchContexts(parent);
+    then.computeMatchContexts(parent);
+    if (orelse != null) {
+      orelse.computeMatchContexts(parent);
+      for (int ix = 0; ix < elselets.length; ix++)
+        elselets[ix].computeMatchContexts(parent);
+    }
   }
 
   public void dump(int level) {

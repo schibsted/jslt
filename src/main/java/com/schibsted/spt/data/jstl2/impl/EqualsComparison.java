@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.schibsted.spt.data.jstl2.Function;
 import com.schibsted.spt.data.jstl2.JstlException;
 
-public class EqualsComparison implements ExpressionNode {
+public class EqualsComparison extends AbstractNode {
   private ExpressionNode left;
   private ExpressionNode right;
 

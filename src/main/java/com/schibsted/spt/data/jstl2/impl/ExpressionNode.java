@@ -17,4 +17,7 @@ public interface ExpressionNode {
   // writes debug info to stdout
   public void dump(int level);
 
+  // fills in the contextQuery in ObjectExpression matchers
+  public void computeMatchContexts(DotExpression parent);
+
 }

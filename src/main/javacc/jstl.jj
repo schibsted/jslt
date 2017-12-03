@@ -50,6 +50,7 @@ TOKEN :
   < ASSIGN: "=" > |
   < EQUALS: "==" > |
   < PLUS: "+" > |
+  < STAR: "*" > |
   < IDENT: (["A"-"Z"] | ["a"-"z"] | ["0"-"9"] | "_" | "-")+ > |
   < VARIABLE: "$" (["A"-"Z"] | ["a"-"z"] | ["0"-"9"] | "_" | "-")+ >
 }
@@ -159,14 +160,21 @@ void Object() :
 {
   <LCURLY>
     (Let())*
-    (Pair() (<COMMA> Pair())*)?
+    (Pair() | Matcher())?
   <RCURLY>
+}
+
+void Matcher() :
+{}
+{
+  <STAR> <COLON> Expr()
 }
 
 void Pair() :
 {}
 {
   <STRING> <COLON> Expr()
+  (<COMMA> (Pair() | Matcher()))?
 }
 
 void IfStatement() :

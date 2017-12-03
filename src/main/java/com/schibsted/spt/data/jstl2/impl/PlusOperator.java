@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import com.schibsted.spt.data.jstl2.Function;
 import com.schibsted.spt.data.jstl2.JstlException;
 
-public class PlusOperator implements ExpressionNode {
+public class PlusOperator extends AbstractNode {
   private ExpressionNode left;
   private ExpressionNode right;
 

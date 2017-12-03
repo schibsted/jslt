@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 /**
  * Represents a "key" : <expr> pair inside a JSON object.
  */
-public class PairExpression implements ExpressionNode {
+public class PairExpression extends AbstractNode {
   private String key;
   private ExpressionNode expr;
 
@@ -21,6 +21,10 @@ public class PairExpression implements ExpressionNode {
 
   public JsonNode apply(Scope scope, JsonNode input) {
     return expr.apply(scope, input);
+  }
+
+  public void computeMatchContexts(DotExpression parent) {
+    expr.computeMatchContexts(new DotExpression(key, parent));
   }
 
   public void dump(int level) {
