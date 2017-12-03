@@ -136,6 +136,9 @@ public class Parser {
              kind == JstlParserConstants.IDENT)
       return chainable2Expr(getChild(node, 0));
 
+    else if (kind == JstlParserConstants.FOR)
+      return buildForExpression(getChild(node, 0));
+
     else if (kind == JstlParserConstants.IF) {
       LetExpression[] letelse = null;
       ExpressionNode theelse = null;
@@ -251,6 +254,12 @@ public class Parser {
       ExpressionNode slicer = node2expr(getChild(arraySlicing, 0));
       return new ArraySlicer(slicer, parent);
     }
+  }
+
+  private static ForExpression buildForExpression(SimpleNode node) {
+    ExpressionNode valueExpr = node2expr(getChild(node, 0));
+    ExpressionNode loopExpr = node2expr(getChild(node, 1));
+    return new ForExpression(valueExpr, loopExpr);
   }
 
   private static String makeString(Token literal) {

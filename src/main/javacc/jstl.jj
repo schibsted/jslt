@@ -51,6 +51,7 @@ TOKEN :
   < EQUALS: "==" > |
   < PLUS: "+" > |
   < STAR: "*" > |
+  < FOR: "for" > |
   < IDENT: (["A"-"Z"] | ["a"-"z"] | ["0"-"9"] | "_" | "-")+ > |
   < VARIABLE: "$" (["A"-"Z"] | ["a"-"z"] | ["0"-"9"] | "_" | "-")+ >
 }
@@ -112,7 +113,7 @@ void BaseExpr() :
 {
   (<NULL> | <INTEGER> | <DECIMAL> | <STRING> | <TRUE> | <FALSE> |
    Chainable() | Parenthesis() |
-   IfStatement() |
+   IfStatement() | For() |
    Array() | Object()
   )
 }
@@ -193,6 +194,12 @@ void ElseBranch() :
   <ELSE>
     (Let())*
     Expr()
+}
+
+void For() :
+{}
+{
+  <FOR> <LPAREN> Expr() <RPAREN> Expr()
 }
 
 void FunctionCall() :

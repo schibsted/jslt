@@ -10,11 +10,15 @@ This has the following benefits:
  * no more ugly `${ ... }` wrappers around the jq queries,
  * much faster implementation (first by byte-compiling to a custom
    virtual machine, later by compiling to Java bytecode),
- * no dependencies on the Scala runtime library,
- * no dependencies on the parser generator,
+ * safe transforms (limited expressivity means there's no way to
+   write transforms that use up all memory or that never terminate),
+ * introspectability (programs can analyze the expressions to see what
+   they do),
  * sane syntax for `not`,
  * sane syntax for function calls,
  * much easier to call Java methods as JSTL functions,
+ * no dependencies on the Scala runtime library,
+ * no dependencies on the parser generator,
  * implementation no longer bound to Jackson.
 
 This is still *very* much a work in progress. In fact, it's nothing
@@ -25,7 +29,7 @@ What is working:
  * Comments.
  * Dot key accessors.
  * Function calls.
- * `if` and `let` statements.
+ * `if`, `let`, and `for` statements.
  * Variables.
  * Boolean comparator `==`.
  * Arithmetic operator `+`.

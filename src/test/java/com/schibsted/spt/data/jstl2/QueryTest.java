@@ -182,4 +182,22 @@ public class QueryTest extends TestBase {
   public void testFunctionArrayIndexing() {
     check("[]", "split(\"a,b,c,d\", \",\")[0]", "\"a\"");
   }
+
+  @Test
+  public void testForLoop() {
+    check("[\"1\", \"2\", \"3\"]", "for (.) number(.)", "[1,2,3]");
+  }
+
+  @Test
+  public void testForLoopEmpty() {
+    check("[]", "for (.) number(.)", "[]");
+  }
+
+  @Test
+  public void testForOnFunctionMapObject() {
+    check("[]",
+          "for (split(\"1,2,3,4\", \",\")) { "+
+          "  \"number\" : number(.) " +
+          "}", "[{\"number\":1},{\"number\":2},{\"number\":3},{\"number\":4}]");
+  }
 }
