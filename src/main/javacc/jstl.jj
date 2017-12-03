@@ -50,6 +50,7 @@ TOKEN :
   < ASSIGN: "=" > |
   < EQUALS: "==" > |
   < PLUS: "+" > |
+  < MINUS: "-" > |
   < STAR: "*" > |
   < FOR: "for" > |
   < IDENT: (["A"-"Z"] | ["a"-"z"] | ["0"-"9"] | "_" | "-")+ > |
@@ -168,7 +169,13 @@ void Object() :
 void Matcher() :
 {}
 {
-  <STAR> <COLON> Expr()
+  <STAR> (MatcherMinus())? <COLON> Expr()
+}
+
+void MatcherMinus() :
+{}
+{
+  <MINUS> (<IDENT> | <STRING>) (<COMMA> (<IDENT> | <STRING>))*
 }
 
 void Pair() :

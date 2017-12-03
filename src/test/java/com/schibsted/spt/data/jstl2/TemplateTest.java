@@ -200,5 +200,54 @@ public class TemplateTest extends TestBase {
           "}");
   }
 
-  // NEXT: matching-7
+  @Test
+  public void testMatchingRemove() {
+    check("{ " +
+          "  \"schema\" : \"http://schemas.schibsted.io/thing/pulse-simple.json#1.json\", " +
+          "  \"id\" : \"94b27ca1-8729-4773-986b-1c0517dd6af1\", " +
+          "  \"published\" : \"2017-05-04T09:13:29+02:00\", " +
+          "  \"type\" : \"View\", " +
+          "  \"environmentId\" : \"urn:schibsted.com:environment:uuid\", " +
+          "  \"url\" : \"http://www.aftenposten.no/\" " +
+          "}",
+
+          "{ " +
+          "  \"schema\" : \"http://schemas.schibsted.io/thing/pulse-simple.json#2.json\", " +
+          "  \"taip\" : \"View\", " +
+          "  * - type : . " +
+          "}",
+
+          "{ " +
+          "  \"schema\" : \"http://schemas.schibsted.io/thing/pulse-simple.json#2.json\", " +
+          "  \"taip\" : \"View\", " +
+          "  \"id\" : \"94b27ca1-8729-4773-986b-1c0517dd6af1\", " +
+          "  \"published\" : \"2017-05-04T09:13:29+02:00\", " +
+          "  \"environmentId\" : \"urn:schibsted.com:environment:uuid\", " +
+          "  \"url\" : \"http://www.aftenposten.no/\" " +
+          "}");
+  }
+
+  // "matching-7.jstl" should "produce array of transformed objects" in {
+  //   verify("matching-7.jstl", "for-out.json", "matching-7.json")
+  // }
+
+  // "matching-8.jstl" should "fail" in {
+  //   fail("matching-8.jstl", "empty.json")
+  // }
+
+  // "matching-10.jstl" should "remove 'type' and 'id'" in {
+  //   verify("matching-10.jstl", "simple.json", "matching-10.json")
+  // }
+
+  // "matching-remove.jstl" should "remove 'type'" in {
+  //   verify("matching-remove.jstl", "simple.json", "matching-remove.json")
+  // }
+
+  // "matching-nested.jstl" should "remove 'baz'" in {
+  //   verify("matching-nested.jstl", "matching-nested.json", "matching-nested-out.json")
+  // }
+
+  // "matching-bad-1.jstl" should "throw error on parse" in {
+  //   parseError("matching-bad-1.jstl")
+  // }
 }

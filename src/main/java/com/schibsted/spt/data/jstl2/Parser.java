@@ -244,9 +244,7 @@ public class Parser {
       if (token.kind == JstlParserConstants.LBRACKET)
         return new DotExpression(); // it's .[...]
 
-      String key = token.image; // works fine for IDENT, but not STRING
-      if (token.kind == JstlParserConstants.STRING)
-        key = makeString(token);
+      String key = identOrString(token);
       return new DotExpression(key, parent);
     } else {
       // it's an array slicer
@@ -260,6 +258,13 @@ public class Parser {
     ExpressionNode valueExpr = node2expr(getChild(node, 0));
     ExpressionNode loopExpr = node2expr(getChild(node, 1));
     return new ForExpression(valueExpr, loopExpr);
+  }
+
+  private static String identOrString(Token token) {
+    if (token.kind == JstlParserConstants.STRING)
+      return makeString(token);
+    else
+      return token.image;
   }
 
   private static String makeString(Token literal) {
@@ -298,14 +303,14 @@ public class Parser {
 
     SimpleNode last = getLastChild(node);
 
-    ExpressionNode matcher = collectMatcher(last);
+    MatcherExpression matcher = collectMatcher(last);
     List<PairExpression> pairs = collectPairs(last);
     PairExpression[] children = new PairExpression[pairs.size()];
     children = pairs.toArray(children);
     return new ObjectExpression(lets, children, matcher);
   }
 
-  private static ExpressionNode collectMatcher(SimpleNode node) {
+  private static MatcherExpression collectMatcher(SimpleNode node) {
     if (node == null)
       return null;
 
@@ -315,10 +320,27 @@ public class Parser {
         return null; // last in chain was a pair
 
       return collectMatcher(last);
-    } else if (node.id == JstlParserTreeConstants.JJTMATCHER)
-      return node2expr(last);
-    else
+    } else if (node.id == JstlParserTreeConstants.JJTMATCHER) {
+      List<String> minuses = new ArrayList();
+      if (node.jjtGetNumChildren() == 2) // means there was "* - foo : ..."
+        collectMinuses(getChild(node, 0), minuses);
+      return new MatcherExpression(node2expr(last), minuses);
+    } else
       throw new RuntimeException("This is wrong");
+  }
+
+  private static void collectMinuses(SimpleNode node, List<String> minuses) {
+    Token token = node.jjtGetFirstToken();
+    token = token.next; // skip the -
+
+    while (true) {
+      minuses.add(identOrString(token));
+      token = token.next;
+      if (token.kind == JstlParserConstants.COLON)
+        break;
+      // else: COMMA
+      token = token.next;
+    }
   }
 
   private static List<PairExpression> collectPairs(SimpleNode pair) {

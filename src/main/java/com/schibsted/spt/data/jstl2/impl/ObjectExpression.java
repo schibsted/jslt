@@ -13,12 +13,12 @@ public class ObjectExpression extends AbstractNode {
   private LetExpression[] lets;
   private PairExpression[] children;
   private DotExpression contextQuery; // find object to match
-  private ExpressionNode matcher;
+  private MatcherExpression matcher;
   private Set<String> keys; // the keys defined in this template
 
   public ObjectExpression(LetExpression[] lets,
                           PairExpression[] children,
-                          ExpressionNode matcher) {
+                          MatcherExpression matcher) {
     this.lets = lets;
     this.children = children;
     this.matcher = matcher;
@@ -26,6 +26,9 @@ public class ObjectExpression extends AbstractNode {
     this.keys = new HashSet();
     for (int ix = 0; ix < children.length; ix++)
       keys.add(children[ix].getKey());
+    if (matcher != null)
+      for (String minus : matcher.getMinuses())
+        keys.add(minus);
   }
 
   public JsonNode apply(Scope scope, JsonNode input) {
