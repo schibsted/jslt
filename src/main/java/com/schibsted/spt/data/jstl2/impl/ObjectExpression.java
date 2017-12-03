@@ -34,7 +34,7 @@ public class ObjectExpression extends AbstractNode {
     ObjectNode object = NodeUtils.mapper.createObjectNode();
     for (int ix = 0; ix < children.length; ix++) {
       JsonNode value = children[ix].apply(scope, input);
-      if (isValue(value))
+      if (NodeUtils.isValue(value))
         object.put(children[ix].getKey(), value);
     }
 
@@ -62,12 +62,6 @@ public class ObjectExpression extends AbstractNode {
       JsonNode value = matcher.apply(scope, pair.getValue());
       object.put(pair.getKey(), value);
     }
-  }
-
-  private boolean isValue(JsonNode value) {
-    return !value.isNull() &&
-      !(value.isObject() && value.size() == 0) &&
-      !(value.isArray() && value.size() == 0);
   }
 
   public void computeMatchContexts(DotExpression parent) {

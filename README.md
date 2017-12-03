@@ -29,7 +29,7 @@ What is working:
  * Variables.
  * Boolean comparator `==`.
  * Arithmetic operator `+`.
- * The `number`, `not`, `test`, `capture`, and `split` functions.
+ * The `number`, `fallback`, `not`, `test`, `capture`, and `split` functions.
  * `(` Parenthetical expressions `)`.
  * Array indexing.
  * Object matching (`* : .`).

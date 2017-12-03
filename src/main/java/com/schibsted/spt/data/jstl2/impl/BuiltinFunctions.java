@@ -44,7 +44,7 @@ public class BuiltinFunctions {
     }
 
     public int getMaxArguments() {
-      return min;
+      return max;
     }
   }
 
@@ -163,6 +163,22 @@ public class BuiltinFunctions {
 
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
       return NodeUtils.toJson(!NodeUtils.isTrue(arguments[0]));
+    }
+  }
+
+  // ===== FALLBACK
+
+  public static class Fallback extends AbstractFunction {
+
+    public Fallback() {
+      super("fallback", 2, 1024);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      for (int ix = 0; ix < arguments.length; ix++)
+        if (NodeUtils.isValue(arguments[ix]))
+          return arguments[ix];
+      return NullNode.instance;
     }
   }
 }

@@ -28,6 +28,7 @@ public class Parser {
     functions.put("capture", new BuiltinFunctions.Capture());
     functions.put("split", new BuiltinFunctions.Split());
     functions.put("not", new BuiltinFunctions.Not());
+    functions.put("fallback", new BuiltinFunctions.Fallback());
   }
 
   public static Expression compile(File jstl) {

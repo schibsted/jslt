@@ -160,4 +160,21 @@ public class FunctionTest extends TestBase {
   public void testNotTrue() {
     check("{}", "not(true)", "false");
   }
+
+  // ===== FALLBACK
+
+  @Test
+  public void testFallbackNull() {
+    check("{}", "fallback(null, true)", "true");
+  }
+
+  @Test
+  public void testFallbackTrue() {
+    check("{}", "fallback(true, null)", "true");
+  }
+
+  @Test
+  public void testFallbackThree() {
+    check("{}", "fallback(.foo, .bar, \"heyho\")", "\"heyho\"");
+  }
 }

@@ -31,6 +31,12 @@ public class NodeUtils {
       !value.isNull();
   }
 
+  public static boolean isValue(JsonNode value) {
+    return !value.isNull() &&
+      !(value.isObject() && value.size() == 0) &&
+      !(value.isArray() && value.size() == 0);
+  }
+
   public static JsonNode toJson(boolean value) {
     if (value)
       return BooleanNode.TRUE;
