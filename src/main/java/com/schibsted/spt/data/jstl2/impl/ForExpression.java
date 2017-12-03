@@ -2,6 +2,7 @@
 package com.schibsted.spt.data.jstl2.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.schibsted.spt.data.jstl2.JstlException;
 
@@ -17,6 +18,8 @@ public class ForExpression extends AbstractNode {
 
   public JsonNode apply(Scope scope, JsonNode input) {
     JsonNode array = valueExpr.apply(scope, input);
+    if (array.isNull())
+      return NullNode.instance;
     if (!array.isArray())
       throw new JstlException("For loop can't iterate over " + array);
 

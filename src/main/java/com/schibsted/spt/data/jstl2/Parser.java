@@ -1,10 +1,8 @@
 
 package com.schibsted.spt.data.jstl2;
 
-import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.io.File;
 import java.io.FileReader;
 import java.io.StringReader;
@@ -18,18 +16,6 @@ import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.schibsted.spt.data.jstl2.impl.*;
 
 public class Parser {
-
-  // this will be replaced with a proper Context. need to figure out
-  // relationship between compile-time and run-time context first.
-  private static Map<String, Function> functions = new HashMap();
-  static {
-    functions.put("number", new BuiltinFunctions.Number());
-    functions.put("test", new BuiltinFunctions.Test());
-    functions.put("capture", new BuiltinFunctions.Capture());
-    functions.put("split", new BuiltinFunctions.Split());
-    functions.put("not", new BuiltinFunctions.Not());
-    functions.put("fallback", new BuiltinFunctions.Fallback());
-  }
 
   public static Expression compile(File jstl) {
     // FIXME: character encoding bug
@@ -194,7 +180,7 @@ public class Parser {
       SimpleNode fnode = descendTo(node, JstlParserTreeConstants.JJTFUNCTIONCALL);
 
       // function call, where the children are the parameters
-      Function func = functions.get(token.image);
+      Function func = BuiltinFunctions.functions.get(token.image);
       if (func == null)
         throw new JstlException("No such function: '" + token.image + "'");
       start = new FunctionExpression(func, children2Exprs(fnode));

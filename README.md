@@ -33,7 +33,8 @@ What is working:
  * Variables.
  * Boolean comparator `==`.
  * Arithmetic operator `+`.
- * The `number`, `fallback`, `not`, `test`, `capture`, and `split` functions.
+ * The `number`, `fallback`, `not`, `test`, `capture`, `split`, `is-array`,
+   `is-object`, `starts-with`, and `lowercase` functions.
  * `(` Parenthetical expressions `)`.
  * Array indexing.
  * Object matching (`* : .`).

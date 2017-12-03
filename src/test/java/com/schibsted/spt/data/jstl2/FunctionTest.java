@@ -177,4 +177,62 @@ public class FunctionTest extends TestBase {
   public void testFallbackThree() {
     check("{}", "fallback(.foo, .bar, \"heyho\")", "\"heyho\"");
   }
+
+  // ===== IS-OBJECT
+
+  @Test
+  public void testIsObjectTrue() {
+    check("{}", "is-object(.)", "true");
+  }
+
+  @Test
+  public void testIsObjectFalse() {
+    check("{}", "is-object([1,2,3])", "false");
+  }
+
+  // ===== IS-ARRAY
+
+  @Test
+  public void testIsArrayTrue() {
+    check("{}", "is-array([1,2,3])", "true");
+  }
+
+  @Test
+  public void testIsArrayFalse() {
+    check("{}", "is-array(.)", "false");
+  }
+
+  // ===== LOWERCASE
+
+  @Test
+  public void testLowercaseString() {
+    check("{}", "lowercase(\"FOO\")", "\"foo\"");
+  }
+
+  @Test
+  public void testLowercaseNumber() {
+    check("{}", "lowercase(22)", "\"22\"");
+  }
+
+  @Test
+  public void testLowercaseNull() {
+    check("{}", "lowercase(null)", "null");
+  }
+
+  // ===== STARTS-WITH
+
+  @Test
+  public void testStartsWithNull() {
+    check("{}", "starts-with(null, \"hey\")", "false");
+  }
+
+  @Test
+  public void testStartsWithTrue() {
+    check("{}", "starts-with(\"heypådey\", \"hey\")", "true");
+  }
+
+  @Test
+  public void testStartsWithFalse() {
+    check("{}", "starts-with(\"heipådeg\", \"hey\")", "false");
+  }
 }

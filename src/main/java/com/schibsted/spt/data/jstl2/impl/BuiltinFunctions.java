@@ -1,6 +1,8 @@
 
 package com.schibsted.spt.data.jstl2.impl;
 
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.regex.Pattern;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -23,6 +25,22 @@ import com.schibsted.spt.data.jstl2.Function;
 import com.schibsted.spt.data.jstl2.JstlException;
 
 public class BuiltinFunctions {
+
+  // this will be replaced with a proper Context. need to figure out
+  // relationship between compile-time and run-time context first.
+  public static Map<String, Function> functions = new HashMap();
+  static {
+    functions.put("number", new BuiltinFunctions.Number());
+    functions.put("test", new BuiltinFunctions.Test());
+    functions.put("capture", new BuiltinFunctions.Capture());
+    functions.put("split", new BuiltinFunctions.Split());
+    functions.put("lowercase", new BuiltinFunctions.Lowercase());
+    functions.put("not", new BuiltinFunctions.Not());
+    functions.put("fallback", new BuiltinFunctions.Fallback());
+    functions.put("is-object", new BuiltinFunctions.IsObject());
+    functions.put("is-array", new BuiltinFunctions.IsArray());
+    functions.put("starts-with", new BuiltinFunctions.StartsWith());
+  }
 
   private static abstract class AbstractFunction implements Function {
     private String name;
@@ -153,6 +171,24 @@ public class BuiltinFunctions {
     }
   }
 
+  // ===== LOWERCASE
+
+  public static class Lowercase extends AbstractFunction {
+
+    public Lowercase() {
+      super("lowercase", 1, 1);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      // if input string is missing then we're doing nothing
+      if (arguments[0].isNull())
+        return arguments[0]; // null
+
+      String string = NodeUtils.toString(arguments[0], false);
+      return new TextNode(string.toLowerCase());
+    }
+  }
+
   // ===== NOT
 
   public static class Not extends AbstractFunction {
@@ -179,6 +215,47 @@ public class BuiltinFunctions {
         if (NodeUtils.isValue(arguments[ix]))
           return arguments[ix];
       return NullNode.instance;
+    }
+  }
+
+  // ===== IS-OBJECT
+
+  public static class IsObject extends AbstractFunction {
+
+    public IsObject() {
+      super("is-object", 1, 1);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      return NodeUtils.toJson(arguments[0].isObject());
+    }
+  }
+
+  // ===== IS-ARRAY
+
+  public static class IsArray extends AbstractFunction {
+
+    public IsArray() {
+      super("is-array", 1, 1);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      return NodeUtils.toJson(arguments[0].isArray());
+    }
+  }
+
+  // ===== STARTS-WITH
+
+  public static class StartsWith extends AbstractFunction {
+
+    public StartsWith() {
+      super("starts-with", 2, 2);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      String string = NodeUtils.toString(arguments[0], false);
+      String prefix = NodeUtils.toString(arguments[1], false);
+      return NodeUtils.toJson(string.startsWith(prefix));
     }
   }
 }

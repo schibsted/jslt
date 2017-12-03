@@ -194,6 +194,11 @@ public class QueryTest extends TestBase {
   }
 
   @Test
+  public void testForLoopNull() {
+    check("[]", "for (null) number(.)", "null");
+  }
+
+  @Test
   public void testForOnFunctionMapObject() {
     check("[]",
           "for (split(\"1,2,3,4\", \",\")) { "+
