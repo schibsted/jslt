@@ -34,7 +34,7 @@ What is working:
  * Boolean comparators `==` and `!=`.
  * Arithmetic operator `+`.
  * The `number`, `round`, `fallback`, `not`, `test`, `capture`, `split`, `join`,
-   `is-array`, `is-object`, `starts-with`, and `lowercase` functions.
+   `is-array`, `is-object`, `starts-with`, `contains`, and `lowercase` functions.
  * `(` Parenthetical expressions `)`.
  * Array indexing and slicing.
  * Object matching (`* : .`).

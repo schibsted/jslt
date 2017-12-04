@@ -267,4 +267,26 @@ public class FunctionTest extends TestBase {
   public void testStartsWithFalse() {
     check("{}", "starts-with(\"heipådeg\", \"hey\")", "false");
   }
+
+  // ===== CONTAINS
+
+  @Test
+  public void testContainsEmpty() {
+    check("{}", "contains(\"Type\", [])", "false");
+  }
+
+  @Test
+  public void testContainsFalse() {
+    check("{}", "contains(\"Type\", [\"Taip\"])", "false");
+  }
+
+  @Test
+  public void testContainsNull() {
+    check("{}", "contains(null, [\"Taip\"])", "false");
+  }
+
+  @Test
+  public void testContainsTrue() {
+    check("{}", "contains(\"Taip\", [\"foo\", \"Taip\", \"halp\"])", "true");
+  }
 }

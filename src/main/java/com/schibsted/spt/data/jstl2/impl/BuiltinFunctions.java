@@ -44,6 +44,7 @@ public class BuiltinFunctions {
     functions.put("is-object", new BuiltinFunctions.IsObject());
     functions.put("is-array", new BuiltinFunctions.IsArray());
     functions.put("starts-with", new BuiltinFunctions.StartsWith());
+    functions.put("contains", new BuiltinFunctions.Contains());
   }
 
   private static abstract class AbstractFunction implements Function {
@@ -304,6 +305,25 @@ public class BuiltinFunctions {
         return NullNode.instance;
 
       return new LongNode(Math.round(number.doubleValue()));
+    }
+  }
+
+  // ===== CONTAINS
+
+  public static class Contains extends AbstractFunction {
+
+    public Contains() {
+      super("contains", 2, 2);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      if (!arguments[1].isArray())
+        throw new JstlException("contains cannot work on " + arguments[1]);
+
+      for (int ix = 0; ix < arguments[1].size(); ix++)
+        if (arguments[1].get(ix).equals(arguments[0]))
+          return BooleanNode.TRUE;
+      return BooleanNode.FALSE;
     }
   }
 }
