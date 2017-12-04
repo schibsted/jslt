@@ -31,8 +31,9 @@ What is working:
  * Function calls.
  * `if`, `let`, and `for` statements.
  * Variables.
- * Boolean comparators `==` and `!=`.
  * Arithmetic operator `+`.
+ * Boolean comparators `==`, `!=`, and `>=`.
+ * Boolean operators `and` and `or`.
  * The `number`, `round`, `fallback`, `not`, `test`, `capture`, `split`, `join`,
    `is-array`, `is-object`, `starts-with`, `contains`, and `lowercase` functions.
  * `(` Parenthetical expressions `)`.
