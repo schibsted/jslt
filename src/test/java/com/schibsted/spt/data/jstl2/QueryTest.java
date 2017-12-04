@@ -184,6 +184,31 @@ public class QueryTest extends TestBase {
   }
 
   @Test
+  public void testArraySlicing() {
+    check("[1,2,3,4,5]", ".[1 : 4]", "[2,3,4]");
+  }
+
+  @Test
+  public void testArraySlicingFromStart() {
+    check("[1,2,3,4,5]", ".[ : 4]", "[1,2,3,4]");
+  }
+
+  @Test
+  public void testArraySlicingToEnd() {
+    check("[1,2,3,4,5]", ".[1 : ]", "[2,3,4,5]");
+  }
+
+  @Test
+  public void testArraySlicingSkipOne() {
+    check("[1,2,3,4,5]", ".[ : -1]", "[1,2,3,4]");
+  }
+
+  @Test
+  public void testArraySlicingTooFar() {
+    check("[1,2,3,4,5]", ".[ : 20]", "[1,2,3,4,5]");
+  }
+
+  @Test
   public void testForLoop() {
     check("[\"1\", \"2\", \"3\"]", "for (.) number(.)", "[1,2,3]");
   }

@@ -232,12 +232,28 @@ public class Parser {
 
       String key = identOrString(token);
       return new DotExpression(key, parent);
-    } else {
-      // it's an array slicer
-      SimpleNode arraySlicing = getChild(node, 0);
-      ExpressionNode slicer = node2expr(getChild(arraySlicing, 0));
-      return new ArraySlicer(slicer, parent);
-    }
+    } else
+      return buildArraySlicer(getChild(node, 0), parent);
+  }
+
+  private static ExpressionNode buildArraySlicer(SimpleNode node,
+                                                 ExpressionNode parent) {
+    boolean colon = false; // slicer or index?
+    ExpressionNode left = null;
+    SimpleNode first = getChild(node, 0);
+    if (first.id != JstlParserTreeConstants.JJTCOLON)
+      left = node2expr(first);
+
+    ExpressionNode right = null;
+    SimpleNode last = getLastChild(node);
+    if (node.jjtGetNumChildren() != 1 &&
+        last.id != JstlParserTreeConstants.JJTCOLON)
+      right = node2expr(last);
+
+    for (int ix = 0; ix < node.jjtGetNumChildren(); ix++)
+      colon = colon || getChild(node, ix).id == JstlParserTreeConstants.JJTCOLON;
+
+    return new ArraySlicer(left, colon, right, parent);
   }
 
   private static ForExpression buildForExpression(SimpleNode node) {

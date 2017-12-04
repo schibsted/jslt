@@ -3,14 +3,20 @@ package com.schibsted.spt.data.jstl2.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.NullNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.schibsted.spt.data.jstl2.JstlException;
 
 public class ArraySlicer extends AbstractNode {
-  private ExpressionNode slicer;
+  private ExpressionNode left;
+  private boolean colon;
+  private ExpressionNode right;
   private ExpressionNode parent;
 
-  public ArraySlicer(ExpressionNode slicer, ExpressionNode parent) {
-    this.slicer = slicer;
+  public ArraySlicer(ExpressionNode left, boolean colon, ExpressionNode right,
+                     ExpressionNode parent) {
+    this.left = left;
+    this.colon = colon;
+    this.right = right;
     this.parent = parent;
   }
 
@@ -19,14 +25,33 @@ public class ArraySlicer extends AbstractNode {
     if (!array.isArray())
       return NullNode.instance;
 
-    JsonNode slice = NodeUtils.number(slicer.apply(scope, input));
-    if (!slice.isNumber())
-      throw new JstlException("Can't index array with " + slice);
+    int leftix = resolveIndex(scope, left, input, array, 0);
+    if (!colon)
+      return array.get(leftix);
 
-    int index = slice.intValue();
-    if (index < 0)
-      index = array.size() + index;
-    return array.get(index);
+    int rightix = resolveIndex(scope, right, input, array, array.size());
+    if (rightix > array.size())
+      rightix = array.size();
+
+    ArrayNode result = NodeUtils.mapper.createArrayNode();
+    for (int ix = leftix; ix < rightix; ix++)
+      result.add(array.get(ix));
+    return result;
+  }
+
+  private int resolveIndex(Scope scope, ExpressionNode expr,
+                           JsonNode input, JsonNode array, int ifnull) {
+    if (expr == null)
+      return ifnull;
+
+    JsonNode node = expr.apply(scope, input);
+    if (!node.isNumber())
+      throw new JstlException("Can't index array with " + node);
+
+    int ix = node.intValue();
+    if (ix < 0)
+      ix = array.size() + ix;
+    return ix;
   }
 
   public void dump(int level) {
@@ -36,6 +61,6 @@ public class ArraySlicer extends AbstractNode {
   }
 
   public String toString() {
-    return "[" + slicer + "]";
+    return "[" + left + " : " + right + "]";
   }
 }
