@@ -12,6 +12,8 @@ import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.LongNode;
 
 // used for the capture() function
 import org.jcodings.specific.UTF8Encoding;
@@ -31,9 +33,11 @@ public class BuiltinFunctions {
   public static Map<String, Function> functions = new HashMap();
   static {
     functions.put("number", new BuiltinFunctions.Number());
+    functions.put("round", new BuiltinFunctions.Round());
     functions.put("test", new BuiltinFunctions.Test());
     functions.put("capture", new BuiltinFunctions.Capture());
     functions.put("split", new BuiltinFunctions.Split());
+    functions.put("join", new BuiltinFunctions.Join());
     functions.put("lowercase", new BuiltinFunctions.Lowercase());
     functions.put("not", new BuiltinFunctions.Not());
     functions.put("fallback", new BuiltinFunctions.Fallback());
@@ -97,7 +101,9 @@ public class BuiltinFunctions {
       if (regexp == null)
         throw new JstlException("test() can't test null regexp");
 
-      return NodeUtils.toJson(Pattern.matches(regexp, string));
+      Pattern p = Pattern.compile(regexp);
+      java.util.regex.Matcher m = p.matcher(string);
+      return NodeUtils.toJson(m.find(0));
     }
   }
 
@@ -256,6 +262,48 @@ public class BuiltinFunctions {
       String string = NodeUtils.toString(arguments[0], false);
       String prefix = NodeUtils.toString(arguments[1], false);
       return NodeUtils.toJson(string.startsWith(prefix));
+    }
+  }
+
+  // ===== JOIN
+
+  public static class Join extends AbstractFunction {
+
+    public Join() {
+      super("join", 2, 2);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      ArrayNode array = NodeUtils.toArray(arguments[0], true);
+      if (array == null)
+        return NullNode.instance;
+
+      String sep = NodeUtils.toString(arguments[1], false);
+
+      StringBuilder buf = new StringBuilder();
+      for (int ix = 0; ix < array.size(); ix++) {
+        if (ix > 0)
+          buf.append(sep);
+        buf.append(NodeUtils.toString(array.get(ix), false));
+      }
+      return new TextNode(buf.toString());
+    }
+  }
+
+  // ===== ROUND
+
+  public static class Round extends AbstractFunction {
+
+    public Round() {
+      super("round", 1, 1);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      JsonNode number = NodeUtils.number(arguments[0]);
+      if (number.isNull())
+        return NullNode.instance;
+
+      return new LongNode(Math.round(number.doubleValue()));
     }
   }
 }

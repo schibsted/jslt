@@ -71,6 +71,11 @@ public class FunctionTest extends TestBase {
   }
 
   @Test
+  public void testTestMatchesPart() {
+    check("{}", "test(\"abcdef\", \"abc\")", "true");
+  }
+
+  @Test
   public void testTestMatchesNot() {
     check("{}", "test(\"cba\", \"abc\")", "false");
   }
@@ -142,6 +147,33 @@ public class FunctionTest extends TestBase {
   @Test
   public void testSplitOnNull() {
     error("split(\"1,2,3\", null)", "null");
+  }
+
+  // ===== JOIN
+
+  @Test
+  public void testJoinNull() {
+    check("{}", "join(null, \",\")", "null");
+  }
+
+  @Test
+  public void testJoinEmpty() {
+    check("{}", "join([], \",\")", "\"\"");
+  }
+
+  @Test
+  public void testJoinOne() {
+    check("{}", "join([1], \",\")", "\"1\"");
+  }
+
+  @Test
+  public void testJoinTwo() {
+    check("{}", "join([1,2], \", \")", "\"1, 2\"");
+  }
+
+  @Test
+  public void testJoinThree() {
+    check("{}", "join([1,2,3], \", \")", "\"1, 2, 3\"");
   }
 
   // ===== NOT

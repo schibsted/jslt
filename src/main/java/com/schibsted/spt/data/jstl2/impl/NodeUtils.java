@@ -62,6 +62,16 @@ public class NodeUtils {
     return value.toString();
   }
 
+  public static ArrayNode toArray(JsonNode value, boolean nullok) {
+    // check what type this is
+    if (value.isArray())
+      return (ArrayNode) value;
+    else if (value.isNull() && nullok)
+      return null;
+
+    throw new JstlException("Cannot convert " + value + " to array");
+  }
+
   public static JsonNode number(JsonNode value) {
     // check what type this is
     if (value.isNumber())
