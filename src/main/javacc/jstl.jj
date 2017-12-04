@@ -41,6 +41,8 @@ TOKEN :
   < RCURLY: "}" > |
   < TRUE: "true" > |
   < FALSE: "false" > |
+  < OR: "or" > |
+  < AND: "and" > |
   < DOT: "." > |
   < IF: "if" > |
   < ELSE: "else" > |
@@ -50,6 +52,7 @@ TOKEN :
   < ASSIGN: "=" > |
   < EQUALS: "==" > |
   < UNEQUALS: "!=" > |
+  < BIGOREQ: ">=" > |
   < PLUS: "+" > |
   < MINUS: "-" > |
   < STAR: "*" > |
@@ -87,6 +90,18 @@ void Start() :
 void Expr() :
 {}
 {
+  AndExpr() (<OR> AndExpr())?
+}
+
+void AndExpr() :
+{}
+{
+  ComparativeExpr() (<AND> AndExpr())?
+}
+
+void ComparativeExpr() :
+{}
+{
   AdditiveExpr() (Comparator() AdditiveExpr())?
 }
 
@@ -94,7 +109,7 @@ void Expr() :
 void Comparator() :
 {}
 {
-  <EQUALS> | <UNEQUALS>
+  <EQUALS> | <UNEQUALS> | <BIGOREQ>
 }
 
 void AdditiveExpr() :

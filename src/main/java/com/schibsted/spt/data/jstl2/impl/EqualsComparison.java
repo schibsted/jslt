@@ -3,14 +3,14 @@ package com.schibsted.spt.data.jstl2.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class EqualsComparison extends AbstractComparison {
+public class EqualsComparison extends AbstractOperator {
 
   public EqualsComparison(ExpressionNode left, ExpressionNode right) {
     super(left, right, "==");
   }
 
-  public boolean test(JsonNode v1, JsonNode v2) {
-    return v1.equals(v2);
+  public JsonNode perform(JsonNode v1, JsonNode v2) {
+    return NodeUtils.toJson(v1.equals(v2));
   }
 
 }

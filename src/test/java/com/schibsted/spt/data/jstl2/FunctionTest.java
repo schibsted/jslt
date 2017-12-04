@@ -268,6 +268,23 @@ public class FunctionTest extends TestBase {
     check("{}", "starts-with(\"heipådeg\", \"hey\")", "false");
   }
 
+  // ===== ENDS-WITH
+
+  @Test
+  public void testEndsWithNull() {
+    check("{}", "ends-with(null, \"hey\")", "false");
+  }
+
+  @Test
+  public void testEndsWithTrue() {
+    check("{}", "ends-with(\"heypådey\", \"dey\")", "true");
+  }
+
+  @Test
+  public void testEndsWithFalse() {
+    check("{}", "ends-with(\"heipådeg\", \"dey\")", "false");
+  }
+
   // ===== CONTAINS
 
   @Test

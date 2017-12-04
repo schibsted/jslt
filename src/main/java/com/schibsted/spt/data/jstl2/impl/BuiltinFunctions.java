@@ -44,6 +44,7 @@ public class BuiltinFunctions {
     functions.put("is-object", new BuiltinFunctions.IsObject());
     functions.put("is-array", new BuiltinFunctions.IsArray());
     functions.put("starts-with", new BuiltinFunctions.StartsWith());
+    functions.put("ends-with", new BuiltinFunctions.EndsWith());
     functions.put("contains", new BuiltinFunctions.Contains());
   }
 
@@ -263,6 +264,21 @@ public class BuiltinFunctions {
       String string = NodeUtils.toString(arguments[0], false);
       String prefix = NodeUtils.toString(arguments[1], false);
       return NodeUtils.toJson(string.startsWith(prefix));
+    }
+  }
+
+  // ===== ENDS-WITH
+
+  public static class EndsWith extends AbstractFunction {
+
+    public EndsWith() {
+      super("ends-with", 2, 2);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      String string = NodeUtils.toString(arguments[0], false);
+      String suffix = NodeUtils.toString(arguments[1], false);
+      return NodeUtils.toJson(string.endsWith(suffix));
     }
   }
 

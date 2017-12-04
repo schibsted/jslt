@@ -50,6 +50,30 @@ public class Parser {
     if (node.id != JstlParserTreeConstants.JJTEXPR)
       throw new RuntimeException("Wrong type of node: " + node);
 
+    ExpressionNode first = node2andexpr(getChild(node, 0));
+    if (node.jjtGetNumChildren() == 1) // it's just the base
+      return first;
+
+    ExpressionNode second = node2andexpr(getChild(node, 1));
+    return new OrOperator(first, second);
+  }
+
+  private static ExpressionNode node2andexpr(SimpleNode node) {
+    if (node.id != JstlParserTreeConstants.JJTANDEXPR)
+      throw new RuntimeException("Wrong type of node: " + node);
+
+    ExpressionNode first = node2compexpr(getChild(node, 0));
+    if (node.jjtGetNumChildren() == 1) // it's just the base
+      return first;
+
+    ExpressionNode second = node2andexpr(getChild(node, 1));
+    return new AndOperator(first, second);
+  }
+
+  private static ExpressionNode node2compexpr(SimpleNode node) {
+    if (node.id != JstlParserTreeConstants.JJTCOMPARATIVEEXPR)
+      throw new RuntimeException("Wrong type of node: " + node);
+
     ExpressionNode first = node2addexpr(getChild(node, 0));
     if (node.jjtGetNumChildren() == 1) // it's just the base
       return first;
@@ -62,6 +86,8 @@ public class Parser {
       return new EqualsComparison(first, second);
     else if (comp.kind == JstlParserConstants.UNEQUALS)
       return new UnequalsComparison(first, second);
+    else if (comp.kind == JstlParserConstants.BIGOREQ)
+      return new BiggerOrEqualComparison(first, second);
     else
       throw new RuntimeException("What kind of comparison is this? " + node);
   }

@@ -144,6 +144,16 @@ public class QueryTest extends TestBase {
   }
 
   @Test
+  public void testBiggerOrEqualFalse() {
+    check("{}", "123 >= 321", "false");
+  }
+
+  @Test
+  public void testBiggerOrEqualTrue() {
+    check("{}", "321 >= 123", "true");
+  }
+
+  @Test
   public void testPlusForStrings() {
     check("{}", "\"foo\" + \"bar\"", "\"foobar\"");
   }
@@ -239,5 +249,68 @@ public class QueryTest extends TestBase {
           "for (split(\"1,2,3,4\", \",\")) { "+
           "  \"number\" : number(.) " +
           "}", "[{\"number\":1},{\"number\":2},{\"number\":3},{\"number\":4}]");
+  }
+
+  @Test
+  public void testOrTrue() {
+    check("{\"foo\" : \"bar\"}",
+          ".foo or true",
+          "true");
+  }
+
+  @Test
+  public void testOrFalse() {
+    check("{\"foo\" : \"bar\"}",
+          ".foo or false",
+          "true");
+  }
+
+  @Test
+  public void testOrFalseFalse() {
+    check("{\"foo\" : \"bar\"}",
+          ".bar or false",
+          "false");
+  }
+
+  @Test
+  public void testAndComparison() {
+    check("{\"foo\" : \"bar\"}",
+          ".foo == \"bar\" and .foo != \"baz\"",
+          "true");
+  }
+
+  @Test
+  public void testAndTrue() {
+    check("{\"foo\" : \"bar\"}",
+          ".foo and true",
+          "true");
+  }
+
+  @Test
+  public void testAndFalse() {
+    check("{\"foo\" : \"bar\"}",
+          ".foo and false",
+          "false");
+  }
+
+  @Test
+  public void testAndOrFalse() {
+    check("{\"foo\" : \"bar\"}",
+          ".foo and false or .foo and true",
+          "true");
+  }
+
+  @Test
+  public void testAndOrTrue() {
+    check("{\"foo\" : \"bar\"}",
+          ".foo and false or .bar and true",
+          "false");
+  }
+
+  @Test
+  public void testAndThree() {
+    check("{\"foo\" : \"bar\"}",
+          ".foo and true and 22",
+          "true");
   }
 }
