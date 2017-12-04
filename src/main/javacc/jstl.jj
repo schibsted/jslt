@@ -49,6 +49,7 @@ TOKEN :
   < LET: "let" > |
   < ASSIGN: "=" > |
   < EQUALS: "==" > |
+  < UNEQUALS: "!=" > |
   < PLUS: "+" > |
   < MINUS: "-" > |
   < STAR: "*" > |
@@ -93,7 +94,7 @@ void Expr() :
 void Comparator() :
 {}
 {
-  <EQUALS>
+  <EQUALS> | <UNEQUALS>
 }
 
 void AdditiveExpr() :

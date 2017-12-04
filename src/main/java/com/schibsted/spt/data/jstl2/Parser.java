@@ -60,6 +60,8 @@ public class Parser {
     Token comp = getChild(node, 1).jjtGetFirstToken();
     if (comp.kind == JstlParserConstants.EQUALS)
       return new EqualsComparison(first, second);
+    else if (comp.kind == JstlParserConstants.UNEQUALS)
+      return new UnequalsComparison(first, second);
     else
       throw new RuntimeException("What kind of comparison is this? " + node);
   }

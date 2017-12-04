@@ -134,6 +134,16 @@ public class QueryTest extends TestBase {
   }
 
   @Test
+  public void testNotEqualsFalse() {
+    check("{}", "123 != 123", "false");
+  }
+
+  @Test
+  public void testNotEqualsTrue() {
+    check("{}", "123 != 321", "true");
+  }
+
+  @Test
   public void testPlusForStrings() {
     check("{}", "\"foo\" + \"bar\"", "\"foobar\"");
   }
