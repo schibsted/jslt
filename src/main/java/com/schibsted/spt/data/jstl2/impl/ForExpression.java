@@ -32,7 +32,10 @@ public class ForExpression extends AbstractNode {
   }
 
   public void computeMatchContexts(DotExpression parent) {
-    // FIXME: what are the rules here, precisely?
+    // if you do matching inside a for the matching is on the current
+    // object being traversed in the list. so we forget the parent
+    // and start over
+    loopExpr.computeMatchContexts(new DotExpression());
   }
 
   public void dump(int level) {

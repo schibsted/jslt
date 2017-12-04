@@ -227,9 +227,31 @@ public class TemplateTest extends TestBase {
           "}");
   }
 
-  // "matching-7.jstl" should "produce array of transformed objects" in {
-  //   verify("matching-7.jstl", "for-out.json", "matching-7.json")
-  // }
+  @Test
+  public void testMatchingInFor() {
+    check("{ " +
+          "   \"list\" : [ " +
+          "     {\"bar\": 1}, " +
+          "     {\"bar\": 2} " +
+          "   ] " +
+          "}",
+
+          "{ " +
+          "   \"foo\" : for ( .list ) " +
+          "     {\"loop\" : \"for\", " +
+          "     * : . } " +
+          "}",
+
+          "{ " +
+          "   \"foo\" : [{ " +
+          "     \"loop\" : \"for\", " +
+          "     \"bar\" : 1 " +
+          "   }, { " +
+          "     \"loop\" : \"for\", " +
+          "     \"bar\" : 2 " +
+          "   } " +
+          "]}");
+  }
 
   // "matching-8.jstl" should "fail" in {
   //   fail("matching-8.jstl", "empty.json")

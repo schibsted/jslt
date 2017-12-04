@@ -36,7 +36,7 @@ public class Parser {
 
       // the start production always contains an expr, so we just ditch it
       SimpleNode start = (SimpleNode) parser.jjtree.rootNode();
-      start.dump(">");
+      //start.dump(">");
 
       LetExpression[] lets = buildLets(start);
       SimpleNode expr = getLastChild(start);
