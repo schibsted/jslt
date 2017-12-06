@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.schibsted.spt.data.jstl2.impl.*;
+import com.schibsted.spt.data.jstl2.impl.vm.Compiler;
 
 public class Parser {
 
@@ -40,7 +41,10 @@ public class Parser {
 
       LetExpression[] lets = buildLets(start);
       SimpleNode expr = getLastChild(start);
-      return new ExpressionImpl(lets, node2expr(expr));
+      ExpressionImpl root = new ExpressionImpl(lets, node2expr(expr));
+      //Compiler compiler = new Compiler();
+      //return compiler.compile(root);
+      return root;
     } catch (ParseException e) {
       throw new RuntimeException(e);
     }

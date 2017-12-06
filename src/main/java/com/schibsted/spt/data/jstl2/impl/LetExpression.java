@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
+import com.schibsted.spt.data.jstl2.impl.vm.Compiler;
 
 public class LetExpression extends AbstractNode {
   private String variable;
@@ -25,6 +26,11 @@ public class LetExpression extends AbstractNode {
 
   public void computeMatchContexts(DotExpression parent) {
     value.computeMatchContexts(parent);
+  }
+
+  public void compile(Compiler compiler) {
+    value.compile(compiler);
+    compiler.genSTORE(variable);
   }
 
   public void dump(int level) {

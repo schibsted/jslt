@@ -33,9 +33,11 @@ OPCODES:
   PUSHV ix  push Variables[scp][ix] on the stack
   PUSHI _   push Input on stack
   DOT   ix  pop object/array from stack, index w/ Literals[ix], push result
+  CALL  ix  call that function (number of params pushed on stack first?)
   STORE ix  pop from stack, store to Variables[scp][ix]
   PUSHS _   increment scp, add new stack frame
   POPS  _   decrement scp (discard stack frame)
+  DUP   _   duplicate object on stack
 
 PULSE-CLEANUP BYTECODE
   PUSHO 0

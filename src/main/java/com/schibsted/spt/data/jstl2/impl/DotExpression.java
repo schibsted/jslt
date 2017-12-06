@@ -3,6 +3,7 @@ package com.schibsted.spt.data.jstl2.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.NullNode;
+import com.schibsted.spt.data.jstl2.impl.vm.Compiler;
 
 public class DotExpression extends AbstractNode {
   private String key;
@@ -30,6 +31,16 @@ public class DotExpression extends AbstractNode {
     if (value == null)
       value = NullNode.instance;
     return value;
+  }
+
+  public void compile(Compiler compiler) {
+    if (parent != null)
+      parent.compile(compiler);
+    else
+      compiler.genPUSHI();
+
+    if (key != null)
+      compiler.genDOT(key);
   }
 
   public void dump(int level) {

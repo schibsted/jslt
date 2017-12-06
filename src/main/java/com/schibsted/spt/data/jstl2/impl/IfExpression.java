@@ -4,6 +4,8 @@ package com.schibsted.spt.data.jstl2.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NullNode;
+import com.schibsted.spt.data.jstl2.impl.vm.Jump;
+import com.schibsted.spt.data.jstl2.impl.vm.Compiler;
 
 public class IfExpression extends AbstractNode {
   private ExpressionNode test;
@@ -44,6 +46,27 @@ public class IfExpression extends AbstractNode {
       for (int ix = 0; ix < elselets.length; ix++)
         elselets[ix].computeMatchContexts(parent);
     }
+  }
+
+  public void compile(Compiler compiler) {
+    test.compile(compiler);
+
+    Jump theelse = compiler.genJNOT();
+    compiler.compileLets(thenlets);
+    then.compile(compiler);
+    if (thenlets.length > 0)
+      compiler.genPOPS();
+
+    Jump done = compiler.genJUMP();
+    theelse.resolve(); // jump to next instructions
+    if (orelse != null) {
+      compiler.compileLets(elselets);
+      orelse.compile(compiler);
+      if (elselets.length > 0)
+        compiler.genPOPS();
+    } else
+      compiler.genPUSHL(NullNode.instance);
+    done.resolve();
   }
 
   public void dump(int level) {

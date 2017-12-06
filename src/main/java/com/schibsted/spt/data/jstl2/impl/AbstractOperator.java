@@ -2,6 +2,7 @@
 package com.schibsted.spt.data.jstl2.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.schibsted.spt.data.jstl2.impl.vm.Compiler;
 
 /**
  * Shared abstract superclass for comparison operators and others.
@@ -22,6 +23,12 @@ public abstract class AbstractOperator extends AbstractNode {
     JsonNode v1 = left.apply(scope, input);
     JsonNode v2 = right.apply(scope, input);
     return perform(v1, v2);
+  }
+
+  public void compile(Compiler compiler) {
+    left.compile(compiler);
+    right.compile(compiler);
+    compiler.generateOperatorCode(operator);
   }
 
   public void dump(int level) {

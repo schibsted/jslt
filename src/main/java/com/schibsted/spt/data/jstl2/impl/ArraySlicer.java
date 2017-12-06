@@ -2,9 +2,11 @@
 package com.schibsted.spt.data.jstl2.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.schibsted.spt.data.jstl2.JstlException;
+import com.schibsted.spt.data.jstl2.impl.vm.Compiler;
 
 public class ArraySlicer extends AbstractNode {
   private ExpressionNode left;
@@ -52,6 +54,24 @@ public class ArraySlicer extends AbstractNode {
     if (ix < 0)
       ix = array.size() + ix;
     return ix;
+  }
+
+  public void compile(Compiler compiler) {
+    parent.compile(compiler);
+    if (left == null)
+      compiler.genPUSHL(new IntNode(0));
+    else
+      left.compile(compiler);
+
+    if (!colon)
+      compiler.genAIDX();
+    else {
+      if (right == null)
+        compiler.genPUSHL(NullNode.instance);
+      else
+        right.compile(compiler);
+      compiler.genASLC();
+    }
   }
 
   public void dump(int level) {

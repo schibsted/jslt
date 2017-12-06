@@ -8,6 +8,7 @@ import java.util.Iterator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.schibsted.spt.data.jstl2.JstlException;
+import com.schibsted.spt.data.jstl2.impl.vm.Compiler;
 
 public class ObjectExpression extends AbstractNode {
   private LetExpression[] lets;
@@ -75,6 +76,19 @@ public class ObjectExpression extends AbstractNode {
       lets[ix].computeMatchContexts(parent);
     for (int ix = 0; ix < children.length; ix++)
       children[ix].computeMatchContexts(parent);
+  }
+
+  public void compile(Compiler compiler) {
+    compiler.compileLets(lets);
+
+    compiler.genPUSHO();
+    for (int ix = 0; ix < children.length; ix++) {
+      children[ix].compile(compiler);
+      compiler.genSETK(children[ix].getKey());
+    }
+
+    if (lets.length > 0)
+      compiler.genPOPS();
   }
 
   public void dump(int level) {

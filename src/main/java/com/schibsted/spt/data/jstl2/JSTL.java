@@ -10,7 +10,7 @@ public class JSTL {
 
   public static void main(String[] args) throws Exception {
     Expression expr = Parser.compile(new File(args[0]));
-    ((ExpressionImpl) expr).dump();
+    //((ExpressionImpl) expr).dump();
 
     ObjectMapper mapper = new ObjectMapper();
 
