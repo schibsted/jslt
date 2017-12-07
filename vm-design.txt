@@ -1,6 +1,19 @@
 
----------------------------------------------------------------------------
+===========================================================================
 VM DESIGN
+
+---------------------------------------------------------------------------
+OPTIMIZATION OPPORTUNITIES
+
+VM ONLY
+  bake array index into opcode for speed
+  put strings into separate pool (so don't have to make TextNodes)
+
+GENERAL
+  single-use variables can be inlined
+
+---------------------------------------------------------------------------
+OVERVIEW
 
 The VM internally contains:
   Variables[][] =

@@ -2,13 +2,18 @@
 package com.schibsted.spt.data.jstl2.impl.vm;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.List;
 import java.util.HashMap;
 import java.util.ArrayList;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.TextNode;
+import com.fasterxml.jackson.databind.node.NullNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.schibsted.spt.data.jstl2.Function;
 import com.schibsted.spt.data.jstl2.Expression;
+import com.schibsted.spt.data.jstl2.impl.NodeUtils;
 import com.schibsted.spt.data.jstl2.impl.LetExpression;
 import com.schibsted.spt.data.jstl2.impl.ExpressionImpl;
 
@@ -181,9 +186,13 @@ public class Compiler {
     bytecode.add(0);
   }
 
-  public void genOLD() {
+  public void genOLD(Set<String> keyset) {
+    ObjectNode o = NodeUtils.mapper.createObjectNode();
+    for (String key : keyset)
+      o.put(key, NullNode.instance);
+
     bytecode.add(VirtualMachine.OP_OLD);
-    bytecode.add(0);
+    bytecode.add(literals.getIndex(o));
   }
 
   public void genDEBUG() {

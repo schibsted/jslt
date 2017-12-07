@@ -213,13 +213,15 @@ public class VirtualMachine {
         // not too happy with this either. to make object matching work
         // we set up the stack by loading the object on top of the stack
         // onto the stack as key, value, obj, key, value, obj, false
+        ObjectNode o = (ObjectNode) literals[param]; // the keys not to include
         val = stack[stp--]; // the object we're matching
         v2 = stack[stp];    // the object we're producing
         stack[++stp] = BooleanNode.FALSE;
         Iterator<Map.Entry<String, JsonNode>> it = val.fields();
         while (it.hasNext()) {
           Map.Entry<String, JsonNode> pair = it.next();
-          // FIXME: we could do the filtering here, instead of later...
+          if (o.has(pair.getKey()))
+            continue; // it's a forbidden key, skip
           stack[++stp] = v2;
           stack[++stp] = pair.getValue();
           stack[++stp] = new TextNode(pair.getKey());
