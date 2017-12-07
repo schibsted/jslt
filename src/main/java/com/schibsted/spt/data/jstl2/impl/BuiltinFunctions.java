@@ -88,6 +88,7 @@ public class BuiltinFunctions {
   // ===== TEST
 
   public static class Test extends AbstractFunction {
+    Map<String, Pattern> cache = new HashMap();
 
     public Test() {
       super("test", 2, 2);
@@ -103,7 +104,11 @@ public class BuiltinFunctions {
       if (regexp == null)
         throw new JstlException("test() can't test null regexp");
 
-      Pattern p = Pattern.compile(regexp);
+      Pattern p = cache.get(regexp);
+      if (p == null) {
+        p = Pattern.compile(regexp);
+        cache.put(regexp, p);
+      }
       java.util.regex.Matcher m = p.matcher(string);
       return NodeUtils.toJson(m.find(0));
     }
@@ -117,6 +122,7 @@ public class BuiltinFunctions {
   // which does solve that. (lots of swearing omitted.)
 
   public static class Capture extends AbstractFunction {
+    Map<String, Regex> cache = new HashMap();
 
     public Capture() {
       super("capture", 2, 2);
@@ -133,7 +139,12 @@ public class BuiltinFunctions {
         throw new JstlException("capture() can't match against null regexp");
       byte[] regexp = regexps.getBytes(UTF_8);
 
-      Regex regex = new Regex(regexp, 0, regexp.length, Option.NONE, UTF8Encoding.INSTANCE);
+      Regex regex = cache.get(regexps);
+      if (regex == null) {
+        regex = new Regex(regexp, 0, regexp.length, Option.NONE, UTF8Encoding.INSTANCE);
+        cache.put(regexps, regex);
+      }
+
       Matcher matcher = regex.matcher(string);
       int result = matcher.search(0, string.length, Option.DEFAULT);
 

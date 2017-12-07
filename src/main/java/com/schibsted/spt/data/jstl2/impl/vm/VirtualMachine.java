@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.schibsted.spt.data.jstl2.Function;
 import com.schibsted.spt.data.jstl2.JstlException;
 import com.schibsted.spt.data.jstl2.impl.NodeUtils;
@@ -167,6 +168,39 @@ public class VirtualMachine {
         b2 = NodeUtils.isTrue(stack[stp--]);
         stack[++stp] = NodeUtils.toJson(b1 || b2);
         break;
+      case OP_POPI:
+        input = stack[stp--];
+        break;
+      case OP_POP:
+        stp--;
+        break;
+      case OP_SWAP:
+        val = stack[stp];
+        stack[stp] = stack[stp - 1];
+        stack[stp - 1] = val;
+        break;
+      case OP_DEBUG:
+        showStack();
+        break;
+      case OP_ALD:
+        // okay, this is a bit iffy. to make 'for' loops work we have
+        // this special instruction setting up the stack for them so
+        // they can just traverse the stack and do their thing without
+        // having to load/store variables all the time.
+
+        // when we begin we have the input array on the stack.
+        array = (ArrayNode) stack[stp--];
+        // push terminating structure on bottom of stack
+        ArrayNode a2 = mapper.createArrayNode(); // result array
+        stack[++stp] = a2;
+        stack[++stp] = BooleanNode.FALSE;
+        // loop over array backwards so first element goes on top
+        for (ix = array.size() - 1; ix >= 0; ix--) {
+          stack[++stp] = a2;
+          stack[++stp] = array.get(ix);
+          stack[++stp] = BooleanNode.TRUE;
+        }
+        break;
       case OP_END:
         if (stp != 0)
           throw new JstlException("Inconsistent stack!");
@@ -183,6 +217,19 @@ public class VirtualMachine {
       return size + ix;
     else
       return ix;
+  }
+
+  private void showStack() {
+    System.out.println("STACK:");
+    for (int ix = 0; ix <= stp; ix++)
+      System.out.println("  " + ix + ": " + shorten(stack[ix].toString()));
+  }
+
+  private String shorten(String str) {
+    if (str.length() > 70)
+      return str.substring(0, 67) + "...";
+    else
+      return str;
   }
 
   public static final int OP_PUSHO = 0;
@@ -209,4 +256,9 @@ public class VirtualMachine {
   public static final int OP_OR    = 21;
   public static final int OP_AIDX  = 22;
   public static final int OP_ASLC  = 23;
+  public static final int OP_ALD   = 24;
+  public static final int OP_POPI  = 25;
+  public static final int OP_SWAP  = 26;
+  public static final int OP_POP   = 27;
+  public static final int OP_DEBUG = 28;
 }

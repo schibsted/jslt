@@ -68,3 +68,43 @@ assign:
   PUSHL null
 else2:
   ...
+
+---------------------------------------------------------------------------
+FOR LOOPS
+
+ALD _: sets up stack as follows
+  true
+  elem 0
+  array
+  true
+  elem 1
+  array
+  true
+  elem 2
+  array
+  true
+  elem 3
+  array
+  false    <-- terminator
+  array
+
+  PUSHI -> save input on stack
+  compute array
+  ALD   -> set up stack
+
+  JNOT end:
+start:
+  <current array elem on top of stack>
+  POPI  -> make top of stack be input
+  compute for body
+  <stack now is: new elem, array, ...>
+  SETA
+  POP   -> remove the array
+  <bool, elem, array on top of stack>
+  JNOT start:
+
+end:
+  <array now on top of stack, previous input below it>
+  SWAP  <- swap two top stack elements
+  POPI  <- restore input from stack
+  <array now on top of stack>

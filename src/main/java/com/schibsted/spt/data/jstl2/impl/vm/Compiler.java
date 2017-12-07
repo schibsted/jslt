@@ -51,6 +51,10 @@ public class Compiler {
       lets[ix].compile(this);
   }
 
+  public int getNextInstruction() {
+    return bytecode.size();
+  }
+
   public void generateOperatorCode(String operator) {
     bytecode.add(operatorCode.get(operator));
     bytecode.add(0);
@@ -102,6 +106,11 @@ public class Compiler {
     return new Jump(bytecode);
   }
 
+  public void genJUMP(int dest) {
+    bytecode.add(VirtualMachine.OP_JUMP);
+    bytecode.add(dest);
+  }
+
   public Jump genJUMP() {
     bytecode.add(VirtualMachine.OP_JUMP);
     bytecode.add(0);
@@ -135,6 +144,36 @@ public class Compiler {
 
   public void genASLC() {
     bytecode.add(VirtualMachine.OP_ASLC);
+    bytecode.add(0);
+  }
+
+  public void genPOP() {
+    bytecode.add(VirtualMachine.OP_POP);
+    bytecode.add(0);
+  }
+
+  public void genSWAP() {
+    bytecode.add(VirtualMachine.OP_SWAP);
+    bytecode.add(0);
+  }
+
+  public void genPOPI() {
+    bytecode.add(VirtualMachine.OP_POPI);
+    bytecode.add(0);
+  }
+
+  public void genDUP() {
+    bytecode.add(VirtualMachine.OP_DUP);
+    bytecode.add(0);
+  }
+
+  public void genALD() {
+    bytecode.add(VirtualMachine.OP_ALD);
+    bytecode.add(0);
+  }
+
+  public void genDEBUG() {
+    bytecode.add(VirtualMachine.OP_DEBUG);
     bytecode.add(0);
   }
 
