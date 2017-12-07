@@ -43,6 +43,10 @@ public class ForExpression extends AbstractNode {
   public void compile(Compiler compiler) {
     compiler.genPUSHI(); // save the input on the stack
     valueExpr.compile(compiler); // compute array to traverse
+
+    compiler.genDUP(); // verify there actually is an array there
+    Jump bitterend = compiler.genJNOT();
+
     compiler.genALD();   // load array to stack
 
     int start = compiler.getNextInstruction(); // remember this point
@@ -55,6 +59,7 @@ public class ForExpression extends AbstractNode {
     compiler.genJUMP(start); // jump to start of loop
 
     end.resolve();
+    bitterend.resolve();
     compiler.genSWAP();  // flip <input, array> so input on top of stack
     compiler.genPOPI();  // restore input from stack
   }

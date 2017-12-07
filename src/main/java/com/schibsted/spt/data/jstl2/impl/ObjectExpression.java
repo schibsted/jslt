@@ -100,6 +100,8 @@ public class ObjectExpression extends AbstractNode {
 
   private void compileMatcher(Compiler compiler) {
     // to understand how this works, see vm-design.txt
+
+    // okay, evaluate
     compiler.genPUSHI(); // save input on stack
     compiler.genSWAP();  // result object now on top, input below
 

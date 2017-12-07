@@ -19,11 +19,11 @@ public class VirtualMachineImage implements Expression {
                              ValuePool<JsonNode> literals,
                              ValuePool<String> variables,
                              ValuePool<Function> functions) {
-    System.out.println("bytecode " + code);
+    //System.out.println("bytecode " + code);
     this.bytecode = new int[code.size()];
     for (int ix = 0; ix < bytecode.length; ix++)
       this.bytecode[ix] = code.get(ix);
-    System.out.println("bytecode.length " + bytecode.length);
+    //System.out.println("bytecode.length " + bytecode.length);
 
     this.literals = literals.toArray(JsonNode.class);
     this.functions = functions.toArray(Function.class);

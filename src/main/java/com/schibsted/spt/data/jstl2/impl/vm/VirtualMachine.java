@@ -52,7 +52,7 @@ public class VirtualMachine {
   public JsonNode run() {
     while (true) {
       int param = bytecode[pc + 1];
-      System.out.println("run: " + bytecode[pc] +" " + param);
+      //System.out.println("run: " + bytecode[pc] +" " + param);
       switch(bytecode[pc]) {
       case OP_PUSHO:
         stack[++stp] = mapper.createObjectNode();

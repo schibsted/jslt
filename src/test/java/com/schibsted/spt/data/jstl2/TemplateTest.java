@@ -253,6 +253,20 @@ public class TemplateTest extends TestBase {
           "]}");
   }
 
+  @Test
+  public void testMatchingNoSuchObject() {
+    check("null",
+
+          "{ " +
+          "  \"foo\" : 5, " +
+          "  * : . " +
+          "}",
+
+          "{ " +
+          "   \"foo\" : 5 " +
+          "}");
+  }
+
   // "matching-8.jstl" should "fail" in {
   //   fail("matching-8.jstl", "empty.json")
   // }

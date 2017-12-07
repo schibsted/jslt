@@ -90,6 +90,8 @@ ALD _: sets up stack as follows
 
   PUSHI -> save input on stack
   compute array
+  dup
+  jnot end:      to verify we actually found an array
   ALD   -> set up stack
 
   JNOT end:
@@ -107,6 +109,8 @@ end:
   <array now on top of stack, previous input below it>
   SWAP  <- swap two top stack elements
   POPI  <- restore input from stack
+
+bitterend:
   <array now on top of stack>
 
 ---------------------------------------------------------------------------
@@ -118,6 +122,8 @@ starting point:
   - keyset of forbidden keys can be turned into literal
 
 <result object on top of stack>
+  dup
+  jnot bitterend:      to verify we actually found an object
   pushi save input on stack
   swap (result on top, input below)
   compute matching object
@@ -125,8 +131,6 @@ starting point:
   smear onto stack: result, false, obj, value, key, obj, value, key, ...
 
 start:
-  dup top
-  jnot end:
   dup top again (key)
   push keyset
   call contains
