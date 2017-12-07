@@ -101,10 +101,51 @@ start:
   SETA
   POP   -> remove the array
   <bool, elem, array on top of stack>
-  JNOT start:
+  JUMP start:
 
 end:
   <array now on top of stack, previous input below it>
   SWAP  <- swap two top stack elements
   POPI  <- restore input from stack
   <array now on top of stack>
+
+---------------------------------------------------------------------------
+OBJECT MATCHER
+
+starting point:
+  - result object, being populated, on top of stack
+  - can generate bytecode to produce input object
+  - keyset of forbidden keys can be turned into literal
+
+<result object on top of stack>
+  pushi save input on stack
+  swap (result on top, input below)
+  compute matching object
+  <mathed object, result, input>
+  smear onto stack: result, false, obj, value, key, obj, value, key, ...
+
+start:
+  dup top
+  jnot end:
+  dup top again (key)
+  push keyset
+  call contains
+  jnot body:
+  pop the value
+  jump start:
+body:
+  <stack is still key, value>
+  swap (so value is on top)
+  popi (make value be the input)
+
+  inject matcher expression here (usually .)
+  <stack is now keyval, key, obj, key, val, obj, key val, obj, ...>
+  DSETK pops keyval, key, obj off stack
+  jump start:
+
+end:
+  <stack from top: terminator, result, saved input>
+  pop
+  swap
+  popi restores input
+  <result now on top>

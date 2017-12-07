@@ -2,6 +2,7 @@
 package com.schibsted.spt.data.jstl2.impl.vm;
 
 import java.util.Map;
+import java.util.Iterator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NullNode;
@@ -107,6 +108,13 @@ public class VirtualMachine {
         if (NodeUtils.isValue(val))
           ((ObjectNode) stack[stp]).set(literals[param].asText(), val);
         break;
+      case OP_DSETK:
+        val = stack[stp--];
+        String key = stack[stp--].asText(); // key
+        if (NodeUtils.isValue(val))
+          ((ObjectNode) stack[stp]).set(key, val);
+        stp--; // remove object from stack no matter what
+        break;
       case OP_SETA:
         val = stack[stp--];
         ((ArrayNode) stack[stp]).add(val);
@@ -172,7 +180,7 @@ public class VirtualMachine {
         input = stack[stp--];
         break;
       case OP_POP:
-        stp--;
+        stp -= param; // default is 1, but can be more
         break;
       case OP_SWAP:
         val = stack[stp];
@@ -199,6 +207,22 @@ public class VirtualMachine {
           stack[++stp] = a2;
           stack[++stp] = array.get(ix);
           stack[++stp] = BooleanNode.TRUE;
+        }
+        break;
+      case OP_OLD:
+        // not too happy with this either. to make object matching work
+        // we set up the stack by loading the object on top of the stack
+        // onto the stack as key, value, obj, key, value, obj, false
+        val = stack[stp--]; // the object we're matching
+        v2 = stack[stp];    // the object we're producing
+        stack[++stp] = BooleanNode.FALSE;
+        Iterator<Map.Entry<String, JsonNode>> it = val.fields();
+        while (it.hasNext()) {
+          Map.Entry<String, JsonNode> pair = it.next();
+          // FIXME: we could do the filtering here, instead of later...
+          stack[++stp] = v2;
+          stack[++stp] = pair.getValue();
+          stack[++stp] = new TextNode(pair.getKey());
         }
         break;
       case OP_END:
@@ -261,4 +285,6 @@ public class VirtualMachine {
   public static final int OP_SWAP  = 26;
   public static final int OP_POP   = 27;
   public static final int OP_DEBUG = 28;
+  public static final int OP_DSETK = 29;
+  public static final int OP_OLD   = 30;
 }

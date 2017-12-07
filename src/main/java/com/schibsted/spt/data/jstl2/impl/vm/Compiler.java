@@ -122,6 +122,11 @@ public class Compiler {
     bytecode.add(literals.getIndex(new TextNode(key)));
   }
 
+  public void genDSETK() {
+    bytecode.add(VirtualMachine.OP_DSETK);
+    bytecode.add(0);
+  }
+
   public void genSETA() {
     bytecode.add(VirtualMachine.OP_SETA);
     bytecode.add(0);
@@ -148,8 +153,12 @@ public class Compiler {
   }
 
   public void genPOP() {
+    genPOP(1); // default: pop one element
+  }
+
+  public void genPOP(int elements) {
     bytecode.add(VirtualMachine.OP_POP);
-    bytecode.add(0);
+    bytecode.add(elements);
   }
 
   public void genSWAP() {
@@ -169,6 +178,11 @@ public class Compiler {
 
   public void genALD() {
     bytecode.add(VirtualMachine.OP_ALD);
+    bytecode.add(0);
+  }
+
+  public void genOLD() {
+    bytecode.add(VirtualMachine.OP_OLD);
     bytecode.add(0);
   }
 
