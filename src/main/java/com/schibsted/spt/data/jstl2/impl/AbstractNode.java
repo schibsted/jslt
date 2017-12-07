@@ -14,4 +14,8 @@ public abstract class AbstractNode implements ExpressionNode {
 
   public void compile(Compiler compiler) {
   }
+
+  public ExpressionNode optimize() {
+    return this;
+  }
 }

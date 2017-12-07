@@ -44,6 +44,12 @@ public class FunctionExpression extends AbstractNode {
     compiler.genCALL(function);
   }
 
+  public ExpressionNode optimize() {
+    for (int ix = 0; ix < arguments.length; ix++)
+      arguments[ix] = arguments[ix].optimize();
+    return this;
+  }
+
   public void dump(int level) {
     System.out.println(NodeUtils.indent(level) + function.getName() + "(");
     for (int ix = 0; ix < arguments.length; ix++)

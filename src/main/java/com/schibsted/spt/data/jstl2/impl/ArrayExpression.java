@@ -27,6 +27,21 @@ public class ArrayExpression extends AbstractNode {
     }
   }
 
+  public ExpressionNode optimize() {
+    boolean allLiterals = true;
+    for (int ix = 0; ix < children.length; ix++) {
+      children[ix] = children[ix].optimize();
+      allLiterals = allLiterals && (children[ix] instanceof LiteralExpression);
+    }
+    if (!allLiterals)
+      return this;
+
+    // we're a static array expression. we can just make the array and
+    // turn that into a literal, instead of creating it over and over
+    JsonNode array = apply(null, null); // literals won't use scope or input
+    return new LiteralExpression(array);
+  }
+
   public void dump(int level) {
     System.out.println(NodeUtils.indent(level) + '[');
     for (int ix = 0; ix < children.length; ix++)

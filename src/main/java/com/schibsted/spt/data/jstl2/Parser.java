@@ -41,7 +41,9 @@ public class Parser {
 
       LetExpression[] lets = buildLets(start);
       SimpleNode expr = getLastChild(start);
-      ExpressionImpl root = new ExpressionImpl(lets, node2expr(expr));
+      ExpressionNode top = node2expr(expr);
+      top = top.optimize();
+      ExpressionImpl root = new ExpressionImpl(lets, top);
       //Compiler compiler = new Compiler();
       //return compiler.compile(root);
       return root;

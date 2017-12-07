@@ -23,4 +23,7 @@ public interface ExpressionNode {
 
   // compile to byte-code
   public void compile(Compiler compiler);
+
+  // return self, or optimized version
+  public ExpressionNode optimize();
 }

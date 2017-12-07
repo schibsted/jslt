@@ -37,5 +37,11 @@ public abstract class AbstractOperator extends AbstractNode {
     right.dump(level + 1);
   }
 
+  public ExpressionNode optimize() {
+    left = left.optimize();
+    right = right.optimize();
+    return this;
+  }
+
   public abstract JsonNode perform(JsonNode v1, JsonNode v2);
 }
