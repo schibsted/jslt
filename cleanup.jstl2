@@ -1,0 +1,153 @@
+{
+  "actor" : {
+    // first find the user ID value
+    let userid = if ( test(.actor."@id", "^(sd|u)rn:[^:]+:(user|person):.*") )
+      .actor."@id"
+    else
+      .actor."spt:userId"
+
+    let good_user_id =
+      if ( test($userid, "^(u|sd)rn:[^:]+:user:null") )
+        null // user modeling complains about these fake IDs
+      else if ( test($userid, "(u|sd)rn:[^:]+:(person|user|account):.*") )
+        // :person: -> :user: (and urn: -> sdrn:)
+        let parts = capture($userid, "(u|sd)rn:(?<site>[^:]+):(person|user|account):(?<id>.*)")
+        let site = (if ($parts.site == "spid.se") "schibsted.com" else $parts.site)
+
+        if ( $parts.id )
+            // If we have an id, split the ID by : and pick the last element
+            ("sdrn:" + $site + ":user:" + split($parts.id, ":")[-1])
+
+    "@id" : $good_user_id,
+    "spt:userId" : $good_user_id,
+    * - "@type", "spt:acceptLanguage", "spt:screenSize", "spt:environmentId",
+        "spt:userAgent", "spt:viewportSize", "spt:userId" : .
+  },
+
+  "location" : {
+    "latitude" : number( if (.location.latitude)
+                           .location.latitude else .latitude),
+    "longitude" : number( if (.location.longitude)
+                            .location.longitude else .longitude),
+    "accuracy" : number(.location.accuracy)
+  },
+
+  "device" : {
+    // find the environment ID
+    let envid = if ( .device.environmentId )
+         .device.environmentId
+      else if ( .actor."spt:environmentId" )
+        ( .actor."spt:environmentId" )
+      else if ( .device."@id" )
+        ( .device."@id" )
+      else if ( test(.actor."@id", "^sdrn:[^:]+:environment:") )
+         .actor."@id"
+
+    // transform it into correct syntax
+    "environmentId" :
+      if ( test($envid, "^(sd|u)rn:[^:]+:environment:") ) (
+        if ( not(test($envid, "^(sd|u)rn:[^:]+:environment:null")) )
+          // normalize the prefix
+          let parts = capture($envid, "(u|sd)rn:[^:]+:environment:(?<id>.*)")
+
+          "sdrn:schibsted:environment:" + $parts.id
+      ) else
+        // add prefix if environmentid doesn't have it
+        "sdrn:schibsted:environment:" + $envid,
+
+
+    "acceptLanguage" : fallback(.device.acceptLanguage, .actor."spt:acceptLanguage" ),
+    "screenSize" : fallback( .device.screenSize, .actor."spt:screenSize" ),
+    "userAgent" : fallback( .device.userAgent , .actor."spt:userAgent" ),
+    "viewportSize" : fallback( .device.viewportSize, .actor."spt:viewportSize"),
+
+    "networkConnectivity" : {
+      // there are two cases here. one is where 'networkConnectivity'
+      // is just an array. the other is where the array is inside the
+      // 'networks' field inside 'networkConnectivity'.
+      let networks = if ( is-array( .device.networkConnectivity ) )
+          .device.networkConnectivity
+        else
+          .device.networkConnectivity.networks
+
+      "networks" : for ( $networks ) {
+        "networkType" : lowercase( .networkType ),
+        "networkState" : lowercase( .networkState ),
+        * - "@type" : .
+      },
+      "@type" : if (is-object(.device.networkConnectivity))
+          .device.networkConnectivity."@type"
+	else
+	  "NetworkConnectivity"
+
+      // we can't use the * matcher here, because networkConnectivity
+      // can be an array. so if we need that we'll have to split on
+      // the if higher up, and try to reuse the 'networks' logic
+      // somehow
+    },
+
+    "additionalEnvironmentIds" : for ( .device.additionalEnvironmentIds )
+      if ( starts-with(., "sdrn:") )
+        .
+      else
+        "sdrn:schibsted:environment:" + . ,
+
+    * - "@id", platformType : .
+  },
+
+  "object" : if ( is-object(.object) ) {
+    let objId = .object."@id"
+    "@id" : if ( test($objId, "^urn:.*:.*:.*"))
+       // Standardize the URN format
+       let urn = if ( test($objId, "^urn.spt:app:urn:schibsted:client:.*"))
+         "urn:schibsted:application:" + (capture($objId, "^urn.spt:app:urn:schibsted:client:(?<id>.*)") .id)
+       else
+         $objId
+
+       // store the namespace part in a temporary variable
+       let tmpNs = split($urn, ":")[1]
+
+       // get namespace
+       let namespace = if ( test($tmpNs, "^.*\\.letsdeal\\..*"))
+         // special treatment for letsdeal
+         "letsdeal" + capture($tmpNs, "^.*\\.letsdeal\\.(?<lang>.*)") .lang
+       else if ( test($tmpNs, "^.*\\..*\\..*"))
+         // if namespace is three parts(A.B.C), pick the middle one (B)
+         capture($tmpNs, "^.*\\.(?<ns>.*)\\..*") .ns
+       else if ( test($tmpNs, "^.*\\..*"))
+         // if namespace is two parts(A.B), pick the first one (A)
+         capture($tmpNs, "^(?<ns>.*)\\..*") .ns
+       else
+         // if it's one part, keep that part
+         $tmpNs
+
+       // get resourceType
+       let tmpResourceType = fallback(.object."@type", split($urn, ":")[2])
+
+       // convert classifiedAd to classified
+       let resourceType = if ( lowercase($tmpResourceType) == "classifiedad" )
+         "classified"
+       else
+         $tmpResourceType
+
+       // resource id is what's left of the URN
+       let resourceId = join(split($urn, ":")[3 : ], ":")
+
+       // finally combine the parts
+       "sdrn:" + $namespace + ":" + $resourceType + ":" + $resourceId
+
+     else
+       $objId,
+    "name" : fallback(.object.name, .object.displayName ),
+
+    * - "@id", displayName : .
+  } else
+    .object,
+
+
+  // ===== MISC ==================================================
+  // must be an integer, is sometimes float
+  "scrollPosition" : round(.scrollPosition),
+
+  * - "latitude", "longitude" : .
+}

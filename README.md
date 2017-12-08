@@ -8,8 +8,7 @@ language in one.
 This has the following benefits:
  * better handling of missing data,
  * no more ugly `${ ... }` wrappers around the jq queries,
- * much faster implementation (first by byte-compiling to a custom
-   virtual machine, later by compiling to Java bytecode),
+ * much faster implementation,
  * safe transforms (limited expressivity means there's no way to
    write transforms that use up all memory or that never terminate),
  * introspectability (programs can analyze the expressions to see what
@@ -35,59 +34,85 @@ What is working:
  * Boolean comparators `==`, `!=`, and `>=`.
  * Boolean operators `and` and `or`.
  * The `number`, `round`, `fallback`, `not`, `test`, `capture`, `split`, `join`,
-   `is-array`, `is-object`, `starts-with`, `contains`, and `lowercase` functions.
+   `is-array`, `is-object`, `starts-with`, `ends-with`, `contains`, and
+   `lowercase` functions.
  * `(` Parenthetical expressions `)`.
  * Array indexing and slicing.
  * Object matching (`* : .`).
 
 ## Working example
 
-This transform now works (a part of `pulse-cleanup.jstl`):
+[pulse-cleanup.jstl](cleanup.jstl2) has been translated to JSTL 2.0
+and works. A performance test on 89,100 Pulse events ran the old JSTL
+1.0 transform in ~6.3 seconds, and the new JSTL 2.0 in ~0.7 seconds.
+
+## What is missing
+
+The following is still missing:
+  * `+` for numbers, as well as `-`, `*`, and `/`.
+  * The rest of the boolean comparators.
+  * The rest of the function library (not designed yet).
+  * String indexing and slicing.
+  * More detailed definition of language semantics, especially error
+    situations.
+  * Adding all the object matcher tests from 1.0.
+  * Many more tests.
+
+## Examples of improvements
+
+In DQT checks used be written like this, using jq:
+
+```
+.published | select(test("regexp"))
+```
+
+With JSTL 2.0 you can write:
+
+```
+test(.published, "regexp")
+```
+
+The `select` used to be necessary to avoid the function crashing on
+missing data. With JSTL 2.0 the pipe disappears, and the function will
+just return `false` if the input is `null`.
+
+Similarly, testing if a value was one of a number of alternatives used
+be done like this:
+
+```
+.object."@type" | (. == "Article" or . == "ClassifiedAd" or . == "Content" or
+                   . == "Product")
+```
+
+In JSTL 2.0 you can use the `contains` function:
+
+```
+contains(.object."@type", ["Article", "ClassifiedAd", "Content", "Product"])"
+```
+
+The first part of pulse-cleanup also becomes simpler. Here is the
+original:
 
 ```
   "actor" : {
     // first find the user ID value
-    let userid = if ( test(.actor."@id", "^(sd|u)rn:[^:]+:(user|person):.*") )
+    let userid = if ${ .actor."@id" | tostring | select(test("^(sd|u)rn:[^:]+:(user|person):.*")) }
+      ${ .actor."@id" }
+    else
+      ${ .actor."spt:userId" }
+```
+
+In JSTL 2.0 this reduces to:
+
+```
+  "actor" : {
+    // first find the user ID value
+    let userid = if (test(.actor."@id", "^(sd|u)rn:[^:]+:(user|person):.*"))
       .actor."@id"
     else
       .actor."spt:userId"
-
-    // then transform the user id into the right format
-    let good_user_id =
-      if ( test($userid, "^(u|sd)rn:[^:]+:user:null") )
-        null // user modeling complains about these fake IDs
-      else if ( test($userid, "(u|sd)rn:[^:]+:(person|user|account):.*") )
-        // :person: -> :user: (and urn: -> sdrn:)
-        let parts = capture($userid, "(u|sd)rn:(?<site>[^:]+):(person|user|account):(?<id>.*)")
-        let site = if ( $parts.site == "spid.se" ) "schibsted.com" else $parts.site
-
-        // Split the ID by : and pick the last element
-        if ($parts.id)
-          "sdrn:" + $site + ":user:" + split($parts.id, ":")[-1]
-
-    "@id" : $good_user_id,
-    "spt:userId" : $good_user_id,
-    * : .
-  }
 ```
 
-## Next step
-
-The next step is to finish translating all the matcher (`* : .`) test
-cases from JSTL 1.0 to the JSTL 2.0 test suite.
-
-## Possible extensions
-
-In the future there will perhaps be a "fallback" operator or function,
-so that it becomes possible to write the `location` cleanup as:
-
-```
-{
-  "location" : {
-    "latitude" : number( fallback(.location.latitude, .latitude) ),
-    "longitude" : number( fallback(.location.longitude, .longitude) ),
-    "accuracy" : number(.location.accuracy),
-    * : .
-  }
-}
-```
+because we no longer need the `${ ... }` wrappers around jq
+expressions, `test` now converts its arguments to strings by default,
+and `select` is no longer needed.
