@@ -67,14 +67,39 @@ how to do fallback for missing values?
 
 ----- FUNCTION LIBRARY
 
-boolean(.)
+is-array()
+is-object()
+
 string(.)
+is-string()
+
 number(.)
+is-number()
+round()
+floor()
+ceiling()
+
+boolean(.)
+is-boolean()
 not(.)
 
 test(., regexp)
+match(., regexp)    ?
 capture(., regexp)
 split(., splitter)
 join(., joiner)
+starts-with()
+ends-with()
+lowercase()
+uppercase()
 
 size(.) <- string, object, array
+
+=== POTENTIALS
+
+normalize-whitespace
+format("...${ jstl expr }...")
+
+=== AREAS TO COVER
+
+datetime parsing

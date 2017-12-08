@@ -30,7 +30,7 @@ What is working:
  * Function calls.
  * `if`, `let`, and `for` statements.
  * Variables.
- * Arithmetic operator `+`.
+ * Arithmetic operators `+` and `*`.
  * Boolean comparators `==`, `!=`, and `>=`.
  * Boolean operators `and` and `or`.
  * The `number`, `round`, `fallback`, `not`, `test`, `capture`, `split`, `join`,
@@ -49,7 +49,7 @@ and works. A performance test on 89,100 Pulse events ran the old JSTL
 ## What is missing
 
 The following is still missing:
-  * Operators `-`, `*`, and `/`.
+  * Operators `-` and `/`.
   * The rest of the boolean comparators.
   * The rest of the function library (not designed yet).
   * String indexing and slicing.

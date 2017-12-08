@@ -115,7 +115,7 @@ void Comparator() :
 void AdditiveExpr() :
 {}
 {
-  BaseExpr() (AdditiveOperator() AdditiveExpr())?
+  MultiplicativeExpr() (AdditiveOperator() AdditiveExpr())?
 }
 
 // not necessary, but makes the tree easier to traverse
@@ -123,6 +123,19 @@ void AdditiveOperator() :
 {}
 {
   <PLUS>
+}
+
+void MultiplicativeExpr() :
+{}
+{
+  BaseExpr() (MultiplicativeOperator() MultiplicativeExpr())?
+}
+
+// not necessary, but makes the tree easier to traverse
+void MultiplicativeOperator() :
+{}
+{
+  <STAR>
 }
 
 void BaseExpr() :

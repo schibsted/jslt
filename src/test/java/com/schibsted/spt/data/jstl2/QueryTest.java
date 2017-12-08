@@ -153,6 +153,8 @@ public class QueryTest extends TestBase {
     check("{}", "321 >= 123", "true");
   }
 
+  // ===== '+' OPERATOR
+
   @Test
   public void testPlusForStrings() {
     check("{}", "\"foo\" + \"bar\"", "\"foobar\"");
@@ -192,6 +194,52 @@ public class QueryTest extends TestBase {
   public void testPlusNumberNull() {
     check("{}", "2 + null", "null");
   }
+
+  // ===== '*' OPERATOR
+
+  @Test
+  public void testMultiplyString() {
+    check("{}", "\"foo\" * 3", "\"foofoofoo\"");
+  }
+
+  @Test
+  public void testMultiplyInts() {
+    check("{}", "3 * 5", "15");
+  }
+
+  @Test
+  public void testMultiplyDoubles() {
+    check("{}", "2.5 * 4.0", "10.0");
+  }
+
+  @Test
+  public void testMultiplyIntWithDouble() {
+    check("{}", "2.5 * 4", "10.0");
+  }
+
+  @Test
+  public void testMultiplyThree() {
+    check("{}", "5 * 2.5 * 4", "50.0");
+  }
+
+  @Test
+  public void testMultiplyNull() {
+    check("{}", "2.5 * null", "null");
+  }
+
+  // ===== OPERATOR PRECEDENCE
+
+  @Test
+  public void testMultiplyThenAdd() {
+    check("{}", "2 + 2 * 5", "12");
+  }
+
+  @Test
+  public void testMultiplyThenAdd2() {
+    check("{}", "5 * 2 + 2", "12");
+  }
+
+  // ===== ...
 
   @Test
   public void testIfAddPrecedence() {

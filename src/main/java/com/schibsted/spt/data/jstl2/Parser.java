@@ -102,7 +102,7 @@ public class Parser {
     if (node.id != JstlParserTreeConstants.JJTADDITIVEEXPR)
       throw new RuntimeException("Wrong type of node: " + node);
 
-    ExpressionNode first = node2baseExpr(getChild(node, 0));
+    ExpressionNode first = node2mulexpr(getChild(node, 0));
     if (node.jjtGetNumChildren() == 1) // it's just the base
       return first;
 
@@ -112,6 +112,24 @@ public class Parser {
     Token comp = getChild(node, 1).jjtGetFirstToken();
     if (comp.kind == JstlParserConstants.PLUS)
       return new PlusOperator(first, second);
+    else
+      throw new RuntimeException("What kind of operator is this?");
+  }
+
+  private static ExpressionNode node2mulexpr(SimpleNode node) {
+    if (node.id != JstlParserTreeConstants.JJTMULTIPLICATIVEEXPR)
+      throw new RuntimeException("Wrong type of node: " + node);
+
+    ExpressionNode first = node2baseExpr(getChild(node, 0));
+    if (node.jjtGetNumChildren() == 1) // it's just the base
+      return first;
+
+    ExpressionNode second = node2mulexpr(getChild(node, 2));
+
+    // get the operator
+    Token comp = getChild(node, 1).jjtGetFirstToken();
+    if (comp.kind == JstlParserConstants.STAR)
+      return new MultiplyOperator(first, second);
     else
       throw new RuntimeException("What kind of operator is this?");
   }
