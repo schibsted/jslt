@@ -159,6 +159,11 @@ public class QueryTest extends TestBase {
   }
 
   @Test
+  public void testPlusStringNull() {
+    check("{}", "\"foo\" + null", "\"foonull\"");
+  }
+
+  @Test
   public void testPlusStringNumber() {
     check("{}", "\"foo\" + 5", "\"foo5\"");
   }
@@ -171,6 +176,21 @@ public class QueryTest extends TestBase {
   @Test
   public void testPlusFunction() {
     check("{}", "\"foo\" + number(5)", "\"foo5\"");
+  }
+
+  @Test
+  public void testPlusInts() {
+    check("{}", "22 + 18", "40");
+  }
+
+  @Test
+  public void testPlusDecimals() {
+    check("{}", "2.2 + 1.8", "4.0");
+  }
+
+  @Test
+  public void testPlusNumberNull() {
+    check("{}", "2 + null", "null");
   }
 
   @Test

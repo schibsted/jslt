@@ -41,6 +41,9 @@ public class TestBase {
       Expression expr = Parser.compile(query);
       JsonNode actual = expr.apply(variables, context);
 
+      // reparse to handle IntNode(2) != LongNode(2)
+      actual = mapper.readTree(mapper.writeValueAsString(actual));
+
       JsonNode expected = mapper.readTree(result);
 
       assertEquals(expected, actual, "actual class " + actual.getClass() + ", expected class " + expected.getClass());
