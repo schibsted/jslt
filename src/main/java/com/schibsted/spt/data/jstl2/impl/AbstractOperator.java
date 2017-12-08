@@ -8,8 +8,8 @@ import com.schibsted.spt.data.jstl2.impl.vm.Compiler;
  * Shared abstract superclass for comparison operators and others.
  */
 public abstract class AbstractOperator extends AbstractNode {
-  private ExpressionNode left;
-  private ExpressionNode right;
+  protected ExpressionNode left;
+  protected ExpressionNode right;
   private String operator;
 
   public AbstractOperator(ExpressionNode left, ExpressionNode right,
