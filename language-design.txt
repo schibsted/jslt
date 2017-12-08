@@ -59,11 +59,29 @@ alternative:
   .[*] returns entire array
   .foo on array of objects = for (...) .foo
 
+FOR (...)
+  ...
+  IF (...)  <-- filter the array
+
 ----- OPEN QUESTIONS
 
-how to do fallback for missing values?
-  function?
-  operator?
+termination of expression in LET: how?
+
+details of matcher semantics
+
+what happens if you declare same variable twice in same block?
+
+how strict should we be on type errors?
+
+support 'for' loops over objects? {"key" : ..., "value" : ...}
+
+how to support?
+  .object."spt:custom" | with_entries(.key |= "spt:custom_" + .)
+
+  {for (.object."spt:custom")
+    "spt:custom_" + .key : .value}
+
+how do {} and [] convert to strings?
 
 ----- FUNCTION LIBRARY
 
@@ -78,6 +96,7 @@ is-number()
 round()
 floor()
 ceiling()
+random()             <- random number 0.0 - 1.0
 
 boolean(.)
 is-boolean()
@@ -93,7 +112,10 @@ ends-with()
 lowercase()
 uppercase()
 
-size(.) <- string, object, array
+size(.)              <- string, object, array
+parse-json(.)        <- parses json argument
+to-json(.)           <- serialize to json
+items(.)             <- turn {} into [{"key":, "value":}] ?
 
 === POTENTIALS
 
@@ -103,3 +125,17 @@ format("...${ jstl expr }...")
 === AREAS TO COVER
 
 datetime parsing
+
+---------------------------------------------------------------------------
+NAME
+
+jstl         Oracle JavaServer Pages Standard Tag Library
+jslt         XSLT in JSON alternative, now dead
+j2j          already exists, but marginal
+jsonator     ditto
+argonator    kind of weird
+jsonify      not really what it does
+jtransform   an FFT thing, might work
+jquery       taken by the frontend thing
+colchis      cryptic
+boreas       cryptic

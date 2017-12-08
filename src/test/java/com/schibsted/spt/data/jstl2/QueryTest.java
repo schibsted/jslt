@@ -10,9 +10,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 
-// FIXME: nested if else ambiguity -> no way to handle for user
-//  -> solve by introducing parentheses
-
 /**
  * Test cases verifying queries against an input.
  */

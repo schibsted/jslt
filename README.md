@@ -3,7 +3,10 @@
 
 JSTL 2.0 is a redesign of JSTL that does *not* use jq as the query
 language, because JSTL 2.0 is a complete query and transformation
-language in one.
+language in one. The language design is inspired by
+[jq](https://stedolan.github.io/jq/),
+[XPath](https://www.w3.org/TR/1999/REC-xpath-19991116/), and
+[XQuery](https://en.wikipedia.org/wiki/XQuery).
 
 This has the following benefits:
  * better handling of missing data,
@@ -49,10 +52,12 @@ and works. A performance test on 89,100 Pulse events ran the old JSTL
 ## What is missing
 
 The following is still missing:
+  * `+` of arrays and objects.
   * Operators `-` and `/`.
   * The rest of the boolean comparators.
   * The rest of the function library (not designed yet).
   * String indexing and slicing.
+  * `contains` should support strings.
   * More detailed definition of language semantics, especially error
     situations.
   * Adding all the object matcher tests from 1.0.
