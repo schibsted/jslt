@@ -12,7 +12,10 @@ VM ONLY
   and/or boolean short-circuit
 
 GENERAL
+  turn fallback into a macro
   single-use variables can be inlined
+
+  if (a) a else b -> fallback(a, b)
 
 NO MEASURABLE EFFECT (tried)
   more efficient function calls with static parameter list

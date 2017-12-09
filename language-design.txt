@@ -79,9 +79,12 @@ how to support?
   .object."spt:custom" | with_entries(.key |= "spt:custom_" + .)
 
   {for (.object."spt:custom")
-    "spt:custom_" + .key : .value}
+    "spt:custom_" + .key : .value
+   if ()}
 
 how do {} and [] convert to strings?
+
+more detail on implicit type conversion rules
 
 ----- FUNCTION LIBRARY
 

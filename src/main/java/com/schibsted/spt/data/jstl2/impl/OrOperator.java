@@ -17,7 +17,7 @@ public class OrOperator extends AbstractOperator {
       return BooleanNode.TRUE;
 
     boolean v2 = NodeUtils.isTrue(right.apply(scope, input));
-    return NodeUtils.toJson(v1 && v2);
+    return NodeUtils.toJson(v1 || v2);
   }
 
   public JsonNode perform(JsonNode v1, JsonNode v2) {

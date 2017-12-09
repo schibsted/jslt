@@ -331,6 +331,13 @@ public class QueryTest extends TestBase {
   }
 
   @Test
+  public void testOrFalse2() {
+    check("{\"foo\" : \"bar\"}",
+          "false or .foo",
+          "true");
+  }
+
+  @Test
   public void testOrFalseFalse() {
     check("{\"foo\" : \"bar\"}",
           ".bar or false",
