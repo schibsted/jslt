@@ -356,6 +356,13 @@ public class QueryTest extends TestBase {
   }
 
   @Test
+  public void testOrThree() {
+    check("{\"foo\" : \"bar\"}",
+          ".bar or true or .foo",
+          "true");
+  }
+
+  @Test
   public void testAndComparison() {
     check("{\"foo\" : \"bar\"}",
           ".foo == \"bar\" and .foo != \"baz\"",

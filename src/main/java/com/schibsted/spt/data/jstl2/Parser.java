@@ -78,7 +78,7 @@ public class Parser {
     if (node.jjtGetNumChildren() == 1) // it's just the base
       return first;
 
-    ExpressionNode second = node2andexpr(getChild(node, 1));
+    ExpressionNode second = node2expr(getChild(node, 1));
     return new OrOperator(first, second);
   }
 

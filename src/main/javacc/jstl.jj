@@ -90,7 +90,7 @@ void Start() :
 void Expr() :
 {}
 {
-  AndExpr() (<OR> AndExpr())?
+  AndExpr() (<OR> Expr())?
 }
 
 void AndExpr() :
