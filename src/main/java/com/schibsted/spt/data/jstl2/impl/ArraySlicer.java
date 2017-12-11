@@ -3,11 +3,15 @@ package com.schibsted.spt.data.jstl2.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.IntNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.schibsted.spt.data.jstl2.JstlException;
 import com.schibsted.spt.data.jstl2.impl.vm.Compiler;
 
+/**
+ * Indexing and slicing of arrays and also strings.
+ */
 public class ArraySlicer extends AbstractNode {
   private ExpressionNode left;
   private boolean colon;
@@ -23,36 +27,53 @@ public class ArraySlicer extends AbstractNode {
   }
 
   public JsonNode apply(Scope scope, JsonNode input) {
-    JsonNode array = parent.apply(scope, input);
-    if (!array.isArray())
+    JsonNode sequence = parent.apply(scope, input);
+    if (!sequence.isArray() && !sequence.isTextual())
       return NullNode.instance;
 
-    int leftix = resolveIndex(scope, left, input, array, 0);
-    if (!colon)
-      return array.get(leftix);
+    int size = sequence.size();
+    if (sequence.isTextual())
+      size = sequence.asText().length();
 
-    int rightix = resolveIndex(scope, right, input, array, array.size());
-    if (rightix > array.size())
-      rightix = array.size();
+    int leftix = resolveIndex(scope, left, input, size, 0);
+    if (!colon) {
+      if (sequence.isArray())
+        return sequence.get(leftix);
+      else {
+        String string = sequence.asText();
+        if (leftix >= string.length())
+          throw new JstlException("String index out of range: " + leftix);
+        return new TextNode("" + string.charAt(leftix));
+      }
+    }
 
-    ArrayNode result = NodeUtils.mapper.createArrayNode();
-    for (int ix = leftix; ix < rightix; ix++)
-      result.add(array.get(ix));
-    return result;
+    int rightix = resolveIndex(scope, right, input, size, size);
+    if (rightix > size)
+      rightix = size;
+
+    if (sequence.isArray()) {
+      ArrayNode result = NodeUtils.mapper.createArrayNode();
+      for (int ix = leftix; ix < rightix; ix++)
+        result.add(sequence.get(ix));
+      return result;
+    } else {
+      String string = sequence.asText();
+      return new TextNode(string.substring(leftix, rightix));
+    }
   }
 
   private int resolveIndex(Scope scope, ExpressionNode expr,
-                           JsonNode input, JsonNode array, int ifnull) {
+                           JsonNode input, int size, int ifnull) {
     if (expr == null)
       return ifnull;
 
     JsonNode node = expr.apply(scope, input);
     if (!node.isNumber())
-      throw new JstlException("Can't index array with " + node);
+      throw new JstlException("Can't index array/string with " + node);
 
     int ix = node.intValue();
     if (ix < 0)
-      ix = array.size() + ix;
+      ix = size + ix;
     return ix;
   }
 

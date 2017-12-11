@@ -40,7 +40,7 @@ What is working:
    `is-array`, `is-object`, `starts-with`, `ends-with`, `contains`, and
    `lowercase` functions.
  * `(` Parenthetical expressions `)`.
- * Array indexing and slicing.
+ * Array and string indexing and slicing.
  * Object matching (`* : .`).
 
 ## Working example
@@ -53,11 +53,10 @@ and works. A performance test on 89,100 Pulse events ran the old JSTL
 
 The following is still missing:
   * `+` of arrays and objects.
+  * `contains` should support strings.
   * Operators `-` and `/`.
   * The rest of the boolean comparators.
   * The rest of the function library (not designed yet).
-  * String indexing and slicing.
-  * `contains` should support strings.
   * More detailed definition of language semantics, especially error
     situations.
   * Adding all the object matcher tests from 1.0.

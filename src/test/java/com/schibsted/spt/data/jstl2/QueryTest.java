@@ -305,6 +305,36 @@ public class QueryTest extends TestBase {
   }
 
   @Test
+  public void testStringIndexing() {
+    check("\"12345\"", ".[0]", "\"1\"");
+  }
+
+  @Test
+  public void testStringIndexingBeyondTheEnd() {
+    error("\"12345\"", ".[7]", "index");
+  }
+
+  @Test
+  public void testStringSlicing() {
+    check("\"12345\"", ".[1 : 4]", "\"234\"");
+  }
+
+  @Test
+  public void testStringSlicingToEnd() {
+    check("\"12345\"", ".[1 : ]", "\"2345\"");
+  }
+
+  @Test
+  public void testStringSlicingSkipOne() {
+    check("\"12345\"", ".[ : -1]", "\"1234\"");
+  }
+
+  @Test
+  public void testStringSlicingTooFar() {
+    check("\"12345\"", ".[ : 20]", "\"12345\"");
+  }
+
+  @Test
   public void testForLoop() {
     check("[\"1\", \"2\", \"3\"]", "for (.) number(.)", "[1,2,3]");
   }
