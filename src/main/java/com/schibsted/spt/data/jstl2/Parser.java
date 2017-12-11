@@ -3,6 +3,8 @@ package com.schibsted.spt.data.jstl2;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.io.File;
 import java.io.Reader;
 import java.io.FileReader;
@@ -25,7 +27,7 @@ public class Parser {
   public static Expression compile(File jstl) {
     // FIXME: character encoding bug
     try (FileReader f = new FileReader(jstl)) {
-      return compile(new JstlParser(f));
+      return compile(Collections.EMPTY_SET, new JstlParser(f));
     } catch (FileNotFoundException e) {
       throw new JstlException("Couldn't find file " + jstl);
     } catch (IOException e) {
@@ -34,22 +36,33 @@ public class Parser {
   }
 
   public static Expression compile(String jstl) {
-    return compile(new JstlParser(new StringReader(jstl)));
+    return compile(Collections.EMPTY_SET, new JstlParser(new StringReader(jstl)));
+  }
+
+  public static Expression compile(Collection<Function> functions,
+                                   String jstl) {
+    return compile(functions, new JstlParser(new StringReader(jstl)));
   }
 
   public static Expression compileResource(String jstl) {
+    return compileResource(Collections.EMPTY_SET, jstl);
+  }
+
+  public static Expression compileResource(Collection<Function> functions,
+                                           String jstl) {
     try (InputStream stream = Parser.class.getClassLoader().getResourceAsStream(jstl)) {
       if (stream == null)
         throw new JstlException("Cannot load resource '" + jstl + "': not found");
 
       Reader reader = new InputStreamReader(stream, "UTF-8");
-      return compile(new JstlParser(reader));
+      return compile(functions, new JstlParser(reader));
     } catch (IOException e) {
       throw new JstlException("Couldn't read resource " + jstl, e);
     }
   }
 
-  private static Expression compile(JstlParser parser) {
+  private static Expression compile(Collection<Function> functions,
+                                    JstlParser parser) {
     try {
       parser.Start();
 
@@ -57,9 +70,10 @@ public class Parser {
       SimpleNode start = (SimpleNode) parser.jjtree.rootNode();
       //start.dump(">");
 
-      LetExpression[] lets = buildLets(start);
+      ParseContext ctx = new ParseContext(functions);
+      LetExpression[] lets = buildLets(ctx, start);
       SimpleNode expr = getLastChild(start);
-      ExpressionNode top = node2expr(expr);
+      ExpressionNode top = node2expr(ctx, expr);
       top = top.optimize();
       ExpressionImpl root = new ExpressionImpl(lets, top);
       //Compiler compiler = new Compiler();
@@ -70,39 +84,39 @@ public class Parser {
     }
   }
 
-  private static ExpressionNode node2expr(SimpleNode node) {
+  private static ExpressionNode node2expr(ParseContext ctx, SimpleNode node) {
     if (node.id != JstlParserTreeConstants.JJTEXPR)
       throw new RuntimeException("Wrong type of node: " + node);
 
-    ExpressionNode first = node2andexpr(getChild(node, 0));
+    ExpressionNode first = node2andexpr(ctx, getChild(node, 0));
     if (node.jjtGetNumChildren() == 1) // it's just the base
       return first;
 
-    ExpressionNode second = node2expr(getChild(node, 1));
+    ExpressionNode second = node2expr(ctx, getChild(node, 1));
     return new OrOperator(first, second);
   }
 
-  private static ExpressionNode node2andexpr(SimpleNode node) {
+  private static ExpressionNode node2andexpr(ParseContext ctx, SimpleNode node) {
     if (node.id != JstlParserTreeConstants.JJTANDEXPR)
       throw new RuntimeException("Wrong type of node: " + node);
 
-    ExpressionNode first = node2compexpr(getChild(node, 0));
+    ExpressionNode first = node2compexpr(ctx, getChild(node, 0));
     if (node.jjtGetNumChildren() == 1) // it's just the base
       return first;
 
-    ExpressionNode second = node2andexpr(getChild(node, 1));
+    ExpressionNode second = node2andexpr(ctx, getChild(node, 1));
     return new AndOperator(first, second);
   }
 
-  private static ExpressionNode node2compexpr(SimpleNode node) {
+  private static ExpressionNode node2compexpr(ParseContext ctx, SimpleNode node) {
     if (node.id != JstlParserTreeConstants.JJTCOMPARATIVEEXPR)
       throw new RuntimeException("Wrong type of node: " + node);
 
-    ExpressionNode first = node2addexpr(getChild(node, 0));
+    ExpressionNode first = node2addexpr(ctx, getChild(node, 0));
     if (node.jjtGetNumChildren() == 1) // it's just the base
       return first;
 
-    ExpressionNode second = node2addexpr(getChild(node, 2));
+    ExpressionNode second = node2addexpr(ctx, getChild(node, 2));
 
     // get the comparator
     Token comp = getChild(node, 1).jjtGetFirstToken();
@@ -116,15 +130,15 @@ public class Parser {
       throw new RuntimeException("What kind of comparison is this? " + node);
   }
 
-  private static ExpressionNode node2addexpr(SimpleNode node) {
+  private static ExpressionNode node2addexpr(ParseContext ctx, SimpleNode node) {
     if (node.id != JstlParserTreeConstants.JJTADDITIVEEXPR)
       throw new RuntimeException("Wrong type of node: " + node);
 
-    ExpressionNode first = node2mulexpr(getChild(node, 0));
+    ExpressionNode first = node2mulexpr(ctx, getChild(node, 0));
     if (node.jjtGetNumChildren() == 1) // it's just the base
       return first;
 
-    ExpressionNode second = node2addexpr(getChild(node, 2));
+    ExpressionNode second = node2addexpr(ctx, getChild(node, 2));
 
     // get the operator
     Token comp = getChild(node, 1).jjtGetFirstToken();
@@ -134,15 +148,15 @@ public class Parser {
       throw new RuntimeException("What kind of operator is this?");
   }
 
-  private static ExpressionNode node2mulexpr(SimpleNode node) {
+  private static ExpressionNode node2mulexpr(ParseContext ctx, SimpleNode node) {
     if (node.id != JstlParserTreeConstants.JJTMULTIPLICATIVEEXPR)
       throw new RuntimeException("Wrong type of node: " + node);
 
-    ExpressionNode first = node2baseExpr(getChild(node, 0));
+    ExpressionNode first = node2baseExpr(ctx, getChild(node, 0));
     if (node.jjtGetNumChildren() == 1) // it's just the base
       return first;
 
-    ExpressionNode second = node2mulexpr(getChild(node, 2));
+    ExpressionNode second = node2mulexpr(ctx, getChild(node, 2));
 
     // get the operator
     Token comp = getChild(node, 1).jjtGetFirstToken();
@@ -152,7 +166,7 @@ public class Parser {
       throw new RuntimeException("What kind of operator is this?");
   }
 
-  private static ExpressionNode node2baseExpr(SimpleNode node) {
+  private static ExpressionNode node2baseExpr(ParseContext ctx, SimpleNode node) {
     if (node.id != JstlParserTreeConstants.JJTBASEEXPR)
       throw new RuntimeException("Wrong type of node: " + node);
 
@@ -190,10 +204,10 @@ public class Parser {
     else if (kind == JstlParserConstants.DOT ||
              kind == JstlParserConstants.VARIABLE ||
              kind == JstlParserConstants.IDENT)
-      return chainable2Expr(getChild(node, 0));
+      return chainable2Expr(ctx, getChild(node, 0));
 
     else if (kind == JstlParserConstants.FOR)
-      return buildForExpression(getChild(node, 0));
+      return buildForExpression(ctx, getChild(node, 0));
 
     else if (kind == JstlParserConstants.IF) {
       LetExpression[] letelse = null;
@@ -201,31 +215,31 @@ public class Parser {
       SimpleNode maybeelse = getLastChild(node);
       if (maybeelse.jjtGetFirstToken().kind == JstlParserConstants.ELSE) {
         SimpleNode elseexpr = getLastChild(maybeelse);
-        theelse = node2expr(elseexpr);
-        letelse = buildLets(maybeelse);
+        theelse = node2expr(ctx, elseexpr);
+        letelse = buildLets(ctx, maybeelse);
       }
 
-      LetExpression[] thenelse = buildLets(node);
+      LetExpression[] thenelse = buildLets(ctx, node);
 
       return new IfExpression(
-        node2expr((SimpleNode) node.jjtGetChild(0)),
+        node2expr(ctx, (SimpleNode) node.jjtGetChild(0)),
         thenelse,
-        node2expr((SimpleNode) node.jjtGetChild(thenelse.length + 1)),
+        node2expr(ctx, (SimpleNode) node.jjtGetChild(thenelse.length + 1)),
         letelse,
         theelse
       );
 
     } else if (kind == JstlParserConstants.LBRACKET)
-      return new ArrayExpression(children2Exprs(node));
+      return new ArrayExpression(children2Exprs(ctx, node));
 
     else if (kind == JstlParserConstants.LCURLY)
-      return buildObject(node);
+      return buildObject(ctx, node);
 
     else if (kind == JstlParserConstants.LPAREN) {
       // we don't need a node for the parentheses - so just build the
       // child as a single node and use that instead
       SimpleNode parens = descendTo(node, JstlParserTreeConstants.JJTPARENTHESIS);
-      return node2expr(getChild(parens, 0));
+      return node2expr(ctx, getChild(parens, 0));
     }
 
     else {
@@ -234,7 +248,7 @@ public class Parser {
     }
   }
 
-  private static ExpressionNode chainable2Expr(SimpleNode node) {
+  private static ExpressionNode chainable2Expr(ParseContext ctx, SimpleNode node) {
     if (node.id != JstlParserTreeConstants.JJTCHAINABLE)
       throw new RuntimeException("Wrong type of node: " + node);
 
@@ -250,10 +264,10 @@ public class Parser {
       SimpleNode fnode = descendTo(node, JstlParserTreeConstants.JJTFUNCTIONCALL);
 
       // function call, where the children are the parameters
-      Function func = BuiltinFunctions.functions.get(token.image);
+      Function func = ctx.getFunction(token.image);
       if (func == null)
         throw new JstlException("No such function: '" + token.image + "'");
-      start = new FunctionExpression(func, children2Exprs(fnode));
+      start = new FunctionExpression(func, children2Exprs(ctx, fnode));
 
     } else if (kind == JstlParserConstants.DOT) {
       token = token.next;
@@ -263,33 +277,35 @@ public class Parser {
         return new DotExpression(); // there was only a dot
 
       // ok, there was a key or array slicer
-      start = buildChainLink(node, null);
+      start = buildChainLink(ctx, node, null);
     } else
       throw new RuntimeException("Now I'm *really* confused!");
 
     // then tack on the rest of the chain, if there is any
     if (node.jjtGetNumChildren() > 0 &&
         getLastChild(node).id == JstlParserTreeConstants.JJTCHAINLINK)
-      return buildDotChain(getLastChild(node), start);
+      return buildDotChain(ctx, getLastChild(node), start);
     else
       return start;
   }
 
-  private static ExpressionNode buildDotChain(SimpleNode chainLink,
+  private static ExpressionNode buildDotChain(ParseContext ctx,
+                                              SimpleNode chainLink,
                                               ExpressionNode parent) {
     if (chainLink.id != JstlParserTreeConstants.JJTCHAINLINK)
       throw new RuntimeException("Wrong type of node: " + chainLink);
 
-    ExpressionNode dot = buildChainLink(chainLink, parent);
+    ExpressionNode dot = buildChainLink(ctx, chainLink, parent);
 
     // check if there is more, if so, build
     if (chainLink.jjtGetNumChildren() == 2)
-      dot = buildDotChain(getChild(chainLink, 1), dot);
+      dot = buildDotChain(ctx, getChild(chainLink, 1), dot);
 
     return dot;
   }
 
-  private static ExpressionNode buildChainLink(SimpleNode node,
+  private static ExpressionNode buildChainLink(ParseContext ctx,
+                                               SimpleNode node,
                                                ExpressionNode parent) {
     Token token = node.jjtGetFirstToken();
 
@@ -303,22 +319,23 @@ public class Parser {
       String key = identOrString(token);
       return new DotExpression(key, parent);
     } else
-      return buildArraySlicer(getChild(node, 0), parent);
+      return buildArraySlicer(ctx, getChild(node, 0), parent);
   }
 
-  private static ExpressionNode buildArraySlicer(SimpleNode node,
+  private static ExpressionNode buildArraySlicer(ParseContext ctx,
+                                                 SimpleNode node,
                                                  ExpressionNode parent) {
     boolean colon = false; // slicer or index?
     ExpressionNode left = null;
     SimpleNode first = getChild(node, 0);
     if (first.id != JstlParserTreeConstants.JJTCOLON)
-      left = node2expr(first);
+      left = node2expr(ctx, first);
 
     ExpressionNode right = null;
     SimpleNode last = getLastChild(node);
     if (node.jjtGetNumChildren() != 1 &&
         last.id != JstlParserTreeConstants.JJTCOLON)
-      right = node2expr(last);
+      right = node2expr(ctx, last);
 
     for (int ix = 0; ix < node.jjtGetNumChildren(); ix++)
       colon = colon || getChild(node, ix).id == JstlParserTreeConstants.JJTCOLON;
@@ -326,9 +343,9 @@ public class Parser {
     return new ArraySlicer(left, colon, right, parent);
   }
 
-  private static ForExpression buildForExpression(SimpleNode node) {
-    ExpressionNode valueExpr = node2expr(getChild(node, 0));
-    ExpressionNode loopExpr = node2expr(getChild(node, 1));
+  private static ForExpression buildForExpression(ParseContext ctx, SimpleNode node) {
+    ExpressionNode valueExpr = node2expr(ctx, getChild(node, 0));
+    ExpressionNode loopExpr = node2expr(ctx, getChild(node, 1));
     return new ForExpression(valueExpr, loopExpr);
   }
 
@@ -343,15 +360,16 @@ public class Parser {
     return literal.image.substring(1, literal.image.length() - 1);
   }
 
-  private static ExpressionNode[] children2Exprs(SimpleNode node) {
+  private static ExpressionNode[] children2Exprs(ParseContext ctx,
+                                                 SimpleNode node) {
     ExpressionNode[] children = new ExpressionNode[node.jjtGetNumChildren()];
     for (int ix = 0; ix < node.jjtGetNumChildren(); ix++)
-      children[ix] = node2expr((SimpleNode) node.jjtGetChild(ix));
+      children[ix] = node2expr(ctx, (SimpleNode) node.jjtGetChild(ix));
     return children;
   }
 
   // collects all the 'let' statements as children of this node
-  private static LetExpression[] buildLets(SimpleNode parent) {
+  private static LetExpression[] buildLets(ParseContext ctx, SimpleNode parent) {
     // figure out how many lets there are
     int letCount = countChildren(parent, JstlParserTreeConstants.JJTLET);
 
@@ -365,24 +383,25 @@ public class Parser {
 
       Token ident = node.jjtGetFirstToken().next;
       SimpleNode expr = (SimpleNode) node.jjtGetChild(0);
-      lets[pos++] = new LetExpression(ident.image, node2expr(expr));
+      lets[pos++] = new LetExpression(ident.image, node2expr(ctx, expr));
     }
     return lets;
   }
 
-  private static ObjectExpression buildObject(SimpleNode node) {
-    LetExpression[] lets = buildLets(node);
+  private static ObjectExpression buildObject(ParseContext ctx, SimpleNode node) {
+    LetExpression[] lets = buildLets(ctx, node);
 
     SimpleNode last = getLastChild(node);
 
-    MatcherExpression matcher = collectMatcher(last);
-    List<PairExpression> pairs = collectPairs(last);
+    MatcherExpression matcher = collectMatcher(ctx, last);
+    List<PairExpression> pairs = collectPairs(ctx, last);
     PairExpression[] children = new PairExpression[pairs.size()];
     children = pairs.toArray(children);
     return new ObjectExpression(lets, children, matcher);
   }
 
-  private static MatcherExpression collectMatcher(SimpleNode node) {
+  private static MatcherExpression collectMatcher(ParseContext ctx,
+                                                  SimpleNode node) {
     if (node == null)
       return null;
 
@@ -391,12 +410,12 @@ public class Parser {
       if (node.jjtGetNumChildren() == 1)
         return null; // last in chain was a pair
 
-      return collectMatcher(last);
+      return collectMatcher(ctx, last);
     } else if (node.id == JstlParserTreeConstants.JJTMATCHER) {
       List<String> minuses = new ArrayList();
       if (node.jjtGetNumChildren() == 2) // means there was "* - foo : ..."
         collectMinuses(getChild(node, 0), minuses);
-      return new MatcherExpression(node2expr(last), minuses);
+      return new MatcherExpression(node2expr(ctx, last), minuses);
     } else
       throw new RuntimeException("This is wrong");
   }
@@ -415,16 +434,17 @@ public class Parser {
     }
   }
 
-  private static List<PairExpression> collectPairs(SimpleNode pair) {
+  private static List<PairExpression> collectPairs(ParseContext ctx,
+                                                   SimpleNode pair) {
     if (pair != null && pair.id == JstlParserTreeConstants.JJTPAIR) {
       String key = makeString(pair.jjtGetFirstToken());
-      ExpressionNode val = node2expr((SimpleNode) pair.jjtGetChild(0));
+      ExpressionNode val = node2expr(ctx, (SimpleNode) pair.jjtGetChild(0));
 
       List<PairExpression> pairs;
       if (pair.jjtGetNumChildren() == 1)
         pairs = new ArrayList(); // no more pairs
       else
-        pairs = collectPairs(getLastChild(pair));
+        pairs = collectPairs(ctx, getLastChild(pair));
 
       pairs.add(new PairExpression(key, val));
       return pairs;

@@ -3,6 +3,7 @@ package com.schibsted.spt.data.jstl2;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Collection;
 import java.util.Collections;
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
@@ -30,15 +31,21 @@ public class TestBase {
   }
 
   void check(String input, String query, String result) {
-    check(input, query, result, Collections.EMPTY_MAP);
+    check(input, query, result, Collections.EMPTY_MAP, Collections.EMPTY_SET);
   }
 
   void check(String input, String query, String result,
              Map<String, JsonNode> variables) {
+    check(input, query, result, variables, Collections.EMPTY_SET);
+  }
+
+  void check(String input, String query, String result,
+             Map<String, JsonNode> variables,
+             Collection<Function> functions) {
     try {
       JsonNode context = mapper.readTree(input);
 
-      Expression expr = Parser.compile(query);
+      Expression expr = Parser.compile(functions, query);
       JsonNode actual = expr.apply(variables, context);
 
       // reparse to handle IntNode(2) != LongNode(2)

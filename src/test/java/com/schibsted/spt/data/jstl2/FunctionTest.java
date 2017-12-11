@@ -2,6 +2,7 @@
 package com.schibsted.spt.data.jstl2;
 
 import java.io.IOException;
+import java.util.Collections;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -10,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NullNode;
+import com.fasterxml.jackson.databind.node.IntNode;
 
 /**
  * Test cases for function implementations.
@@ -305,5 +307,32 @@ public class FunctionTest extends TestBase {
   @Test
   public void testContainsTrue() {
     check("{}", "contains(\"Taip\", [\"foo\", \"Taip\", \"halp\"])", "true");
+  }
+
+  // ===== EXTENSION FUNCTION
+
+  private static class TestFunction implements Function {
+
+    public String getName() {
+      return "test";
+    }
+
+    public int getMinArguments() {
+      return 0;
+    }
+
+    public int getMaxArguments() {
+      return 0;
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] params) {
+      return new IntNode(42);
+    }
+  }
+
+  @Test
+  public void testTestFunction() {
+    check("{}", "test()", "42", Collections.EMPTY_MAP,
+          Collections.singleton(new TestFunction()));
   }
 }
