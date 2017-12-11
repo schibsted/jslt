@@ -20,6 +20,11 @@ public class TemplateTest extends TestBase {
   }
 
   @Test
+  public void testTemplateNull() {
+    check("{\"foo\" : 2}", "{\"bar\" : .foo, \"baz\" : .bar}", "{\"bar\" : 2}");
+  }
+
+  @Test
   public void testIfTemplate() {
     String template = "{\"bar\" : if (.foo) .foo else .bar}";
     check("{\"foo\" : 2}", template, "{\"bar\" : 2}");
