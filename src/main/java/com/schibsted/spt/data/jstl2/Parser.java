@@ -4,8 +4,12 @@ package com.schibsted.spt.data.jstl2;
 import java.util.List;
 import java.util.ArrayList;
 import java.io.File;
+import java.io.Reader;
 import java.io.FileReader;
 import java.io.StringReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.FileNotFoundException;
 import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.DoubleNode;
@@ -20,15 +24,29 @@ public class Parser {
 
   public static Expression compile(File jstl) {
     // FIXME: character encoding bug
-    try {
-      return compile(new JstlParser(new FileReader(jstl)));
+    try (FileReader f = new FileReader(jstl)) {
+      return compile(new JstlParser(f));
     } catch (FileNotFoundException e) {
       throw new JstlException("Couldn't find file " + jstl);
+    } catch (IOException e) {
+      throw new JstlException("Couldn't read file " + jstl, e);
     }
   }
 
   public static Expression compile(String jstl) {
     return compile(new JstlParser(new StringReader(jstl)));
+  }
+
+  public static Expression compileResource(String jstl) {
+    try (InputStream stream = Parser.class.getClassLoader().getResourceAsStream(jstl)) {
+      if (stream == null)
+        throw new JstlException("Cannot load resource '" + jstl + "': not found");
+
+      Reader reader = new InputStreamReader(stream, "UTF-8");
+      return compile(new JstlParser(reader));
+    } catch (IOException e) {
+      throw new JstlException("Couldn't read resource " + jstl, e);
+    }
   }
 
   private static Expression compile(JstlParser parser) {

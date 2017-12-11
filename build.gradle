@@ -61,7 +61,7 @@ dependencies {
 // java javacc -OUTPUT_DIRECTORY=build/javacc/com/schibsted/spt/data/jstl2 build/javacc/com/schibsted/spt/data/jstl2/jstl.jj.jj
 
 group "com.schibsted.spt.data"
-version "0.0.9"
+version "0.0.10"
 
 //schibstedJvm {
 //    enrichVersion = true

@@ -7,4 +7,8 @@ public class JstlException extends RuntimeException {
     super(message);
   }
 
+  public JstlException(String message, Throwable cause) {
+    super(message, cause);
+  }
+
 }
