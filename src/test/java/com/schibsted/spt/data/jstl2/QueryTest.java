@@ -121,6 +121,17 @@ public class QueryTest extends TestBase {
   }
 
   @Test
+  public void testEqualsAcrossTypes() {
+    check("{}", "123 == 123.0", "true");
+  }
+
+  @Test
+  public void testEqualsAcrossTypes2() {
+    // the plus returns a LongNode, but 123 is an IntNode
+    check("{}", "123 == (120 + 3)", "true");
+  }
+
+  @Test
   public void testEqualsBitMoreComplex() {
     check("{\"foo\" : {\"bar\" : 123}}", ".foo.bar == 123", "true");
   }
