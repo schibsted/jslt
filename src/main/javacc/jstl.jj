@@ -56,6 +56,7 @@ TOKEN :
   < PLUS: "+" > |
   < MINUS: "-" > |
   < STAR: "*" > |
+  < SLASH: "/" > |
   < FOR: "for" > |
   < IDENT: (["A"-"Z"] | ["a"-"z"] | ["0"-"9"] | "_" | "-")+ > |
   < VARIABLE: "$" (["A"-"Z"] | ["a"-"z"] | ["0"-"9"] | "_" | "-")+ >
@@ -135,7 +136,7 @@ void MultiplicativeExpr() :
 void MultiplicativeOperator() :
 {}
 {
-  <STAR>
+  <STAR> | <SLASH>
 }
 
 void BaseExpr() :

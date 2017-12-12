@@ -16,10 +16,7 @@ public class MinusOperator extends NumericOperator {
     super(left, right, "-");
   }
 
-  public JsonNode perform(JsonNode v1, JsonNode v2) {
-    // we only support the numeric operation and nothing else
-    return super.perform(v1, v2);
-  }
+  // we only support the numeric operation and nothing else
 
   protected double perform(double v1, double v2) {
     return v1 - v2;

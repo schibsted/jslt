@@ -310,6 +310,28 @@ public class QueryTest extends TestBase {
     check("{}", "22 - 18 - 2", "2");
   }
 
+  // ===== '-' OPERATOR
+
+  @Test
+  public void testDivideIntegers() {
+    check("{}", "16 / 4", "4");
+  }
+
+  @Test
+  public void testDivideFloats() {
+    check("{}", "16.0 / 32.0", "0.5");
+  }
+
+  @Test
+  public void testDivideToFloat() {
+    check("{}", "16 / 32", "0.5");
+  }
+
+  @Test
+  public void testDivideString() {
+    error("\"foo\" / 22", "number");
+  }
+
   // ===== OPERATOR PRECEDENCE
 
   @Test
@@ -325,6 +347,11 @@ public class QueryTest extends TestBase {
   @Test
   public void testMultiplyThenSubtract() {
     check("{}", "20 - 2 * 5", "10");
+  }
+
+  @Test
+  public void testDivideThenSubtract() {
+    check("{}", "20 - 10 / 2", "15");
   }
 
   // ===== ...

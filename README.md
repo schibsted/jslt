@@ -33,7 +33,7 @@ What is working:
  * Function calls.
  * `if`, `let`, and `for` statements.
  * Variables.
- * Operators `+`, `-`, and `*`.
+ * Operators `+`, `-`, `*`, and `/`.
  * Boolean comparators `==`, `!=`, and `>=`.
  * Boolean operators `and` and `or`.
  * The `number`, `round`, `fallback`, `not`, `test`, `capture`, `split`, `join`,
@@ -53,9 +53,9 @@ and works. A performance test on 89,100 Pulse events ran the old JSTL
 
 The following is still missing:
   * `contains` should support strings and objects.
-  * Operator `/`.
   * The rest of the boolean comparators.
   * The rest of the function library (not 100% designed yet).
+  * Escape syntax in strings.
   * More detailed definition of language semantics, especially error
     situations.
   * Adding all the object matcher tests from 1.0.
