@@ -203,6 +203,47 @@ public class QueryTest extends TestBase {
     check("{}", "2 + null", "null");
   }
 
+  @Test
+  public void testPlusArrays() {
+    check("{}", "[1,2,3] + [4,5]", "[1,2,3,4,5]");
+  }
+
+  @Test
+  public void testPlusEmptyArray() {
+    check("{}", "[] + [4,5]", "[4,5]");
+  }
+
+  @Test
+  public void testPlusNumberAndArray() {
+    error("232 + [4,5]", "convert");
+  }
+
+  @Test
+  public void testPlusNumberAndObject() {
+    error("232 + {\"foo\":34}", "convert");
+  }
+
+  @Test
+  public void testPlusNumberAndBoolean() {
+    error("232 + false", "convert");
+  }
+
+  @Test
+  public void testPlusObjects() {
+    check("{}", ". + {\"foo\":14}", "{\"foo\":14}");
+  }
+
+  @Test
+  public void testPlusObjectsUnion() {
+    check("{\"bar\":44}", ". + {\"foo\":14}", "{\"foo\":14,\"bar\":44}");
+  }
+
+  @Test
+  public void testPlusObjectsUnionLeftSideWins() {
+    check("{\"bar\":44,\"foo\":false}", ". + {\"foo\":14}",
+          "{\"foo\":false,\"bar\":44}");
+  }
+
   // ===== '*' OPERATOR
 
   @Test

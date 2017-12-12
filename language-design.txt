@@ -72,6 +72,13 @@ details of matcher semantics
 what happens if you declare same variable twice in same block?
 
 how strict should we be on type errors?
+  anything + null -> null
+  "foo" + 5       -> "foo5"
+  "foo" + true    -> "footrue"
+  "foo" + [1,2,3] -> ???
+  5 + [1,2,3]     -> error
+  5 + false       -> error
+  [1,2,3] + {...} -> error
 
 support 'for' loops over objects? {"key" : ..., "value" : ...}
 

@@ -14,12 +14,13 @@ public abstract class NumericOperator extends AbstractOperator {
   }
 
   public JsonNode perform(JsonNode v1, JsonNode v2) {
-    v1 = NodeUtils.number(v1);
-    v2 = NodeUtils.number(v2);
-
     if (v1.isNull() || v2.isNull())
       return NullNode.instance;
-    else if (v1.isIntegralNumber() && v2.isIntegralNumber())
+
+    v1 = NodeUtils.number(v1, true);
+    v2 = NodeUtils.number(v2, true);
+
+    if (v1.isIntegralNumber() && v2.isIntegralNumber())
       return new LongNode(perform(v1.longValue(), v2.longValue()));
     else
       return new DoubleNode(perform(v1.doubleValue(), v2.doubleValue()));

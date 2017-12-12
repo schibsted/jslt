@@ -33,7 +33,7 @@ What is working:
  * Function calls.
  * `if`, `let`, and `for` statements.
  * Variables.
- * Arithmetic operators `+` and `*`.
+ * Operators `+` and `*`.
  * Boolean comparators `==`, `!=`, and `>=`.
  * Boolean operators `and` and `or`.
  * The `number`, `round`, `fallback`, `not`, `test`, `capture`, `split`, `join`,
@@ -52,19 +52,19 @@ and works. A performance test on 89,100 Pulse events ran the old JSTL
 ## What is missing
 
 The following is still missing:
-  * `+` of arrays and objects.
-  * `contains` should support strings.
+  * `contains` should support strings and objects.
   * Operators `-` and `/`.
   * The rest of the boolean comparators.
-  * The rest of the function library (not designed yet).
+  * The rest of the function library (not 100% designed yet).
   * More detailed definition of language semantics, especially error
     situations.
   * Adding all the object matcher tests from 1.0.
+  * Documentation.
   * Many more tests.
 
 ## Examples of improvements
 
-In DQT checks used be written like this, using jq:
+In DQT checks used to be written like this, using jq:
 
 ```
 .published | select(test("regexp"))

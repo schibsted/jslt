@@ -73,11 +73,19 @@ public class NodeUtils {
   }
 
   public static JsonNode number(JsonNode value) {
+    return number(value, false);
+  }
+
+  public static JsonNode number(JsonNode value, boolean strict) {
     // check what type this is
     if (value.isNumber())
       return value;
-    else if (!value.isTextual())
-      return NullNode.instance;
+    else if (!value.isTextual()) {
+      if (strict)
+        throw new JstlException("Can't convert " + value + " to number");
+      else
+        return NullNode.instance;
+    }
 
     // let's look at this number
     String number = value.asText();
