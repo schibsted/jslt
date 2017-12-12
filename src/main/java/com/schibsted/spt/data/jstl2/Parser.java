@@ -144,6 +144,8 @@ public class Parser {
     Token comp = getChild(node, 1).jjtGetFirstToken();
     if (comp.kind == JstlParserConstants.PLUS)
       return new PlusOperator(first, second);
+    else if (comp.kind == JstlParserConstants.MINUS)
+      return new MinusOperator(first, second);
     else
       throw new RuntimeException("What kind of operator is this?");
   }

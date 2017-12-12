@@ -122,7 +122,7 @@ void AdditiveExpr() :
 void AdditiveOperator() :
 {}
 {
-  <PLUS>
+  <PLUS> | <MINUS>
 }
 
 void MultiplicativeExpr() :

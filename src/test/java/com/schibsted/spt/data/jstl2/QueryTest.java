@@ -3,6 +3,7 @@ package com.schibsted.spt.data.jstl2;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Disabled;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -276,6 +277,39 @@ public class QueryTest extends TestBase {
     check("{}", "2.5 * null", "null");
   }
 
+  // ===== '-' OPERATOR
+
+  @Test
+  public void testMinusInts() {
+    check("{}", "22 - 18", "4");
+  }
+
+  @Test
+  public void testMinusDecimals() {
+    // the problem here is that the test fails because the result is
+    check("{}", "2.5 - 1.8", "0.7");
+  }
+
+  @Test
+  public void testMinusNumberNull() {
+    check("{}", "2 - null", "null");
+  }
+
+  @Test
+  public void testMinusNonNumber() {
+    error("232 - false", "number");
+  }
+
+  @Test
+  public void testMinusString() {
+    error("\"foo\" - 22", "number");
+  }
+
+  @Test @Disabled // not sure how to fix this
+  public void testMinusThree() {
+    check("{}", "22 - 18 - 2", "2");
+  }
+
   // ===== OPERATOR PRECEDENCE
 
   @Test
@@ -286,6 +320,11 @@ public class QueryTest extends TestBase {
   @Test
   public void testMultiplyThenAdd2() {
     check("{}", "5 * 2 + 2", "12");
+  }
+
+  @Test
+  public void testMultiplyThenSubtract() {
+    check("{}", "20 - 2 * 5", "10");
   }
 
   // ===== ...
