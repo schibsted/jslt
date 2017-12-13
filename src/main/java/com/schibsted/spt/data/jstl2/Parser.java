@@ -95,7 +95,7 @@ public class Parser {
       return first;
 
     ExpressionNode second = node2expr(ctx, getChild(node, 1));
-    return new OrOperator(first, second);
+    return new OrOperator(first, second, makeLocation(ctx, node));
   }
 
   private static ExpressionNode node2andexpr(ParseContext ctx, SimpleNode node) {
@@ -107,7 +107,7 @@ public class Parser {
       return first;
 
     ExpressionNode second = node2andexpr(ctx, getChild(node, 1));
-    return new AndOperator(first, second);
+    return new AndOperator(first, second, makeLocation(ctx, node));
   }
 
   private static ExpressionNode node2compexpr(ParseContext ctx, SimpleNode node) {
@@ -121,13 +121,14 @@ public class Parser {
     ExpressionNode second = node2addexpr(ctx, getChild(node, 2));
 
     // get the comparator
+    Location loc = makeLocation(ctx, node);
     Token comp = getChild(node, 1).jjtGetFirstToken();
     if (comp.kind == JstlParserConstants.EQUALS)
-      return new EqualsComparison(first, second);
+      return new EqualsComparison(first, second, loc);
     else if (comp.kind == JstlParserConstants.UNEQUALS)
-      return new UnequalsComparison(first, second);
+      return new UnequalsComparison(first, second, loc);
     else if (comp.kind == JstlParserConstants.BIGOREQ)
-      return new BiggerOrEqualComparison(first, second);
+      return new BiggerOrEqualComparison(first, second, loc);
     else
       throw new RuntimeException("What kind of comparison is this? " + node);
   }
@@ -143,11 +144,12 @@ public class Parser {
     ExpressionNode second = node2addexpr(ctx, getChild(node, 2));
 
     // get the operator
+    Location loc = makeLocation(ctx, node);
     Token comp = getChild(node, 1).jjtGetFirstToken();
     if (comp.kind == JstlParserConstants.PLUS)
-      return new PlusOperator(first, second);
+      return new PlusOperator(first, second, loc);
     else if (comp.kind == JstlParserConstants.MINUS)
-      return new MinusOperator(first, second);
+      return new MinusOperator(first, second, loc);
     else
       throw new RuntimeException("What kind of operator is this?");
   }
@@ -163,11 +165,12 @@ public class Parser {
     ExpressionNode second = node2mulexpr(ctx, getChild(node, 2));
 
     // get the operator
+    Location loc = makeLocation(ctx, node);
     Token comp = getChild(node, 1).jjtGetFirstToken();
     if (comp.kind == JstlParserConstants.STAR)
-      return new MultiplyOperator(first, second);
+      return new MultiplyOperator(first, second, loc);
     else if (comp.kind == JstlParserConstants.SLASH)
-      return new DivideOperator(first, second);
+      return new DivideOperator(first, second, loc);
     else
       throw new RuntimeException("What kind of operator is this?");
   }
@@ -176,6 +179,7 @@ public class Parser {
     if (node.id != JstlParserTreeConstants.JJTBASEEXPR)
       throw new RuntimeException("Wrong type of node: " + node);
 
+    Location loc = makeLocation(ctx, node);
     Token token = node.jjtGetFirstToken();
     if (token.kind == JstlParserConstants.LBRACKET ||
         token.kind == JstlParserConstants.LCURLY ||
@@ -188,24 +192,24 @@ public class Parser {
     int kind = token.kind;
 
     if (kind == JstlParserConstants.NULL)
-      return new LiteralExpression(NullNode.instance);
+      return new LiteralExpression(NullNode.instance, loc);
 
     else if (kind == JstlParserConstants.INTEGER) {
       IntNode number = new IntNode(Integer.parseInt(token.image));
-      return new LiteralExpression(number);
+      return new LiteralExpression(number, loc);
 
     } else if (kind == JstlParserConstants.DECIMAL) {
       DoubleNode number = new DoubleNode(Double.parseDouble(token.image));
-      return new LiteralExpression(number);
+      return new LiteralExpression(number, loc);
 
     } else if (kind == JstlParserConstants.STRING)
-      return new LiteralExpression(new TextNode(makeString(token)));
+      return new LiteralExpression(new TextNode(makeString(token)), loc);
 
     else if (kind == JstlParserConstants.TRUE)
-      return new LiteralExpression(BooleanNode.TRUE);
+      return new LiteralExpression(BooleanNode.TRUE, loc);
 
     else if (kind == JstlParserConstants.FALSE)
-      return new LiteralExpression(BooleanNode.FALSE);
+      return new LiteralExpression(BooleanNode.FALSE, loc);
 
     else if (kind == JstlParserConstants.DOT ||
              kind == JstlParserConstants.VARIABLE ||
@@ -232,11 +236,12 @@ public class Parser {
         thenelse,
         node2expr(ctx, (SimpleNode) node.jjtGetChild(thenelse.length + 1)),
         letelse,
-        theelse
+        theelse,
+        loc
       );
 
     } else if (kind == JstlParserConstants.LBRACKET)
-      return new ArrayExpression(children2Exprs(ctx, node));
+      return new ArrayExpression(children2Exprs(ctx, node), loc);
 
     else if (kind == JstlParserConstants.LCURLY)
       return buildObject(ctx, node);
@@ -261,10 +266,12 @@ public class Parser {
     Token token = node.jjtGetFirstToken();
     int kind = token.kind;
 
+    Location loc = makeLocation(ctx, node);
+
     // need to special-case the first node
     ExpressionNode start;
     if (kind == JstlParserConstants.VARIABLE)
-      start = new VariableExpression(token.image.substring(1));
+      start = new VariableExpression(token.image.substring(1), loc);
 
     else if (kind == JstlParserConstants.IDENT) {
       SimpleNode fnode = descendTo(node, JstlParserTreeConstants.JJTFUNCTIONCALL);
@@ -276,16 +283,16 @@ public class Parser {
         Macro mac = ctx.getMacro(token.image);
         if (mac == null)
           throw new JstlException("No such function: '" + token.image + "'");
-        start = new MacroExpression(mac, children2Exprs(ctx, fnode));
+        start = new MacroExpression(mac, children2Exprs(ctx, fnode), loc);
       } else
-        start = new FunctionExpression(func, children2Exprs(ctx, fnode));
+        start = new FunctionExpression(func, children2Exprs(ctx, fnode), loc);
 
     } else if (kind == JstlParserConstants.DOT) {
       token = token.next;
       if (token.kind != JstlParserConstants.IDENT &&
           token.kind != JstlParserConstants.STRING &&
           token.kind != JstlParserConstants.LBRACKET)
-        return new DotExpression(); // there was only a dot
+        return new DotExpression(loc); // there was only a dot
 
       // ok, there was a key or array slicer
       start = buildChainLink(ctx, node, null);
@@ -324,11 +331,12 @@ public class Parser {
       // it's a dotkey
       token = token.next; // step to token after DOT
 
+      Location loc = makeLocation(ctx, node);
       if (token.kind == JstlParserConstants.LBRACKET)
-        return new DotExpression(); // it's .[...]
+        return new DotExpression(loc); // it's .[...]
 
       String key = identOrString(token);
-      return new DotExpression(key, parent);
+      return new DotExpression(key, parent, loc);
     } else
       return buildArraySlicer(ctx, getChild(node, 0), parent);
   }
@@ -351,13 +359,14 @@ public class Parser {
     for (int ix = 0; ix < node.jjtGetNumChildren(); ix++)
       colon = colon || getChild(node, ix).id == JstlParserTreeConstants.JJTCOLON;
 
-    return new ArraySlicer(left, colon, right, parent);
+    Location loc = makeLocation(ctx, node);
+    return new ArraySlicer(left, colon, right, parent, loc);
   }
 
   private static ForExpression buildForExpression(ParseContext ctx, SimpleNode node) {
     ExpressionNode valueExpr = node2expr(ctx, getChild(node, 0));
     ExpressionNode loopExpr = node2expr(ctx, getChild(node, 1));
-    return new ForExpression(valueExpr, loopExpr);
+    return new ForExpression(valueExpr, loopExpr, makeLocation(ctx, node));
   }
 
   private static String identOrString(Token token) {
@@ -392,9 +401,10 @@ public class Parser {
       if (node.firstToken.kind != JstlParserConstants.LET)
         continue;
 
+      Location loc = makeLocation(ctx, node);
       Token ident = node.jjtGetFirstToken().next;
       SimpleNode expr = (SimpleNode) node.jjtGetChild(0);
-      lets[pos++] = new LetExpression(ident.image, node2expr(ctx, expr));
+      lets[pos++] = new LetExpression(ident.image, node2expr(ctx, expr), loc);
     }
     return lets;
   }
@@ -408,7 +418,8 @@ public class Parser {
     List<PairExpression> pairs = collectPairs(ctx, last);
     PairExpression[] children = new PairExpression[pairs.size()];
     children = pairs.toArray(children);
-    return new ObjectExpression(lets, children, matcher);
+    return new ObjectExpression(lets, children, matcher,
+                                makeLocation(ctx, node));
   }
 
   private static MatcherExpression collectMatcher(ParseContext ctx,
@@ -426,7 +437,8 @@ public class Parser {
       List<String> minuses = new ArrayList();
       if (node.jjtGetNumChildren() == 2) // means there was "* - foo : ..."
         collectMinuses(getChild(node, 0), minuses);
-      return new MatcherExpression(node2expr(ctx, last), minuses);
+      return new MatcherExpression(node2expr(ctx, last), minuses,
+                                   makeLocation(ctx, last));
     } else
       throw new RuntimeException("This is wrong");
   }
@@ -457,7 +469,7 @@ public class Parser {
       else
         pairs = collectPairs(ctx, getLastChild(pair));
 
-      pairs.add(new PairExpression(key, val));
+      pairs.add(new PairExpression(key, val, makeLocation(ctx, pair)));
       return pairs;
     } else
       // has to be a matcher, so we're done
@@ -487,5 +499,10 @@ public class Parser {
       if (getChild(node, ix).id == type)
         count++;
     return count;
+  }
+
+  private static Location makeLocation(ParseContext ctx, SimpleNode node) {
+    Token token = node.jjtGetFirstToken();
+    return new Location(ctx.getSource(), token.beginLine, token.beginColumn);
   }
 }

@@ -22,7 +22,7 @@ public class ExpressionImpl implements Expression {
     this.actual = actual;
 
     // traverse tree and set up context queries
-    actual.computeMatchContexts(new DotExpression());
+    actual.computeMatchContexts(new DotExpression(null));
   }
 
   public JsonNode apply(Map<String, JsonNode> variables, JsonNode input) {

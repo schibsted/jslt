@@ -12,7 +12,9 @@ public class MatcherExpression extends AbstractNode {
   private List<String> minuses;
   private ExpressionNode expr;
 
-  public MatcherExpression(ExpressionNode expr, List<String> minuses) {
+  public MatcherExpression(ExpressionNode expr, List<String> minuses,
+                           Location location) {
+    super(location);
     this.minuses = minuses;
     this.expr = expr;
   }

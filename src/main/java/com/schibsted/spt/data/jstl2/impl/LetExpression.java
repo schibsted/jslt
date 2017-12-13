@@ -11,7 +11,8 @@ public class LetExpression extends AbstractNode {
   private String variable;
   private ExpressionNode value;
 
-  public LetExpression(String variable, ExpressionNode value) {
+  public LetExpression(String variable, ExpressionNode value, Location location) {
+    super(location);
     this.variable = variable;
     this.value = value;
   }

@@ -162,8 +162,8 @@ public class VirtualMachine {
         stack[++stp] = new TextNode(s1 + s2);
         break;
       case OP_GTEQ:
-        i2 = NodeUtils.number(stack[stp--]).intValue(); // right
-        i1 = NodeUtils.number(stack[stp--]).intValue(); // left
+        i2 = NodeUtils.number(stack[stp--], null).intValue(); // right
+        i1 = NodeUtils.number(stack[stp--], null).intValue(); // left
         stack[++stp] = NodeUtils.toJson(i1 >= i2);
         break;
       case OP_AND:

@@ -7,7 +7,8 @@ import com.schibsted.spt.data.jstl2.impl.vm.Compiler;
 public class LiteralExpression extends AbstractNode {
   private JsonNode value;
 
-  public LiteralExpression(JsonNode value) {
+  public LiteralExpression(JsonNode value, Location location) {
+    super(location);
     this.value = value;
   }
 

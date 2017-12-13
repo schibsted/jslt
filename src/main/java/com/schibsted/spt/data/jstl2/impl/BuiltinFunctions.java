@@ -114,7 +114,7 @@ public class BuiltinFunctions {
     }
 
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      return NodeUtils.number(arguments[0]);
+      return NodeUtils.number(arguments[0], null);
     }
   }
 
@@ -367,7 +367,7 @@ public class BuiltinFunctions {
     }
 
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      JsonNode number = NodeUtils.number(arguments[0]);
+      JsonNode number = NodeUtils.number(arguments[0], null);
       if (number.isNull())
         return NullNode.instance;
 

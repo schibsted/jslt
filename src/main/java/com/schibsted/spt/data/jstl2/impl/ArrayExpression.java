@@ -8,7 +8,8 @@ import com.schibsted.spt.data.jstl2.impl.vm.Compiler;
 public class ArrayExpression extends AbstractNode {
   private ExpressionNode[] children;
 
-  public ArrayExpression(ExpressionNode[] children) {
+  public ArrayExpression(ExpressionNode[] children, Location location) {
+    super(location);
     this.children = children;
   }
 
@@ -39,7 +40,7 @@ public class ArrayExpression extends AbstractNode {
     // we're a static array expression. we can just make the array and
     // turn that into a literal, instead of creating it over and over
     JsonNode array = apply(null, null); // literals won't use scope or input
-    return new LiteralExpression(array);
+    return new LiteralExpression(array, location);
   }
 
   public void dump(int level) {

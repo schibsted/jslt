@@ -7,8 +7,9 @@ import com.schibsted.spt.data.jstl2.JstlException;
 
 public class AndOperator extends AbstractOperator {
 
-  public AndOperator(ExpressionNode left, ExpressionNode right) {
-    super(left, right, "and");
+  public AndOperator(ExpressionNode left, ExpressionNode right,
+                     Location location) {
+    super(left, right, "and", location);
   }
 
   public JsonNode apply(Scope scope, JsonNode input) {

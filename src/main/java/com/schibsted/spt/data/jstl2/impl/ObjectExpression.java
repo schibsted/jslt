@@ -23,7 +23,9 @@ public class ObjectExpression extends AbstractNode {
 
   public ObjectExpression(LetExpression[] lets,
                           PairExpression[] children,
-                          MatcherExpression matcher) {
+                          MatcherExpression matcher,
+                          Location location) {
+    super(location);
     this.lets = lets;
     this.children = children;
     this.matcher = matcher;
@@ -58,7 +60,7 @@ public class ObjectExpression extends AbstractNode {
     if (context.isNull())
       return; // we found nothing
     if (!context.isObject())
-      throw new JstlException("Cannot match against " + context);
+      throw new JstlException("Cannot match against " + context, location);
 
     // then do the matching
     Iterator<Map.Entry<String, JsonNode>> it = context.fields();

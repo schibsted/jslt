@@ -18,7 +18,9 @@ public class IfExpression extends AbstractNode {
                       LetExpression[] thenlets,
                       ExpressionNode then,
                       LetExpression[] elselets,
-                      ExpressionNode orelse) {
+                      ExpressionNode orelse,
+                      Location location) {
+    super(location);
     this.test = test;
     this.thenlets = thenlets;
     this.then = then;

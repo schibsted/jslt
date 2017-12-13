@@ -9,16 +9,17 @@ import com.fasterxml.jackson.databind.node.DoubleNode;
 
 public abstract class NumericOperator extends AbstractOperator {
 
-  public NumericOperator(ExpressionNode left, ExpressionNode right, String name) {
-    super(left, right, name);
+  public NumericOperator(ExpressionNode left, ExpressionNode right, String name,
+                         Location location) {
+    super(left, right, name, location);
   }
 
   public JsonNode perform(JsonNode v1, JsonNode v2) {
     if (v1.isNull() || v2.isNull())
       return NullNode.instance;
 
-    v1 = NodeUtils.number(v1, true);
-    v2 = NodeUtils.number(v2, true);
+    v1 = NodeUtils.number(v1, true, location);
+    v2 = NodeUtils.number(v2, true, location);
 
     if (v1.isIntegralNumber() && v2.isIntegralNumber())
       return new LongNode(perform(v1.longValue(), v2.longValue()));

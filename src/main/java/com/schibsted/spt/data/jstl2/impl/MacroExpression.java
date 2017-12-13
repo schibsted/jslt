@@ -19,7 +19,9 @@ public class MacroExpression extends AbstractNode {
   private Macro macro;
   private ExpressionNode[] arguments;
 
-  public MacroExpression(Macro macro, ExpressionNode[] arguments) {
+  public MacroExpression(Macro macro, ExpressionNode[] arguments,
+                         Location location) {
+    super(location);
     this.macro = macro;
     this.arguments = arguments;
 
@@ -28,7 +30,7 @@ public class MacroExpression extends AbstractNode {
       throw new JstlException(
         "Function '" + macro.getName() + "' needs " +
         macro.getMinArguments() + "-" + macro.getMaxArguments() +
-        " arguments, got " + arguments.length
+        " arguments, got " + arguments.length, location
       );
   }
 

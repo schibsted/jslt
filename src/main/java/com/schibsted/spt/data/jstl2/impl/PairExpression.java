@@ -11,7 +11,8 @@ public class PairExpression extends AbstractNode {
   private String key;
   private ExpressionNode expr;
 
-  public PairExpression(String key, ExpressionNode expr) {
+  public PairExpression(String key, ExpressionNode expr, Location location) {
+    super(location);
     this.key = key;
     this.expr = expr;
   }
@@ -25,7 +26,7 @@ public class PairExpression extends AbstractNode {
   }
 
   public void computeMatchContexts(DotExpression parent) {
-    expr.computeMatchContexts(new DotExpression(key, parent));
+    expr.computeMatchContexts(new DotExpression(key, parent, location));
   }
 
   public void compile(Compiler compiler) {

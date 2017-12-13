@@ -72,17 +72,17 @@ public class NodeUtils {
     throw new JstlException("Cannot convert " + value + " to array");
   }
 
-  public static JsonNode number(JsonNode value) {
-    return number(value, false);
+  public static JsonNode number(JsonNode value, Location loc) {
+    return number(value, false, loc);
   }
 
-  public static JsonNode number(JsonNode value, boolean strict) {
+  public static JsonNode number(JsonNode value, boolean strict, Location loc) {
     // check what type this is
     if (value.isNumber())
       return value;
     else if (!value.isTextual()) {
       if (strict)
-        throw new JstlException("Can't convert " + value + " to number");
+        throw new JstlException("Can't convert " + value + " to number", loc);
       else
         return NullNode.instance;
     }
@@ -95,7 +95,8 @@ public class NodeUtils {
       else
         return new IntNode(Integer.parseInt(number));
     } catch (NumberFormatException e) {
-      throw new JstlException("number(" + number + ") failed: not a number");
+      throw new JstlException("number(" + number + ") failed: not a number",
+                              loc);
     }
   }
 

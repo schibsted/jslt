@@ -12,8 +12,9 @@ import com.schibsted.spt.data.jstl2.JstlException;
 
 public class MinusOperator extends NumericOperator {
 
-  public MinusOperator(ExpressionNode left, ExpressionNode right) {
-    super(left, right, "-");
+  public MinusOperator(ExpressionNode left, ExpressionNode right,
+                       Location location) {
+    super(left, right, "-", location);
   }
 
   // we only support the numeric operation and nothing else

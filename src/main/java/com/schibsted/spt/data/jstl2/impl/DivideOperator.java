@@ -12,8 +12,9 @@ import com.schibsted.spt.data.jstl2.JstlException;
 
 public class DivideOperator extends NumericOperator {
 
-  public DivideOperator(ExpressionNode left, ExpressionNode right) {
-    super(left, right, "/");
+  public DivideOperator(ExpressionNode left, ExpressionNode right,
+                        Location location) {
+    super(left, right, "/", location);
   }
 
   public JsonNode perform(JsonNode v1, JsonNode v2) {
@@ -21,8 +22,8 @@ public class DivideOperator extends NumericOperator {
       return NullNode.instance;
 
     // we only support the numeric operation and nothing else
-    v1 = NodeUtils.number(v1, true);
-    v2 = NodeUtils.number(v2, true);
+    v1 = NodeUtils.number(v1, true, location);
+    v2 = NodeUtils.number(v2, true, location);
 
     if (v1.isIntegralNumber() && v2.isIntegralNumber()) {
       long l1 = v1.longValue();

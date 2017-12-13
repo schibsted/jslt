@@ -9,10 +9,12 @@ public class DotExpression extends AbstractNode {
   private String key;
   private ExpressionNode parent;
 
-  public DotExpression() {
+  public DotExpression(Location location) {
+    super(location);
   }
 
-  public DotExpression(String key, ExpressionNode parent) {
+  public DotExpression(String key, ExpressionNode parent, Location location) {
+    super(location);
     this.key = key;
     this.parent = parent;
   }

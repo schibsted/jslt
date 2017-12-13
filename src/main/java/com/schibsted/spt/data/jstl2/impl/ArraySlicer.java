@@ -19,7 +19,8 @@ public class ArraySlicer extends AbstractNode {
   private ExpressionNode parent;
 
   public ArraySlicer(ExpressionNode left, boolean colon, ExpressionNode right,
-                     ExpressionNode parent) {
+                     ExpressionNode parent, Location location) {
+    super(location);
     this.left = left;
     this.colon = colon;
     this.right = right;
@@ -42,7 +43,7 @@ public class ArraySlicer extends AbstractNode {
       else {
         String string = sequence.asText();
         if (leftix >= string.length())
-          throw new JstlException("String index out of range: " + leftix);
+          throw new JstlException("String index out of range: " + leftix, location);
         return new TextNode("" + string.charAt(leftix));
       }
     }
@@ -69,7 +70,7 @@ public class ArraySlicer extends AbstractNode {
 
     JsonNode node = expr.apply(scope, input);
     if (!node.isNumber())
-      throw new JstlException("Can't index array/string with " + node);
+      throw new JstlException("Can't index array/string with " + node, location);
 
     int ix = node.intValue();
     if (ix < 0)

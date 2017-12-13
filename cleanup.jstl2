@@ -138,6 +138,7 @@
 
      else
        $objId,
+
     "name" : fallback(.object.name, .object.displayName ),
 
     * - "@id", displayName : .

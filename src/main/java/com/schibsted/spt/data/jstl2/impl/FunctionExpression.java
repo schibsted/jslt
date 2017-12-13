@@ -14,7 +14,9 @@ public class FunctionExpression extends AbstractNode {
   private Function function;
   private ExpressionNode[] arguments;
 
-  public FunctionExpression(Function function, ExpressionNode[] arguments) {
+  public FunctionExpression(Function function, ExpressionNode[] arguments,
+                            Location location) {
+    super(location);
     this.function = function;
     this.arguments = arguments;
 
@@ -23,7 +25,7 @@ public class FunctionExpression extends AbstractNode {
       throw new JstlException(
         "Function '" + function.getName() + "' needs " +
         function.getMinArguments() + "-" + function.getMaxArguments() +
-        " arguments, got " + arguments.length
+        " arguments, got " + arguments.length, location
       );
   }
 

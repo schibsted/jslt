@@ -4,7 +4,6 @@ package com.schibsted.spt.data.jstl2.impl;
 import java.util.Map;
 import java.util.Collections;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.schibsted.spt.data.jstl2.JstlException;
 
 public class Scope {
   private static Scope root = new Scope(Collections.EMPTY_MAP, null);
@@ -33,8 +32,6 @@ public class Scope {
     JsonNode value = variables.get(variable);
     if (value == null && parent != null)
       value = parent.getValue(variable);
-    if (value == null)
-      throw new JstlException("No such variable '" + variable + "'");
     return value;
   }
 }

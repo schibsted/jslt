@@ -13,7 +13,8 @@ public abstract class AbstractOperator extends AbstractNode {
   private String operator;
 
   public AbstractOperator(ExpressionNode left, ExpressionNode right,
-                          String operator) {
+                          String operator, Location location) {
+    super(location);
     this.left = left;
     this.right = right;
     this.operator = operator;

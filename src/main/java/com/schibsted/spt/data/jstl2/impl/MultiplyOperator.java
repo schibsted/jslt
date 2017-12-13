@@ -10,8 +10,9 @@ import com.schibsted.spt.data.jstl2.JstlException;
 
 public class MultiplyOperator extends NumericOperator {
 
-  public MultiplyOperator(ExpressionNode left, ExpressionNode right) {
-    super(left, right, "*");
+  public MultiplyOperator(ExpressionNode left, ExpressionNode right,
+                          Location location) {
+    super(left, right, "*", location);
   }
 
   public JsonNode perform(JsonNode v1, JsonNode v2) {

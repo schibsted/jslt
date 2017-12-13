@@ -7,8 +7,8 @@ import com.schibsted.spt.data.jstl2.JstlException;
 
 public class OrOperator extends AbstractOperator {
 
-  public OrOperator(ExpressionNode left, ExpressionNode right) {
-    super(left, right, "or");
+  public OrOperator(ExpressionNode left, ExpressionNode right, Location location) {
+    super(left, right, "or", location);
   }
 
   public JsonNode apply(Scope scope, JsonNode input) {

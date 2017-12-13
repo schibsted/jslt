@@ -1,14 +1,32 @@
 
 package com.schibsted.spt.data.jstl2;
 
+import com.schibsted.spt.data.jstl2.impl.Location;
+
 public class JstlException extends RuntimeException {
+  private Location location;
 
   public JstlException(String message) {
-    super(message);
+    this(message, null, null);
+  }
+
+  public JstlException(String message, Location location) {
+    this(message, null, location);
   }
 
   public JstlException(String message, Throwable cause) {
-    super(message, cause);
+    this(message, cause, null);
   }
 
+  public JstlException(String message, Throwable cause, Location location) {
+    super(message, cause);
+    this.location = location;
+  }
+
+  public String getMessage() {
+    if (location != null)
+      return super.getMessage() + " at " + location;
+    else
+      return super.getMessage();
+  }
 }

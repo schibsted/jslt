@@ -13,7 +13,9 @@ public class ForExpression extends AbstractNode {
   private ExpressionNode loopExpr;
 
   public ForExpression(ExpressionNode valueExpr,
-                      ExpressionNode loopExpr) {
+                       ExpressionNode loopExpr,
+                       Location location) {
+    super(location);
     this.valueExpr = valueExpr;
     this.loopExpr = loopExpr;
   }
@@ -23,7 +25,7 @@ public class ForExpression extends AbstractNode {
     if (array.isNull())
       return NullNode.instance;
     if (!array.isArray())
-      throw new JstlException("For loop can't iterate over " + array);
+      throw new JstlException("For loop can't iterate over " + array, location);
 
     ArrayNode result = NodeUtils.mapper.createArrayNode();
     for (int ix = 0; ix < array.size(); ix++) {
@@ -37,7 +39,7 @@ public class ForExpression extends AbstractNode {
     // if you do matching inside a for the matching is on the current
     // object being traversed in the list. so we forget the parent
     // and start over
-    loopExpr.computeMatchContexts(new DotExpression());
+    loopExpr.computeMatchContexts(new DotExpression(location));
   }
 
   public void compile(Compiler compiler) {
