@@ -52,6 +52,8 @@ and works. A performance test on 89,100 Pulse events ran the old JSTL
 ## What is missing
 
 The following is still missing:
+  * All error messages should include where in the source code the
+    error occured.
   * `contains` should support strings and objects.
   * The rest of the boolean comparators.
   * The rest of the function library (not 100% designed yet).

@@ -27,7 +27,8 @@ public class Parser {
   public static Expression compile(File jstl) {
     // FIXME: character encoding bug
     try (FileReader f = new FileReader(jstl)) {
-      return compile(Collections.EMPTY_SET, new JstlParser(f));
+      ParseContext ctx = new ParseContext(jstl.getAbsolutePath());
+      return compile(ctx, new JstlParser(f));
     } catch (FileNotFoundException e) {
       throw new JstlException("Couldn't find file " + jstl);
     } catch (IOException e) {
@@ -36,12 +37,14 @@ public class Parser {
   }
 
   public static Expression compile(String jstl) {
-    return compile(Collections.EMPTY_SET, new JstlParser(new StringReader(jstl)));
+    ParseContext ctx = new ParseContext("<unknown>");
+    return compile(ctx, new JstlParser(new StringReader(jstl)));
   }
 
   public static Expression compile(Collection<Function> functions,
                                    String jstl) {
-    return compile(functions, new JstlParser(new StringReader(jstl)));
+    ParseContext ctx = new ParseContext(functions, "<unknown>");
+    return compile(ctx, new JstlParser(new StringReader(jstl)));
   }
 
   public static Expression compileResource(String jstl) {
@@ -55,14 +58,14 @@ public class Parser {
         throw new JstlException("Cannot load resource '" + jstl + "': not found");
 
       Reader reader = new InputStreamReader(stream, "UTF-8");
-      return compile(functions, new JstlParser(reader));
+      ParseContext ctx = new ParseContext(functions, jstl);
+      return compile(ctx, new JstlParser(reader));
     } catch (IOException e) {
       throw new JstlException("Couldn't read resource " + jstl, e);
     }
   }
 
-  private static Expression compile(Collection<Function> functions,
-                                    JstlParser parser) {
+  private static Expression compile(ParseContext ctx, JstlParser parser) {
     try {
       parser.Start();
 
@@ -70,7 +73,6 @@ public class Parser {
       SimpleNode start = (SimpleNode) parser.jjtree.rootNode();
       //start.dump(">");
 
-      ParseContext ctx = new ParseContext(functions);
       LetExpression[] lets = buildLets(ctx, start);
       SimpleNode expr = getLastChild(start);
       ExpressionNode top = node2expr(ctx, expr);

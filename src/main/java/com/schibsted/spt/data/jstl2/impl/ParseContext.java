@@ -4,6 +4,7 @@ package com.schibsted.spt.data.jstl2.impl;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Collection;
+import java.util.Collections;
 import com.schibsted.spt.data.jstl2.Function;
 
 /**
@@ -12,11 +13,19 @@ import com.schibsted.spt.data.jstl2.Function;
  */
 public class ParseContext {
   private Map<String, Function> functions;
+  private String source; // what file/resource are we parsing?
 
-  public ParseContext(Collection<Function> extensions) {
+  public ParseContext(Collection<Function> extensions, String source) {
     this.functions = new HashMap();
     for (Function func : extensions)
       functions.put(func.getName(), func);
+
+    this.source = source;
+  }
+
+  public ParseContext(String source) {
+    this.functions = Collections.EMPTY_MAP;
+    this.source = source;
   }
 
   public Function getFunction(String name) {
@@ -28,5 +37,9 @@ public class ParseContext {
 
   public Macro getMacro(String name) {
     return BuiltinFunctions.macros.get(name);
+  }
+
+  public String getSource() {
+    return source;
   }
 }
