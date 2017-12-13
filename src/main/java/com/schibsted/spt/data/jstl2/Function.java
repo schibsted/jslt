@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 /**
  * Interface implemented by all function implementations. May replace
  * it with a wrapper that carries the metadata and an inner object
- * that has just the 'call' method. May introduce a MagicFunction that
+ * that has just the 'call' method.
  */
 public interface Function {
 

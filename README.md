@@ -60,6 +60,8 @@ The following is still missing:
     situations.
   * Adding all the object matcher tests from 1.0.
   * Documentation.
+  * Language playground.
+  * Optimizations: complete constant folding.
   * Many more tests.
 
 ## Examples of improvements

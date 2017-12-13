@@ -25,4 +25,8 @@ public class ParseContext {
       func = BuiltinFunctions.functions.get(name);
     return func;
   }
+
+  public Macro getMacro(String name) {
+    return BuiltinFunctions.macros.get(name);
+  }
 }

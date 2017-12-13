@@ -26,6 +26,11 @@ import org.joni.NameEntry;
 import com.schibsted.spt.data.jstl2.Function;
 import com.schibsted.spt.data.jstl2.JstlException;
 
+/**
+ * For now contains all the various function implementations. Should
+ * probably be broken up into separate files and use annotations to
+ * capture a lot of this information instead.
+ */
 public class BuiltinFunctions {
 
   // this will be replaced with a proper Context. need to figure out
@@ -40,12 +45,16 @@ public class BuiltinFunctions {
     functions.put("join", new BuiltinFunctions.Join());
     functions.put("lowercase", new BuiltinFunctions.Lowercase());
     functions.put("not", new BuiltinFunctions.Not());
-    functions.put("fallback", new BuiltinFunctions.Fallback());
     functions.put("is-object", new BuiltinFunctions.IsObject());
     functions.put("is-array", new BuiltinFunctions.IsArray());
     functions.put("starts-with", new BuiltinFunctions.StartsWith());
     functions.put("ends-with", new BuiltinFunctions.EndsWith());
     functions.put("contains", new BuiltinFunctions.Contains());
+  }
+
+  public static Map<String, Macro> macros = new HashMap();
+  static {
+    macros.put("fallback", new BuiltinFunctions.Fallback());
   }
 
   private static abstract class AbstractFunction implements Function {
@@ -54,6 +63,30 @@ public class BuiltinFunctions {
     private int max;
 
     public AbstractFunction(String name, int min, int max) {
+      this.name = name;
+      this.min = min;
+      this.max = max;
+    }
+
+    public String getName() {
+      return name;
+    }
+
+    public int getMinArguments() {
+      return min;
+    }
+
+    public int getMaxArguments() {
+      return max;
+    }
+  }
+
+  private static abstract class AbstractMacro implements Macro {
+    private String name;
+    private int min;
+    private int max;
+
+    public AbstractMacro(String name, int min, int max) {
       this.name = name;
       this.min = min;
       this.max = max;
@@ -223,16 +256,23 @@ public class BuiltinFunctions {
 
   // ===== FALLBACK
 
-  public static class Fallback extends AbstractFunction {
+  public static class Fallback extends AbstractMacro {
 
     public Fallback() {
       super("fallback", 2, 1024);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      for (int ix = 0; ix < arguments.length; ix++)
-        if (NodeUtils.isValue(arguments[ix]))
-          return arguments[ix];
+    public JsonNode call(Scope scope, JsonNode input,
+                         ExpressionNode[] parameters) {
+      // making this a macro means we can evaluate only the parameters
+      // that are necessary to find a value, and leave the rest
+      // untouched, giving better performance
+
+      for (int ix = 0; ix < parameters.length; ix++) {
+        JsonNode value = parameters[ix].apply(scope, input);
+        if (NodeUtils.isValue(value))
+          return value;
+      }
       return NullNode.instance;
     }
   }

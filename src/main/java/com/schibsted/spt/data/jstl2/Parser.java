@@ -269,9 +269,14 @@ public class Parser {
 
       // function call, where the children are the parameters
       Function func = ctx.getFunction(token.image);
-      if (func == null)
-        throw new JstlException("No such function: '" + token.image + "'");
-      start = new FunctionExpression(func, children2Exprs(ctx, fnode));
+      if (func == null) {
+        // it could still be a macro
+        Macro mac = ctx.getMacro(token.image);
+        if (mac == null)
+          throw new JstlException("No such function: '" + token.image + "'");
+        start = new MacroExpression(mac, children2Exprs(ctx, fnode));
+      } else
+        start = new FunctionExpression(func, children2Exprs(ctx, fnode));
 
     } else if (kind == JstlParserConstants.DOT) {
       token = token.next;

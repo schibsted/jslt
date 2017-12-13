@@ -212,6 +212,15 @@ public class FunctionTest extends TestBase {
     check("{}", "fallback(.foo, .bar, \"heyho\")", "\"heyho\"");
   }
 
+  @Test
+  public void testFallbackIsAMagicMacro() {
+    // if fallback were a function evaluation of the second parameter
+    // would fail. however, it's a macro, and since the first
+    // parameter is a value, we never evaluate the second one. which
+    // is what this test verifies.
+    check("{}", "fallback(22, true + false)", "22");
+  }
+
   // ===== IS-OBJECT
 
   @Test
