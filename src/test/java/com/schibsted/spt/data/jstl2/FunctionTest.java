@@ -345,6 +345,28 @@ public class FunctionTest extends TestBase {
     error("size(true)", "true");
   }
 
+  // ===== STRING
+
+  @Test
+  public void testBooleanToString() {
+    check("{}", "string(false)", "\"false\"");
+  }
+
+  @Test
+  public void testNumberToString() {
+    check("{}", "string(123.2)", "\"123.2\"");
+  }
+
+  @Test
+  public void testStringToString() {
+    check("{}", "string(\"foo\")", "\"foo\"");
+  }
+
+  @Test
+  public void testNullToString() {
+    check("{}", "string(null)", "\"null\"");
+  }
+
   // ===== EXTENSION FUNCTION
 
   private static class TestFunction implements Function {

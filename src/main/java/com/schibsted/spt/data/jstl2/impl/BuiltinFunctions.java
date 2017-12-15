@@ -40,6 +40,7 @@ public class BuiltinFunctions {
   static {
     functions.put("number", new BuiltinFunctions.Number());
     functions.put("round", new BuiltinFunctions.Round());
+    functions.put("string", new BuiltinFunctions.ToString());
     functions.put("test", new BuiltinFunctions.Test());
     functions.put("capture", new BuiltinFunctions.Capture());
     functions.put("split", new BuiltinFunctions.Split());
@@ -416,6 +417,22 @@ public class BuiltinFunctions {
 
       else
         throw new JstlException("Function size() cannot work on " + arguments[0]);
+    }
+  }
+
+  // ===== SIZE
+
+  public static class ToString extends AbstractFunction {
+
+    public ToString() {
+      super("string", 1, 1);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      if (arguments[0].isTextual())
+        return arguments[0];
+      else
+        return new TextNode(arguments[0].toString());
     }
   }
 }
