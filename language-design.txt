@@ -66,6 +66,10 @@ FOR (...)
 ----- OPEN QUESTIONS
 
 termination of expression in LET: how?
+  let foo = (...)
+  let foo = ... ;
+  let ... as $foo
+  set ... as $foo
 
 details of matcher semantics
 
@@ -92,6 +96,15 @@ how to support?
 how do {} and [] convert to strings?
 
 more detail on implicit type conversion rules
+
+allow .foo on array by applying to each element in array?
+  -> raises need for [ ...boolean expr... ]
+  -> if we want this extension . inside [] has to refer to the node
+
+support ..foo operator?
+  -> also raises need for [ filters ]
+
+contains() vs 'in'?
 
 ----- FUNCTION LIBRARY
 

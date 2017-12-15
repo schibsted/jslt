@@ -61,8 +61,10 @@ and works. A performance test on 89,100 Pulse events ran the old JSTL
 The following is still missing:
   * Escape syntax in strings.
   * The rest of the boolean comparators.
-  * `contains` should support strings and objects.
+  * `contains` should support strings and objects. (Maybe replace with
+    `in` operator.)
   * The rest of the function library (not 100% designed yet).
+  * Fix the syntax ambiguity problem with `let`.
   * More detailed definition of language semantics, especially error
     situations.
   * Adding all the object matcher tests from 1.0.
