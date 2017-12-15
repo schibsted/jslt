@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.LongNode;
+import com.fasterxml.jackson.databind.node.IntNode;
 
 // used for the capture() function
 import org.jcodings.specific.UTF8Encoding;
@@ -50,6 +51,7 @@ public class BuiltinFunctions {
     functions.put("starts-with", new BuiltinFunctions.StartsWith());
     functions.put("ends-with", new BuiltinFunctions.EndsWith());
     functions.put("contains", new BuiltinFunctions.Contains());
+    functions.put("size", new BuiltinFunctions.Size());
   }
 
   public static Map<String, Macro> macros = new HashMap();
@@ -391,6 +393,29 @@ public class BuiltinFunctions {
         if (arguments[1].get(ix).equals(arguments[0]))
           return BooleanNode.TRUE;
       return BooleanNode.FALSE;
+    }
+  }
+
+  // ===== SIZE
+
+  public static class Size extends AbstractFunction {
+
+    public Size() {
+      super("size", 1, 1);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      if (arguments[0].isArray() || arguments[0].isObject())
+        return new IntNode(arguments[0].size());
+
+      else if (arguments[0].isTextual())
+        return new IntNode(arguments[0].asText().length());
+
+      else if (arguments[0].isNull())
+        return arguments[0];
+
+      else
+        throw new JstlException("Function size() cannot work on " + arguments[0]);
     }
   }
 }

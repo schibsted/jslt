@@ -23,6 +23,10 @@ This has the following benefits:
  * no dependencies on the parser generator,
  * implementation no longer bound to Jackson.
 
+[**Demo playground**](http://spt-data-dev-public-web.s3-website-eu-west-1.amazonaws.com/jstl2.html).
+
+## Status
+
 This is still *very* much a work in progress. In fact, it's nothing
 like feature-complete. So don't even think about using it.
 
@@ -37,13 +41,11 @@ What is working:
  * Boolean comparators `==`, `!=`, and `>=`.
  * Boolean operators `and` and `or`.
  * The `number`, `round`, `fallback`, `not`, `test`, `capture`, `split`, `join`,
-   `is-array`, `is-object`, `starts-with`, `ends-with`, `contains`, and
-   `lowercase` functions.
+   `is-array`, `is-object`, `starts-with`, `ends-with`, `contains`, `size`,
+   and `lowercase` functions.
  * `(` Parenthetical expressions `)`.
  * Array and string indexing and slicing.
  * Object matching (`* : .`).
-
-## Working example
 
 [pulse-cleanup.jstl](cleanup.jstl2) has been translated to JSTL 2.0
 and works. A performance test on 89,100 Pulse events ran the old JSTL
@@ -52,15 +54,14 @@ and works. A performance test on 89,100 Pulse events ran the old JSTL
 ## What is missing
 
 The following is still missing:
-  * `contains` should support strings and objects.
-  * The rest of the boolean comparators.
-  * The rest of the function library (not 100% designed yet).
   * Escape syntax in strings.
+  * The rest of the boolean comparators.
+  * `contains` should support strings and objects.
+  * The rest of the function library (not 100% designed yet).
   * More detailed definition of language semantics, especially error
     situations.
   * Adding all the object matcher tests from 1.0.
   * Documentation.
-  * Language playground.
   * Optimizations: complete constant folding.
   * Many more tests.
 

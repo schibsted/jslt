@@ -139,13 +139,34 @@ datetime parsing
 ---------------------------------------------------------------------------
 NAME
 
-jstl         Oracle JavaServer Pages Standard Tag Library
 jslt         XSLT in JSON alternative, now dead
-j2j          already exists, but marginal
 jsonator     ditto
+j2j          already exists, but marginal
+jstl         Oracle JavaServer Pages Standard Tag Library
 argonator    kind of weird
 jsonify      not really what it does
 jtransform   an FFT thing, might work
 jquery       taken by the frontend thing
 colchis      cryptic
 boreas       cryptic
+
+-------------------------------------------------------------------------------
+USE CASES
+
+--- #1: TRUE/FALSE if .object.items contains {} with @Type==Jobs
+
+{"object":{"items":[
+  {"@Type" : "George"},
+  {"@Type" : "Jobs"},
+  {"@Type" : "Fnupp"}
+]}}
+
+solutions:
+
+WORKS NOW    contains("Jobs", for (.object.items) ."@Type")
+
+MIGHT DO     contains("Jobs", .object.items."@Type")
+  requires .foo on arrays: apply to each object in array
+
+MIGHT DO     "Jobs" in (for (.object.items) ."@Type")
+  turn 'contains' function into 'in' operator

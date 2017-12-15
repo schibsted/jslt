@@ -318,6 +318,33 @@ public class FunctionTest extends TestBase {
     check("{}", "contains(\"Taip\", [\"foo\", \"Taip\", \"halp\"])", "true");
   }
 
+  // ===== SIZE
+
+  @Test
+  public void testSizeArray() {
+    check("{}", "size([1,2,3])", "3");
+  }
+
+  @Test
+  public void testSizeObject() {
+    check("{}", "size({\"foo\" : 2, \"bar\" : 24})", "2");
+  }
+
+  @Test
+  public void testSizeNull() {
+    check("{}", "size( .nonexistent )", "null");
+  }
+
+  @Test
+  public void testSizeString() {
+    check("{}", "size(\"Lars Marius\")", "11");
+  }
+
+  @Test
+  public void testSizeBoolean() {
+    error("size(true)", "true");
+  }
+
   // ===== EXTENSION FUNCTION
 
   private static class TestFunction implements Function {
