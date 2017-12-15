@@ -388,6 +388,7 @@ public class Parser {
         result[pos++] = ch;
       else {
         ch = string.charAt(++ix);
+
         switch (ch) {
         case '\\': result[pos++] = ch; break;
         case '"': result[pos++] = ch; break;
@@ -397,12 +398,33 @@ public class Parser {
         case 'r': result[pos++] = '\r'; break;
         case 't': result[pos++] = '\t'; break;
         case '/': result[pos++] = '/'; break;
+        case 'u':
+          if (ix + 5 >= string.length())
+            throw new JstlException("Unfinished Unicode escape sequence",
+                                    makeLocation(ctx, literal));
+          result[pos++] = interpretUnicodeEscape(string, ix + 1);
+          ix += 4;
+          break;
         default: throw new JstlException("Unknown escape sequence: \\" + ch,
                                          makeLocation(ctx, literal));
         }
       }
     }
     return new String(result, 0, pos);
+  }
+
+  private static char interpretUnicodeEscape(String string, int start) {
+    int codepoint = 0;
+    for (int ix = 0; ix < 4; ix++)
+      codepoint = codepoint * 16 + interpretHexDigit(string.charAt(start + ix));
+    return (char) codepoint;
+  }
+
+  private static char interpretHexDigit(char digit) {
+    if (digit >= '0' && digit <= '9')
+      return (char) (digit - '0');
+
+    throw new JstlException("Bad Unicode escape hex digit: '" + digit + "'");
   }
 
   private static ExpressionNode[] children2Exprs(ParseContext ctx,

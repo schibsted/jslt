@@ -152,6 +152,31 @@ public class JsonParseTest {
     error("\" \\d \"");
   }
 
+  @Test
+  public void testUnfinishedUnicodeEscape1() {
+    error("\"\\u\"");
+  }
+
+  @Test
+  public void testUnfinishedUnicodeEscape2() {
+    error("\"\\u0\"");
+  }
+
+  @Test
+  public void testUnfinishedUnicodeEscape3() {
+    error("\"\\u00\"");
+  }
+
+  @Test
+  public void testUnfinishedUnicodeEscape4() {
+    error("\"\\u004\"");
+  }
+
+  @Test
+  public void testUnicodeEscape() {
+    check("\"\\u0061\"");
+  }
+
   private void check(String json) {
     try {
       Expression expr = Parser.compile(json);
