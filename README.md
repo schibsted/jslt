@@ -25,10 +25,15 @@ This has the following benefits:
 
 [**Demo playground**](http://spt-data-dev-public-web.s3-website-eu-west-1.amazonaws.com/jstl2.html).
 
+[**Language tutorial**](tutorial.md).
+
 ## Status
 
 This is still *very* much a work in progress. In fact, it's nothing
 like feature-complete. So don't even think about using it.
+
+The language design is not finished, so features may be
+added/disappear/change.
 
 What is working:
  * JSON parsing.
