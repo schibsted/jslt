@@ -18,6 +18,8 @@ context node." If the JSON above is the input you can do simple
 navigation with dot expressions. `.` always returns the context node,
 so that would give us back the same JSON.
 
+## Dot accessors
+
 You can access object keys with `.key`, so that `.foo` (on the same
 input) would give us:
 
@@ -30,6 +32,8 @@ These can be chained, so `.foo.bar` would produce:
 ```
 [1,2,3,4,5]
 ```
+
+## Array indexing
 
 You can also do array indexing with `[ index ]`, so that `.foo.bar[0]`
 would give you `1`.
@@ -52,6 +56,8 @@ which would then produce:
 }
 ```
 
+## Functions
+
 JSTL has a number of built-in functions, like `size`, which returns
 the number of elements in an object or array, or the number of
 characters in a string. The function syntax is the common one, so we
@@ -72,6 +78,8 @@ which would then produce:
   "size" : 5
 }
 ```
+
+## For expressions
 
 The `for` expression lets you transform an array. The syntax is
 
@@ -101,6 +109,8 @@ This will produce:
   "size" : 5
 }
 ```
+
+## If expressions
 
 We also have `if` tests, which use the syntax:
 
