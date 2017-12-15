@@ -203,7 +203,7 @@ public class Parser {
       return new LiteralExpression(number, loc);
 
     } else if (kind == JstlParserConstants.STRING)
-      return new LiteralExpression(new TextNode(makeString(token)), loc);
+      return new LiteralExpression(new TextNode(makeString(ctx, token)), loc);
 
     else if (kind == JstlParserConstants.TRUE)
       return new LiteralExpression(BooleanNode.TRUE, loc);
@@ -335,7 +335,7 @@ public class Parser {
       if (token.kind == JstlParserConstants.LBRACKET)
         return new DotExpression(loc); // it's .[...]
 
-      String key = identOrString(token);
+      String key = identOrString(ctx, token);
       return new DotExpression(key, parent, loc);
     } else
       return buildArraySlicer(ctx, getChild(node, 0), parent);
@@ -369,15 +369,40 @@ public class Parser {
     return new ForExpression(valueExpr, loopExpr, makeLocation(ctx, node));
   }
 
-  private static String identOrString(Token token) {
+  private static String identOrString(ParseContext ctx, Token token) {
     if (token.kind == JstlParserConstants.STRING)
-      return makeString(token);
+      return makeString(ctx, token);
     else
       return token.image;
   }
 
-  private static String makeString(Token literal) {
-    return literal.image.substring(1, literal.image.length() - 1);
+  private static String makeString(ParseContext ctx, Token literal) {
+    // we need to handle escape sequences, so therefore we walk
+    // through the entire string, building the output step by step
+    String string = literal.image;
+    char[] result = new char[string.length() - 2];
+    int pos = 0; // position in result array
+    for (int ix = 1; ix < string.length() - 1; ix++) {
+      char ch = string.charAt(ix);
+      if (ch != '\\')
+        result[pos++] = ch;
+      else {
+        ch = string.charAt(++ix);
+        switch (ch) {
+        case '\\': result[pos++] = ch; break;
+        case '"': result[pos++] = ch; break;
+        case 'n': result[pos++] = '\n'; break;
+        case 'b': result[pos++] = '\u0008'; break;
+        case 'f': result[pos++] = '\f'; break;
+        case 'r': result[pos++] = '\r'; break;
+        case 't': result[pos++] = '\t'; break;
+        case '/': result[pos++] = '/'; break;
+        default: throw new JstlException("Unknown escape sequence: \\" + ch,
+                                         makeLocation(ctx, literal));
+        }
+      }
+    }
+    return new String(result, 0, pos);
   }
 
   private static ExpressionNode[] children2Exprs(ParseContext ctx,
@@ -436,19 +461,20 @@ public class Parser {
     } else if (node.id == JstlParserTreeConstants.JJTMATCHER) {
       List<String> minuses = new ArrayList();
       if (node.jjtGetNumChildren() == 2) // means there was "* - foo : ..."
-        collectMinuses(getChild(node, 0), minuses);
+        collectMinuses(ctx, getChild(node, 0), minuses);
       return new MatcherExpression(node2expr(ctx, last), minuses,
                                    makeLocation(ctx, last));
     } else
       throw new RuntimeException("This is wrong");
   }
 
-  private static void collectMinuses(SimpleNode node, List<String> minuses) {
+  private static void collectMinuses(ParseContext ctx, SimpleNode node,
+                                     List<String> minuses) {
     Token token = node.jjtGetFirstToken();
     token = token.next; // skip the -
 
     while (true) {
-      minuses.add(identOrString(token));
+      minuses.add(identOrString(ctx, token));
       token = token.next;
       if (token.kind == JstlParserConstants.COLON)
         break;
@@ -460,7 +486,7 @@ public class Parser {
   private static List<PairExpression> collectPairs(ParseContext ctx,
                                                    SimpleNode pair) {
     if (pair != null && pair.id == JstlParserTreeConstants.JJTPAIR) {
-      String key = makeString(pair.jjtGetFirstToken());
+      String key = makeString(ctx, pair.jjtGetFirstToken());
       ExpressionNode val = node2expr(ctx, (SimpleNode) pair.jjtGetChild(0));
 
       List<PairExpression> pairs;
@@ -503,6 +529,10 @@ public class Parser {
 
   private static Location makeLocation(ParseContext ctx, SimpleNode node) {
     Token token = node.jjtGetFirstToken();
+    return new Location(ctx.getSource(), token.beginLine, token.beginColumn);
+  }
+
+  private static Location makeLocation(ParseContext ctx, Token token) {
     return new Location(ctx.getSource(), token.beginLine, token.beginColumn);
   }
 }

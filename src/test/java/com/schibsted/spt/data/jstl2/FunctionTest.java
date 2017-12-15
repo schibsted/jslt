@@ -84,7 +84,7 @@ public class FunctionTest extends TestBase {
 
   @Test
   public void testTestString() {
-    check("{}", "test(23123, \"\\d+\")", "true");
+    check("{}", "test(23123, \"\\\\d+\")", "true");
   }
 
   @Test
@@ -96,7 +96,7 @@ public class FunctionTest extends TestBase {
 
   @Test
   public void testCaptureNoMatch() {
-    check("{}", "capture(\"abc\", \"(?<foo>\\d+)\")", "{}");
+    check("{}", "capture(\"abc\", \"(?<foo>\\\\d+)\")", "{}");
   }
 
   @Test
@@ -106,17 +106,17 @@ public class FunctionTest extends TestBase {
 
   @Test
   public void testCaptureNotAString() {
-    check("{}", "capture(123456, \"(?<foo>\\d+)\")", "{\"foo\":\"123456\"}");
+    check("{}", "capture(123456, \"(?<foo>\\\\d+)\")", "{\"foo\":\"123456\"}");
   }
 
   @Test
   public void testCaptureNotAtStart() {
-    check("{}", "capture(\"abc123456def\", \"(?<foo>\\d+)\")", "{\"foo\":\"123456\"}");
+    check("{}", "capture(\"abc123456def\", \"(?<foo>\\\\d+)\")", "{\"foo\":\"123456\"}");
   }
 
   @Test
   public void testCaptureNull() {
-    check("{}", "capture(null, \"(?<foo>\\d+)\")", "null");
+    check("{}", "capture(null, \"(?<foo>\\\\d+)\")", "null");
   }
 
   @Test

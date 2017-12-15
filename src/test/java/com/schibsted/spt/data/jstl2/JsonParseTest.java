@@ -3,6 +3,7 @@ package com.schibsted.spt.data.jstl2;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -106,6 +107,51 @@ public class JsonParseTest {
     check("{\"foo\" : \"bar\", \"array\" : [7,6,5,4,null], \"koko\":233}");
   }
 
+  @Test
+  public void testEscapedQuote() {
+    check("\" \\\" \""); // \\\" -> \" in the actual string that's parsed
+  }
+
+  @Test
+  public void testEscapedBackslash() {
+    check("\" \\\\ \""); // \\\\ -> \\ in the actual string that's parsed
+  }
+
+  @Test
+  public void testEscapedNewline() {
+    check("\" \\n \""); // \\n -> \n in the actual string that's parsed
+  }
+
+  @Test
+  public void testEscapedReturn() {
+    check("\" \\r \"");
+  }
+
+  @Test
+  public void testEscapedSlash() {
+    check("\" \\/ \"");
+  }
+
+  @Test
+  public void testEscapedBackspace() {
+    check("\" \\b \"");
+  }
+
+  @Test
+  public void testEscapedTab() {
+    check("\" \\t \"");
+  }
+
+  @Test
+  public void testEscapedFormFeed() {
+    check("\" \\f \"");
+  }
+
+  @Test
+  public void testUndefinedEscape() {
+    error("\" \\d \"");
+  }
+
   private void check(String json) {
     try {
       Expression expr = Parser.compile(json);
@@ -116,6 +162,15 @@ public class JsonParseTest {
       assertEquals(expected, actual, "actual class " + actual.getClass() + ", expected class " + expected.getClass());
     } catch (IOException e) {
       throw new RuntimeException(e);
+    }
+  }
+
+  private void error(String json) {
+    try {
+      check(json);
+      fail("Successfully parsed " + json);
+    } catch (JstlException e) {
+      // this is what we want
     }
   }
 
