@@ -43,7 +43,7 @@ What is working:
  * `if`, `let`, and `for` statements.
  * Variables.
  * Operators `+`, `-`, `*`, and `/`.
- * Boolean comparators `==`, `!=`, and `>=`.
+ * Boolean comparators.
  * Boolean operators `and` and `or`.
  * The `number`, `round`, `fallback`, `not`, `test`, `capture`, `split`, `join`,
    `is-array`, `is-object`, `starts-with`, `ends-with`, `contains`, `size`,
@@ -59,7 +59,6 @@ and works. A performance test on 89,100 Pulse events ran the old JSTL
 ## What is missing
 
 The following is still missing:
-  * The rest of the boolean comparators.
   * `contains` should support strings and objects. (Maybe replace with
     `in` operator?)
   * The rest of the function library (not 100% designed yet).

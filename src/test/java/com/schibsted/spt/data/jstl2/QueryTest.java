@@ -148,6 +148,11 @@ public class QueryTest extends TestBase {
   }
 
   @Test
+  public void testNotEqualsFalseDecimal() {
+    check("{}", "123 != 123.0", "false");
+  }
+
+  @Test
   public void testNotEqualsTrue() {
     check("{}", "123 != 321", "true");
   }
@@ -160,6 +165,126 @@ public class QueryTest extends TestBase {
   @Test
   public void testBiggerOrEqualTrue() {
     check("{}", "321 >= 123", "true");
+  }
+
+  @Test
+  public void testBiggerOrEqualTrueEqual() {
+    check("{}", "123 >= 123", "true");
+  }
+
+  @Test
+  public void testBiggerOrEqualTrueDecimals() {
+    check("{}", "321 >= 123.0", "true");
+  }
+
+  @Test
+  public void testBiggerOrEqualFalseDecimals() {
+    check("{}", "123.0 >= 321", "false");
+  }
+
+  @Test
+  public void testBiggerOrEqualFalseString() {
+    check("{}", "\"abc\" >= \"def\"", "false");
+  }
+
+  @Test
+  public void testBiggerOrEqualTrueString() {
+    check("{}", "\"def\" >= \"abc\"", "true");
+  }
+
+  @Test
+  public void testBiggerFalse() {
+    check("{}", "123 > 321", "false");
+  }
+
+  @Test
+  public void testBiggerTrue() {
+    check("{}", "321 > 123", "true");
+  }
+
+  @Test
+  public void testBiggerTrueDecimals() {
+    check("{}", "321 > 123.0", "true");
+  }
+
+  @Test
+  public void testBiggerFalseDecimals() {
+    check("{}", "123.0 > 321", "false");
+  }
+
+  @Test
+  public void testBiggerFalseString() {
+    check("{}", "\"abc\" > \"def\"", "false");
+  }
+
+  @Test
+  public void testBiggerTrueString() {
+    check("{}", "\"def\" > \"abc\"", "true");
+  }
+
+  @Test
+  public void testSmallerFalse() {
+    check("{}", "321 < 123", "false");
+  }
+
+  @Test
+  public void testSmallerTrue() {
+    check("{}", "123 < 321", "true");
+  }
+
+  @Test
+  public void testSmallerTrueDecimals() {
+    check("{}", "123.0 < 321", "true");
+  }
+
+  @Test
+  public void testSmallerFalseDecimals() {
+    check("{}", "321 < 123.0", "false");
+  }
+
+  @Test
+  public void testSmallerFalseString() {
+    check("{}", "\"def\" < \"abc\"", "false");
+  }
+
+  @Test
+  public void testSmallerTrueString() {
+    check("{}", "\"abc\" < \"def\"", "true");
+  }
+
+  @Test
+  public void testSmallerOrEqualTrue() {
+    check("{}", "123 <= 321", "true");
+  }
+
+  @Test
+  public void testSmallerOrEqualFalse() {
+    check("{}", "321 <= 123", "false");
+  }
+
+  @Test
+  public void testSmallerOrEqualTrueEqual() {
+    check("{}", "123 <= 123", "true");
+  }
+
+  @Test
+  public void testSmallerOrEqualFalseDecimals() {
+    check("{}", "321 <= 123.0", "false");
+  }
+
+  @Test
+  public void testSmallerOrEqualTrueDecimals() {
+    check("{}", "123.0 <= 321", "true");
+  }
+
+  @Test
+  public void testSmallerOrEqualTrueString() {
+    check("{}", "\"abc\" <= \"def\"", "true");
+  }
+
+  @Test
+  public void testSmallerOrEqualFalseString() {
+    check("{}", "\"def\" <= \"abc\"", "false");
   }
 
   // ===== '+' OPERATOR

@@ -53,6 +53,9 @@ TOKEN :
   < EQUALS: "==" > |
   < UNEQUALS: "!=" > |
   < BIGOREQ: ">=" > |
+  < BIGGER: ">" > |
+  < SMALLER: "<" > |
+  < SMALLOREQ: "<=" > |
   < PLUS: "+" > |
   < MINUS: "-" > |
   < STAR: "*" > |
@@ -110,7 +113,7 @@ void ComparativeExpr() :
 void Comparator() :
 {}
 {
-  <EQUALS> | <UNEQUALS> | <BIGOREQ>
+  <EQUALS> | <UNEQUALS> | <BIGOREQ> | <BIGGER> | <SMALLER> | <SMALLOREQ>
 }
 
 void AdditiveExpr() :

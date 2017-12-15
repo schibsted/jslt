@@ -11,6 +11,10 @@ public class EqualsComparison extends AbstractOperator {
   }
 
   public JsonNode perform(JsonNode v1, JsonNode v2) {
+    return NodeUtils.toJson(equals(v1, v2));
+  }
+
+  static boolean equals(JsonNode v1, JsonNode v2) {
     boolean result;
     if (v1.isNumber() && v2.isNumber()) {
       // unfortunately, comparison of numeric nodes in Jackson is
@@ -20,12 +24,11 @@ public class EqualsComparison extends AbstractOperator {
 
       if (v1.isIntegralNumber() && v2.isIntegralNumber())
         // if both are integers, then compare them as such
-        result = v1.longValue() == v2.longValue();
+        return v1.longValue() == v2.longValue();
       else
-        result = v1.doubleValue() == v2.doubleValue();
+        return v1.doubleValue() == v2.doubleValue();
     } else
-      result = v1.equals(v2);
-    return NodeUtils.toJson(result);
+      return v1.equals(v2);
   }
 
 }

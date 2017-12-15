@@ -129,6 +129,12 @@ public class Parser {
       return new UnequalsComparison(first, second, loc);
     else if (comp.kind == JstlParserConstants.BIGOREQ)
       return new BiggerOrEqualComparison(first, second, loc);
+    else if (comp.kind == JstlParserConstants.BIGGER)
+      return new BiggerComparison(first, second, loc);
+    else if (comp.kind == JstlParserConstants.SMALLER)
+      return new SmallerComparison(first, second, loc);
+    else if (comp.kind == JstlParserConstants.SMALLOREQ)
+      return new SmallerOrEqualsComparison(first, second, loc);
     else
       throw new RuntimeException("What kind of comparison is this? " + node);
   }
