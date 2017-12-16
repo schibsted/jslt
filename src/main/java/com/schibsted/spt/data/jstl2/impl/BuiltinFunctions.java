@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.LongNode;
 import com.fasterxml.jackson.databind.node.IntNode;
+import com.fasterxml.jackson.databind.node.DoubleNode;
 
 // used for the capture() function
 import org.jcodings.specific.UTF8Encoding;
@@ -40,6 +41,7 @@ public class BuiltinFunctions {
   static {
     functions.put("number", new BuiltinFunctions.Number());
     functions.put("round", new BuiltinFunctions.Round());
+    functions.put("random", new BuiltinFunctions.Random());
     functions.put("string", new BuiltinFunctions.ToString());
     functions.put("test", new BuiltinFunctions.Test());
     functions.put("capture", new BuiltinFunctions.Capture());
@@ -120,6 +122,39 @@ public class BuiltinFunctions {
 
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
       return NodeUtils.number(arguments[0], null);
+    }
+  }
+
+  // ===== ROUND
+
+  public static class Round extends AbstractFunction {
+
+    public Round() {
+      super("round", 1, 1);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      JsonNode number = arguments[0];
+      if (number.isNull())
+        return NullNode.instance;
+      else if (!number.isNumber())
+        throw new JstlException("round() cannot round a non-number: " + number);
+
+      return new LongNode(Math.round(number.doubleValue()));
+    }
+  }
+
+  // ===== RANDOM
+
+  public static class Random extends AbstractFunction {
+    private static java.util.Random random = new java.util.Random();
+
+    public Random() {
+      super("random", 0, 0);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      return new DoubleNode(random.nextDouble());
     }
   }
 
@@ -360,25 +395,6 @@ public class BuiltinFunctions {
         buf.append(NodeUtils.toString(array.get(ix), false));
       }
       return new TextNode(buf.toString());
-    }
-  }
-
-  // ===== ROUND
-
-  public static class Round extends AbstractFunction {
-
-    public Round() {
-      super("round", 1, 1);
-    }
-
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      JsonNode number = arguments[0];
-      if (number.isNull())
-        return NullNode.instance;
-      else if (!number.isNumber())
-        throw new JstlException("round() cannot round a non-number: " + number);
-
-      return new LongNode(Math.round(number.doubleValue()));
     }
   }
 

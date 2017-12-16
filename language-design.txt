@@ -120,7 +120,7 @@ OK  is-number()
 OK  round()
     floor()
     ceiling()
-    random()             <- random number 0.0 - 1.0
+OK  random()             <- random number 0.0 - 1.0
 
     boolean(.)
     is-boolean()

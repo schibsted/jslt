@@ -18,7 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * Utilities for test cases.
  */
 public class TestBase {
-  private static ObjectMapper mapper = new ObjectMapper();
+  static ObjectMapper mapper = new ObjectMapper();
 
   Map<String, JsonNode> makeVars(String var, String val) {
     try {

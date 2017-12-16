@@ -97,6 +97,26 @@ public class FunctionTest extends TestBase {
     check("{}", "round(null)", "null");
   }
 
+  // ===== RANDOM
+
+  @Test
+  public void testRandom() {
+    try {
+      JsonNode context = mapper.readTree("{}");
+
+      Expression expr = Parser.compile("random()");
+
+      for (int ix = 0; ix < 10; ix++) {
+        JsonNode actual = expr.apply(context);
+        assertTrue(actual.isNumber());
+        double value = actual.doubleValue();
+        assertTrue(value > 0.0 && value < 1.0);
+      }
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
   // ===== TEST
 
   @Test
