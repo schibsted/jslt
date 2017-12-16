@@ -50,6 +50,7 @@ public class BuiltinFunctions {
     functions.put("is-object", new BuiltinFunctions.IsObject());
     functions.put("is-array", new BuiltinFunctions.IsArray());
     functions.put("is-string", new BuiltinFunctions.IsString());
+    functions.put("is-number", new BuiltinFunctions.IsNumber());
     functions.put("starts-with", new BuiltinFunctions.StartsWith());
     functions.put("ends-with", new BuiltinFunctions.EndsWith());
     functions.put("contains", new BuiltinFunctions.Contains());
@@ -447,6 +448,19 @@ public class BuiltinFunctions {
 
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
       return NodeUtils.toJson(arguments[0].isTextual());
+    }
+  }
+
+  // ===== IS-NUMBER
+
+  public static class IsNumber extends AbstractFunction {
+
+    public IsNumber() {
+      super("is-number", 1, 1);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      return NodeUtils.toJson(arguments[0].isNumber());
     }
   }
 }

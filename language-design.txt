@@ -114,7 +114,7 @@ OK  is-array()
 OK  is-object()
 
 OK  string(.)
-    is-string()
+OK  is-string()
 
 OK  number(.)
     is-number()

@@ -257,6 +257,23 @@ public class FunctionTest extends TestBase {
     check("{}", "is-string(.)", "false");
   }
 
+  // ===== IS-STRING
+
+  @Test
+  public void testIsNumberInteger() {
+    check("{}", "is-number(232)", "true");
+  }
+
+  @Test
+  public void testIsNumberDecimal() {
+    check("{}", "is-number(232.0)", "true");
+  }
+
+  @Test
+  public void testIsNumberFalse() {
+    check("{}", "is-number(.)", "false");
+  }
+
   // ===== LOWERCASE
 
   @Test
