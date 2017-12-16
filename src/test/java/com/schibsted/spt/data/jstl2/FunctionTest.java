@@ -245,6 +245,18 @@ public class FunctionTest extends TestBase {
     check("{}", "is-array(.)", "false");
   }
 
+  // ===== IS-STRING
+
+  @Test
+  public void testIsStringTrue() {
+    check("{}", "is-string(\"[1,2,3]\")", "true");
+  }
+
+  @Test
+  public void testIsStringFalse() {
+    check("{}", "is-string(.)", "false");
+  }
+
   // ===== LOWERCASE
 
   @Test

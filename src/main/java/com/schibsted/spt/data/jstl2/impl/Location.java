@@ -6,7 +6,7 @@ package com.schibsted.spt.data.jstl2.impl;
  * messages.
  */
 public class Location {
-  private String source;
+  private String source; // can be null, if we don't know
   private int line;
   private int column;
 
@@ -17,6 +17,9 @@ public class Location {
   }
 
   public String toString() {
-    return source + ':' + line + ':' + column;
+    if (source != null)
+      return source + ':' + line + ':' + column;
+    else
+      return "" + line + ':' + column;
   }
 }

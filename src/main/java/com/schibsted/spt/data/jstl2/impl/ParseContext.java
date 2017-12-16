@@ -13,7 +13,11 @@ import com.schibsted.spt.data.jstl2.Function;
  */
 public class ParseContext {
   private Map<String, Function> functions;
-  private String source; // what file/resource are we parsing?
+  /**
+   * What file/resource are we parsing? Can be null, in cases where we
+   * don't have this information.
+   */
+  private String source;
 
   public ParseContext(Collection<Function> extensions, String source) {
     this.functions = new HashMap();

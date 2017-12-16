@@ -49,6 +49,7 @@ public class BuiltinFunctions {
     functions.put("not", new BuiltinFunctions.Not());
     functions.put("is-object", new BuiltinFunctions.IsObject());
     functions.put("is-array", new BuiltinFunctions.IsArray());
+    functions.put("is-string", new BuiltinFunctions.IsString());
     functions.put("starts-with", new BuiltinFunctions.StartsWith());
     functions.put("ends-with", new BuiltinFunctions.EndsWith());
     functions.put("contains", new BuiltinFunctions.Contains());
@@ -420,7 +421,7 @@ public class BuiltinFunctions {
     }
   }
 
-  // ===== SIZE
+  // ===== STRING
 
   public static class ToString extends AbstractFunction {
 
@@ -433,6 +434,19 @@ public class BuiltinFunctions {
         return arguments[0];
       else
         return new TextNode(arguments[0].toString());
+    }
+  }
+
+  // ===== IS-STRING
+
+  public static class IsString extends AbstractFunction {
+
+    public IsString() {
+      super("is-string", 1, 1);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      return NodeUtils.toJson(arguments[0].isTextual());
     }
   }
 }

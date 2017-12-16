@@ -43,7 +43,7 @@ public class Parser {
 
   public static Expression compile(Collection<Function> functions,
                                    String jstl) {
-    ParseContext ctx = new ParseContext(functions, "<unknown>");
+    ParseContext ctx = new ParseContext(functions, null);
     return compile(ctx, new JstlParser(new StringReader(jstl)));
   }
 
@@ -288,7 +288,7 @@ public class Parser {
         // it could still be a macro
         Macro mac = ctx.getMacro(token.image);
         if (mac == null)
-          throw new JstlException("No such function: '" + token.image + "'");
+          throw new JstlException("No such function: '" + token.image + "'", loc);
         start = new MacroExpression(mac, children2Exprs(ctx, fnode), loc);
       } else
         start = new FunctionExpression(func, children2Exprs(ctx, fnode), loc);

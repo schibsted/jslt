@@ -85,13 +85,15 @@ how strict should we be on type errors?
   [1,2,3] + {...} -> error
 
 support 'for' loops over objects? {"key" : ..., "value" : ...}
-
 how to support?
   .object."spt:custom" | with_entries(.key |= "spt:custom_" + .)
 
   {for (.object."spt:custom")
     "spt:custom_" + .key : .value
    if ()}
+
+for loops: when iteration produces null, should it be added to the
+  array?
 
 how do {} and [] convert to strings?
 
@@ -108,37 +110,38 @@ contains() vs 'in'?
 
 ----- FUNCTION LIBRARY
 
-is-array()
-is-object()
+OK  is-array()
+OK  is-object()
 
-string(.)
-is-string()
+OK  string(.)
+    is-string()
 
-number(.)
-is-number()
-round()
-floor()
-ceiling()
-random()             <- random number 0.0 - 1.0
+OK  number(.)
+    is-number()
+OK  round()
+    floor()
+    ceiling()
+    random()             <- random number 0.0 - 1.0
 
-boolean(.)
-is-boolean()
-not(.)
+    boolean(.)
+    is-boolean()
+OK  not(.)
 
-test(., regexp)
-match(., regexp)    ?
-capture(., regexp)
-split(., splitter)
-join(., joiner)
-starts-with()
-ends-with()
-lowercase()
-uppercase()
+OK  test(., regexp)
+    match(., regexp)    ?
+OK  capture(., regexp)
+OK  split(., splitter)
+OK  join(., joiner)
+OK  starts-with()
+OK  ends-with()
+OK  lowercase()
+    uppercase()
 
-size(.)              <- string, object, array
-parse-json(.)        <- parses json argument
-to-json(.)           <- serialize to json
-items(.)             <- turn {} into [{"key":, "value":}] ?
+OK  fallback(...)
+OK  size(.)              <- string, object, array
+    parse-json(.)        <- parses json argument
+    to-json(.)           <- serialize to json
+    items(.)             <- turn {} into [{"key":, "value":}] ?
 
 === POTENTIALS
 
