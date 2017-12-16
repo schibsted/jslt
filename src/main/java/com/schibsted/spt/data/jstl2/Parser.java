@@ -429,6 +429,10 @@ public class Parser {
   private static char interpretHexDigit(char digit) {
     if (digit >= '0' && digit <= '9')
       return (char) (digit - '0');
+    else if (digit >= 'A' && digit <= 'F')
+      return (char) ((digit - 'A') + 10);
+    else if (digit >= 'a' && digit <= 'f')
+      return (char) ((digit - 'a') + 10);
 
     throw new JstlException("Bad Unicode escape hex digit: '" + digit + "'");
   }

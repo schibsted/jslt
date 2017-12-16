@@ -177,6 +177,16 @@ public class JsonParseTest {
     check("\"\\u0061\"");
   }
 
+  @Test
+  public void testUnicodeEscapeLowerCase() {
+    check("\"\\u00ff\"");
+  }
+
+  @Test
+  public void testUnicodeEscapeUpperCase() {
+    check("\"\\u00FF\"");
+  }
+
   private void check(String json) {
     try {
       Expression expr = Parser.compile(json);
