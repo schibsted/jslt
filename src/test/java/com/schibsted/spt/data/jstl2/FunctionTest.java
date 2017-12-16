@@ -65,6 +65,38 @@ public class FunctionTest extends TestBase {
     check("{}", "number({})", "null");
   }
 
+  // ===== ROUND
+
+  @Test
+  public void testRoundWrongType() {
+    error("round([1,2,3,4])", "number");
+  }
+
+  @Test
+  public void testRoundInteger() {
+    check("{}", "round(42)", "42");
+  }
+
+  @Test
+  public void testRoundDouble() {
+    check("{}", "round(42.0)", "42");
+  }
+
+  @Test
+  public void testRoundDown() {
+    check("{}", "round(42.4)", "42");
+  }
+
+  @Test
+  public void testRoundUp() {
+    check("{}", "round(42.5)", "43");
+  }
+
+  @Test
+  public void testRoundNull() {
+    check("{}", "round(null)", "null");
+  }
+
   // ===== TEST
 
   @Test

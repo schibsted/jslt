@@ -372,9 +372,11 @@ public class BuiltinFunctions {
     }
 
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      JsonNode number = NodeUtils.number(arguments[0], null);
+      JsonNode number = arguments[0];
       if (number.isNull())
         return NullNode.instance;
+      else if (!number.isNumber())
+        throw new JstlException("round() cannot round a non-number: " + number);
 
       return new LongNode(Math.round(number.doubleValue()));
     }

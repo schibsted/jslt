@@ -142,7 +142,9 @@ OK  size(.)              <- string, object, array
 
 === POTENTIALS
 
-items(.)             <- turn {} into [{"key":, "value":}] ?
+filter(seq, func)    <- macro to filter a sequence
+array(.)             <- turn {} into [{"key":, "value":}] ?
+object(.)            <- reverse: turn [{"key":, "value":}] into {...}
 match(., regexp)
 normalize-whitespace
 format("...${ jstl expr }...")
