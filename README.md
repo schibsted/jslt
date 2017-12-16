@@ -8,7 +8,12 @@ language in one. The language design is inspired by
 [XPath](https://www.w3.org/TR/1999/REC-xpath-19991116/), and
 [XQuery](https://en.wikipedia.org/wiki/XQuery).
 
-This has the following benefits:
+JSTL 2.0 can be used as:
+ * a query language to extract values from JSON (`.provider.id`),
+ * a filter/check language to test JSON objects (`starts-with(.provider.id, "sdrn:")`) ,
+ * a transformation language to convert between JSON formats.
+
+The new language has the following benefits over JSTL 1.0:
  * better handling of missing data,
  * no more ugly `${ ... }` wrappers around the jq queries,
  * much faster implementation,
