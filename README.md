@@ -63,15 +63,17 @@ and works. A performance test on 89,100 Pulse events ran the old JSTL
 
 ## What is missing
 
-The following is still missing:
+Needs to be fixed before we start using it for real:
+  * Fix the syntax ambiguity problem with `let`.
+
+Needs to be done before too long:
   * `contains` should support strings and objects. (Maybe replace with
     `in` operator?)
   * The rest of the function library (not 100% designed yet).
-  * Fix the syntax ambiguity problem with `let`.
   * More detailed definition of language semantics, especially error
     situations.
   * Adding all the object matcher tests from 1.0.
-  * Documentation.
+  * Documentation: complete tutorial + function library doc.
   * Optimizations: complete constant folding.
   * Many more tests.
 
