@@ -567,29 +567,6 @@ public class QueryTest extends TestBase {
   }
 
   @Test
-  public void testForLoop() {
-    check("[\"1\", \"2\", \"3\"]", "for (.) number(.)", "[1,2,3]");
-  }
-
-  @Test
-  public void testForLoopEmpty() {
-    check("[]", "for (.) number(.)", "[]");
-  }
-
-  @Test
-  public void testForLoopNull() {
-    check("[]", "for (null) number(.)", "null");
-  }
-
-  @Test
-  public void testForOnFunctionMapObject() {
-    check("[]",
-          "for (split(\"1,2,3,4\", \",\")) { "+
-          "  \"number\" : number(.) " +
-          "}", "[{\"number\":1},{\"number\":2},{\"number\":3},{\"number\":4}]");
-  }
-
-  @Test
   public void testOrTrue() {
     check("{\"foo\" : \"bar\"}",
           ".foo or true",
@@ -664,5 +641,43 @@ public class QueryTest extends TestBase {
     check("{\"foo\" : \"bar\"}",
           ".foo and true and 22",
           "true");
+  }
+
+  // ===== FOR LOOPS
+
+  @Test
+  public void testForLoop() {
+    check("[\"1\", \"2\", \"3\"]", "for (.) number(.)", "[1,2,3]");
+  }
+
+  @Test
+  public void testForLoopEmpty() {
+    check("[]", "for (.) number(.)", "[]");
+  }
+
+  @Test
+  public void testForLoopNull() {
+    check("[]", "for (null) number(.)", "null");
+  }
+
+  @Test
+  public void testForLoopNotSequence() {
+    error("for (32323) number(.)", "loop");
+  }
+
+  @Test
+  public void testForOnFunctionMapObject() {
+    check("[]",
+          "for (split(\"1,2,3,4\", \",\")) { "+
+          "  \"number\" : number(.) " +
+          "}", "[{\"number\":1},{\"number\":2},{\"number\":3},{\"number\":4}]");
+  }
+
+  @Test
+  public void testForOnObject() {
+    check("{\"foo\":1,\"bar\":2}",
+          "for (.) .",
+          "[{\"key\" : \"foo\", \"value\" : 1}, " +
+          " {\"key\" : \"bar\", \"value\" : 2}]");
   }
 }

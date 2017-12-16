@@ -84,7 +84,6 @@ how strict should we be on type errors?
   5 + false       -> error
   [1,2,3] + {...} -> error
 
-support 'for' loops over objects? {"key" : ..., "value" : ...}
 how to support?
   .object."spt:custom" | with_entries(.key |= "spt:custom_" + .)
 
@@ -117,7 +116,7 @@ OK  string(.)
 OK  is-string()
 
 OK  number(.)
-    is-number()
+OK  is-number()
 OK  round()
     floor()
     ceiling()
@@ -128,7 +127,6 @@ OK  round()
 OK  not(.)
 
 OK  test(., regexp)
-    match(., regexp)    ?
 OK  capture(., regexp)
 OK  split(., splitter)
 OK  join(., joiner)
@@ -141,14 +139,15 @@ OK  fallback(...)
 OK  size(.)              <- string, object, array
     parse-json(.)        <- parses json argument
     to-json(.)           <- serialize to json
-    items(.)             <- turn {} into [{"key":, "value":}] ?
 
 === POTENTIALS
 
+items(.)             <- turn {} into [{"key":, "value":}] ?
+match(., regexp)
 normalize-whitespace
 format("...${ jstl expr }...")
 
-=== AREAS TO COVER
+=== AREAS NOT DESIGNED YET
 
 datetime parsing
 
