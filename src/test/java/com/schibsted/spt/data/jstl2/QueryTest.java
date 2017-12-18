@@ -708,6 +708,13 @@ public class QueryTest extends TestBase {
   }
 
   @Test
+  public void testObjectForObjectFiltering() {
+    check("{\"foo\" : 22, \"bar\": 2}",
+          "{for (.) .key : if (.value > 10) .value}",
+          "{\"foo\" : 22}");
+  }
+
+  @Test
   public void testObjectForKeyExpr() {
     check("{\"foo\" : 22}",
           "{for (.) \"prefix\" + .key : .value}",

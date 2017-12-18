@@ -45,7 +45,8 @@ public class ObjectComprehension extends AbstractNode {
       if (!keyNode.isTextual())
         throw new JstlException("Object comprehension must have string as key, not " + keyNode, location);
       JsonNode valueNode = value.apply(scope, context);
-      object.set(keyNode.asText(), valueNode);
+      if (NodeUtils.isValue(valueNode))
+        object.set(keyNode.asText(), valueNode);
     }
     return object;
   }
