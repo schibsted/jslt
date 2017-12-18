@@ -32,6 +32,8 @@ The new language has the following benefits over JSTL 1.0:
 
 [**Language tutorial**](tutorial.md).
 
+[**Function documentation**](functions.md).
+
 ## Status
 
 This is still *very* much a work in progress. In fact, it's nothing

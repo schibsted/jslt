@@ -39,24 +39,35 @@ public class BuiltinFunctions {
   // relationship between compile-time and run-time context first.
   public static Map<String, Function> functions = new HashMap();
   static {
+    // GENERAL
+    functions.put("contains", new BuiltinFunctions.Contains());
+    functions.put("size", new BuiltinFunctions.Size());
+
+    // NUMERIC
+    functions.put("is-number", new BuiltinFunctions.IsNumber());
     functions.put("number", new BuiltinFunctions.Number());
     functions.put("round", new BuiltinFunctions.Round());
     functions.put("random", new BuiltinFunctions.Random());
+
+    // STRING
+    functions.put("is-string", new BuiltinFunctions.IsString());
     functions.put("string", new BuiltinFunctions.ToString());
     functions.put("test", new BuiltinFunctions.Test());
     functions.put("capture", new BuiltinFunctions.Capture());
     functions.put("split", new BuiltinFunctions.Split());
     functions.put("join", new BuiltinFunctions.Join());
     functions.put("lowercase", new BuiltinFunctions.Lowercase());
-    functions.put("not", new BuiltinFunctions.Not());
-    functions.put("is-object", new BuiltinFunctions.IsObject());
-    functions.put("is-array", new BuiltinFunctions.IsArray());
-    functions.put("is-string", new BuiltinFunctions.IsString());
-    functions.put("is-number", new BuiltinFunctions.IsNumber());
     functions.put("starts-with", new BuiltinFunctions.StartsWith());
     functions.put("ends-with", new BuiltinFunctions.EndsWith());
-    functions.put("contains", new BuiltinFunctions.Contains());
-    functions.put("size", new BuiltinFunctions.Size());
+
+    // BOOLEAN
+    functions.put("not", new BuiltinFunctions.Not());
+
+    // OBJECT
+    functions.put("is-object", new BuiltinFunctions.IsObject());
+
+    // ARRAY
+    functions.put("is-array", new BuiltinFunctions.IsArray());
   }
 
   public static Map<String, Macro> macros = new HashMap();

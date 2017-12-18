@@ -79,6 +79,8 @@ which would then produce:
 }
 ```
 
+The full set of functions is documented on [another page](functions.md).
+
 ## For expressions
 
 The `for` expression lets you transform an array. The syntax is
