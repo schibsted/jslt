@@ -399,6 +399,26 @@ public class FunctionTest extends TestBase {
     check("{}", "contains(\"Taip\", [\"foo\", \"Taip\", \"halp\"])", "true");
   }
 
+  @Test
+  public void testContainsStringTrue() {
+    check("{}", "contains(\"Taip\", \"StringWithTaip\")", "true");
+  }
+
+  @Test
+  public void testContainsStringFalse() {
+    check("{}", "contains(\"Taip\", \"StringWithType\")", "false");
+  }
+
+  @Test
+  public void testContainsStringNull() {
+    check("{}", "contains(null, \"StringnullWithType\")", "false");
+  }
+
+  @Test
+  public void testContainsBadType() {
+    error("contains(123, false)", "false");
+  }
+
   // ===== SIZE
 
   @Test

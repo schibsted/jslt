@@ -67,7 +67,7 @@ Needs to be fixed before we start using it for real:
   * Fix the syntax ambiguity problem with `let`.
 
 Needs to be done before too long:
-  * `contains` should support strings and objects. (Maybe replace with
+  * `contains` should support objects. (Maybe replace with
     `in` operator?)
   * The rest of the function library (not 100% designed yet).
   * More detailed definition of language semantics, especially error

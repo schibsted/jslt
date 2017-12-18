@@ -407,12 +407,22 @@ public class BuiltinFunctions {
     }
 
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      if (!arguments[1].isArray())
-        throw new JstlException("contains cannot work on " + arguments[1]);
+      if (arguments[1].isArray()) {
+        for (int ix = 0; ix < arguments[1].size(); ix++)
+          if (arguments[1].get(ix).equals(arguments[0]))
+            return BooleanNode.TRUE;
 
-      for (int ix = 0; ix < arguments[1].size(); ix++)
-        if (arguments[1].get(ix).equals(arguments[0]))
-          return BooleanNode.TRUE;
+      } else if (arguments[1].isTextual()) {
+        String sub = NodeUtils.toString(arguments[0], true);
+        if (sub == null)
+          return BooleanNode.FALSE;
+
+        String str = arguments[1].asText();
+        return NodeUtils.toJson(str.indexOf(sub) != -1);
+
+      } else
+        throw new JstlException("Contains cannot operate on " + arguments[1]);
+
       return BooleanNode.FALSE;
     }
   }
