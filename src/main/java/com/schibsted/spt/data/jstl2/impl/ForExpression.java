@@ -1,13 +1,9 @@
 
 package com.schibsted.spt.data.jstl2.impl;
 
-import java.util.Map;
-import java.util.Iterator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.schibsted.spt.data.jstl2.JstlException;
 import com.schibsted.spt.data.jstl2.impl.vm.Jump;
 import com.schibsted.spt.data.jstl2.impl.vm.Compiler;
@@ -29,7 +25,7 @@ public class ForExpression extends AbstractNode {
     if (array.isNull())
       return NullNode.instance;
     else if (array.isObject())
-      array = convertObjectToArray(array);
+      array = NodeUtils.convertObjectToArray(array);
     else if (!array.isArray())
       throw new JstlException("For loop can't iterate over " + array, location);
 
@@ -77,18 +73,5 @@ public class ForExpression extends AbstractNode {
     valueExpr.dump(level + 1);
     System.out.println(NodeUtils.indent(level) + ")");
     loopExpr.dump(level + 1);
-  }
-
-  private ArrayNode convertObjectToArray(JsonNode object) {
-    ArrayNode array = NodeUtils.mapper.createArrayNode();
-    Iterator<Map.Entry<String, JsonNode>> it = object.fields();
-    while (it.hasNext()) {
-      Map.Entry<String, JsonNode> item = it.next();
-      ObjectNode element = NodeUtils.mapper.createObjectNode();
-      element.set("key", new TextNode(item.getKey()));
-      element.set("value", item.getValue());
-      array.add(element);
-    }
-    return array;
   }
 }

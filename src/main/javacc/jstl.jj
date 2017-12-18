@@ -145,10 +145,11 @@ void MultiplicativeOperator() :
 void BaseExpr() :
 {}
 {
-  (<NULL> | <INTEGER> | <DECIMAL> | <STRING> | <TRUE> | <FALSE> |
+  (LOOKAHEAD(2)
+   <NULL> | <INTEGER> | <DECIMAL> | <STRING> | <TRUE> | <FALSE> |
    Chainable() | Parenthesis() |
    IfStatement() | For() |
-   Array() | Object()
+   Array() | (LOOKAHEAD(2)  Object() | ObjectComprehension())
   )
 }
 
@@ -218,6 +219,16 @@ void Pair() :
 {
   <STRING> <COLON> Expr()
   (<COMMA> (Pair() | Matcher()))?
+}
+
+void ObjectComprehension() :
+{}
+{
+  <LCURLY>
+    <FOR> <LPAREN> Expr() <RPAREN>
+      (Let())*
+      Expr() <COLON> Expr()
+  <RCURLY>
 }
 
 void IfStatement() :

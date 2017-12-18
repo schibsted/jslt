@@ -680,4 +680,43 @@ public class QueryTest extends TestBase {
           "[{\"key\" : \"foo\", \"value\" : 1}, " +
           " {\"key\" : \"bar\", \"value\" : 2}]");
   }
+
+  // ===== OBJECT COMPREHENSION
+
+  @Test
+  public void testObjectForEmpty() {
+    check("[]", "{for (.) .key : .value}", "{}");
+  }
+
+  @Test
+  public void testObjectForNull() {
+    check("{}", "{for (.foo) .key : .value}", "null");
+  }
+
+  @Test
+  public void testObjectForBasic() {
+    check("[{\"key\" : \"foo\", \"value\" : 22}]",
+          "{for (.) .key : .value}",
+          "{\"foo\" : 22}");
+  }
+
+  @Test
+  public void testObjectForObject() {
+    check("{\"foo\" : 22}",
+          "{for (.) .key : .value}",
+          "{\"foo\" : 22}");
+  }
+
+  @Test
+  public void testObjectForKeyExpr() {
+    check("{\"foo\" : 22}",
+          "{for (.) \"prefix\" + .key : .value}",
+          "{\"prefixfoo\" : 22}");
+  }
+
+  @Test
+  public void testObjectForBadKeyType() {
+    error("{for ({\"foo\":22}) .value : .key}",
+          "string");
+  }
 }

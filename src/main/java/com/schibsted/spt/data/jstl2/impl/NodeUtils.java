@@ -1,6 +1,8 @@
 
 package com.schibsted.spt.data.jstl2.impl;
 
+import java.util.Map;
+import java.util.Iterator;
 import java.util.Collections;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.IntNode;
@@ -8,6 +10,8 @@ import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.DoubleNode;
+import com.fasterxml.jackson.databind.node.TextNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.schibsted.spt.data.jstl2.JstlException;
 
@@ -98,6 +102,19 @@ public class NodeUtils {
       throw new JstlException("number(" + number + ") failed: not a number",
                               loc);
     }
+  }
+
+  public static ArrayNode convertObjectToArray(JsonNode object) {
+    ArrayNode array = mapper.createArrayNode();
+    Iterator<Map.Entry<String, JsonNode>> it = object.fields();
+    while (it.hasNext()) {
+      Map.Entry<String, JsonNode> item = it.next();
+      ObjectNode element = NodeUtils.mapper.createObjectNode();
+      element.set("key", new TextNode(item.getKey()));
+      element.set("value", item.getValue());
+      array.add(element);
+    }
+    return array;
   }
 
   public static String indent(int level) {

@@ -249,10 +249,14 @@ public class Parser {
     } else if (kind == JstlParserConstants.LBRACKET)
       return new ArrayExpression(children2Exprs(ctx, node), loc);
 
-    else if (kind == JstlParserConstants.LCURLY)
-      return buildObject(ctx, node);
+    else if (kind == JstlParserConstants.LCURLY) {
+      Token next = token.next;
+      if (next.kind == JstlParserConstants.FOR)
+        return buildObjectComprehension(ctx, node);
+      else
+        return buildObject(ctx, node);
 
-    else if (kind == JstlParserConstants.LPAREN) {
+    } else if (kind == JstlParserConstants.LPAREN) {
       // we don't need a node for the parentheses - so just build the
       // child as a single node and use that instead
       SimpleNode parens = descendTo(node, JstlParserTreeConstants.JJTPARENTHESIS);
@@ -532,6 +536,16 @@ public class Parser {
     } else
       // has to be a matcher, so we're done
       return new ArrayList();
+  }
+
+  private static ObjectComprehension buildObjectComprehension(ParseContext ctx, SimpleNode node) {
+    // children: loop-expr let* key-expr value-expr
+    ExpressionNode loopExpr = node2expr(ctx, getChild(node, 0));
+    int ix = node.jjtGetNumChildren() - 2;
+    ExpressionNode keyExpr = node2expr(ctx, getChild(node, ix));
+    ExpressionNode valueExpr = node2expr(ctx, getLastChild(node));
+    return new ObjectComprehension(loopExpr, keyExpr, valueExpr,
+                                   makeLocation(ctx, node));
   }
 
   private static SimpleNode getChild(SimpleNode node, int ix) {
