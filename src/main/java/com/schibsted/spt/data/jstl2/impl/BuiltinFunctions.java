@@ -57,6 +57,7 @@ public class BuiltinFunctions {
     functions.put("split", new BuiltinFunctions.Split());
     functions.put("join", new BuiltinFunctions.Join());
     functions.put("lowercase", new BuiltinFunctions.Lowercase());
+    functions.put("uppercase", new BuiltinFunctions.Uppercase());
     functions.put("starts-with", new BuiltinFunctions.StartsWith());
     functions.put("ends-with", new BuiltinFunctions.EndsWith());
 
@@ -289,6 +290,24 @@ public class BuiltinFunctions {
 
       String string = NodeUtils.toString(arguments[0], false);
       return new TextNode(string.toLowerCase());
+    }
+  }
+
+  // ===== UPPERCASE
+
+  public static class Uppercase extends AbstractFunction {
+
+    public Uppercase() {
+      super("uppercase", 1, 1);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      // if input string is missing then we're doing nothing
+      if (arguments[0].isNull())
+        return arguments[0]; // null
+
+      String string = NodeUtils.toString(arguments[0], false);
+      return new TextNode(string.toUpperCase());
     }
   }
 

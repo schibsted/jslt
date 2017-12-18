@@ -343,6 +343,23 @@ public class FunctionTest extends TestBase {
     check("{}", "lowercase(null)", "null");
   }
 
+  // ===== UPPERCASE
+
+  @Test
+  public void testUppercaseString() {
+    check("{}", "uppercase(\"foo\")", "\"FOO\"");
+  }
+
+  @Test
+  public void testUppercaseNumber() {
+    check("{}", "uppercase(22)", "\"22\"");
+  }
+
+  @Test
+  public void testUppercaseNull() {
+    check("{}", "uppercase(null)", "null");
+  }
+
   // ===== STARTS-WITH
 
   @Test

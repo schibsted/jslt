@@ -133,7 +133,7 @@ OK  join(., joiner)
 OK  starts-with()
 OK  ends-with()
 OK  lowercase()
-    uppercase()
+OK  uppercase()
 
 OK  fallback(...)
 OK  size(.)              <- string, object, array
