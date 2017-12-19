@@ -482,6 +482,13 @@ public class BuiltinFunctions {
           if (arguments[1].get(ix).equals(arguments[0]))
             return BooleanNode.TRUE;
 
+      } else if (arguments[1].isObject()) {
+        String key = NodeUtils.toString(arguments[0], true);
+        if (key == null)
+          return BooleanNode.FALSE;
+
+        return NodeUtils.toJson(arguments[1].has(key));
+
       } else if (arguments[1].isTextual()) {
         String sub = NodeUtils.toString(arguments[0], true);
         if (sub == null)

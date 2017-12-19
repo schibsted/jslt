@@ -496,6 +496,26 @@ public class FunctionTest extends TestBase {
   }
 
   @Test
+  public void testContainsObjectTrue() {
+    check("{}", "contains(\"Taip\", {\"Taip\" : 44})", "true");
+  }
+
+  @Test
+  public void testContainsObjectFalse() {
+    check("{}", "contains(\"Taip\", {\"Type\" : 44})", "false");
+  }
+
+  @Test // FIXME: not 100% sure about this
+  public void testContainsObjectNonstring() {
+    check("{}", "contains(42, {\"Taip\" : 44})", "false");
+  }
+
+  @Test
+  public void testContainsObjectNull() {
+    check("{}", "contains(null, {})", "false");
+  }
+
+  @Test
   public void testContainsBadType() {
     error("contains(123, false)", "false");
   }
