@@ -48,6 +48,7 @@ public class BuiltinFunctions {
     functions.put("number", new BuiltinFunctions.Number());
     functions.put("round", new BuiltinFunctions.Round());
     functions.put("floor", new BuiltinFunctions.Floor());
+    functions.put("ceiling", new BuiltinFunctions.Ceiling());
     functions.put("random", new BuiltinFunctions.Random());
 
     // STRING
@@ -173,6 +174,25 @@ public class BuiltinFunctions {
         throw new JstlException("floor() cannot round a non-number: " + number);
 
       return new LongNode((long) Math.floor(number.doubleValue()));
+    }
+  }
+
+  // ===== CEILING
+
+  public static class Ceiling extends AbstractFunction {
+
+    public Ceiling() {
+      super("ceiling", 1, 1);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      JsonNode number = arguments[0];
+      if (number.isNull())
+        return NullNode.instance;
+      else if (!number.isNumber())
+        throw new JstlException("ceiling() cannot round a non-number: " + number);
+
+      return new LongNode((long) Math.ceil(number.doubleValue()));
     }
   }
 

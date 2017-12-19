@@ -97,6 +97,38 @@ public class FunctionTest extends TestBase {
     check("{}", "round(null)", "null");
   }
 
+  // ===== CEILING
+
+  @Test
+  public void testCeilingWrongType() {
+    error("ceiling([1,2,3,4])", "number");
+  }
+
+  @Test
+  public void testCeilingInteger() {
+    check("{}", "ceiling(42)", "42");
+  }
+
+  @Test
+  public void testCeilingDouble() {
+    check("{}", "ceiling(42.0)", "42");
+  }
+
+  @Test
+  public void testCeilingDown() {
+    check("{}", "ceiling(42.4)", "43");
+  }
+
+  @Test
+  public void testCeilingUp() {
+    check("{}", "ceiling(42.5)", "43");
+  }
+
+  @Test
+  public void testCeilingNull() {
+    check("{}", "ceiling(null)", "null");
+  }
+
   // ===== FLOOR
 
   @Test

@@ -119,7 +119,7 @@ OK  number(.)
 OK  is-number()
 OK  round()
 OK  floor()
-    ceiling()
+OK  ceiling()
 OK  random()             <- random number 0.0 - 1.0
 
     boolean(.)
