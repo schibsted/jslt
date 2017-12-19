@@ -54,7 +54,7 @@ What is working:
  * Boolean operators `and` and `or`.
  * The `number`, `round`, `fallback`, `not`, `test`, `capture`, `split`, `join`,
    `is-array`, `is-object`, `starts-with`, `ends-with`, `contains`, `size`,
-   `lowercase`, `uppercase`, `string`, `is-string`, `is-number`, and
+   `lowercase`, `uppercase`, `string`, `is-string`, `is-number`, `floor` and
    `random` functions.
  * `(` Parenthetical expressions `)`.
  * Array and string indexing and slicing.

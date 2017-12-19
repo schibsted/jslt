@@ -97,6 +97,38 @@ public class FunctionTest extends TestBase {
     check("{}", "round(null)", "null");
   }
 
+  // ===== FLOOR
+
+  @Test
+  public void testFloorWrongType() {
+    error("floor([1,2,3,4])", "number");
+  }
+
+  @Test
+  public void testFloorInteger() {
+    check("{}", "floor(42)", "42");
+  }
+
+  @Test
+  public void testFloorDouble() {
+    check("{}", "floor(42.0)", "42");
+  }
+
+  @Test
+  public void testFloorDown() {
+    check("{}", "floor(42.4)", "42");
+  }
+
+  @Test
+  public void testFloorUp() {
+    check("{}", "floor(42.5)", "42");
+  }
+
+  @Test
+  public void testFloorNull() {
+    check("{}", "floor(null)", "null");
+  }
+
   // ===== RANDOM
 
   @Test

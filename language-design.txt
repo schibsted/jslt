@@ -118,7 +118,7 @@ OK  is-string()
 OK  number(.)
 OK  is-number()
 OK  round()
-    floor()
+OK  floor()
     ceiling()
 OK  random()             <- random number 0.0 - 1.0
 
