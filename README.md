@@ -66,16 +66,17 @@ and works. A performance test on 89,100 Pulse events ran the old JSTL
 
 ## What is missing
 
-Needs to be fixed before we start using it for real:
+Things to be done:
   * Fix the syntax ambiguity problem with `let`.
-
-Needs to be done before too long:
   * The rest of the function library (not 100% designed yet).
   * More detailed definition of language semantics, especially error
     situations.
   * Adding all the object matcher tests from 1.0.
   * Documentation: complete tutorial + function library doc.
   * Optimizations: complete constant folding.
+  * Use property-based testing and fuzz testing to harden the parser.
+  * Get rid of the `org.jruby.joni` dependency by instead using
+    [one of these techniques](https://stackoverflow.com/questions/15588903/get-group-names-in-java-regex).
   * Many more tests.
 
 ## Examples of improvements
