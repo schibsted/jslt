@@ -22,7 +22,7 @@ public class DotExpression extends AbstractNode {
   public JsonNode apply(Scope scope, JsonNode input) {
     // if there is no key we just return the input
     if (key == null)
-      return input; // FIXME: should we make a copy?
+      return input;
 
     // if we have a parent, get the input from the parent (preceding expr)
     if (parent != null)

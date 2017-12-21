@@ -148,6 +148,7 @@ object(.)            <- reverse: turn [{"key":, "value":}] into {...}
 match(., regexp)
 normalize-whitespace
 format("...${ jstl expr }...")
+run-template()
 
 === AREAS NOT DESIGNED YET
 

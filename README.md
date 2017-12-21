@@ -64,6 +64,17 @@ What is working:
 and works. A performance test on 89,100 Pulse events ran the old JSTL
 1.0 transform in ~6.3 seconds, and the new JSTL 2.0 in ~0.7 seconds.
 
+## Command-line
+
+To run transforms on the command-line, first build with `./gradlew
+clean shadowJar`. Then you can run with:
+
+```
+java -cp build/libs/*.jar com.schibsted.spt.data.jstl2.JSTL transform.jstl input.json
+```
+
+The result is written to standard out.
+
 ## What is missing
 
 Things to be done:
