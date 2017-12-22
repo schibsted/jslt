@@ -501,6 +501,18 @@ public class QueryTest extends TestBase {
     check("{}", "let foo = (5)\n2", "2");
   }
 
+  // ===== ARRAY INDEXING
+
+  @Test
+  public void testArrayIndexingNull() {
+    check("null", ".[0]", "null");
+  }
+
+  @Test
+  public void testArrayIndexingNullNull() {
+    check("[]", ".[0].bar", "null");
+  }
+
   @Test
   public void testArrayIndexing() {
     check("[1,2,3,4,5]", ".[0]", "1");
@@ -565,6 +577,8 @@ public class QueryTest extends TestBase {
   public void testStringSlicingTooFar() {
     check("\"12345\"", ".[ : 20]", "\"12345\"");
   }
+
+  // ===== ...
 
   @Test
   public void testOrTrue() {

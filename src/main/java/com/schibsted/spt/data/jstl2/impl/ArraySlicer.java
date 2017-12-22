@@ -38,9 +38,12 @@ public class ArraySlicer extends AbstractNode {
 
     int leftix = resolveIndex(scope, left, input, size, 0);
     if (!colon) {
-      if (sequence.isArray())
-        return sequence.get(leftix);
-      else {
+      if (sequence.isArray()) {
+        JsonNode val = sequence.get(leftix);
+        if (val == null)
+          val = NullNode.instance;
+        return val;
+      } else {
         String string = sequence.asText();
         if (leftix >= string.length())
           throw new JstlException("String index out of range: " + leftix, location);
