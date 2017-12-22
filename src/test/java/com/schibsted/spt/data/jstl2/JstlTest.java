@@ -1,7 +1,7 @@
 
 package com.schibsted.spt.data.jstl2;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 public class JstlTest extends TestBase {
     @Test

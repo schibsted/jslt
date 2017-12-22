@@ -18,8 +18,6 @@ buildscript {
     }
   }
   dependencies {
-    classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.2'
-    classpath 'com.kncept.junit5.reporter:junit-reporter:1.0.1'
     classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.5.4"
   }
 }
@@ -29,8 +27,6 @@ plugins {
 }
 
 apply plugin: 'java'
-apply plugin: 'org.junit.platform.gradle.plugin'
-apply plugin: 'com.kncept.junit5.reporter'
 apply plugin: "com.jfrog.artifactory"
 apply plugin: 'maven-publish'
 
@@ -47,8 +43,8 @@ dependencies {
   // can't use it, so we have to depend on this for now (seriously?!?!)
   compile "org.jruby.joni:joni:2.1.11"
 
-  testCompile("org.junit.jupiter:junit-jupiter-api:5.0.2")
-  testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.2")
+
+  testCompile 'junit:junit:4.12'
 }
 
 // stolen from the Schibsted JVM plugin

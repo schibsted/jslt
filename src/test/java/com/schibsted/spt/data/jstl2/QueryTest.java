@@ -2,11 +2,11 @@
 package com.schibsted.spt.data.jstl2;
 
 import java.io.IOException;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Disabled;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.Test;
+import org.junit.Ignore;
+import static org.junit.Assert.fail;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.NullNode;
@@ -51,9 +51,16 @@ public class QueryTest extends TestBase {
     check("{\"foo\" : {\"bar\" : {\"baz\" : 221}}}", ".foo.bar.baz", "221");
   }
 
+  // ===== IF
+
   @Test
   public void testIfNoElse() {
     check("{}", "if (true) 320", "320");
+  }
+
+  @Test
+  public void testIfNoElseFalse() {
+    check("{}", "if (false) 320", "null");
   }
 
   @Test
@@ -70,6 +77,8 @@ public class QueryTest extends TestBase {
   public void testNullIsFalse() {
     check("{}", "if (null) 320 else 240", "240");
   }
+
+  // ===== ...
 
   @Test
   public void testFunctionCall() {
@@ -430,7 +439,7 @@ public class QueryTest extends TestBase {
     error("\"foo\" - 22", "number");
   }
 
-  @Test @Disabled // not sure how to fix this
+  @Test @Ignore // not sure how to fix this
   public void testMinusThree() {
     check("{}", "22 - 18 - 2", "2");
   }
