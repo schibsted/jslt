@@ -109,6 +109,18 @@ contains() vs 'in'?
 
 ----- FUNCTION LIBRARY
 
+NECESSARY CHANGE:
+  type conversion functions: extra, optional default fallback value
+    if fallback: return that
+    if no fallback: error
+
+  parse-json( ... ): same solution: fallback object to which function adds
+    error information. allows client to recognize failed parses without
+    building error handling into the language
+
+  don't actually need parse-json handling for CSP, since filtering failed
+    events is sufficient
+
 OK  is-array()
 OK  is-object()
 
@@ -277,3 +289,20 @@ THE LET ISSUE
     * - "@type", "spt:acceptLanguage", "spt:screenSize", "spt:environmentId",
         "spt:userAgent", "spt:viewportSize", "spt:userId" : .
   },
+
+---------------------------------------------------------------------------
+BUILD ERROR HANDLING INTO LANGUAGE?
+
+try ( <expr> ) else <expr>
+try <expr> else <expr>
+
+try string(.location.accuracy) else null
+try
+  parse-json( .Report )
+else
+  ... how about access to error information here?
+      privileged variable $error?
+      get into exception matching?
+
+only allow function calls inside try/else?
+  how complex can the expression inside try/else be?

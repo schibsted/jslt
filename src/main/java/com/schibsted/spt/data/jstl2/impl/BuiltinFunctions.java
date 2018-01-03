@@ -2,9 +2,12 @@
 package com.schibsted.spt.data.jstl2.impl;
 
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -16,14 +19,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.LongNode;
 import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.DoubleNode;
-
-// used for the capture() function
-import org.jcodings.specific.UTF8Encoding;
-import org.joni.Matcher;
-import org.joni.Option;
-import org.joni.Regex;
-import org.joni.Region;
-import org.joni.NameEntry;
 
 import com.schibsted.spt.data.jstl2.Function;
 import com.schibsted.spt.data.jstl2.JstlException;
@@ -213,7 +208,7 @@ public class BuiltinFunctions {
   // ===== TEST
 
   public static class Test extends AbstractFunction {
-    Map<String, Pattern> cache = new HashMap();
+    static Map<String, Pattern> cache = new HashMap();
 
     public Test() {
       super("test", 2, 2);
@@ -243,11 +238,11 @@ public class BuiltinFunctions {
 
   // believe it or not, but the built-in Java regex library is so
   // incredibly shitty that it doesn't allow you to learn what the
-  // names of the named groups are. so we are using this library,
-  // which does solve that. (lots of swearing omitted.)
+  // names of the named groups are. so we have to use regexps to
+  // parse the regexps. (lots of swearing omitted.)
 
   public static class Capture extends AbstractFunction {
-    Map<String, Regex> cache = new HashMap();
+    static Map<String, JstlPattern> cache = new HashMap();
 
     public Capture() {
       super("capture", 2, 2);
@@ -258,38 +253,62 @@ public class BuiltinFunctions {
       if (arguments[0].isNull())
         return arguments[0]; // null
 
-      byte[] string = NodeUtils.toString(arguments[0], false).getBytes(UTF_8);
+      String string = NodeUtils.toString(arguments[0], false);
       String regexps = NodeUtils.toString(arguments[1], true);
       if (regexps == null)
         throw new JstlException("capture() can't match against null regexp");
-      byte[] regexp = regexps.getBytes(UTF_8);
 
-      Regex regex = cache.get(regexps);
+      JstlPattern regex = cache.get(regexps);
       if (regex == null) {
-        regex = new Regex(regexp, 0, regexp.length, Option.NONE, UTF8Encoding.INSTANCE);
+        regex = new JstlPattern(regexps);
         cache.put(regexps, regex);
       }
 
-      Matcher matcher = regex.matcher(string);
-      int result = matcher.search(0, string.length, Option.DEFAULT);
-
       ObjectNode node = NodeUtils.mapper.createObjectNode();
-
-      if (result != -1) {
-        Region region = matcher.getEagerRegion();
-        for (Iterator<NameEntry> entry = regex.namedBackrefIterator(); entry.hasNext();) {
-          NameEntry e = entry.next();
-          int number = e.getBackRefs()[0]; // can have many refs per name
-          int begin = region.beg[number];
-          int end = region.end[number];
-
-          byte[] name = e.name;
-          node.put(new String(name, e.nameP, e.nameEnd - e.nameP, UTF_8),
-                   new String(string, begin, end - begin, UTF_8));
+      Matcher m = regex.matcher(string);
+      if (m.find()) {
+        for (String group : regex.getGroups()) {
+          try {
+            node.put(group, m.group(group));
+          } catch (IllegalStateException e) {
+            // this group had no match: do nothing
+          }
         }
       }
 
       return node;
+    }
+  }
+
+  // from https://stackoverflow.com/a/15588989/5974641
+  private static class JstlPattern {
+    private Pattern pattern;
+    private Set<String> groups;
+
+    public JstlPattern(String regexp) {
+      this.pattern = Pattern.compile(regexp);
+      this.groups = getNamedGroups(regexp);
+    }
+
+    public Matcher matcher(String input) {
+      return pattern.matcher(input);
+    }
+
+    public Set<String> getGroups() {
+      return groups;
+    }
+
+    private static Pattern extractor =
+      Pattern.compile("\\(\\?<([a-zA-Z][a-zA-Z0-9]*)>");
+
+    private static Set<String> getNamedGroups(String regex) {
+      Set<String> groups = new TreeSet<String>();
+
+      Matcher m = extractor.matcher(regex);
+      while (m.find())
+        groups.add(m.group(1));
+
+      return groups;
     }
   }
 
