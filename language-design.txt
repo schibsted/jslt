@@ -154,6 +154,7 @@ OK  size(.)              <- string, object, array
 
 === POTENTIALS
 
+is-value             <- same as boolean except for 0 and 0.0
 filter(seq, func)    <- macro to filter a sequence
 array(.)             <- turn {} into [{"key":, "value":}] ?
 object(.)            <- reverse: turn [{"key":, "value":}] into {...}

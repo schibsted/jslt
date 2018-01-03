@@ -32,6 +32,7 @@ public class NodeUtils {
       !(value.isObject() && value.size() == 0) &&
       !(value.isTextual() && value.asText().length() == 0) &&
       !(value.isArray() && value.size() == 0) &&
+      !(value.isNumber() && value.intValue() == 0) &&
       !value.isNull();
   }
 

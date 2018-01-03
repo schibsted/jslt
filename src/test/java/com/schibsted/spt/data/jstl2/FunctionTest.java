@@ -311,6 +311,68 @@ public class FunctionTest extends TestBase {
     check("{}", "not(true)", "false");
   }
 
+  // ===== BOOLEAN
+
+  @Test
+  public void test2BooleanNull() {
+    check("{}", "boolean(null)", "false");
+  }
+
+  @Test
+  public void test2BooleanTrue() {
+    check("{}", "boolean(true)", "true");
+  }
+
+  @Test
+  public void test2BooleanFalse() {
+    check("{}", "boolean(false)", "false");
+  }
+
+  @Test
+  public void test2BooleanZero() {
+    check("{}", "boolean(0)", "false");
+  }
+
+  @Test
+  public void test2BooleanZeroDecimal() {
+    check("{}", "boolean(0.0)", "false");
+  }
+
+  @Test
+  public void test2BooleanNumber() {
+    check("{}", "boolean(23)", "true");
+  }
+
+  @Test
+  public void test2BooleanString() {
+    check("{}", "boolean(\"furdle\")", "true");
+  }
+
+  @Test
+  public void test2BooleanEmptyString() {
+    check("{}", "boolean(\"\")", "false");
+  }
+
+  @Test
+  public void test2BooleanArray() {
+    check("{}", "boolean([\"furdle\"])", "true");
+  }
+
+  @Test
+  public void test2BooleanEmptyArray() {
+    check("{}", "boolean([])", "false");
+  }
+
+  @Test
+  public void test2BooleanObject() {
+    check("{}", "boolean({\"furdle\" : 22})", "true");
+  }
+
+  @Test
+  public void test2BooleanEmptyObject() {
+    check("{}", "boolean({})", "false");
+  }
+
   // ===== FALLBACK
 
   @Test
