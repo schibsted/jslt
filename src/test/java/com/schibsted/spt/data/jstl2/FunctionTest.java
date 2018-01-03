@@ -373,6 +373,33 @@ public class FunctionTest extends TestBase {
     check("{}", "boolean({})", "false");
   }
 
+  // ===== IS-BOOLEAN
+
+  @Test
+  public void testIsBooleanNull() {
+    check("{}", "is-boolean(null)", "false");
+  }
+
+  @Test
+  public void testIsBooleanTrue() {
+    check("{}", "is-boolean(true)", "true");
+  }
+
+  @Test
+  public void testIsBooleanFalse() {
+    check("{}", "is-boolean(false)", "true");
+  }
+
+  @Test
+  public void testIsBooleanZero() {
+    check("{}", "is-boolean(0)", "false");
+  }
+
+  @Test
+  public void testIsBooleanNumber() {
+    check("{}", "is-boolean(22)", "false");
+  }
+
   // ===== FALLBACK
 
   @Test

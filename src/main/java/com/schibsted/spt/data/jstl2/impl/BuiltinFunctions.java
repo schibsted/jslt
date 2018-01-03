@@ -61,6 +61,7 @@ public class BuiltinFunctions {
     // BOOLEAN
     functions.put("not", new BuiltinFunctions.Not());
     functions.put("boolean", new BuiltinFunctions.Boolean());
+    functions.put("is-boolean", new BuiltinFunctions.IsBoolean());
 
     // OBJECT
     functions.put("is-object", new BuiltinFunctions.IsObject());
@@ -394,6 +395,19 @@ public class BuiltinFunctions {
 
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
       return NodeUtils.toJson(NodeUtils.isTrue(arguments[0]));
+    }
+  }
+
+  // ===== IS-BOOLEAN
+
+  public static class IsBoolean extends AbstractFunction {
+
+    public IsBoolean() {
+      super("is-boolean", 1, 1);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      return NodeUtils.toJson(arguments[0].isBoolean());
     }
   }
 

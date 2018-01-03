@@ -134,8 +134,8 @@ OK  floor()
 OK  ceiling()
 OK  random()             <- random number 0.0 - 1.0
 
-    boolean(.)
-    is-boolean()
+OK  boolean(.)
+OK  is-boolean()
 OK  not(.)
 
 OK  test(., regexp)
