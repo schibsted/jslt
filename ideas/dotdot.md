@@ -39,7 +39,8 @@ which will give you something like:
   [ "172.31.38.173" ], [ "10.6.16.122" ], [ null ], [ "172.31.23.235" ],
   [ "172.31.37.247" ], [ "10.0.1.20" ], [ "10.0.1.213" ], [ "172.31.17.39" ],
   [ "10.0.5.203" ], [ null, null, null, null, null, null, null ], ...
-]```
+]
+```
 
 There are several issues with this:
   * Having to use `for`.
