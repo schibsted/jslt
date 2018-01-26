@@ -45,7 +45,7 @@ which will give you something like:
 There are several issues with this:
   * Having to use `for`.
   * Having to nest the `for`s.
-  * Ending up with nested loops.
+  * Ending up with nested arrays.
   * Getting `null` values.
 
 The `..` operator, which is like `.`, except it also recurses through
@@ -58,6 +58,10 @@ The exact rules would be:
  * For objects, if the key is there, add the value to the matches.
  * For objects, traverse all values that are objects or arrays.
  * For arrays, same.
+
+## Related ideas
+
+ * [Using `.foo` on arrays](dot-on-array.md)
 
 ## Schibsted relevance
 
