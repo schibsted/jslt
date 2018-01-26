@@ -45,6 +45,42 @@ returns `null`. All other types cause an error.
 Rounds its argument to the nearest integer. Integers and `null` are
 returned untouched. All other types cause an error.
 
+### _floor(float) -> integer_
+
+Rounds its argument to the nearest integer equal to or less than
+_float_.  Integers and `null` are returned untouched. All other types
+cause an error.
+
+### _ceiling(float) -> integer_
+
+Rounds its argument to the nearest integer equal to or greater than
+_float_.  Integers and `null` are returned untouched. All other types
+cause an error.
+
 ### _random() -> float_
 
 Returns a random number between `0.0` and `1.0`.
+
+<!-- STRING =================================================================-->
+
+## String functions
+
+### _is-string(object) -> boolean_
+
+True iff the argument is a string.
+
+### _string(object) -> string_
+
+Converts _object_ into a string representation of the object.
+Numbers, null, and boolean become the JSON representation of the
+object inside a string.
+
+### _test(input, regexp) -> boolean_
+
+True iff _input_ matches the _regexp_. It's sufficient for the regexp
+to match part of the string, unless the anchors  `^` and `$` are used.
+
+### _capture(input, regexp) -> object_
+
+If _input_ matches the _regexp_ it returns an object where there is a
+key for every named group in the regexp

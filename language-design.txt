@@ -45,9 +45,22 @@ null       -> what it says
 
 *          -> matcher
 
------ ADD LATER, if at all
+----- PROBABLY NECESSARY
 
-.foo [ condition ] -> FIXME: multiple results? how to deal with?
+..foo      -> recursive descent matching all keys named 'foo'
+              result is an array of all matches
+
+leads to need for filtering predicate support
+
+
+also, filtering in for loops will become necessary quite soon
+  FOR (...) ... IF (...) ?
+  FOR (...) ... WHERE ... ?
+  implicit not(is-value()) removal ?
+
+----- ADD LATER, if at foo
+
+.all [ condition ] -> FIXME: multiple results? how to deal with?
   inside condition we change the context node
 
   .foo .[*] .bar -> traverse array? how to deal with this?
