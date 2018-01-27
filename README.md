@@ -36,11 +36,8 @@ The new language has the following benefits over JSTL 1.0:
 
 ## Status
 
-This is still *very* much a work in progress. In fact, it's nothing
-like feature-complete. So don't even think about using it.
-
-The language design is not finished, so features may be
-added/disappear/change.
+The language design is not finished, so features may be added. The
+language as it stands is not likely to change.
 
 What is working:
  * JSON parsing.
@@ -64,6 +61,9 @@ What is working:
 and works. A performance test on 89,100 Pulse events ran the old JSTL
 1.0 transform in ~6.3 seconds, and the new JSTL 2.0 in ~0.7 seconds.
 
+`pulse-cleanup.jstl` and `base-cleanup.jstl` are now running in
+production in Yggdrasil and The Batch Job 2.0.
+
 ## Command-line
 
 To run transforms on the command-line, first build with `./gradlew
@@ -78,17 +78,16 @@ The result is written to standard out.
 ## What is missing
 
 Things to be done:
-  * Fix the syntax ambiguity problem with `let`.
   * The rest of the function library (not 100% designed yet).
+  * Fix the syntax ambiguity problem with `let`.
   * More detailed definition of language semantics, especially error
     situations.
-  * Adding all the object matcher tests from 1.0.
   * Documentation: complete tutorial + function library doc.
   * Optimizations: complete constant folding.
   * Use property-based testing and fuzz testing to harden the parser.
-  * Get rid of the `org.jruby.joni` dependency by instead using
-    [one of these techniques](https://stackoverflow.com/questions/15588903/get-group-names-in-java-regex).
   * Many more tests.
+
+See also [the list of ideas](ideas/).
 
 ## Examples of improvements
 

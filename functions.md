@@ -79,8 +79,22 @@ object inside a string.
 
 True iff _input_ matches the _regexp_. It's sufficient for the regexp
 to match part of the string, unless the anchors  `^` and `$` are used.
+If _input_ is null the function returns `false`.
 
 ### _capture(input, regexp) -> object_
 
 If _input_ matches the _regexp_ it returns an object where there is a
-key for every named group in the regexp
+key for every named group in the regexp. If _input_ is null the
+function returns `null`. If the regexp doesn't match an empty object
+is returned.
+
+### _split(input, regexp) -> array_
+
+Splits the _input_ string with the _regexp_ and returns an array of
+strings. If _input_ is `null` the function returns `null`.
+
+### _join(array, separator) -> string_
+
+Returns a string produced by concatenating the elements of the array
+(converted to strings using the `string` function) with _separator_
+between each element. If _array_ is `null` the function returns `null`.

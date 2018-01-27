@@ -54,3 +54,5 @@ syntax.
 
 There is a close relation here with the possible `IF` or `WHERE`
 inside `FOR` loops.
+
+The `filter` macro would be another candidate.
