@@ -51,6 +51,17 @@ public class Parser {
     return compileResource(Collections.EMPTY_SET, jstl);
   }
 
+  /**
+   * Compile JSTL2 template from the Reader. The resourceName is just
+   * a name used in error messages, and has no practical effect.
+   */
+  public static Expression compile(Collection<Function> functions,
+                                   String resourceName,
+                                   Reader reader) {
+    ParseContext ctx = new ParseContext(functions, resourceName);
+    return compile(ctx, new JstlParser(reader));
+  }
+
   public static Expression compileResource(Collection<Function> functions,
                                            String jstl) {
     try (InputStream stream = Parser.class.getClassLoader().getResourceAsStream(jstl)) {
