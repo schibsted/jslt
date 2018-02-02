@@ -93,3 +93,9 @@ publishing {
       }
   }
 }
+
+check {
+  doLast {
+    println 'Test report in build/reports/tests/test/index.html'
+  }
+}
