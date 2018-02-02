@@ -188,6 +188,11 @@ public class JsonParseTest {
     check("\"\\u00FF\"");
   }
 
+  @Test
+  public void testCorrectException() {
+    error("foo bar");
+  }
+
   private void check(String json) {
     try {
       Expression expr = Parser.compile(json);

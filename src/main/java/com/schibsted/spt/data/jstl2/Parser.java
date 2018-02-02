@@ -93,13 +93,14 @@ public class Parser {
       //return compiler.compile(root);
       return root;
     } catch (ParseException e) {
-      throw new RuntimeException(e);
+      throw new JstlException("Parse error: " + e.getMessage(),
+                              makeLocation(ctx, e.currentToken));
     }
   }
 
   private static ExpressionNode node2expr(ParseContext ctx, SimpleNode node) {
     if (node.id != JstlParserTreeConstants.JJTEXPR)
-      throw new RuntimeException("Wrong type of node: " + node);
+      throw new JstlException("INTERNAL ERROR: Wrong type of node: " + node);
 
     ExpressionNode first = node2andexpr(ctx, getChild(node, 0));
     if (node.jjtGetNumChildren() == 1) // it's just the base
@@ -111,7 +112,7 @@ public class Parser {
 
   private static ExpressionNode node2andexpr(ParseContext ctx, SimpleNode node) {
     if (node.id != JstlParserTreeConstants.JJTANDEXPR)
-      throw new RuntimeException("Wrong type of node: " + node);
+      throw new JstlException("INTERNAL ERROR: Wrong type of node: " + node);
 
     ExpressionNode first = node2compexpr(ctx, getChild(node, 0));
     if (node.jjtGetNumChildren() == 1) // it's just the base
@@ -123,7 +124,7 @@ public class Parser {
 
   private static ExpressionNode node2compexpr(ParseContext ctx, SimpleNode node) {
     if (node.id != JstlParserTreeConstants.JJTCOMPARATIVEEXPR)
-      throw new RuntimeException("Wrong type of node: " + node);
+      throw new JstlException("INTERNAL ERROR: Wrong type of node: " + node);
 
     ExpressionNode first = node2addexpr(ctx, getChild(node, 0));
     if (node.jjtGetNumChildren() == 1) // it's just the base
@@ -147,12 +148,12 @@ public class Parser {
     else if (comp.kind == JstlParserConstants.SMALLOREQ)
       return new SmallerOrEqualsComparison(first, second, loc);
     else
-      throw new RuntimeException("What kind of comparison is this? " + node);
+      throw new JstlException("INTERNAL ERROR: What kind of comparison is this? " + node);
   }
 
   private static ExpressionNode node2addexpr(ParseContext ctx, SimpleNode node) {
     if (node.id != JstlParserTreeConstants.JJTADDITIVEEXPR)
-      throw new RuntimeException("Wrong type of node: " + node);
+      throw new JstlException("INTERNAL ERROR: Wrong type of node: " + node);
 
     ExpressionNode first = node2mulexpr(ctx, getChild(node, 0));
     if (node.jjtGetNumChildren() == 1) // it's just the base
@@ -168,12 +169,12 @@ public class Parser {
     else if (comp.kind == JstlParserConstants.MINUS)
       return new MinusOperator(first, second, loc);
     else
-      throw new RuntimeException("What kind of operator is this?");
+      throw new JstlException("INTERNAL ERROR: What kind of operator is this?");
   }
 
   private static ExpressionNode node2mulexpr(ParseContext ctx, SimpleNode node) {
     if (node.id != JstlParserTreeConstants.JJTMULTIPLICATIVEEXPR)
-      throw new RuntimeException("Wrong type of node: " + node);
+      throw new JstlException("INTERNAL ERROR: Wrong type of node: " + node);
 
     ExpressionNode first = node2baseExpr(ctx, getChild(node, 0));
     if (node.jjtGetNumChildren() == 1) // it's just the base
@@ -189,12 +190,12 @@ public class Parser {
     else if (comp.kind == JstlParserConstants.SLASH)
       return new DivideOperator(first, second, loc);
     else
-      throw new RuntimeException("What kind of operator is this?");
+      throw new JstlException("INTERNAL ERROR: What kind of operator is this?");
   }
 
   private static ExpressionNode node2baseExpr(ParseContext ctx, SimpleNode node) {
     if (node.id != JstlParserTreeConstants.JJTBASEEXPR)
-      throw new RuntimeException("Wrong type of node: " + node);
+      throw new JstlException("INTERNAL ERROR: Wrong type of node: " + node);
 
     Location loc = makeLocation(ctx, node);
     Token token = node.jjtGetFirstToken();
@@ -276,13 +277,14 @@ public class Parser {
 
     else {
       node.dump(">");
-      throw new RuntimeException("I'm confused now: " + node.jjtGetNumChildren() + " " + kind);
+      throw new JstlException("INTERNAL ERROR: I'm confused now: " +
+                              node.jjtGetNumChildren() + " " + kind);
     }
   }
 
   private static ExpressionNode chainable2Expr(ParseContext ctx, SimpleNode node) {
     if (node.id != JstlParserTreeConstants.JJTCHAINABLE)
-      throw new RuntimeException("Wrong type of node: " + node);
+      throw new JstlException("INTERNAL ERROR: Wrong type of node: " + node);
 
     Token token = node.jjtGetFirstToken();
     int kind = token.kind;
@@ -318,7 +320,7 @@ public class Parser {
       // ok, there was a key or array slicer
       start = buildChainLink(ctx, node, null);
     } else
-      throw new RuntimeException("Now I'm *really* confused!");
+      throw new JstlException("INTERNAL ERROR: Now I'm *really* confused!");
 
     // then tack on the rest of the chain, if there is any
     if (node.jjtGetNumChildren() > 0 &&
@@ -332,7 +334,7 @@ public class Parser {
                                               SimpleNode chainLink,
                                               ExpressionNode parent) {
     if (chainLink.id != JstlParserTreeConstants.JJTCHAINLINK)
-      throw new RuntimeException("Wrong type of node: " + chainLink);
+      throw new JstlException("INTERNAL ERROR: Wrong type of node: " + chainLink);
 
     ExpressionNode dot = buildChainLink(ctx, chainLink, parent);
 
@@ -512,7 +514,7 @@ public class Parser {
       return new MatcherExpression(node2expr(ctx, last), minuses,
                                    makeLocation(ctx, last));
     } else
-      throw new RuntimeException("This is wrong");
+      throw new JstlException("INTERNAL ERROR: This is wrong");
   }
 
   private static void collectMinuses(ParseContext ctx, SimpleNode node,
