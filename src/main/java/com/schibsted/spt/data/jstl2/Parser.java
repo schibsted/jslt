@@ -95,6 +95,8 @@ public class Parser {
     } catch (ParseException e) {
       throw new JstlException("Parse error: " + e.getMessage(),
                               makeLocation(ctx, e.currentToken));
+    } catch (TokenMgrError e) {
+      throw new JstlException("Parse error: " + e.getMessage());
     }
   }
 

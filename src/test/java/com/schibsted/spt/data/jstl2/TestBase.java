@@ -73,7 +73,8 @@ public class TestBase {
       JsonNode actual = expr.apply(context);
       fail("JSTL did not detect error");
     } catch (JstlException e) {
-      assertTrue(e.getMessage().indexOf(result) != -1);
+      assertTrue("incorrect error message: '" + e.getMessage() + "'",
+                 e.getMessage().indexOf(result) != -1);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

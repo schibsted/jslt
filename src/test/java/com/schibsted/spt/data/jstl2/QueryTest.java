@@ -749,4 +749,16 @@ public class QueryTest extends TestBase {
     error("{for ({\"foo\":22}) .value : .key}",
           "string");
   }
+
+  // ===== VARIOUS SYNTAX ERRORS
+
+  @Test
+  public void testCorrectException() {
+    error("foo bar", "Parse error");
+  }
+
+  @Test
+  public void testCorrectException2() {
+    error("validate(\"foo\"; \"bar\"; \"baz\")", "Parse error");
+  }
 }
