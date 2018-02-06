@@ -26,11 +26,21 @@ public class ExpressionImpl implements Expression {
   }
 
   public JsonNode apply(Map<String, JsonNode> variables, JsonNode input) {
+    // Jackson 2.9.2 can parse to Java null. See unit test
+    // QueryTest.testNullInput. so we have to handle that
+    if (input == null)
+      input = NullNode.instance;
+
     Scope scope = NodeUtils.evalLets(Scope.makeScope(variables), input, lets);
     return actual.apply(scope, input);
   }
 
   public JsonNode apply(JsonNode input) {
+    // Jackson 2.9.2 can parse to Java null. See unit test
+    // QueryTest.testNullInput. so we have to handle that
+    if (input == null)
+      input = NullNode.instance;
+
     Scope scope = NodeUtils.evalLets(Scope.getRoot(), input, lets);
     return actual.apply(scope, input);
   }

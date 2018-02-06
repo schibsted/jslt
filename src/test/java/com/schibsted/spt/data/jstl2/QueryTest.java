@@ -750,6 +750,11 @@ public class QueryTest extends TestBase {
           "string");
   }
 
+  @Test
+  public void testNullInput() {
+    check("", ".foo", "null");
+  }
+
   // ===== VARIOUS SYNTAX ERRORS
 
   @Test
