@@ -41,6 +41,7 @@ public class BuiltinFunctions {
     // GENERAL
     functions.put("contains", new BuiltinFunctions.Contains());
     functions.put("size", new BuiltinFunctions.Size());
+    functions.put("error", new BuiltinFunctions.Error());
 
     // NUMERIC
     functions.put("is-number", new BuiltinFunctions.IsNumber());
@@ -602,6 +603,20 @@ public class BuiltinFunctions {
 
       else
         throw new JstlException("Function size() cannot work on " + arguments[0]);
+    }
+  }
+
+  // ===== ERROR
+
+  public static class Error extends AbstractFunction {
+
+    public Error() {
+      super("error", 1, 1);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      String msg = NodeUtils.toString(arguments[0], false);
+      throw new JstlException("error: " + msg);
     }
   }
 

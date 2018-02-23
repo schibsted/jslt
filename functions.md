@@ -26,6 +26,12 @@ must be a key in the object.
 Returns the number of elements in the sequence, which can be an array,
 an object, or a string. If _sequence_ is _null_ it returns _null_.
 
+### _error(message)_
+
+Halts the transform with an error. The message is the message given to
+the user.
+
+
 <!-- NUMERIC ===============================================================-->
 
 ## Numeric functions
@@ -148,6 +154,7 @@ True iff `value` is a boolean.
 
 True iff `value` is an object.
 
+
 <!-- ARRAY ==================================================================-->
 
 ## Array functions
@@ -171,6 +178,7 @@ Objects are converted to arrays of the form:
 ### _is-array(value) -> boolean_
 
 True iff `value` is an array.
+
 
 <!-- TIME ===================================================================-->
 

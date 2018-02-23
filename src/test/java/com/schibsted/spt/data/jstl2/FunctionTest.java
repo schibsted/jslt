@@ -784,6 +784,13 @@ public class FunctionTest extends TestBase {
           "Couldn't parse format");
   }
 
+  // ===== ERROR
+
+  @Test
+  public void testErrorMessage() {
+    error("error(\"Oh no\")", "Oh no");
+  }
+
   // ===== EXTENSION FUNCTION
 
   private static class TestFunction implements Function {
