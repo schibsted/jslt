@@ -68,6 +68,9 @@ public class BuiltinFunctions {
 
     // ARRAY
     functions.put("is-array", new BuiltinFunctions.IsArray());
+
+    // TIME
+    functions.put("now", new BuiltinFunctions.Now());
   }
 
   public static Map<String, Macro> macros = new HashMap();
@@ -613,6 +616,20 @@ public class BuiltinFunctions {
 
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
       return NodeUtils.toJson(arguments[0].isNumber());
+    }
+  }
+
+  // ===== NOW
+
+  public static class Now extends AbstractFunction {
+
+    public Now() {
+      super("now", 0, 0);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      long ms = System.currentTimeMillis();
+      return NodeUtils.toJson( ms / 1000.0 );
     }
   }
 }

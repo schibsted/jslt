@@ -59,6 +59,16 @@ public class TestBase {
     }
   }
 
+  JsonNode execute(String input, String query) {
+    try {
+      JsonNode context = mapper.readTree(input);
+      Expression expr = Parser.compile(query);
+      return expr.apply(context);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
   // result must be contained in the error message
   void error(String query, String result) {
     error("{}", query, result);

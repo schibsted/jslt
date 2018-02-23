@@ -49,6 +49,10 @@ public class NodeUtils {
       return BooleanNode.FALSE;
   }
 
+  public static JsonNode toJson(double value) {
+    return new DoubleNode(value);
+  }
+
   public static JsonNode toJson(String[] array) {
     ArrayNode node = NodeUtils.mapper.createArrayNode();
     for (int ix = 0; ix < array.length; ix++)

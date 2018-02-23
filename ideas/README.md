@@ -8,4 +8,4 @@ It's mostly new features, but not exclusively.
 * [The .. operator](dotdot.md)
 * [Using `.foo` on arrays](dot-on-array.md)
 * [Predicates](predicates.md)
-* [The `filter` macro`](filter.md)
+* [The `filter` macro](filter.md)

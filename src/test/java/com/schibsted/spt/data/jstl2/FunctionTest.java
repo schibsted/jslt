@@ -658,6 +658,21 @@ public class FunctionTest extends TestBase {
     check("{}", "string(null)", "\"null\"");
   }
 
+  // ===== NOW
+
+  @Test
+  public void testNow() {
+    JsonNode now1 = execute("{}", "now()");
+    double now2 = System.currentTimeMillis();
+    long delta = 1000; // milliseconds of wriggle-room
+
+    assertTrue(now1.isDouble());
+    assertTrue("now1 (" + now1 + ") << now2 (" + now2 + ")",
+               (now1.asDouble() * 1000) < (now2 + delta));
+    assertTrue("now1 (" + now1 + ") >> now2 (" + now2 + ")",
+               (now1.asDouble() * 1000) > (now2 - delta));
+  }
+
   // ===== EXTENSION FUNCTION
 
   private static class TestFunction implements Function {
