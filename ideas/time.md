@@ -2,10 +2,11 @@
 # Time functions
 
 The immediate need is for the Amplitude transforms, where we need to
-be able to parse date/time formats into seconds since epoch.  However,
-people will almost certainly also need to format date/time values. So
-we need to add functions for this to the language. Unfortunately, time
-is a complicated mess, so there are some tradeoffs involved.
+be able to parse date/time formats into milliseconds since epoch.
+However, people will almost certainly also need to format date/time
+values.  So we need to add functions for this to the language.
+Unfortunately, time is a complicated mess, so there are some tradeoffs
+involved.
 
 ## Timestamps only
 
@@ -21,9 +22,9 @@ now() -> timestamp
 The `timestamp` here is seconds since the epoch in UTC, expressed as a
 float so that we get fractional seconds in there. So if the input
 string has a timezone, that's normalized to UTC. Usually, you don't
-care about this, and can format back to the format you want.  If you
-need to present the timestamp in a specific timezone you can do that
-by specifying the optional argument.
+care about this, and can format back to the format you want to display
+in.  If you need to present the timestamp in a specific timezone you
+can do that by specifying the optional argument.
 
 The downside here is that you cannot:
  * reformat a date/time and preserve the timezone,
@@ -39,8 +40,7 @@ It would be possible to implement the following:
 parse-time("<datetime string>", "format") -> time object
 format-time(time object, "format") -> "<datetime string>"
 mktime(time object) -> seconds since epoch
-localtime(seconds since epoch) -> time object
-utctime(seconds since epoch) -> time object
+time-in-zone(seconds since epoch, "timezone") -> time object
 now() -> seconds since epoch
 ```
 
@@ -61,7 +61,7 @@ A time object would be a JSON object with a structure like:
 
 The downside here is:
  * our simple use case now involves two functions,
- * there are five functions, not two,
+ * there are four functions, not three,
  * all use cases involve creating an expensive intermediate object, and
  * times may or may not carry timezone information, which is really
    presentation information, and not part of the time itself.
@@ -99,7 +99,7 @@ with the decimal part being fractional seconds.
 
 Ruby `Time.now` returns a `Datetime` object, where `to_i` will give
 seconds since epoch as an integer, and `to_f` will give seconds since
-epoch as a decimal number representing seconds.
+epoch as a decimal number with fractions.
 
 XPath 3.0 inherits the XML Schema type system and is therefore
 [basically weird](https://www.w3.org/TR/xpath-functions-31/#parsing-dates-and-times).
