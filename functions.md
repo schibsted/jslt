@@ -116,3 +116,69 @@ True iff the `tested` string starts with `prefix`.
 ### _ends-with(tested, suffix) -> boolean_
 
 True iff the `tested` string ends with `suffix`.
+
+<!-- BOOLEAN ================================================================-->
+
+## Boolean functions
+
+### _boolean(value) -> boolean_
+
+Converts the input value to a boolean. Everything is considered to be
+`true`, except `null`, `[]`, `{}`, `""`, `false`, and `0`.
+
+### _not(boolean) -> boolean_
+
+Returns the opposite boolean value from the parameter. The input is
+quietly converted to boolean, so `not(null)` will return `true`.
+
+### _is-boolean(value) -> boolean_
+
+True iff `value` is a boolean.
+
+<!-- OBJECT =================================================================-->
+
+## Object functions
+
+### _is-object(value) -> boolean_
+
+True iff `value` is an object.
+
+<!-- ARRAY ==================================================================-->
+
+## Array functions
+
+### _array(value) -> array_
+
+Converts the input value to an array. Numbers, booleans, and strings
+can't be converted to an array, so these cause errors.
+
+Objects are converted to arrays of the form:
+
+```
+[
+  {"key" : first key, "value" : first value},
+  {"key" : second key, "value" : second value},
+  {"key" : third key, "value" : third value},
+  ...
+]
+```
+
+### _is-array(value) -> boolean_
+
+True iff `value` is an array.
+
+<!-- TIME ===================================================================-->
+
+## Time functions
+
+### _now() -> double_
+
+Returns the number of seconds since midnight, January 1, 1970 UTC in
+the UTC timezone. Milliseconds are returned as decimals of the number.
+
+### _parse-time(time, format) -> double_
+
+Parses `time` with `format` (specified in Java date/time format) and
+returns the number of seconds since the epoch in the UTC timezone. If
+no timezone is specified in the `time` string, the timezone is assumed
+to be UTC.

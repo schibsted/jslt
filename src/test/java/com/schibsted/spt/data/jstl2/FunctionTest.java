@@ -311,6 +311,11 @@ public class FunctionTest extends TestBase {
     check("{}", "not(true)", "false");
   }
 
+  @Test
+  public void testNotOfANumber() {
+    check("{}", "not(123)", "false");
+  }
+
   // ===== BOOLEAN
 
   @Test
@@ -336,6 +341,11 @@ public class FunctionTest extends TestBase {
   @Test
   public void test2BooleanZeroDecimal() {
     check("{}", "boolean(0.0)", "false");
+  }
+
+  @Test
+  public void test2BooleanNonZeroDecimal() {
+    check("{}", "boolean(0.2)", "true");
   }
 
   @Test

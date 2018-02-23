@@ -95,6 +95,11 @@ which would then produce:
 
 The full set of functions is documented on [another page](functions.md).
 
+As a rule, parameters are quietly converted to the expected type,
+using the built-in type conversion functions. In general, if a
+parameter is `null` (because of missing data in the source JSON) then
+the function will just return `null`.
+
 ## For expressions
 
 The `for` expression lets you take an array and transform it into a
