@@ -769,6 +769,21 @@ public class FunctionTest extends TestBase {
           "12564129312");
   }
 
+  @Test
+  public void testParseDateTimeErrorFallback() {
+    // no time zone
+    check("{}",
+          "parse-time(\"1973-12-25 05:22:33\", \"yyyy-MM-dd HH:mm:ssz\", null)",
+          "null");
+  }
+
+  @Test
+  public void testParseDateTimeErrorInFormatFallback() {
+    // bad format string
+    error("parse-time(\"1973-12-25 05:22:33\", \"yyyy-MM-dd gnugugg HH:mm:ssz\", null)",
+          "Couldn't parse format");
+  }
+
   // ===== EXTENSION FUNCTION
 
   private static class TestFunction implements Function {

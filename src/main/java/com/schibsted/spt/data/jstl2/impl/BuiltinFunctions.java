@@ -666,7 +666,7 @@ public class BuiltinFunctions {
   public static class ParseTime extends AbstractFunction {
 
     public ParseTime() {
-      super("parse-time", 2, 2);
+      super("parse-time", 2, 3);
     }
 
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
@@ -675,6 +675,9 @@ public class BuiltinFunctions {
         return NullNode.instance;
 
       String formatstr = NodeUtils.toString(arguments[1], false);
+      JsonNode fallback = null;
+      if (arguments.length > 2)
+        fallback = arguments[2];
 
       // the performance of this could be better, but it's not so easy
       // to fix that when SimpleDateFormat isn't thread-safe, so we
@@ -689,7 +692,10 @@ public class BuiltinFunctions {
         // thrown if format is bad
         throw new JstlException("parse-time: Couldn't parse format '" + formatstr + "': " + e.getMessage());
       } catch (ParseException e) {
-        throw new JstlException("parse-time: " + e.getMessage());
+        if (fallback == null)
+          throw new JstlException("parse-time: " + e.getMessage());
+        else
+          return fallback;
       }
     }
   }

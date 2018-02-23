@@ -181,9 +181,13 @@ True iff `value` is an array.
 Returns the number of seconds since midnight, January 1, 1970 UTC in
 the UTC timezone. Milliseconds are returned as decimals of the number.
 
-### _parse-time(time, format) -> double_
+### _parse-time(time, format, fallback?) -> double_
 
 Parses `time` with `format` (specified in Java date/time format) and
 returns the number of seconds since the epoch in the UTC timezone. If
 no timezone is specified in the `time` string, the timezone is assumed
 to be UTC.
+
+If `fallback` is not specified, the function will cause an error if
+`time` is of the wrong type or does not match the format. If
+`fallback` is specified that value will be returned instead.
