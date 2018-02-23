@@ -450,6 +450,28 @@ public class FunctionTest extends TestBase {
     check("{}", "is-array(.)", "false");
   }
 
+  // ===== ARRAY
+
+  @Test
+  public void testArrayToArray() {
+    check("{}", "array([1,2,3])", "[1,2,3]");
+  }
+
+  @Test
+  public void testNullToArray() {
+    check("{}", "array(.missing)", "null");
+  }
+
+  @Test
+  public void testBooleanToArray() {
+    error("array(true)", "true");
+  }
+
+  @Test
+  public void testObjectToArray() {
+    check("{\"foo\" : 2}", "array(.)", "[{\"key\" : \"foo\", \"value\" : 2}]");
+  }
+
   // ===== IS-STRING
 
   @Test

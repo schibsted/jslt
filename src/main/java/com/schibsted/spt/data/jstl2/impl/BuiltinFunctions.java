@@ -71,6 +71,7 @@ public class BuiltinFunctions {
     functions.put("is-object", new BuiltinFunctions.IsObject());
 
     // ARRAY
+    functions.put("array", new BuiltinFunctions.Array());
     functions.put("is-array", new BuiltinFunctions.IsArray());
 
     // TIME
@@ -465,6 +466,25 @@ public class BuiltinFunctions {
 
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
       return NodeUtils.toJson(arguments[0].isArray());
+    }
+  }
+
+  // ===== ARRAY
+
+  public static class Array extends AbstractFunction {
+
+    public Array() {
+      super("array", 1, 1);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      JsonNode value = arguments[0];
+      if (value.isNull() || value.isArray())
+        return value;
+      else if (value.isObject())
+        return NodeUtils.convertObjectToArray(value);
+      else
+        throw new JstlException("array() cannot convert " + value);
     }
   }
 
