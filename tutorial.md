@@ -38,8 +38,18 @@ These can be chained, so `.foo.bar` would produce:
 You can also do array indexing with `[ index ]`, so that `.foo.bar[0]`
 would give you `1`.
 
+Array slicing is supported, so you can write `[1 : 3]` and get `[2,
+3]`.  The first index is inclusive, and the last index is exclusive.
+
+You can use negative indexes to refer to elements starting from the
+end of the array, so that `[-1]` would return the last element of the
+array, `5`. This also works with slicing, so to remove the first and
+the last element, write `[1 : -1]`.
+
+## JSON construction
+
 Inside JSON you can write expressions anywhere you can write a JSON
-literal, so (still working on same input) you could write a new object
+literal, so (still working on same input) you could make a new object
 like this:
 
 ```
@@ -83,16 +93,18 @@ The full set of functions is documented on [another page](functions.md).
 
 ## For expressions
 
-The `for` expression lets you transform an array. The syntax is
+The `for` expression lets you take an array and transform it into a
+new array, by evaluating an expression on each of the array elements.
+The syntax is
 
 ```
 for (<expr>)
   <expr>
 ```
 
-The first expression evaluates to an array, which we loop over. For
-each element in it the second expression is evaluated (with `.` now
-referring to the current array element).
+The first expression, inside the parenthesis, evaluates to an array,
+which we loop over. For each element in it the second expression is
+evaluated (with `.` now referring to the current array element).
 
 So if we want an array of strings instead, we can say:
 
@@ -152,3 +164,70 @@ if (.foo.bar != null)
 else
   "No array today"
 ```
+
+## Object for expressions
+
+It's also possible to use `for` expressions to produce objects. As
+before, we process each element in the input array separately, but in
+this case we make a key in the object for each element in the array.
+When the key and value are evaluated, `.` refers to the current array
+element.
+
+We can iterate over the same array we've been working on, and turn the
+array into an object as follows:
+
+```
+{for (.foo.bar) string(.) : .}
+```
+
+This would produce the following object:
+
+```
+{
+  "1" : 1,
+  "2" : 2,
+  "3" : 3,
+  "4" : 4,
+  "5" : 5
+}
+```
+
+That's a rather strange object, of course, but we can also loop over
+objects (with both types of `for` loop). Looping over an object turns
+the object into an array, where each key/value pair in the object has
+become an object of the form:
+
+```
+{"key" : the key, "value" : the value}
+```
+
+So let's say we want to process an object, and add `"custom"` as a
+prefix to each of the existing keys. Let's say our input was:
+
+```
+{
+  "foo" : 1,
+  "bar" : 2
+}
+```
+
+We can process this with:
+
+```
+{for (.) "custom_" + .key : .value}
+```
+
+and get:
+
+```
+{
+  "custom_foo" : 1,
+  "custom_bar" : 2
+}
+```
+
+## Object matching
+
+## Variables
+
+## Operators

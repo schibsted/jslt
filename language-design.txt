@@ -1,5 +1,14 @@
 
 ---------------------------------------------------------------------------
+OPEN QUESTIONS
+
+.key into a literal or array -> what should result be?
+  jq       = error
+  jsonpath = error
+  jsonata  = nothing
+  jstl now = nothing
+
+---------------------------------------------------------------------------
 LANGUAGE DESIGN
 
 .       -> input
