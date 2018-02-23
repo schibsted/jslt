@@ -34,11 +34,16 @@ an object, or a string. If _sequence_ is _null_ it returns _null_.
 
 True iff the argument is a number.
 
-### _number(object) -> integer|float_
+### _number(object, fallback?) -> integer|float_
 
 Converts the argument into a number, if possible. Decimals and floats
 will be returned untouched. Strings are parsed into numbers. `null`
-returns `null`. All other types cause an error.
+returns `null`. All other types cause an error, unless `fallback` is
+specified.
+
+If `fallback` is specified then if `object` is of the wrong type, or
+if it is a string that cannot be parsed, then the `fallback` value is
+returned.
 
 ### _round(float) -> integer_
 

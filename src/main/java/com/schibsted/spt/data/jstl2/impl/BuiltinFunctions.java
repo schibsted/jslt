@@ -137,11 +137,14 @@ public class BuiltinFunctions {
   public static class Number extends AbstractFunction {
 
     public Number() {
-      super("number", 1, 1);
+      super("number", 1, 2);
     }
 
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      return NodeUtils.number(arguments[0], null);
+      if (arguments.length == 1)
+        return NodeUtils.number(arguments[0], true, null);
+      else
+        return NodeUtils.number(arguments[0], true, null, arguments[1]);
     }
   }
 

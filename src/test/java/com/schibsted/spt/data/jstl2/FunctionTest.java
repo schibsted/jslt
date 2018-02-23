@@ -22,7 +22,7 @@ public class FunctionTest extends TestBase {
 
   @Test
   public void testWrongType() {
-    check("{}", "number([1,2,3,4])", "null");
+    error("number([1,2,3,4])", "[1,2,3,4]");
   }
 
   @Test
@@ -51,6 +51,11 @@ public class FunctionTest extends TestBase {
   }
 
   @Test
+  public void testNotANumberFallback() {
+    check("{}", "number(\"hurble\", [1,2,3])", "[1,2,3]");
+  }
+
+  @Test
   public void testNoArguments() {
     error("number()", "argument");
   }
@@ -62,7 +67,7 @@ public class FunctionTest extends TestBase {
 
   @Test
   public void testNumberObject() {
-    check("{}", "number({})", "null");
+    error("number({})", "{}");
   }
 
   // ===== ROUND

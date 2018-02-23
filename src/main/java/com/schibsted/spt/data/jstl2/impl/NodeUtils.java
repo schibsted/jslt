@@ -86,14 +86,23 @@ public class NodeUtils {
   }
 
   public static JsonNode number(JsonNode value, boolean strict, Location loc) {
+    // this works, because Java null can never be a function parameter
+    // in JSTL, unlike JSON null
+    return number(value, strict, loc, null);
+  }
+
+  public static JsonNode number(JsonNode value, boolean strict, Location loc,
+                                JsonNode fallback) {
     // check what type this is
-    if (value.isNumber())
+    if (value.isNumber() || value.isNull())
       return value;
     else if (!value.isTextual()) {
       if (strict)
         throw new JstlException("Can't convert " + value + " to number", loc);
-      else
+      else if (fallback == null)
         return NullNode.instance;
+      else
+        return fallback;
     }
 
     // let's look at this number
@@ -104,8 +113,11 @@ public class NodeUtils {
       else
         return new IntNode(Integer.parseInt(number));
     } catch (NumberFormatException e) {
-      throw new JstlException("number(" + number + ") failed: not a number",
-                              loc);
+      if (fallback == null)
+        throw new JstlException("number(" + number + ") failed: not a number",
+                                loc);
+      else
+        return fallback;
     }
   }
 
