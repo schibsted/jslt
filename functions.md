@@ -98,3 +98,21 @@ strings. If _input_ is `null` the function returns `null`.
 Returns a string produced by concatenating the elements of the array
 (converted to strings using the `string` function) with _separator_
 between each element. If _array_ is `null` the function returns `null`.
+
+### _lowercase(string) -> string_
+
+Converts the input string to lowercase. Note that this is a naive
+function that only handles ASCII characters.
+
+### _uppercase(string) -> string_
+
+Converts the input string to uppercase. Note that this is a naive
+function that only handles ASCII characters.
+
+### _starts-with(tested, prefix) -> boolean_
+
+True iff the `tested` string starts with `prefix`.
+
+### _ends-with(tested, suffix) -> boolean_
+
+True iff the `tested` string ends with `suffix`.
