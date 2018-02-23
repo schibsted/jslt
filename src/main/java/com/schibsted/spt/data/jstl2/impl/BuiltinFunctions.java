@@ -3,11 +3,15 @@ package com.schibsted.spt.data.jstl2.impl;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.Date;
 import java.util.TreeSet;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.SimpleTimeZone;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -71,6 +75,7 @@ public class BuiltinFunctions {
 
     // TIME
     functions.put("now", new BuiltinFunctions.Now());
+    functions.put("parse-time", new BuiltinFunctions.ParseTime());
   }
 
   public static Map<String, Macro> macros = new HashMap();
@@ -630,6 +635,39 @@ public class BuiltinFunctions {
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
       long ms = System.currentTimeMillis();
       return NodeUtils.toJson( ms / 1000.0 );
+    }
+  }
+
+  // ===== PARSE-TIME
+
+  public static class ParseTime extends AbstractFunction {
+
+    public ParseTime() {
+      super("parse-time", 2, 2);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      String text = NodeUtils.toString(arguments[0], true);
+      if (text == null)
+        return NullNode.instance;
+
+      String formatstr = NodeUtils.toString(arguments[1], false);
+
+      // the performance of this could be better, but it's not so easy
+      // to fix that when SimpleDateFormat isn't thread-safe, so we
+      // can't safely share it between threads
+
+      try {
+        SimpleDateFormat format = new SimpleDateFormat(formatstr);
+        format.setTimeZone(new SimpleTimeZone(SimpleTimeZone.UTC_TIME, "UTC"));
+        Date time = format.parse(text);
+        return NodeUtils.toJson((double) (time.getTime() / 1000.0));
+      } catch (IllegalArgumentException e) {
+        // thrown if format is bad
+        throw new JstlException("parse-time: Couldn't parse format '" + formatstr + "': " + e.getMessage());
+      } catch (ParseException e) {
+        throw new JstlException("parse-time: " + e.getMessage());
+      }
     }
   }
 }

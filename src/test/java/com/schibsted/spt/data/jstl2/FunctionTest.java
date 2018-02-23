@@ -673,6 +673,65 @@ public class FunctionTest extends TestBase {
                (now1.asDouble() * 1000) > (now2 - delta));
   }
 
+  // ===== PARSE-TIME
+
+  @Test
+  public void testParseDateTime() {
+    check("\"1973-12-25 04:21:33Z\"",
+          "parse-time(., \"yyyy-MM-dd HH:mm:ssX\")",
+          "125641293.0");
+  }
+
+  @Test
+  public void testParseDateTimeNoTimezone() {
+    // in this case the code assumes UTC
+    check("\"1973-12-25 04:21:33\"",
+          "round(parse-time(., \"yyyy-MM-dd HH:mm:ss\"))",
+          "125641293");
+  }
+
+  @Test
+  public void testParseDateTimeCET() {
+    check("\"1973-12-25 05:21:33CET\"", // CET, one hour later = same time UTC
+          "round(parse-time(., \"yyyy-MM-dd HH:mm:ssz\"))",
+          "125641293");
+  }
+
+  @Test
+  public void testParseDateTimeError() {
+    // no time zone
+    error("parse-time(\"1973-12-25 05:22:33\", \"yyyy-MM-dd HH:mm:ssz\")",
+          "Unparseable");
+  }
+
+  @Test
+  public void testParseDateTimeErrorInFormat() {
+    // bad format string
+    error("parse-time(\"1973-12-25 05:22:33\", \"yyyy-MM-dd gnugugg HH:mm:ssz\")",
+          "Couldn't parse format");
+  }
+
+  @Test
+  public void testParseDate() {
+    check("\"1973-12-25\"",
+          "round(parse-time(., \"yyyy-MM-dd\"))",
+          "125625600");
+  }
+
+  @Test
+  public void testParseDateTimeNull() {
+    check("null",
+          "parse-time(., \"yyyy-MM-dd HH:mm:ssX\")",
+          "null");
+  }
+
+  @Test
+  public void testParseDateTimeMillis() {
+    check("\"1973-12-25 04:21:33.123\"",
+          "round(parse-time(., \"yyyy-MM-dd HH:mm:ss.S\") * 100)",
+          "12564129312");
+  }
+
   // ===== EXTENSION FUNCTION
 
   private static class TestFunction implements Function {
