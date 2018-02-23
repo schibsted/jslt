@@ -33,6 +33,10 @@ These can be chained, so `.foo.bar` would produce:
 [1,2,3,4,5]
 ```
 
+If your key contains special characters you can put it in quotes, so
+while `.Key - Type Strange` would not work `."Key - Type Strange"`
+would.
+
 ## Array indexing
 
 You can also do array indexing with `[ index ]`, so that `.foo.bar[0]`
@@ -226,8 +230,123 @@ and get:
 }
 ```
 
+## Operators
+
+The usual operators are supported. For arithmetic you can use `+`,
+`-`, `*`, and `/` as expected.
+
+`+` also works on strings, arrays, and objects. For objects, if the
+same key appears on both sides, the value on the left will "win".
+
+The usual comparison operators are also supported, so you could
+process the 1-5 array with
+
+```
+for (.foo.bar) . > 2
+```
+
+and get
+
+```
+[false, false, true, true, true]
+```
+
+You can also combine boolean values with `and` and `or`. `not` is a
+function.
+
 ## Object matching
+
+In some cases, you want to insert or override some values in an
+object, but leave the rest untouched. For example, let's say we want
+to multiply `"foo"` by 10, but keep the rest of the object. This can
+be done with object matching, where we write an object like this:
+
+```
+{
+  "foo" : .foo * 10,
+  * : .
+}
+```
+
+This is a normal JSON object, except for the last part, `* : .`. The
+`*` matches all keys in the input object, except for those that are
+already specified (`"foo"` in this case) and copies them into the
+output object. The `.` is a normal expression, evaluated with the
+value of each key in turn.
+
+So the output is:
+
+```
+{
+  "foo" : 10,
+  "bar" : 2
+}
+```
+
+Since `.` is a normal expression, you could actually write:
+
+```
+{ * : . * 10 }
+```
+
+That would match and copy all keys, but all values would be multiplied
+by 10, so the output would be:
+
+```
+{
+  "foo" : 10,
+  "bar" : 20
+}
+```
+
+If there are some keys you don't want to copy you can explicitly omit
+them:
+
+```
+{
+  "foo" : .foo * 10,
+  * - bar, baz, quux : .
+}
+```
+
+This would produce:
+
+```
+{"foo" : 10}
+```
+
+If your input is a nested object you can still use the matching. So if
+you write:
+
+```
+{
+  "foo" : {
+    "baz" : .hey.ho,
+    * : .
+  },
+  "bar" : 24
+}
+```
+
+Then this `*` will match the object inside the `"foo"` key in the
+input object.
 
 ## Variables
 
-## Operators
+You can set variables to break up complex computations, or to avoid
+computing things more than once. The syntax is:
+
+```
+let foo = .foo
+```
+
+From that point on, you can refer to the value with `$foo`.
+
+Let statements are allowed at the top level, at the start of objects,
+inside `for` (before the expression), and inside `if`. Variables
+defined inside an object, `for`, or `if` are only visible inside those
+expressions.
+
+It's also possible to set variables from the code running a JSTL 2.0
+transform, so that the value is "injected" into the transform. This
+can be useful for configuration, passwords, and similar values.
