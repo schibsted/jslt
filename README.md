@@ -63,7 +63,6 @@ The result is written to standard out.
 ## What is missing
 
 Things to be done:
-  * Change `for` syntax to require brackets around it.
   * Fix the syntax ambiguity problem with `let`.
   * More detailed definition of language semantics, especially error
     situations.

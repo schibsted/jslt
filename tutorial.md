@@ -107,8 +107,8 @@ new array, by evaluating an expression on each of the array elements.
 The syntax is
 
 ```
-for (<expr>)
-  <expr>
+[for (<expr>)
+  <expr>]
 ```
 
 The first expression, inside the parenthesis, evaluates to an array,
@@ -119,7 +119,7 @@ So if we want an array of strings instead, we can say:
 
 ```
 {
-  "array" : for (.foo.bar) string(.),
+  "array" : [for (.foo.bar) string(.)],
   "size"  : size(.foo.bar)
 }
 ```
@@ -152,7 +152,7 @@ follows:
 ```
 if (.foo.bar)
   {
-    "array" : for (.foo.bar) string(.),
+    "array" : [for (.foo.bar) string(.)],
     "size"  : size(.foo.bar)
   }
 else
@@ -167,7 +167,7 @@ explicit comparison:
 ```
 if (.foo.bar != null)
   {
-    "array" : for (.foo.bar) string(.),
+    "array" : [for (.foo.bar) string(.)],
     "size"  : size(.foo.bar)
   }
 else
@@ -247,7 +247,7 @@ The usual comparison operators are also supported, so you could
 process the 1-5 array with
 
 ```
-for (.foo.bar) . > 2
+[for (.foo.bar) . > 2]
 ```
 
 and get

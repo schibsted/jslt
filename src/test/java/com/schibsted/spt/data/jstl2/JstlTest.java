@@ -135,9 +135,9 @@ public class JstlTest extends TestBase {
     @Test
     public void testProduceArrayOfTransformedObjects() {
         String query =
-                "{\"bar\" : for (.list)\n" +
+                "{\"bar\" : [for (.list)\n" +
                 "  {\"loop\" : \"for\",\n" +
-                "   * : . }\n" +
+                "   * : . }]\n" +
                 "}\n";
         String input =
                 "{\n" +

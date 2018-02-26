@@ -244,9 +244,9 @@ public class TemplateTest extends TestBase {
           "}",
 
           "{ " +
-          "   \"foo\" : for ( .list ) " +
+          "   \"foo\" : [for ( .list ) " +
           "     {\"loop\" : \"for\", " +
-          "     * : . } " +
+          "     * : . }] " +
           "}",
 
           "{ " +

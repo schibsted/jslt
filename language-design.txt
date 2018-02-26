@@ -6,7 +6,7 @@ OPEN QUESTIONS
   jq       = error
   jsonpath = error
   jsonata  = nothing
-  jstl now = nothing
+  jstl now = null
 
 ---------------------------------------------------------------------------
 LANGUAGE DESIGN

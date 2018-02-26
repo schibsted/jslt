@@ -236,9 +236,6 @@ public class Parser {
              kind == JstlParserConstants.IDENT)
       return chainable2Expr(ctx, getChild(node, 0));
 
-    else if (kind == JstlParserConstants.FOR)
-      return buildForExpression(ctx, getChild(node, 0));
-
     else if (kind == JstlParserConstants.IF) {
       LetExpression[] letelse = null;
       ExpressionNode theelse = null;
@@ -260,10 +257,14 @@ public class Parser {
         loc
       );
 
-    } else if (kind == JstlParserConstants.LBRACKET)
-      return new ArrayExpression(children2Exprs(ctx, node), loc);
+    } else if (kind == JstlParserConstants.LBRACKET) {
+      Token next = token.next;
+      if (next.kind == JstlParserConstants.FOR)
+        return buildForExpression(ctx, node);
+      else
+        return new ArrayExpression(children2Exprs(ctx, node), loc);
 
-    else if (kind == JstlParserConstants.LCURLY) {
+    } else if (kind == JstlParserConstants.LCURLY) {
       Token next = token.next;
       if (next.kind == JstlParserConstants.FOR)
         return buildObjectComprehension(ctx, node);
