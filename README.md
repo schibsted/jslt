@@ -39,30 +39,15 @@ The new language has the following benefits over JSTL 1.0:
 The language design is not finished, so features may be added. The
 language as it stands is not likely to change.
 
-What is working:
- * JSON parsing.
- * Comments.
- * Dot key accessors.
- * Function calls.
- * `if`, `let`, and `for` statements.
- * Variables.
- * Operators `+`, `-`, `*`, and `/`.
- * Boolean comparators.
- * Boolean operators `and` and `or`.
- * The `number`, `round`, `fallback`, `not`, `test`, `capture`, `split`, `join`,
-   `is-array`, `is-object`, `starts-with`, `ends-with`, `contains`, `size`,
-   `lowercase`, `uppercase`, `string`, `is-string`, `is-number`, `floor`,
-   `ceiling`, and `random` functions.
- * `(` Parenthetical expressions `)`.
- * Array and string indexing and slicing.
- * Object matching (`* : .`).
+The entire language is implemented, and all of the function library.
+We may add some more functions, but essentially everything is
+implemented.
 
 [pulse-cleanup.jstl](cleanup.jstl2) has been translated to JSTL 2.0
 and works. A performance test on 89,100 Pulse events ran the old JSTL
 1.0 transform in ~6.3 seconds, and the new JSTL 2.0 in ~0.7 seconds.
 
-`pulse-cleanup.jstl` and `base-cleanup.jstl` are now running in
-production in Yggdrasil and The Batch Job 2.0.
+Many transforms have been running in production for several months.
 
 ## Command-line
 
@@ -78,14 +63,12 @@ The result is written to standard out.
 ## What is missing
 
 Things to be done:
-  * The rest of the function library (not 100% designed yet).
+  * Change `for` syntax to require brackets around it.
   * Fix the syntax ambiguity problem with `let`.
   * More detailed definition of language semantics, especially error
     situations.
-  * Documentation: complete tutorial + function library doc.
   * Optimizations: complete constant folding.
   * Use property-based testing and fuzz testing to harden the parser.
-  * Many more tests.
 
 See also [the list of ideas](ideas/).
 
