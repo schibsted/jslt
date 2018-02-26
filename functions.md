@@ -199,3 +199,9 @@ to be UTC.
 If `fallback` is not specified, the function will cause an error if
 `time` is of the wrong type or does not match the format. If
 `fallback` is specified that value will be returned instead.
+
+### _format-time(timestamp, format, timezone?) -> string_
+
+Formats `timestamp` (the number of seconds since epoch) with `format`
+and returns the formatted string. The timezone is assumed to be UTC,
+but this can be overridden with the `timezone` argument.

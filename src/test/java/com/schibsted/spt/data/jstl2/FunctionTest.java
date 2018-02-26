@@ -784,6 +784,41 @@ public class FunctionTest extends TestBase {
           "Couldn't parse format");
   }
 
+  // ===== FORMAT-TIME
+
+  @Test
+  public void testFormatDateTime() {
+    check("125641293.0",
+          "format-time(., \"yyyy-MM-dd HH:mm:ss\")",
+          "\"1973-12-25 04:21:33\"");
+  }
+
+  @Test
+  public void testFormatDateTimeErrorInFormat() {
+    error("format-time(125641293.0, \"yyyy-MM-dd dfkdfjkdf HH:mm:ss\")",
+          "Couldn't parse format");
+  }
+
+  @Test
+  public void testFormatDateTimeToUTC() {
+    check("125641293.0",
+          "format-time(., \"yyyy-MM-dd HH:mm:ssz\")",
+          "\"1973-12-25 04:21:33UTC\"");
+  }
+
+  @Test
+  public void testFormatDateTimeToCET() {
+    check("125641293.0",
+          "format-time(., \"yyyy-MM-dd HH:mm:ssz\", \"CET\")",
+          "\"1973-12-25 05:21:33CET\"");
+  }
+
+  @Test
+  public void testFormatDateTimeBadTimeZone() {
+    error("format-time(125641293.0, \"yyyy-MM-dd HH:mm:ss\", \"fjsjdjsjs\")",
+          "Unknown timezone");
+  }
+
   // ===== ERROR
 
   @Test

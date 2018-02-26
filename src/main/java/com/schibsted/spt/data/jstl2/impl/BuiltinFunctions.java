@@ -4,9 +4,12 @@ package com.schibsted.spt.data.jstl2.impl;
 import java.util.Map;
 import java.util.Set;
 import java.util.Date;
+import java.util.Arrays;
 import java.util.TreeSet;
+import java.util.HashSet;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.TimeZone;
 import java.util.SimpleTimeZone;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -78,6 +81,7 @@ public class BuiltinFunctions {
     // TIME
     functions.put("now", new BuiltinFunctions.Now());
     functions.put("parse-time", new BuiltinFunctions.ParseTime());
+    functions.put("format-time", new BuiltinFunctions.FormatTime());
   }
 
   public static Map<String, Macro> macros = new HashMap();
@@ -711,6 +715,51 @@ public class BuiltinFunctions {
           throw new JstlException("parse-time: " + e.getMessage());
         else
           return fallback;
+      }
+    }
+  }
+
+  // ===== FORMAT-TIME
+
+  public static class FormatTime extends AbstractFunction {
+    static Set<String> zonenames = new HashSet();
+    static {
+      zonenames.addAll(Arrays.asList(TimeZone.getAvailableIDs()));
+    }
+
+    public FormatTime() {
+      super("format-time", 2, 3);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      JsonNode number = NodeUtils.number(arguments[0], null);
+      if (number == null)
+        return NullNode.instance;
+
+      double timestamp = number.asDouble();
+
+      String formatstr = NodeUtils.toString(arguments[1], false);
+
+      TimeZone zone = new SimpleTimeZone(SimpleTimeZone.UTC_TIME, "UTC");
+      if (arguments.length == 3) {
+        String zonename = NodeUtils.toString(arguments[2], false);
+        if (!zonenames.contains(zonename))
+          throw new JstlException("format-time: Unknown timezone " + zonename);
+        zone = TimeZone.getTimeZone(zonename);
+      }
+
+      // the performance of this could be better, but it's not so easy
+      // to fix that when SimpleDateFormat isn't thread-safe, so we
+      // can't safely share it between threads
+
+      try {
+        SimpleDateFormat format = new SimpleDateFormat(formatstr);
+        format.setTimeZone(zone);
+        String formatted = format.format((long) timestamp * 1000);
+        return new TextNode(formatted);
+      } catch (IllegalArgumentException e) {
+        // thrown if format is bad
+        throw new JstlException("format-time: Couldn't parse format '" + formatstr + "': " + e.getMessage());
       }
     }
   }
