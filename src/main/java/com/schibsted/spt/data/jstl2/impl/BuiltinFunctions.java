@@ -560,7 +560,10 @@ public class BuiltinFunctions {
     }
 
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      if (arguments[1].isArray()) {
+      if (arguments[1].isNull())
+        return BooleanNode.FALSE; // nothing is contained in null
+
+      else if (arguments[1].isArray()) {
         for (int ix = 0; ix < arguments[1].size(); ix++)
           if (arguments[1].get(ix).equals(arguments[0]))
             return BooleanNode.TRUE;

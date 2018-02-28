@@ -646,6 +646,11 @@ public class FunctionTest extends TestBase {
     error("contains(123, false)", "false");
   }
 
+  @Test
+  public void testContainsStringInNull() {
+    check("{}", "contains(\"Taip\", null)", "false");
+  }
+
   // ===== SIZE
 
   @Test
