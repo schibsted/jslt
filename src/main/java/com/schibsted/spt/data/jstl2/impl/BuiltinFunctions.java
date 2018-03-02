@@ -73,6 +73,7 @@ public class BuiltinFunctions {
 
     // OBJECT
     functions.put("is-object", new BuiltinFunctions.IsObject());
+    functions.put("get-key", new BuiltinFunctions.GetKey());
 
     // ARRAY
     functions.put("array", new BuiltinFunctions.Array());
@@ -461,6 +462,33 @@ public class BuiltinFunctions {
 
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
       return NodeUtils.toJson(arguments[0].isObject());
+    }
+  }
+
+  // ===== GET-KEY
+
+  public static class GetKey extends AbstractFunction {
+
+    public GetKey() {
+      super("get-key", 2, 2);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      String key = NodeUtils.toString(arguments[1], true);
+      if (key == null)
+        return NullNode.instance;
+
+      JsonNode obj = arguments[0];
+      if (obj.isObject()) {
+        JsonNode value = obj.get(key);
+        if (value == null)
+          return NullNode.instance;
+        else
+          return value;
+      } else if (obj.isNull())
+        return NullNode.instance;
+      else
+        throw new JstlException("get-key: can't look up keys in " + obj);
     }
   }
 

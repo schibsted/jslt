@@ -60,6 +60,7 @@ public class NodeUtils {
     return node;
   }
 
+  // nullok => return Java null for Json null
   public static String toString(JsonNode value, boolean nullok) {
     // check what type this is
     if (value.isTextual())

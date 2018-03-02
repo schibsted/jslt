@@ -154,6 +154,12 @@ True iff `value` is a boolean.
 
 True iff `value` is an object.
 
+### _get-key(object, key) -> value_
+
+Does the same as `.key` on `object`, with the difference that here the
+key can be dynamic. That is, it can come from a variable, be looked up
+in input data, and so on. If the key does not exist, `null` is returned.
+
 
 <!-- ARRAY ==================================================================-->
 

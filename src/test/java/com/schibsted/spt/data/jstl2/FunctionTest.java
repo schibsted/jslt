@@ -831,6 +831,41 @@ public class FunctionTest extends TestBase {
     error("error(\"Oh no\")", "Oh no");
   }
 
+  // ===== GET-KEY
+
+  @Test
+  public void testGetKey() {
+    check(" { \"foo\" : 24 } ",
+          " get-key(., \"foo\") ",
+          " 24 ");
+  }
+
+  @Test
+  public void testGetNonexistentKey() {
+    check(" { \"foo\" : 24 } ",
+          " get-key(., \"bar\") ",
+          " null ");
+  }
+
+  @Test
+  public void testGetNullKey() {
+    check(" { \"foo\" : 24 } ",
+          " get-key(., null) ",
+          " null ");
+  }
+
+  @Test
+  public void testGetKeyFromNull() {
+    check(" { \"foo\" : 24 } ",
+          " get-key(null, \"key\") ",
+          " null ");
+  }
+
+  @Test
+  public void testGetKeyFromNonObject() {
+    error(" get-key(24, \"key\") ", "24");
+  }
+
   // ===== EXTENSION FUNCTION
 
   private static class TestFunction implements Function {
