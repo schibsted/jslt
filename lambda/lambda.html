@@ -73,7 +73,7 @@ Please <a href="https://github.schibsted.io/spt-dataanalytics/jstl2/issues"
 
 <textarea id="jstl" name="jstl" cols=80 rows=20>
 let idparts = split(.id, "-")
-let xxx = for ($idparts) "x" * size(.)
+let xxx = [for ($idparts) "x" * size(.)]
 
 {
   "id" : join($xxx, "-"),
