@@ -90,7 +90,7 @@ missing data. With JSTL 2.0 the pipe disappears, and the function will
 just return `false` if the input is `null`.
 
 Similarly, testing if a value was one of a number of alternatives used
-be done like this:
+to be done like this:
 
 ```
 .object."@type" | (. == "Article" or . == "ClassifiedAd" or . == "Content" or

@@ -57,10 +57,8 @@ public class ObjectExpression extends AbstractNode {
   private void evaluateMatcher(Scope scope, JsonNode input, ObjectNode object) {
     // find the object to match against
     JsonNode context = contextQuery.apply(scope, input);
-    if (context.isNull())
-      return; // we found nothing
-    if (!context.isObject())
-      throw new JstlException("Cannot match against " + context, location);
+    if (context.isNull() && !context.isObject())
+      return; // no keys to match against
 
     // then do the matching
     Iterator<Map.Entry<String, JsonNode>> it = context.fields();

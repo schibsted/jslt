@@ -100,25 +100,27 @@ public class TemplateTest extends TestBase {
 
   @Test
   public void testMatchArray() {
-    error("[1,2,3,4,5]",
+    check("[1,2,3,4,5]",
 
           "{\"bille\" : 100, " +
           " \"foo\" : .bar, " +
           " \"bar\" : 200, " +
           " * : .}",
 
-          "match");
+          "{\"bille\" : 100, " +
+          " \"bar\" : 200}");
   }
 
   @Test
   public void testMatchArrayOnly() {
-    error("[1,2,3,4,5]",
+    check("[1,2,3,4,5]",
 
           "{\"bille\" : 100, " +
           " \"bar\" : 200, " +
           " * : .}",
 
-          "match");
+          "{\"bille\" : 100, " +
+          " \"bar\" : 200}");
   }
 
   @Test
@@ -272,6 +274,23 @@ public class TemplateTest extends TestBase {
           "{ " +
           "   \"foo\" : 5 " +
           "}");
+  }
+
+  @Test
+  public void testMatchingNotAnAobject() {
+    check("{ " +
+          "   \"foo\" : 5, " +
+          "   \"bar\" : 2 " +
+          "}",
+
+          "{ " +
+          "  \"foo\" : { " +
+          "    \"bar\" : .bar, " +
+          "    * : . " +
+          "  } " +
+          "}",
+
+          "{\"foo\" : {\"bar\" : 2}}");
   }
 
   // "matching-8.jstl" should "fail" in {
