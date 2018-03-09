@@ -73,8 +73,10 @@ public class ObjectExpression extends AbstractNode {
   }
 
   public void computeMatchContexts(DotExpression parent) {
-    if (matcher != null)
+    if (matcher != null) {
       contextQuery = parent;
+      contextQuery.checkOk(location); // verify expression is legal
+    }
 
     for (int ix = 0; ix < lets.length; ix++)
       lets[ix].computeMatchContexts(parent);

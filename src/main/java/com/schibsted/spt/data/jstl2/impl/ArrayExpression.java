@@ -28,6 +28,12 @@ public class ArrayExpression extends AbstractNode {
     }
   }
 
+  public void computeMatchContexts(DotExpression parent) {
+    FailDotExpression fail = new FailDotExpression(location);
+    for (int ix = 0; ix < children.length; ix++)
+      children[ix].computeMatchContexts(fail);
+  }
+
   public ExpressionNode optimize() {
     boolean allLiterals = true;
     for (int ix = 0; ix < children.length; ix++) {

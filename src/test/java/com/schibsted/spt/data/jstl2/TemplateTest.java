@@ -293,6 +293,27 @@ public class TemplateTest extends TestBase {
           "{\"foo\" : {\"bar\" : 2}}");
   }
 
+  @Test
+  public void testMatchingInForInsideAnArray() {
+    check("[{ " +
+          "   \"foo\" : 5, " +
+          "   \"bar\" : 2 " +
+          "}]",
+
+          // convoluted template to say: take the top-level array,
+          // transform the objects it contains into the same objects,
+          // and wrap the whole thing in an array
+          "[[for (.) {* : .}]]",
+
+          "[[{\"foo\" : 5, \"bar\" : 2}]]");
+  }
+
+  @Test
+  public void testMatchingInAnArray() {
+    error("[{* : .}]",
+          "array");
+  }
+
   // "matching-8.jstl" should "fail" in {
   //   fail("matching-8.jstl", "empty.json")
   // }

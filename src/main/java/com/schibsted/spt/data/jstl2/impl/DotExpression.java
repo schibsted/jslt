@@ -56,4 +56,13 @@ public class DotExpression extends AbstractNode {
     else
       return me;
   }
+
+  // verify that we've build a correct DotExpression for our object
+  // matcher (only used for that)
+  public void checkOk(Location matcher) {
+    // this object is OK, but might be a FailDotExpression higher up,
+    // so check for that
+    if (parent != null)
+      ((DotExpression) parent).checkOk(matcher);
+  }
 }
