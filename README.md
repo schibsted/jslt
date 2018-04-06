@@ -66,7 +66,10 @@ Things to be done:
   * Fix the syntax ambiguity problem with `let`.
   * More detailed definition of language semantics, especially error
     situations.
-  * Optimizations: complete constant folding.
+  * Optimizer: complete constant folding. Particularly constant
+    folding for variables would be valuable.
+  * Avoid building more scope objects than necessary and avoid
+    creating deep scope trees that require a lot of lookup.
   * Use property-based testing and fuzz testing to harden the parser.
 
 See also [the list of ideas](ideas/).
