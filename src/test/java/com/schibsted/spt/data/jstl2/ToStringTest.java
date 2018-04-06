@@ -71,6 +71,13 @@ public class ToStringTest extends TestBase {
     verify("[for (.foo) .bar]", "[for (.foo) .bar]");
   }
 
+  // ----- VARIABLE
+
+  @Test
+  public void testVariable() {
+    verify("$foo", "$foo");
+  }
+
   // ----- UTILITIES
 
   private void verify(String input, String output) {

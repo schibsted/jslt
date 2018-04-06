@@ -27,4 +27,8 @@ public class VariableExpression extends AbstractNode {
 
   public void dump(int level) {
   }
+
+  public String toString() {
+    return "$" + variable;
+  }
 }
