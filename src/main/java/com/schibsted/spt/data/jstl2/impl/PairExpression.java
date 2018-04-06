@@ -33,6 +33,16 @@ public class PairExpression extends AbstractNode {
     expr.compile(compiler);
   }
 
+  // is the expr a literal?
+  public boolean isLiteral() {
+    return expr instanceof LiteralExpression;
+  }
+
+  public ExpressionNode optimize() {
+    expr = expr.optimize();
+    return this;
+  }
+
   public void dump(int level) {
     System.out.println(NodeUtils.indent(level) + '"' + key + '"' + " :");
     expr.dump(level + 1);

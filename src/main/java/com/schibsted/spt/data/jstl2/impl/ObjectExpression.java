@@ -84,6 +84,21 @@ public class ObjectExpression extends AbstractNode {
       children[ix].computeMatchContexts(parent);
   }
 
+  public ExpressionNode optimize() {
+    boolean allLiterals = matcher == null; // not static otherwise
+    for (int ix = 0; ix < children.length; ix++) {
+      children[ix] = (PairExpression) children[ix].optimize();
+      allLiterals = allLiterals && children[ix].isLiteral();
+    }
+    if (!allLiterals)
+      return this;
+
+    // we're a static object expression. we can just make the object and
+    // turn that into a literal, instead of creating it over and over
+    JsonNode object = apply(null, null); // literals won't use scope or input
+    return new LiteralExpression(object, location);
+  }
+
   public void compile(Compiler compiler) {
     compiler.compileLets(lets);
 
