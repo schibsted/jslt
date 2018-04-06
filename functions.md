@@ -128,11 +128,16 @@ True iff the `tested` string starts with `prefix`.
 
 True iff the `tested` string ends with `suffix`.
 
-### _from-json(string) -> value_
+### _from-json(string, fallback?) -> value_
 
 Parses the string as JSON and returns the result. So parsing `"22"`
 will return `22`. If the string is `null` then the function will
 return `null`.
+
+If the optional `fallback` argument is not specified JSON parse errors
+will cause an error. If it is specified that value will be returned if
+the JSON cannot be parsed. So `from-json("[1,2", "BAD")` will return
+`"BAD"`.
 
 ### _to-json(value) -> string_
 

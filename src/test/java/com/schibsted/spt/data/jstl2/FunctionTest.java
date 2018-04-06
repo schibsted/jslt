@@ -901,6 +901,13 @@ public class FunctionTest extends TestBase {
     error(" from-json(\"[1,2,\") ", "parse");
   }
 
+  @Test
+  public void testFromBadJsonFallback() {
+    check(" \"[1,2,\" ",
+          " from-json(., false) ",
+          " false ");
+  }
+
   // ===== TO-JSON
 
   @Test

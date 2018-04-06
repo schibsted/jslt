@@ -561,7 +561,7 @@ public class BuiltinFunctions {
   public static class FromJson extends AbstractFunction {
 
     public FromJson() {
-      super("from-json", 1, 1);
+      super("from-json", 1, 2);
     }
 
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
@@ -572,7 +572,10 @@ public class BuiltinFunctions {
       try {
         return NodeUtils.mapper.readTree(json);
       } catch (Exception e) {
-        throw new JstlException("from-json can't parse " + json + ": " + e);
+        if (arguments.length == 2)
+          return arguments[1]; // return fallback on parse fail
+        else
+          throw new JstlException("from-json can't parse " + json + ": " + e);
       }
     }
   }
