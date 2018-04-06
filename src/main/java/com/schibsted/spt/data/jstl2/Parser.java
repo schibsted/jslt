@@ -24,10 +24,17 @@ import com.schibsted.spt.data.jstl2.impl.vm.Compiler;
 
 public class Parser {
 
+  public static Expression compile(Collection<Function> functions,
+                                   File jstl) {
+    return compile(new ParseContext(functions, jstl.getAbsolutePath()), jstl);
+  }
+
   public static Expression compile(File jstl) {
-    // FIXME: character encoding bug
+    return compile(new ParseContext(jstl.getAbsolutePath()), jstl);
+  }
+
+  private static Expression compile(ParseContext ctx, File jstl) {
     try (FileReader f = new FileReader(jstl)) {
-      ParseContext ctx = new ParseContext(jstl.getAbsolutePath());
       return compile(ctx, new JstlParser(f));
     } catch (FileNotFoundException e) {
       throw new JstlException("Couldn't find file " + jstl);
