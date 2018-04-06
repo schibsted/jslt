@@ -866,6 +866,64 @@ public class FunctionTest extends TestBase {
     error(" get-key(24, \"key\") ", "24");
   }
 
+  // ===== FROM-JSON
+
+  @Test
+  public void testFromJsonNull() {
+    check(" null ",
+          " from-json(.) ",
+          " null ");
+  }
+
+  @Test
+  public void testFromJsonJsonNull() {
+    check(" \"null\" ",
+          " from-json(.) ",
+          " null ");
+  }
+
+  @Test
+  public void testFromJsonNumber() {
+    check(" \"22\" ",
+          " from-json(.) ",
+          " 22 ");
+  }
+
+  @Test
+  public void testFromJsonComplexObject() {
+    check(" \"{\\\"foo\\\" : {\\\"bar\\\" : 22}}\" ",
+          " from-json(.) ",
+          " {\"foo\":{\"bar\":22}} ");
+  }
+
+  @Test
+  public void testFromBadJson() {
+    error(" from-json(\"[1,2,\") ", "parse");
+  }
+
+  // ===== TO-JSON
+
+  @Test
+  public void testToJsonNull() {
+    check(" null ",
+          " to-json(.) ",
+          " \"null\" ");
+  }
+
+  @Test
+  public void testToJsonNumber() {
+    check(" 22 ",
+          " to-json(.) ",
+          " \"22\" ");
+  }
+
+  @Test
+  public void testToJsonComplexObject() {
+    check(" {\"foo\":{\"bar\":22}} ",
+          " to-json(.) ",
+          " \"{\\\"foo\\\":{\\\"bar\\\":22}}\" ");
+  }
+
   // ===== EXTENSION FUNCTION
 
   private static class TestFunction implements Function {

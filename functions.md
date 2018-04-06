@@ -128,6 +128,17 @@ True iff the `tested` string starts with `prefix`.
 
 True iff the `tested` string ends with `suffix`.
 
+### _from-json(string) -> value_
+
+Parses the string as JSON and returns the result. So parsing `"22"`
+will return `22`. If the string is `null` then the function will
+return `null`.
+
+### _to-json(value) -> string_
+
+The opposite of `from-json`, in that it takes any JSON value and
+returns it serialized as a string.
+
 <!-- BOOLEAN ================================================================-->
 
 ## Boolean functions

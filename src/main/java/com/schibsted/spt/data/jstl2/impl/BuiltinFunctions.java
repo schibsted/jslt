@@ -65,6 +65,8 @@ public class BuiltinFunctions {
     functions.put("uppercase", new BuiltinFunctions.Uppercase());
     functions.put("starts-with", new BuiltinFunctions.StartsWith());
     functions.put("ends-with", new BuiltinFunctions.EndsWith());
+    functions.put("from-json", new BuiltinFunctions.FromJson());
+    functions.put("to-json", new BuiltinFunctions.ToJson());
 
     // BOOLEAN
     functions.put("not", new BuiltinFunctions.Not());
@@ -551,6 +553,45 @@ public class BuiltinFunctions {
       String string = NodeUtils.toString(arguments[0], false);
       String suffix = NodeUtils.toString(arguments[1], false);
       return NodeUtils.toJson(string.endsWith(suffix));
+    }
+  }
+
+  // ===== FROM-JSON
+
+  public static class FromJson extends AbstractFunction {
+
+    public FromJson() {
+      super("from-json", 1, 1);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      String json = NodeUtils.toString(arguments[0], true);
+      if (json == null)
+        return NullNode.instance;
+
+      try {
+        return NodeUtils.mapper.readTree(json);
+      } catch (Exception e) {
+        throw new JstlException("from-json can't parse " + json + ": " + e);
+      }
+    }
+  }
+
+  // ===== TO-JSON
+
+  public static class ToJson extends AbstractFunction {
+
+    public ToJson() {
+      super("to-json", 1, 1);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      try {
+        String json = NodeUtils.mapper.writeValueAsString(input);
+        return new TextNode(json);
+      } catch (Exception e) {
+        throw new JstlException("to-json can't serialize " + input + ": " + e);
+      }
     }
   }
 
