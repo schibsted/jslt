@@ -50,7 +50,7 @@ public class DotExpression extends AbstractNode {
   }
 
   public String toString() {
-    String me = " ." + (key == null ? "<nothing>" : key);
+    String me = "." + (key == null ? "" : key);
     if (parent != null)
       return "" + parent + me;
     else

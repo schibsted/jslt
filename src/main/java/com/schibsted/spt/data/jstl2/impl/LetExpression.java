@@ -39,4 +39,9 @@ public class LetExpression extends AbstractNode {
                        "let " + variable + " =");
     value.dump(level + 1);
   }
+
+  public ExpressionNode optimize() {
+    value = value.optimize();
+    return this;
+  }
 }

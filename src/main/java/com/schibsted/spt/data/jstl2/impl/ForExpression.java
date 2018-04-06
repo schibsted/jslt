@@ -74,4 +74,8 @@ public class ForExpression extends AbstractNode {
     System.out.println(NodeUtils.indent(level) + ")");
     loopExpr.dump(level + 1);
   }
+
+  public String toString() {
+    return "[for (" + valueExpr + ") " + loopExpr + "]";
+  }
 }

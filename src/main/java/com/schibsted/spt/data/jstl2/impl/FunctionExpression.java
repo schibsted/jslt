@@ -58,4 +58,18 @@ public class FunctionExpression extends AbstractNode {
       arguments[ix].dump(level + 1);
     System.out.println(NodeUtils.indent(level) + ')');
   }
+
+  public String toString() {
+    StringBuilder buf = new StringBuilder();
+    buf.append(function.getName());
+    buf.append('(');
+    for (int ix = 0; ix < arguments.length; ix++) {
+      if (ix > 0)
+        buf.append(", ");
+      buf.append(arguments[ix].toString());
+    }
+    buf.append(')');
+
+    return buf.toString();
+  }
 }

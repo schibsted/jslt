@@ -57,4 +57,9 @@ public class ExpressionImpl implements Expression {
       lets[ix].dump(0);
     actual.dump(0);
   }
+
+  public String toString() {
+    // FIXME: letexprs
+    return actual.toString();
+  }
 }

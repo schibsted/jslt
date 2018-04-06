@@ -2,6 +2,8 @@
 package com.schibsted.spt.data.jstl2.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.schibsted.spt.data.jstl2.JstlException;
 import com.schibsted.spt.data.jstl2.impl.vm.Compiler;
 
 public class LiteralExpression extends AbstractNode {
@@ -22,5 +24,13 @@ public class LiteralExpression extends AbstractNode {
 
   public void dump(int level) {
     System.out.println(NodeUtils.indent(level) + value);
+  }
+
+  public String toString() {
+    try {
+      return NodeUtils.mapper.writeValueAsString(value);
+    } catch (JsonProcessingException e) {
+      throw new JstlException("Couldn't serialize literal value: " + e);
+    }
   }
 }

@@ -64,10 +64,13 @@ The result is written to standard out.
 
 Things to be done:
   * Fix the syntax ambiguity problem with `let`.
+  * Implement toString() throughout the object tree, so that it's
+    possible to turn expressions back to strings.
   * More detailed definition of language semantics, especially error
     situations.
   * Optimizer: complete constant folding. Particularly constant
-    folding for variables would be valuable.
+    folding for variables would be valuable. Also, need to make sure
+    entire expression tree is traversed.
   * Avoid building more scope objects than necessary and avoid
     creating deep scope trees that require a lot of lookup.
   * Use property-based testing and fuzz testing to harden the parser.

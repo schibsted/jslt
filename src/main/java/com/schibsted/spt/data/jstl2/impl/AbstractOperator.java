@@ -45,4 +45,8 @@ public abstract class AbstractOperator extends AbstractNode {
   }
 
   public abstract JsonNode perform(JsonNode v1, JsonNode v2);
+
+  public String toString() {
+    return left.toString() + " " + operator + " " + right;
+  }
 }
