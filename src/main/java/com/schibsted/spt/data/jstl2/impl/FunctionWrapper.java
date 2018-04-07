@@ -41,6 +41,10 @@ public class FunctionWrapper implements Function {
     return method.getParameterCount();
   }
 
+  public String getKind() {
+    return "Function";
+  }
+
   public JsonNode call(JsonNode input, JsonNode[] arguments) {
     Object[] args = new Object[arguments.length];
     for (int ix = 0; ix < arguments.length; ix++)

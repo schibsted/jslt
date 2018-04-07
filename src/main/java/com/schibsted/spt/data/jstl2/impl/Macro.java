@@ -9,13 +9,7 @@ import com.fasterxml.jackson.databind.JsonNode;
  * That allows it to do things that an ordinary function cannot do.
  * Macros are an internal feature for now.
  */
-public interface Macro {
-
-  public String getName();
-
-  public int getMinArguments();
-
-  public int getMaxArguments();
+public interface Macro extends Callable {
 
   /**
    * Invokes the macro, which can then modify the input node and

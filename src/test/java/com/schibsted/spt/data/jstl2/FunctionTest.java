@@ -947,6 +947,10 @@ public class FunctionTest extends TestBase {
       return 0;
     }
 
+    public String getKind() {
+      return "Function";
+    }
+
     public JsonNode call(JsonNode input, JsonNode[] params) {
       return new IntNode(42);
     }

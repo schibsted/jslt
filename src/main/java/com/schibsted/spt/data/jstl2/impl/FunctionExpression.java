@@ -10,23 +10,13 @@ import com.schibsted.spt.data.jstl2.Function;
 import com.schibsted.spt.data.jstl2.JstlException;
 import com.schibsted.spt.data.jstl2.impl.vm.Compiler;
 
-public class FunctionExpression extends AbstractNode {
+public class FunctionExpression extends AbstractInvocationExpression {
   private Function function;
-  private ExpressionNode[] arguments;
 
   public FunctionExpression(Function function, ExpressionNode[] arguments,
                             Location location) {
-    super(location);
+    super(function, arguments, location);
     this.function = function;
-    this.arguments = arguments;
-
-    if (arguments.length < function.getMinArguments() ||
-        arguments.length > function.getMaxArguments())
-      throw new JstlException(
-        "Function '" + function.getName() + "' needs " +
-        function.getMinArguments() + "-" + function.getMaxArguments() +
-        " arguments, got " + arguments.length, location
-      );
   }
 
   public JsonNode apply(Scope scope, JsonNode input) {
@@ -44,32 +34,5 @@ public class FunctionExpression extends AbstractNode {
       arguments[ix].compile(compiler);
     compiler.genPUSHL(new IntNode(arguments.length));
     compiler.genCALL(function);
-  }
-
-  public ExpressionNode optimize() {
-    for (int ix = 0; ix < arguments.length; ix++)
-      arguments[ix] = arguments[ix].optimize();
-    return this;
-  }
-
-  public void dump(int level) {
-    System.out.println(NodeUtils.indent(level) + function.getName() + "(");
-    for (int ix = 0; ix < arguments.length; ix++)
-      arguments[ix].dump(level + 1);
-    System.out.println(NodeUtils.indent(level) + ')');
-  }
-
-  public String toString() {
-    StringBuilder buf = new StringBuilder();
-    buf.append(function.getName());
-    buf.append('(');
-    for (int ix = 0; ix < arguments.length; ix++) {
-      if (ix > 0)
-        buf.append(", ");
-      buf.append(arguments[ix].toString());
-    }
-    buf.append(')');
-
-    return buf.toString();
   }
 }

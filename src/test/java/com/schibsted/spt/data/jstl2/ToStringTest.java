@@ -57,6 +57,13 @@ public class ToStringTest extends TestBase {
     verify("number(\"22\", null)", "number(\"22\", null)");
   }
 
+  // ----- MACROS
+
+  @Test
+  public void testMacro2() {
+    verify("fallback(\"22\", null)", "fallback(\"22\", null)");
+  }
+
   // ----- OPERATORS
 
   @Test
