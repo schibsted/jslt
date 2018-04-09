@@ -15,6 +15,4 @@ public interface Callable {
 
   public int getMaxArguments();
 
-  public String getKind(); // "Macro" or "Function"
-
 }

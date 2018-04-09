@@ -26,12 +26,14 @@ public abstract class AbstractInvocationExpression extends AbstractNode {
     this.arguments = arguments;
 
     if (arguments.length < callable.getMinArguments() ||
-        arguments.length > callable.getMaxArguments())
+        arguments.length > callable.getMaxArguments()) {
+      String kind = (this instanceof FunctionExpression) ? "Function" : "Macro";
       throw new JstlException(
-        callable.getKind() + " '" + callable.getName() + "' needs " +
+        kind + " '" + callable.getName() + "' needs " +
         callable.getMinArguments() + "-" + callable.getMaxArguments() +
         " arguments, got " + arguments.length, location
       );
+    }
   }
 
   public ExpressionNode optimize() {

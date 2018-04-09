@@ -121,20 +121,12 @@ public class BuiltinFunctions {
     public AbstractFunction(String name, int min, int max) {
       super(name, min, max);
     }
-
-    public String getKind() {
-      return "Function";
-    }
   }
 
   private static abstract class AbstractMacro extends AbstractCallable implements Macro {
 
     public AbstractMacro(String name, int min, int max) {
       super(name, min, max);
-    }
-
-    public String getKind() {
-      return "Macro";
     }
   }
 
