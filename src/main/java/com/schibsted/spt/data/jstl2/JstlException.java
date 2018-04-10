@@ -30,6 +30,10 @@ public class JstlException extends RuntimeException {
       return super.getMessage();
   }
 
+  public String getMessageWithoutLocation() {
+    return super.getMessage();
+  }
+
   public String getSource() {
     return location.getSource();
   }
