@@ -908,6 +908,11 @@ public class FunctionTest extends TestBase {
           " false ");
   }
 
+  @Test
+  public void testFromJsonNothing() {
+    check(" \"\" ", "from-json(.)", "null");
+  }
+
   // ===== TO-JSON
 
   @Test

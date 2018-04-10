@@ -47,6 +47,8 @@ public class TestBase {
 
       Expression expr = Parser.compile(functions, query);
       JsonNode actual = expr.apply(variables, context);
+      if (actual == null)
+        throw new JstlException("Returned Java null");
 
       // reparse to handle IntNode(2) != LongNode(2)
       actual = mapper.readTree(mapper.writeValueAsString(actual));

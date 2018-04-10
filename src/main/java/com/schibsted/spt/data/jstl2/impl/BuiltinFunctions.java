@@ -560,7 +560,10 @@ public class BuiltinFunctions {
         return NullNode.instance;
 
       try {
-        return NodeUtils.mapper.readTree(json);
+        JsonNode parsed = NodeUtils.mapper.readTree(json);
+        if (parsed == null) // if input is "", for example
+          return NullNode.instance;
+        return parsed;
       } catch (Exception e) {
         if (arguments.length == 2)
           return arguments[1]; // return fallback on parse fail
