@@ -17,15 +17,15 @@ public class Location {
   }
 
   public String getSource() {
-    return source();
+    return source;
   }
 
   public int getLine() {
-    return line();
+    return line;
   }
 
   public int getColumn() {
-    return column();
+    return column;
   }
 
   public String toString() {
