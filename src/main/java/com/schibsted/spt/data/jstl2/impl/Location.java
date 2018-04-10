@@ -16,6 +16,18 @@ public class Location {
     this.column = column;
   }
 
+  public String getSource() {
+    return source();
+  }
+
+  public int getLine() {
+    return line();
+  }
+
+  public int getColumn() {
+    return column();
+  }
+
   public String toString() {
     if (source != null)
       return source + ':' + line + ':' + column;

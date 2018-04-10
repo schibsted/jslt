@@ -29,4 +29,16 @@ public class JstlException extends RuntimeException {
     else
       return super.getMessage();
   }
+
+  public String getSource() {
+    return location.getSource();
+  }
+
+  public int getLine() {
+    return location.getLine();
+  }
+
+  public int getColumn() {
+    return location.getColumn();
+  }
 }
