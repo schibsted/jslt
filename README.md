@@ -13,6 +13,31 @@ JSTL 2.0 can be used as:
  * a filter/check language to test JSON objects (`starts-with(.provider.id, "sdrn:")`) ,
  * a transformation language to convert between JSON formats.
 
+An example of a basic transform from the Pulse schema to the format
+Amplitude expects:
+
+```
+let user_id = fallback(.actor."spt:userId", .account."@id")
+
+{
+    "event_type" :  if (contains("backend", .schema)) (
+      "Backend - "+ ."@type" +" "+ .object."@type"
+    ) else
+      ."@type" + " " + .object."@type",
+    "device_id" : sha256-hex( $salt + .device.environmentId ),
+    "time": round(parse-time(.published, "yyyy-MM-dd'T'HH:mm:ssX") * 1000),
+    "device_manufacturer": .device.manufacturer,
+    "device_model": .device.model,
+    "language": .device.acceptLanguage,
+    "os_name": .device.osType,
+    "os_version": .device.osVersion,
+    "platform": .device.platformType,
+    "user_id" : if ($user_id) sha256-hex( $salt + $user_id) ,
+    "user_properties": {
+        "is_logged_in" : boolean($user_id)
+    }
+}
+
 The new language has the following benefits over JSTL 1.0:
  * better handling of missing data,
  * no more ugly `${ ... }` wrappers around the jq queries,
@@ -48,6 +73,8 @@ and works. A performance test on 89,100 Pulse events ran the old JSTL
 1.0 transform in ~6.3 seconds, and the new JSTL 2.0 in ~0.7 seconds.
 
 Many transforms have been running in production for several months.
+At the time of writing, JSTL2 performs ~7.5 billion transforms per day
+and in addition about 20-30 billion filtering queries.
 
 ## Command-line
 
