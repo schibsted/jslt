@@ -36,6 +36,7 @@ let user_id = fallback(.actor."spt:userId", .account."@id")
         "is_logged_in" : boolean($user_id)
     }
 }
+```
 
 The new language has the following benefits over JSTL 1.0:
  * better handling of missing data,
