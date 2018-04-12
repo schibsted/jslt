@@ -1,9 +1,8 @@
 
 # JSTL 2.0
 
-JSTL 2.0 is a redesign of JSTL that does *not* use jq as the query
-language, because JSTL 2.0 is a complete query and transformation
-language in one. The language design is inspired by
+JSTL 2.0 is a complete query and transformation language for JSON.
+The language design is inspired by
 [jq](https://stedolan.github.io/jq/),
 [XPath](https://www.w3.org/TR/1999/REC-xpath-19991116/), and
 [XQuery](https://en.wikipedia.org/wiki/XQuery).
