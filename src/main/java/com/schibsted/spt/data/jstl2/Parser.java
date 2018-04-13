@@ -523,8 +523,10 @@ public class Parser {
         collectMinuses(ctx, getChild(node, 0), minuses);
       return new MatcherExpression(node2expr(ctx, last), minuses,
                                    makeLocation(ctx, last));
-    } else
-      throw new JstlException("INTERNAL ERROR: This is wrong");
+    } else if (node.id == JstlParserTreeConstants.JJTLET)
+      return null; // last item is a let, which is messed up, but legal
+    else
+      throw new JstlException("INTERNAL ERROR: This is wrong: " + node);
   }
 
   private static void collectMinuses(ParseContext ctx, SimpleNode node,

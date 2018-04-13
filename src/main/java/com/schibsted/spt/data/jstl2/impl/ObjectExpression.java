@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.IntNode;
+import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -95,7 +96,8 @@ public class ObjectExpression extends AbstractNode {
 
     // we're a static object expression. we can just make the object and
     // turn that into a literal, instead of creating it over and over
-    JsonNode object = apply(null, null); // literals won't use scope or input
+    // apply parameters: literals won't use scope or input, so...
+    JsonNode object = apply(null, NullNode.instance);
     return new LiteralExpression(object, location);
   }
 

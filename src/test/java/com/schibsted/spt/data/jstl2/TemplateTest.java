@@ -314,6 +314,18 @@ public class TemplateTest extends TestBase {
           "array");
   }
 
+  @Test
+  public void testHandleTrickyTransform() {
+    check("{}",
+          "{" +
+          "  \"provider\": {" +
+          "    let urn = .provider.\"@id\""+
+          "  }," +
+          "  * : ." +
+          "}",
+          "{}");
+  }
+
   // "matching-8.jstl" should "fail" in {
   //   fail("matching-8.jstl", "empty.json")
   // }
