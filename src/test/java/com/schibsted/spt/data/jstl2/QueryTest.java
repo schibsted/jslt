@@ -756,6 +756,16 @@ public class QueryTest extends TestBase {
     check("", ".foo", "null");
   }
 
+  @Test
+  public void testCommentAtTheEnd() {
+    check("{}", ".foo // this used to break", "null");
+  }
+
+  @Test
+  public void testEmptyCommentAtTheEnd() {
+    check("{}", ".foo //", "null");
+  }
+
   // ===== VARIOUS SYNTAX ERRORS
 
   @Test
