@@ -766,6 +766,14 @@ public class QueryTest extends TestBase {
     check("{}", ".foo //", "null");
   }
 
+  @Test
+  public void testCommentInTheMiddle() {
+    check("{}", ".foo\n" +
+                "// comment\n"+
+                "and false",
+          "false");
+  }
+
   // ===== VARIOUS SYNTAX ERRORS
 
   @Test
