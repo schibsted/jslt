@@ -79,5 +79,9 @@ implement the state-preserving transform in pure JSTL.
 There is the spectre of cyclic imports, but that can be handled fairly
 easily.
 
+What if one redeclares a function already available, either built in,
+or supplied from the outside? Probably this should be allowed, with
+the declaration inside the template taking precedence.
+
 The only real cost is that transforms will no longer be guaranteed to
 eventually finish computing.
