@@ -53,6 +53,6 @@ a boolean, then it is a predicate. JSONPath uses the `[? <expr> ]`
 syntax.
 
 There is a close relation here with the possible `IF` or `WHERE`
-inside `FOR` loops.
+inside `FOR` loops ([for-filter](for-filter.md)).
 
 The `filter` macro would be another candidate.

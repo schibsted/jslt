@@ -9,3 +9,4 @@ It's mostly new features, but not exclusively.
 * [Using `.foo` on arrays](dot-on-array.md)
 * [Predicates](predicates.md)
 * [The `filter` macro](filter.md)
+* [The `for` filter](for-filter.md)

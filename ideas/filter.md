@@ -12,4 +12,5 @@ filter(.path.to.array, number(.price) > 20)
 This can't be a function, because the second argument has to be
 evaluated many times, but it's perfectly doable as a macro.
 
-Alternatives are `FOR (...) ... IF (...)` and [predicates](predicates.md).
+Alternatives are `FOR (...) ... IF (...)` [for-filter](for-filter.md)
+and [predicates](predicates.md).
