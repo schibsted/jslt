@@ -10,6 +10,10 @@ public abstract class AbstractNode implements ExpressionNode {
     this.location = location;
   }
 
+  public Location getLocation() {
+    return location;
+  }
+
   public void dump(int level) {
     System.out.println(NodeUtils.indent(level) + this);
   }

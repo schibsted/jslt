@@ -64,6 +64,7 @@ TOKEN :
   < STAR: "*" > |
   < SLASH: "/" > |
   < FOR: "for" > |
+  < DEF: "def" > |
   < IDENT: (["A"-"Z"] | ["a"-"z"] | ["0"-"9"] | "_" | "-")+ > |
   < VARIABLE: "$" (["A"-"Z"] | ["a"-"z"] | ["0"-"9"] | "_" | "-")+ >
 }
@@ -79,7 +80,7 @@ SPECIAL_TOKEN :
 void Start() :
 {}
 {
-  (Let())*
+  (Let() | FunctionDecl())*
   Expr() <EOF>
 }
 
@@ -259,4 +260,11 @@ void Let() :
 {}
 {
   <LET> <IDENT> <ASSIGN> Expr()
+}
+
+void FunctionDecl() :
+{}
+{
+  <DEF> <IDENT> <LPAREN> (<IDENT> (<COMMA> <IDENT>)*)? <RPAREN>
+  Expr()
 }

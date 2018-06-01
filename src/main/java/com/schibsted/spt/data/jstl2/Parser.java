@@ -1,7 +1,9 @@
 
 package com.schibsted.spt.data.jstl2;
 
+import java.util.Map;
 import java.util.List;
+import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -92,8 +94,11 @@ public class Parser {
       //start.dump(">");
 
       LetExpression[] lets = buildLets(ctx, start);
+      collectFunctions(ctx, start); // registered with context
+
       SimpleNode expr = getLastChild(start);
       ExpressionNode top = node2expr(ctx, expr);
+      ctx.resolveFunctions();
       top = top.optimize();
       ExpressionImpl root = new ExpressionImpl(lets, top);
       //Compiler compiler = new Compiler();
@@ -309,16 +314,17 @@ public class Parser {
     else if (kind == JstlParserConstants.IDENT) {
       SimpleNode fnode = descendTo(node, JstlParserTreeConstants.JJTFUNCTIONCALL);
 
-      // function call, where the children are the parameters
-      Function func = ctx.getFunction(token.image);
-      if (func == null) {
-        // it could still be a macro
-        Macro mac = ctx.getMacro(token.image);
-        if (mac == null)
-          throw new JstlException("No such function: '" + token.image + "'", loc);
+      // function or macro call, where the children are the parameters
+      Macro mac = ctx.getMacro(token.image);
+      if (mac != null)
         start = new MacroExpression(mac, children2Exprs(ctx, fnode), loc);
-      } else
-        start = new FunctionExpression(func, children2Exprs(ctx, fnode), loc);
+      else {
+        // we don't resolve the function here, because it may not have been
+        // declared yet. instead we store the name, and do the resolution
+        // later
+        start = new FunctionExpression(token.image, children2Exprs(ctx, fnode), loc);
+        ctx.rememberFunctionCall((FunctionExpression) start); // so we can resolve later
+      }
 
     } else if (kind == JstlParserConstants.DOT) {
       token = token.next;
@@ -491,6 +497,41 @@ public class Parser {
       lets[pos++] = new LetExpression(ident.image, node2expr(ctx, expr), loc);
     }
     return lets;
+  }
+
+  // collects all the 'def' statements as children of this node
+  // functions are registered with the context
+  private static void collectFunctions(ParseContext ctx, SimpleNode parent) {
+    Map<String, FunctionDeclaration> functions = new HashMap();
+    for (int ix = 0; ix < parent.jjtGetNumChildren(); ix++) {
+      SimpleNode node = (SimpleNode) parent.jjtGetChild(ix);
+      if (node.firstToken.kind != JstlParserConstants.DEF)
+        continue;
+
+      String name = node.jjtGetFirstToken().next.image;
+      String[] params = collectParams(parent);
+
+      SimpleNode expr = (SimpleNode) node.jjtGetChild(0);
+      ctx.addDeclaredFunction(name, new FunctionDeclaration(
+        name, params, node2expr(ctx, expr)
+      ));
+    }
+  }
+
+  private static String[] collectParams(SimpleNode node) {
+    Token token = node.jjtGetFirstToken(); // DEF
+    token = token.next; // IDENT
+    token = token.next; // LPAREN
+
+    List<String> params = new ArrayList();
+    while (token.kind != JstlParserConstants.RPAREN) {
+      if (token.kind == JstlParserConstants.IDENT)
+        params.add(token.image);
+
+      token = token.next;
+    }
+
+    return params.toArray(new String[0]);
   }
 
   private static ObjectExpression buildObject(ParseContext ctx, SimpleNode node) {
