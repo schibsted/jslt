@@ -90,11 +90,11 @@ The result is written to standard out.
 ## What is missing
 
 Things to be done:
+  * Move the tests out into JSON files.
+  * Write a proper spec with EBNF and everything.
   * Fix the syntax ambiguity problem with `let`.
   * Implement toString() throughout the object tree, so that it's
     possible to turn expressions back to strings.
-  * More detailed definition of language semantics, especially error
-    situations.
   * Optimizer: complete constant folding. Particularly constant
     folding for variables would be valuable. Also, need to make sure
     entire expression tree is traversed.
