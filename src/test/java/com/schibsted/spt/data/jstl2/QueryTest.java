@@ -785,4 +785,14 @@ public class QueryTest extends TestBase {
   public void testCorrectException2() {
     error("validate(\"foo\"; \"bar\"; \"baz\")", "Parse error");
   }
+
+  @Test
+  public void testNoColonInSlice() {
+    error(".[1 2]", "Parse error");
+  }
+
+  @Test
+  public void testNoSliceInSlice() {
+    error(".[]", "Parse error");
+  }
 }

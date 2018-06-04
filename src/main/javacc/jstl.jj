@@ -179,7 +179,12 @@ void DotKey() :
 void ArraySlicing() :
 {}
 {
-  <LBRACKET> (Expr())? (Colon())? (Expr())? <RBRACKET>
+  <LBRACKET>
+  (
+    Expr() (Colon() (Expr())?)? |
+    Colon() Expr()
+  )
+  <RBRACKET>
 }
 
 void Colon() : {} { <COLON> } // need this to make parse tree manageable
