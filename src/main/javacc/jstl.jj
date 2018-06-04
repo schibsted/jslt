@@ -142,14 +142,6 @@ void BaseExpr() :
   )
 }
 
-void For() :
-{}
-{
-  <LBRACKET>
-  <FOR> <LPAREN> Expr() <RPAREN> Expr()
-  <RBRACKET>
-}
-
 void Chainable() :
 {}
 {
