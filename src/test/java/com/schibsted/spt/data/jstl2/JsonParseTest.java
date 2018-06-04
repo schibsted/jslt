@@ -188,6 +188,66 @@ public class JsonParseTest {
     check("\"\\u00FF\"");
   }
 
+  @Test
+  public void testMustAllowZero() {
+    check("0");
+  }
+
+  @Test
+  public void testMustAllowZeroPointZero() {
+    check("0.0");
+  }
+
+  @Test
+  public void testInitialZeroInNumber() {
+    error("0123");
+  }
+
+  @Test
+  public void testInitialZeroInNegativeNumber() {
+    error("-0123");
+  }
+
+  @Test
+  public void testInitialZeroInFloat() {
+    error("0123.0");
+  }
+
+  @Test
+  public void testInitialZeroInNegativeFloat() {
+    error("-0123.0");
+  }
+
+  @Test
+  public void test_eFloatPlus() {
+    check("1e+1");
+  }
+
+  @Test
+  public void test_EFloatPlus() {
+    check("1E+1");
+  }
+
+  @Test
+  public void test_eFloatMinus() {
+    check("1e-1");
+  }
+
+  @Test
+  public void test_EFloatMinus() {
+    check("1E-1");
+  }
+
+  @Test
+  public void test_eFloat() {
+    check("1e1");
+  }
+
+  @Test
+  public void test_EFloat() {
+    check("1E1");
+  }
+
   private void check(String json) {
     try {
       Expression expr = Parser.compile(json);
@@ -203,7 +263,7 @@ public class JsonParseTest {
 
   private void error(String json) {
     try {
-      check(json);
+      Parser.compile(json);
       fail("Successfully parsed " + json);
     } catch (JstlException e) {
       // this is what we want

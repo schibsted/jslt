@@ -90,6 +90,7 @@ The result is written to standard out.
 ## What is missing
 
 Things to be done:
+  * Complete JSON parsing of strings.
   * Move the tests out into JSON files.
   * Write a proper spec with EBNF and everything.
   * Fix the syntax ambiguity problem with `let`.
