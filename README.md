@@ -90,15 +90,17 @@ The result is written to standard out.
 ## What is missing
 
 Things to be done:
-  * Complete JSON parsing of strings.
   * Move the tests out into JSON files.
   * Write a proper spec with EBNF and everything.
   * Fix the syntax ambiguity problem with `let`.
   * Implement toString() throughout the object tree, so that it's
     possible to turn expressions back to strings.
-  * Optimizer: complete constant folding. Particularly constant
-    folding for variables would be valuable. Also, need to make sure
-    entire expression tree is traversed.
+  * Optimizer:
+     * Make sure entire tree is traversed.
+     * Complete constant folding. Particularly constant folding for variables
+       would be valuable.
+     * Inlining of functions.
+     * Eliminate unused variables.
   * Avoid building more scope objects than necessary and avoid
     creating deep scope trees that require a lot of lookup.
   * Use property-based testing and fuzz testing to harden the parser.
