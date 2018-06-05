@@ -509,7 +509,7 @@ public class Parser {
         continue;
 
       String name = node.jjtGetFirstToken().next.image;
-      String[] params = collectParams(parent);
+      String[] params = collectParams(node);
 
       SimpleNode expr = (SimpleNode) node.jjtGetChild(0);
       ctx.addDeclaredFunction(name, new FunctionDeclaration(

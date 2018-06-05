@@ -55,6 +55,22 @@ public class FunctionDeclarationTest extends TestBase {
           "a(5)", "-1");
   }
 
+  @Test
+  public void testTooManyParameters() {
+    error("def a() " +
+          "  25 " +
+          "a(5)", "arguments");
+  }
+
+  @Test
+  public void testBizarreParsingBug() {
+    check("{}",
+          "let var = 2 " +
+          "def a() " +
+          "  25 " +
+          "a()", "25");
+  }
+
   // FIXME: no support for optional parameters
   // FIXME: cannot refer to global variables. is this good or bad?
 
