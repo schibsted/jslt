@@ -8,9 +8,6 @@ import org.junit.Test;
  */
 public class FunctionDeclarationTest extends TestBase {
 
-  String idfunc = " ";
-  String plusfunc = " def id(param) $param ";
-
   @Test
   public void testIdFunction() {
     check("{}", "def id(param) $param " +
@@ -34,6 +31,31 @@ public class FunctionDeclarationTest extends TestBase {
           "length([1, 2, 3, 4, 5, 6])", "6");
   }
 
-  // FIXME: still cannot refer to global variables. is this good or bad?
+  @Test
+  public void testRedefineBuiltin() {
+    check("{}",
+          "def size(array) " +
+          "  5 // all arrays have 5 elements\n " +
+          "size([1, 2])", "5");
+  }
+
+  @Test
+  public void testMutualRecursion() {
+    check("{}",
+          "def a(value) " +
+          "  if ($value > 0) " +
+          "    b($value - 1) " +
+          "  else " +
+          "    $value " +
+          "def b(value) " +
+          "  if ($value > 0) " +
+          "    a($value - 2) " +
+          "  else " +
+          "    $value - 1 " +
+          "a(5)", "-1");
+  }
+
+  // FIXME: no support for optional parameters
+  // FIXME: cannot refer to global variables. is this good or bad?
 
 }
