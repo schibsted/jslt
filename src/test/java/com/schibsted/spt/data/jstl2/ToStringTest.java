@@ -68,7 +68,7 @@ public class ToStringTest extends TestBase {
 
   @Test
   public void testTwoPlusTwo() {
-    verify("2 + 2", "2 + 2");
+    verify("2+2", "2 + 2");
   }
 
   // ----- FOR
