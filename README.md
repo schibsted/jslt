@@ -96,7 +96,9 @@ Things to be done:
   * Implement toString() throughout the object tree, so that it's
     possible to turn expressions back to strings.
   * Optimizer:
-     * Make sure entire tree is traversed.
+     * Implement parse tree traversal API.
+     * Make sure entire tree is traversed (inside function decls and
+       variables, for example).
      * Complete constant folding. Particularly constant folding for variables
        would be valuable.
      * Inlining of functions.
