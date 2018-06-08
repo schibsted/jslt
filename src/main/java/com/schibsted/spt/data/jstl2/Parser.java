@@ -98,7 +98,7 @@ public class Parser {
     }
   }
 
-  public static ExpressionImpl compileImport(Collection<Function> functions,
+  private static ExpressionImpl compileImport(Collection<Function> functions,
                                              ParseContext parent,
                                              String jstl) {
     try (InputStream stream = Parser.class.getClassLoader().getResourceAsStream(jstl)) {

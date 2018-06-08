@@ -417,3 +417,6 @@ import "utilities.jstl" as utils
 The `import` statement must appear before any variable or function
 declarations. You can have any number of them, and a module can import
 other modules. Cyclic imports are not allowed.
+
+For now, modules are imported from the classpath, and there is no
+resolution of relative paths.

@@ -50,7 +50,7 @@ ext {
 }
 
 group "com.schibsted.spt.data"
-version "0.0.14.$timestamp.$gitrev"
+version "0.0.15.$timestamp.$gitrev"
 
 sourceSets {
     main {
