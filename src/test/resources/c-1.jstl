@@ -1,0 +1,4 @@
+
+import "b-1.jstl" as b
+
+b(.)

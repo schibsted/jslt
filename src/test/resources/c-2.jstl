@@ -1,0 +1,2 @@
+
+import "a-2.jstl" as a // cyclic import = kaboom
