@@ -11,11 +11,21 @@ import com.schibsted.spt.data.jstl2.JstlException;
 import com.schibsted.spt.data.jstl2.impl.vm.Compiler;
 
 public class FunctionExpression extends AbstractInvocationExpression {
-  private Function function;
+  private Function function; // null before resolution
+  private String name;
 
-  public FunctionExpression(Function function, ExpressionNode[] arguments,
+  public FunctionExpression(String name, ExpressionNode[] arguments,
                             Location location) {
-    super(function, arguments, location);
+    super(arguments, location);
+    this.name = name;
+  }
+
+  public String getFunctionName() {
+    return name;
+  }
+
+  public void resolve(Function function) {
+    super.resolve(function);
     this.function = function;
   }
 

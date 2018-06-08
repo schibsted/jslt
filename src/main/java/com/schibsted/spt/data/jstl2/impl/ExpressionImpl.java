@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
+import com.schibsted.spt.data.jstl2.Function;
 import com.schibsted.spt.data.jstl2.Expression;
 import com.schibsted.spt.data.jstl2.impl.vm.Compiler;
 
@@ -15,14 +16,26 @@ import com.schibsted.spt.data.jstl2.impl.vm.Compiler;
  */
 public class ExpressionImpl implements Expression {
   private LetExpression[] lets;
+  private Map<String, Function> functions;
   private ExpressionNode actual;
 
-  public ExpressionImpl(LetExpression[] lets, ExpressionNode actual) {
+  public ExpressionImpl(LetExpression[] lets, Map<String, Function> functions,
+                        ExpressionNode actual) {
     this.lets = lets;
+    this.functions = functions;
     this.actual = actual;
 
     // traverse tree and set up context queries
-    actual.computeMatchContexts(new DotExpression(null));
+    if (actual != null)
+      actual.computeMatchContexts(new DotExpression(null));
+  }
+
+  public Function getFunction(String name) {
+    return functions.get(name);
+  }
+
+  public boolean hasBody() {
+    return actual != null;
   }
 
   public JsonNode apply(Map<String, JsonNode> variables, JsonNode input) {

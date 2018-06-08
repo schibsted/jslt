@@ -15,16 +15,18 @@ import com.schibsted.spt.data.jstl2.impl.vm.Compiler;
  * having to repeat so much code.
  */
 public abstract class AbstractInvocationExpression extends AbstractNode {
-  private Callable callable;
+  private Callable callable; // null until resolve is called
   protected ExpressionNode[] arguments;
 
-  public AbstractInvocationExpression(Callable callable,
-                                      ExpressionNode[] arguments,
+  public AbstractInvocationExpression(ExpressionNode[] arguments,
                                       Location location) {
     super(location);
-    this.callable = callable;
     this.arguments = arguments;
+  }
 
+  // invoked when we know which callable it's going to be
+  public void resolve(Callable callable) {
+    this.callable = callable;
     if (arguments.length < callable.getMinArguments() ||
         arguments.length > callable.getMaxArguments()) {
       String kind = (this instanceof FunctionExpression) ? "Function" : "Macro";

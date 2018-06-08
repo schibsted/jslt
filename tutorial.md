@@ -355,3 +355,68 @@ expressions.
 It's also possible to set variables from the code running a JSTL 2.0
 transform, so that the value is "injected" into the transform. This
 can be useful for configuration, passwords, and similar values.
+
+## Function declarations
+
+You can declare your own functions at the top level in expressions and
+templates like so:
+
+```
+def sum(array)
+  if ($array)
+    $array[0] + sum($array[1 : ])
+  else
+    0
+```
+
+This function sums the numbers in an array, returning the total.
+
+The syntax is simple: first declare the name and the parameters, then
+follow that with an expression that evaluates to the results. You can
+define variables inside the function. Functions can call themselves,
+and they can call other functions you define.
+
+Here is a function that counts the number of keys in an object,
+including objects contained within it, building on the `sum` function
+above.
+
+```
+def count(node)
+  if (is-object($node))
+    size($node) + sum([for ($node) count(.value)])
+  else if (is-array($node))
+    sum([for ($node) count(.)])
+  else
+    0
+```
+
+Functions can be declared in any order. You can declare a function
+with the same name as a built-in or extension function, and your
+declaration will shadow the original.
+
+## Import statements
+
+In order to make it possible to modularize transforms by reusing code
+JSTL allows you to import JSTL modules from files. These are exactly
+like ordinary JSTL templates, except that the final expression after
+the variable and function declarations is not required.
+
+If the two functions above were saved in a file named `utilities.jstl`
+then we could use them in another transform as follows:
+
+```
+import "utilities.jstl" as utils
+
+{
+  "type" : "object",
+  "size" : size(.),
+  "keys" : utils:count(.)
+}
+```
+
+The `import` statement must appear before any variable or function
+declarations. You can have any number of them, and a module can import
+other modules. Cyclic imports are not allowed.
+
+For now, modules are imported from the classpath, and there is no
+resolution of relative paths.

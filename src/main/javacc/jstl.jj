@@ -64,7 +64,15 @@ TOKEN :
   < STAR: "*" > |
   < SLASH: "/" > |
   < FOR: "for" > |
+  < DEF: "def" > |
+  < IMPORT: "import" > |
+  < AS: "as" > |
   < IDENT: (["A"-"Z"] | ["a"-"z"] | ["0"-"9"] | "_" | "-")+ > |
+  < PIDENT:
+    (["A"-"Z"] | ["a"-"z"] | ["0"-"9"] | "_" | "-")+
+    ":"
+    (["A"-"Z"] | ["a"-"z"] | ["0"-"9"] | "_" | "-")+
+  > |
   < VARIABLE: "$" (["A"-"Z"] | ["a"-"z"] | ["0"-"9"] | "_" | "-")+ >
 }
 
@@ -79,8 +87,18 @@ SPECIAL_TOKEN :
 void Start() :
 {}
 {
-  (Let())*
+  (Import())*
+  (Let() | FunctionDecl())*
   Expr() <EOF>
+}
+
+/** Root production for module files */
+void Module() :
+{}
+{
+  (Import())*
+  (Let() | FunctionDecl())*
+  (Expr())? <EOF>
 }
 
 void Expr() :
@@ -188,7 +206,7 @@ void Array() :
 {}
 {
   <LBRACKET>
-    (<FOR> <LPAREN> Expr() <RPAREN> Expr() |
+    (<FOR> <LPAREN> Expr() <RPAREN> (Let())* Expr() |
      (Expr() (<COMMA> Expr())*)?)
   <RBRACKET>
 }
@@ -252,11 +270,25 @@ void ElseBranch() :
 void FunctionCall() :
 {}
 {
-  <IDENT> <LPAREN> (Expr() (<COMMA> Expr())*)? <RPAREN>
+  (<IDENT> | <PIDENT>) <LPAREN> (Expr() (<COMMA> Expr())*)? <RPAREN>
 }
 
 void Let() :
 {}
 {
   <LET> <IDENT> <ASSIGN> Expr()
+}
+
+void FunctionDecl() :
+{}
+{
+  <DEF> <IDENT> <LPAREN> (<IDENT> (<COMMA> <IDENT>)*)? <RPAREN>
+    (Let())*
+    Expr()
+}
+
+void Import() :
+{}
+{
+  <IMPORT> <STRING> <AS> <IDENT>
 }

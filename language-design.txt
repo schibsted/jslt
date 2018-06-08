@@ -192,10 +192,10 @@ datetime parsing
 ---------------------------------------------------------------------------
 NAME
 
+jstl         Oracle JavaServer Pages Standard Tag Library
 jslt         XSLT in JSON alternative, now dead
 jsonator     ditto
 j2j          already exists, but marginal
-jstl         Oracle JavaServer Pages Standard Tag Library
 argonator    kind of weird
 jsonify      not really what it does
 jtransform   an FFT thing, might work

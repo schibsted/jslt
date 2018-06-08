@@ -10,13 +10,16 @@ import com.schibsted.spt.data.jstl2.impl.vm.Compiler;
 
 public class ForExpression extends AbstractNode {
   private ExpressionNode valueExpr;
+  private LetExpression[] lets;
   private ExpressionNode loopExpr;
 
   public ForExpression(ExpressionNode valueExpr,
+                       LetExpression[] lets,
                        ExpressionNode loopExpr,
                        Location location) {
     super(location);
     this.valueExpr = valueExpr;
+    this.lets = lets;
     this.loopExpr = loopExpr;
   }
 
@@ -29,10 +32,18 @@ public class ForExpression extends AbstractNode {
     else if (!array.isArray())
       throw new JstlException("For loop can't iterate over " + array, location);
 
+    // may be the same, if no lets
+    Scope newscope = scope;
+
     ArrayNode result = NodeUtils.mapper.createArrayNode();
     for (int ix = 0; ix < array.size(); ix++) {
       JsonNode value = array.get(ix);
-      result.add(loopExpr.apply(scope, value));
+
+      // must evaluate lets over again for each value because of context
+      if (lets.length > 0)
+        newscope = NodeUtils.evalLets(scope, value, lets);
+
+      result.add(loopExpr.apply(newscope, value));
     }
     return result;
   }

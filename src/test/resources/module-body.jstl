@@ -1,0 +1,5 @@
+
+def id(value)
+  $value
+
+27 // deliberately have a body here

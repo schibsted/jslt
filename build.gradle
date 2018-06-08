@@ -29,6 +29,7 @@ plugins {
 apply plugin: 'java'
 apply plugin: "com.jfrog.artifactory"
 apply plugin: 'maven-publish'
+apply plugin: "maven"
 
 repositories {
   mavenLocal()
@@ -49,7 +50,7 @@ ext {
 }
 
 group "com.schibsted.spt.data"
-version "0.0.14.$timestamp.$gitrev"
+version "0.0.15.$timestamp.$gitrev"
 
 sourceSets {
     main {

@@ -26,7 +26,7 @@ public abstract class ComparisonOperator extends AbstractOperator {
 
     }
 
-    throw new JstlException("Can't compare " + v1 + " and " + v2);
+    throw new JstlException("Can't compare " + v1 + " and " + v2, location);
   }
 
 }

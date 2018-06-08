@@ -20,7 +20,8 @@ public class MacroExpression extends AbstractInvocationExpression {
 
   public MacroExpression(Macro macro, ExpressionNode[] arguments,
                          Location location) {
-    super(macro, arguments, location);
+    super(arguments, location);
+    resolve(macro);
     this.macro = macro;
   }
 

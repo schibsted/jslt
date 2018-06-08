@@ -705,6 +705,14 @@ public class QueryTest extends TestBase {
           " {\"key\" : \"bar\", \"value\" : 2}]");
   }
 
+  @Test
+  public void testForWithLet() {
+    check("{\"foo\":1,\"bar\":2}",
+          "[for (.) let v = . $v]",
+          "[{\"key\" : \"foo\", \"value\" : 1}, " +
+          " {\"key\" : \"bar\", \"value\" : 2}]");
+  }
+
   // ===== OBJECT COMPREHENSION
 
   @Test

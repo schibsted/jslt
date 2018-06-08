@@ -1,0 +1,16 @@
+
+def sum(numbers)
+  if (not($numbers))
+    0
+  else
+    $numbers[0] + sum($numbers[1 : ])
+
+// count the number of keys in an object, recursively down through the
+// entire structure
+def count(node)
+  if (is-object($node))
+    size($node) + sum([for ($node) count(.value)])
+  else if (is-array($node))
+    sum([for ($node) count(.)])
+  else
+    0
