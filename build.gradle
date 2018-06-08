@@ -29,6 +29,7 @@ plugins {
 apply plugin: 'java'
 apply plugin: "com.jfrog.artifactory"
 apply plugin: 'maven-publish'
+apply plugin: "maven"
 
 repositories {
   mavenLocal()

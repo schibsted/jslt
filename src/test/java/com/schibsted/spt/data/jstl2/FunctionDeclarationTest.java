@@ -71,6 +71,15 @@ public class FunctionDeclarationTest extends TestBase {
           "a()", "25");
   }
 
+  @Test
+  public void testLetInsideFunctionDecl() {
+    check("{}",
+          "def a(p) " +
+          "  let v = $p " +
+          "  $v " +
+          "a(25)", "25");
+  }
+
   // FIXME: no support for optional parameters
   // FIXME: cannot refer to global variables. is this good or bad?
 

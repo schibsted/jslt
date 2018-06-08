@@ -37,7 +37,7 @@ public class Parser {
 
   private static Expression compile(ParseContext ctx, File jstl) {
     try (FileReader f = new FileReader(jstl)) {
-      return compile(ctx, new JstlParser(f));
+      return compileExpression(ctx, new JstlParser(f));
     } catch (FileNotFoundException e) {
       throw new JstlException("Couldn't find file " + jstl);
     } catch (IOException e) {
@@ -47,13 +47,13 @@ public class Parser {
 
   public static Expression compile(String jstl) {
     ParseContext ctx = new ParseContext("<unknown>");
-    return compile(ctx, new JstlParser(new StringReader(jstl)));
+    return compileExpression(ctx, new JstlParser(new StringReader(jstl)));
   }
 
   public static Expression compile(Collection<Function> functions,
                                    String jstl) {
     ParseContext ctx = new ParseContext(functions, null);
-    return compile(ctx, new JstlParser(new StringReader(jstl)));
+    return compileExpression(ctx, new JstlParser(new StringReader(jstl)));
   }
 
   public static Expression compileResource(String jstl) {
@@ -68,7 +68,7 @@ public class Parser {
                                    String resourceName,
                                    Reader reader) {
     ParseContext ctx = new ParseContext(functions, resourceName);
-    return compile(ctx, new JstlParser(reader));
+    return compileExpression(ctx, new JstlParser(reader));
   }
 
   public static Expression compileResource(Collection<Function> functions,
@@ -79,37 +79,75 @@ public class Parser {
 
       Reader reader = new InputStreamReader(stream, "UTF-8");
       ParseContext ctx = new ParseContext(functions, jstl);
-      return compile(ctx, new JstlParser(reader));
+      return compileExpression(ctx, new JstlParser(reader));
     } catch (IOException e) {
       throw new JstlException("Couldn't read resource " + jstl, e);
     }
   }
 
-  private static Expression compile(ParseContext ctx, JstlParser parser) {
+  private static Expression compileExpression(ParseContext ctx, JstlParser parser) {
     try {
       parser.Start();
+      return compile(ctx, (SimpleNode) parser.jjtree.rootNode());
 
-      // the start production always contains an expr, so we just ditch it
-      SimpleNode start = (SimpleNode) parser.jjtree.rootNode();
-      //start.dump(">");
-
-      LetExpression[] lets = buildLets(ctx, start);
-      collectFunctions(ctx, start); // registered with context
-
-      SimpleNode expr = getLastChild(start);
-      ExpressionNode top = node2expr(ctx, expr);
-      ctx.resolveFunctions();
-      top = top.optimize();
-      ExpressionImpl root = new ExpressionImpl(lets, top);
-      //Compiler compiler = new Compiler();
-      //return compiler.compile(root);
-      return root;
     } catch (ParseException e) {
       throw new JstlException("Parse error: " + e.getMessage(),
                               makeLocation(ctx, e.currentToken));
     } catch (TokenMgrError e) {
       throw new JstlException("Parse error: " + e.getMessage());
     }
+  }
+
+  public static ExpressionImpl compileImport(Collection<Function> functions,
+                                             ParseContext parent,
+                                             String jstl) {
+    try (InputStream stream = Parser.class.getClassLoader().getResourceAsStream(jstl)) {
+      if (stream == null)
+        throw new JstlException("Cannot load resource '" + jstl + "': not found");
+
+      Reader reader = new InputStreamReader(stream, "UTF-8");
+      ParseContext ctx = new ParseContext(functions, jstl);
+      ctx.setParent(parent);
+      return compileModule(ctx, new JstlParser(reader));
+    } catch (IOException e) {
+      throw new JstlException("Couldn't read resource " + jstl, e);
+    }
+  }
+
+  private static ExpressionImpl compileModule(ParseContext ctx, JstlParser parser) {
+    try {
+      parser.Module();
+      return compile(ctx, (SimpleNode) parser.jjtree.rootNode());
+
+    } catch (ParseException e) {
+      throw new JstlException("Parse error: " + e.getMessage(),
+                              makeLocation(ctx, e.currentToken));
+    } catch (TokenMgrError e) {
+      throw new JstlException("Parse error: " + e.getMessage());
+    }
+  }
+
+  private static ExpressionImpl compile(ParseContext ctx, SimpleNode root) {
+    processImports(ctx, root); // registered with context
+    LetExpression[] lets = buildLets(ctx, root);
+    collectFunctions(ctx, root); // registered with context
+
+    SimpleNode expr = getLastChild(root);
+
+    ExpressionNode top = null;
+    if (expr.id == JstlParserTreeConstants.JJTEXPR) {
+      top = node2expr(ctx, expr);
+      ctx.resolveFunctions();
+      top = top.optimize();
+    } else
+      ctx.resolveFunctions();
+
+    ExpressionImpl result =
+      new ExpressionImpl(lets, ctx.getDeclaredFunctions(), top);
+
+    //Compiler compiler = new Compiler();
+    //return compiler.compile(root);
+    return result;
   }
 
   private static ExpressionNode node2expr(ParseContext ctx, SimpleNode node) {
@@ -245,7 +283,8 @@ public class Parser {
 
     else if (kind == JstlParserConstants.DOT ||
              kind == JstlParserConstants.VARIABLE ||
-             kind == JstlParserConstants.IDENT)
+             kind == JstlParserConstants.IDENT ||
+             kind == JstlParserConstants.PIDENT)
       return chainable2Expr(ctx, getChild(node, 0));
 
     else if (kind == JstlParserConstants.IF) {
@@ -322,9 +361,29 @@ public class Parser {
         // we don't resolve the function here, because it may not have been
         // declared yet. instead we store the name, and do the resolution
         // later
-        start = new FunctionExpression(token.image, children2Exprs(ctx, fnode), loc);
+        start = new FunctionExpression(
+          token.image, children2Exprs(ctx, fnode), loc
+        );
         ctx.rememberFunctionCall((FunctionExpression) start); // so we can resolve later
       }
+
+    } else if (kind == JstlParserConstants.PIDENT) {
+      SimpleNode fnode = descendTo(node, JstlParserTreeConstants.JJTFUNCTIONCALL);
+
+      // imported function must already be there and cannot be a macro
+      String pident = token.image;
+      int colon = pident.indexOf(':'); // grammar ensures it's there
+      String prefix = pident.substring(0, colon);
+      String name = pident.substring(colon + 1);
+
+      // throws exception if something fails
+      Function f = ctx.getImportedFunction(prefix, name, loc);
+
+      FunctionExpression fun = new FunctionExpression(
+        pident, children2Exprs(ctx, fnode), loc
+      );
+      fun.resolve(f);
+      start = fun;
 
     } else if (kind == JstlParserConstants.DOT) {
       token = token.next;
@@ -404,8 +463,9 @@ public class Parser {
 
   private static ForExpression buildForExpression(ParseContext ctx, SimpleNode node) {
     ExpressionNode valueExpr = node2expr(ctx, getChild(node, 0));
-    ExpressionNode loopExpr = node2expr(ctx, getChild(node, 1));
-    return new ForExpression(valueExpr, loopExpr, makeLocation(ctx, node));
+    LetExpression[] lets = buildLets(ctx, node);
+    ExpressionNode loopExpr = node2expr(ctx, getLastChild(node));
+    return new ForExpression(valueExpr, lets, loopExpr, makeLocation(ctx, node));
   }
 
   private static String identOrString(ParseContext ctx, Token token) {
@@ -478,6 +538,37 @@ public class Parser {
     return children;
   }
 
+  // performs all the import directives and register the prefixes
+  private static void processImports(ParseContext ctx, SimpleNode parent) {
+    for (int ix = 0; ix < parent.jjtGetNumChildren(); ix++) {
+      SimpleNode node = (SimpleNode) parent.jjtGetChild(ix);
+      if (node.firstToken.kind != JstlParserConstants.IMPORT)
+        continue;
+
+      Token token = node.jjtGetFirstToken(); // 'import'
+      token = token.next; // source
+      String source = makeString(ctx, token);
+      token = token.next; // 'as'
+      token = token.next; // prefix
+      String prefix = token.image;
+
+      JstlFile module = doImport(ctx, source, node, prefix);
+
+      ctx.registerModule(prefix, module);
+      ctx.addDeclaredFunction(prefix, module);
+    }
+  }
+
+  private static JstlFile doImport(ParseContext parent, String source,
+                                   SimpleNode node, String prefix) {
+    if (parent.isAlreadyImported(source))
+      throw new JstlException("Module '" + source + "' is already imported",
+                              makeLocation(parent, node));
+
+    ExpressionImpl expr = compileImport(parent.getExtensions(), parent, source);
+    return new JstlFile(prefix, source, expr);
+  }
+
   // collects all the 'let' statements as children of this node
   private static LetExpression[] buildLets(ParseContext ctx, SimpleNode parent) {
     // figure out how many lets there are
@@ -510,10 +601,11 @@ public class Parser {
 
       String name = node.jjtGetFirstToken().next.image;
       String[] params = collectParams(node);
+      LetExpression[] lets = buildLets(ctx, node);
 
-      SimpleNode expr = (SimpleNode) node.jjtGetChild(0);
+      SimpleNode expr = (SimpleNode) getLastChild(node);
       ctx.addDeclaredFunction(name, new FunctionDeclaration(
-        name, params, node2expr(ctx, expr)
+        name, params, lets, node2expr(ctx, expr)
       ));
     }
   }

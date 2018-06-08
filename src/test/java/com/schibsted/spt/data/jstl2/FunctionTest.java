@@ -9,9 +9,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.IntNode;
 
 /**
  * Test cases for function implementations.
@@ -934,27 +931,6 @@ public class FunctionTest extends TestBase {
     check(" {\"foo\":{\"bar\":22}} ",
           " to-json(.) ",
           " \"{\\\"foo\\\":{\\\"bar\\\":22}}\" ");
-  }
-
-  // ===== EXTENSION FUNCTION
-
-  private static class TestFunction implements Function {
-
-    public String getName() {
-      return "test";
-    }
-
-    public int getMinArguments() {
-      return 0;
-    }
-
-    public int getMaxArguments() {
-      return 0;
-    }
-
-    public JsonNode call(JsonNode input, JsonNode[] params) {
-      return new IntNode(42);
-    }
   }
 
   @Test
