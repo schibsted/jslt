@@ -21,10 +21,10 @@ import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
-import com.schibsted.spt.data.jstl2.impl.*;
 import com.schibsted.spt.data.jslt.Function;
 import com.schibsted.spt.data.jslt.Expression;
 import com.schibsted.spt.data.jslt.JsltException;
+import com.schibsted.spt.data.jslt.impl.*;
 
 public class ParserImpl {
 

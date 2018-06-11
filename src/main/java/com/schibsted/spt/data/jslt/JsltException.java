@@ -1,7 +1,7 @@
 
 package com.schibsted.spt.data.jslt;
 
-import com.schibsted.spt.data.jstl2.impl.Location;
+import com.schibsted.spt.data.jslt.impl.Location;
 
 public class JsltException extends RuntimeException {
   private Location location;

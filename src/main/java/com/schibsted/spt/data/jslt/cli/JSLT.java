@@ -4,9 +4,9 @@ package com.schibsted.spt.data.jslt.cli;
 import java.io.File;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.schibsted.spt.data.jstl2.impl.ExpressionImpl;
 import com.schibsted.spt.data.jslt.Parser;
 import com.schibsted.spt.data.jslt.Expression;
+import com.schibsted.spt.data.jslt.impl.ExpressionImpl;
 
 public class JSLT {
 

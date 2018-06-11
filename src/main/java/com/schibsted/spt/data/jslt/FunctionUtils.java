@@ -2,7 +2,7 @@
 package com.schibsted.spt.data.jslt;
 
 import java.lang.reflect.Method;
-import com.schibsted.spt.data.jstl2.impl.FunctionWrapper;
+import com.schibsted.spt.data.jslt.impl.FunctionWrapper;
 
 public class FunctionUtils {
 

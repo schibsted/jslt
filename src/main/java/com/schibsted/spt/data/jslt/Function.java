@@ -2,7 +2,7 @@
 package com.schibsted.spt.data.jslt;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.schibsted.spt.data.jstl2.impl.Callable;
+import com.schibsted.spt.data.jslt.impl.Callable;
 
 /**
  * Interface for function implementations.
