@@ -1,5 +1,5 @@
 
-package com.schibsted.spt.data.jstl2;
+package com.schibsted.spt.data.jslt.parser;
 
 import java.util.Map;
 import java.util.List;
@@ -23,69 +23,13 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.schibsted.spt.data.jstl2.impl.*;
 import com.schibsted.spt.data.jstl2.impl.vm.Compiler;
+import com.schibsted.spt.data.jstl2.Function;
+import com.schibsted.spt.data.jstl2.Expression;
+import com.schibsted.spt.data.jstl2.JstlException;
 
-public class Parser {
+public class ParserImpl {
 
-  public static Expression compile(Collection<Function> functions,
-                                   File jstl) {
-    return compile(new ParseContext(functions, jstl.getAbsolutePath()), jstl);
-  }
-
-  public static Expression compile(File jstl) {
-    return compile(new ParseContext(jstl.getAbsolutePath()), jstl);
-  }
-
-  private static Expression compile(ParseContext ctx, File jstl) {
-    try (FileReader f = new FileReader(jstl)) {
-      return compileExpression(ctx, new JstlParser(f));
-    } catch (FileNotFoundException e) {
-      throw new JstlException("Couldn't find file " + jstl);
-    } catch (IOException e) {
-      throw new JstlException("Couldn't read file " + jstl, e);
-    }
-  }
-
-  public static Expression compile(String jstl) {
-    ParseContext ctx = new ParseContext("<unknown>");
-    return compileExpression(ctx, new JstlParser(new StringReader(jstl)));
-  }
-
-  public static Expression compile(Collection<Function> functions,
-                                   String jstl) {
-    ParseContext ctx = new ParseContext(functions, null);
-    return compileExpression(ctx, new JstlParser(new StringReader(jstl)));
-  }
-
-  public static Expression compileResource(String jstl) {
-    return compileResource(Collections.EMPTY_SET, jstl);
-  }
-
-  /**
-   * Compile JSTL2 template from the Reader. The resourceName is just
-   * a name used in error messages, and has no practical effect.
-   */
-  public static Expression compile(Collection<Function> functions,
-                                   String resourceName,
-                                   Reader reader) {
-    ParseContext ctx = new ParseContext(functions, resourceName);
-    return compileExpression(ctx, new JstlParser(reader));
-  }
-
-  public static Expression compileResource(Collection<Function> functions,
-                                           String jstl) {
-    try (InputStream stream = Parser.class.getClassLoader().getResourceAsStream(jstl)) {
-      if (stream == null)
-        throw new JstlException("Cannot load resource '" + jstl + "': not found");
-
-      Reader reader = new InputStreamReader(stream, "UTF-8");
-      ParseContext ctx = new ParseContext(functions, jstl);
-      return compileExpression(ctx, new JstlParser(reader));
-    } catch (IOException e) {
-      throw new JstlException("Couldn't read resource " + jstl, e);
-    }
-  }
-
-  private static Expression compileExpression(ParseContext ctx, JstlParser parser) {
+  public static Expression compileExpression(ParseContext ctx, JsltParser parser) {
     try {
       parser.Start();
       return compile(ctx, (SimpleNode) parser.jjtree.rootNode());
@@ -101,20 +45,20 @@ public class Parser {
   private static ExpressionImpl compileImport(Collection<Function> functions,
                                              ParseContext parent,
                                              String jstl) {
-    try (InputStream stream = Parser.class.getClassLoader().getResourceAsStream(jstl)) {
+    try (InputStream stream = ParserImpl.class.getClassLoader().getResourceAsStream(jstl)) {
       if (stream == null)
         throw new JstlException("Cannot load resource '" + jstl + "': not found");
 
       Reader reader = new InputStreamReader(stream, "UTF-8");
       ParseContext ctx = new ParseContext(functions, jstl);
       ctx.setParent(parent);
-      return compileModule(ctx, new JstlParser(reader));
+      return compileModule(ctx, new JsltParser(reader));
     } catch (IOException e) {
       throw new JstlException("Couldn't read resource " + jstl, e);
     }
   }
 
-  private static ExpressionImpl compileModule(ParseContext ctx, JstlParser parser) {
+  private static ExpressionImpl compileModule(ParseContext ctx, JsltParser parser) {
     try {
       parser.Module();
       return compile(ctx, (SimpleNode) parser.jjtree.rootNode());
@@ -135,7 +79,7 @@ public class Parser {
     SimpleNode expr = getLastChild(root);
 
     ExpressionNode top = null;
-    if (expr.id == JstlParserTreeConstants.JJTEXPR) {
+    if (expr.id == JsltParserTreeConstants.JJTEXPR) {
       top = node2expr(ctx, expr);
       ctx.resolveFunctions();
       top = top.optimize();
@@ -151,7 +95,7 @@ public class Parser {
   }
 
   private static ExpressionNode node2expr(ParseContext ctx, SimpleNode node) {
-    if (node.id != JstlParserTreeConstants.JJTEXPR)
+    if (node.id != JsltParserTreeConstants.JJTEXPR)
       throw new JstlException("INTERNAL ERROR: Wrong type of node: " + node);
 
     ExpressionNode first = node2andexpr(ctx, getChild(node, 0));
@@ -163,7 +107,7 @@ public class Parser {
   }
 
   private static ExpressionNode node2andexpr(ParseContext ctx, SimpleNode node) {
-    if (node.id != JstlParserTreeConstants.JJTANDEXPR)
+    if (node.id != JsltParserTreeConstants.JJTANDEXPR)
       throw new JstlException("INTERNAL ERROR: Wrong type of node: " + node);
 
     ExpressionNode first = node2compexpr(ctx, getChild(node, 0));
@@ -175,7 +119,7 @@ public class Parser {
   }
 
   private static ExpressionNode node2compexpr(ParseContext ctx, SimpleNode node) {
-    if (node.id != JstlParserTreeConstants.JJTCOMPARATIVEEXPR)
+    if (node.id != JsltParserTreeConstants.JJTCOMPARATIVEEXPR)
       throw new JstlException("INTERNAL ERROR: Wrong type of node: " + node);
 
     ExpressionNode first = node2addexpr(ctx, getChild(node, 0));
@@ -187,24 +131,24 @@ public class Parser {
     // get the comparator
     Location loc = makeLocation(ctx, node);
     Token comp = getChild(node, 1).jjtGetFirstToken();
-    if (comp.kind == JstlParserConstants.EQUALS)
+    if (comp.kind == JsltParserConstants.EQUALS)
       return new EqualsComparison(first, second, loc);
-    else if (comp.kind == JstlParserConstants.UNEQUALS)
+    else if (comp.kind == JsltParserConstants.UNEQUALS)
       return new UnequalsComparison(first, second, loc);
-    else if (comp.kind == JstlParserConstants.BIGOREQ)
+    else if (comp.kind == JsltParserConstants.BIGOREQ)
       return new BiggerOrEqualComparison(first, second, loc);
-    else if (comp.kind == JstlParserConstants.BIGGER)
+    else if (comp.kind == JsltParserConstants.BIGGER)
       return new BiggerComparison(first, second, loc);
-    else if (comp.kind == JstlParserConstants.SMALLER)
+    else if (comp.kind == JsltParserConstants.SMALLER)
       return new SmallerComparison(first, second, loc);
-    else if (comp.kind == JstlParserConstants.SMALLOREQ)
+    else if (comp.kind == JsltParserConstants.SMALLOREQ)
       return new SmallerOrEqualsComparison(first, second, loc);
     else
       throw new JstlException("INTERNAL ERROR: What kind of comparison is this? " + node);
   }
 
   private static ExpressionNode node2addexpr(ParseContext ctx, SimpleNode node) {
-    if (node.id != JstlParserTreeConstants.JJTADDITIVEEXPR)
+    if (node.id != JsltParserTreeConstants.JJTADDITIVEEXPR)
       throw new JstlException("INTERNAL ERROR: Wrong type of node: " + node);
 
     ExpressionNode first = node2mulexpr(ctx, getChild(node, 0));
@@ -216,16 +160,16 @@ public class Parser {
     // get the operator
     Location loc = makeLocation(ctx, node);
     Token comp = getChild(node, 1).jjtGetFirstToken();
-    if (comp.kind == JstlParserConstants.PLUS)
+    if (comp.kind == JsltParserConstants.PLUS)
       return new PlusOperator(first, second, loc);
-    else if (comp.kind == JstlParserConstants.MINUS)
+    else if (comp.kind == JsltParserConstants.MINUS)
       return new MinusOperator(first, second, loc);
     else
       throw new JstlException("INTERNAL ERROR: What kind of operator is this?");
   }
 
   private static ExpressionNode node2mulexpr(ParseContext ctx, SimpleNode node) {
-    if (node.id != JstlParserTreeConstants.JJTMULTIPLICATIVEEXPR)
+    if (node.id != JsltParserTreeConstants.JJTMULTIPLICATIVEEXPR)
       throw new JstlException("INTERNAL ERROR: Wrong type of node: " + node);
 
     ExpressionNode first = node2baseExpr(ctx, getChild(node, 0));
@@ -237,23 +181,23 @@ public class Parser {
     // get the operator
     Location loc = makeLocation(ctx, node);
     Token comp = getChild(node, 1).jjtGetFirstToken();
-    if (comp.kind == JstlParserConstants.STAR)
+    if (comp.kind == JsltParserConstants.STAR)
       return new MultiplyOperator(first, second, loc);
-    else if (comp.kind == JstlParserConstants.SLASH)
+    else if (comp.kind == JsltParserConstants.SLASH)
       return new DivideOperator(first, second, loc);
     else
       throw new JstlException("INTERNAL ERROR: What kind of operator is this?");
   }
 
   private static ExpressionNode node2baseExpr(ParseContext ctx, SimpleNode node) {
-    if (node.id != JstlParserTreeConstants.JJTBASEEXPR)
+    if (node.id != JsltParserTreeConstants.JJTBASEEXPR)
       throw new JstlException("INTERNAL ERROR: Wrong type of node: " + node);
 
     Location loc = makeLocation(ctx, node);
     Token token = node.jjtGetFirstToken();
-    if (token.kind == JstlParserConstants.LBRACKET ||
-        token.kind == JstlParserConstants.LCURLY ||
-        token.kind == JstlParserConstants.IF)
+    if (token.kind == JsltParserConstants.LBRACKET ||
+        token.kind == JsltParserConstants.LCURLY ||
+        token.kind == JsltParserConstants.IF)
       // it's not a token but a production, so we ditch the Expr node
       // and go down to the level below, which holds the actual info
       node = (SimpleNode) node.jjtGetChild(0);
@@ -261,37 +205,37 @@ public class Parser {
     token = node.jjtGetFirstToken();
     int kind = token.kind;
 
-    if (kind == JstlParserConstants.NULL)
+    if (kind == JsltParserConstants.NULL)
       return new LiteralExpression(NullNode.instance, loc);
 
-    else if (kind == JstlParserConstants.INTEGER) {
+    else if (kind == JsltParserConstants.INTEGER) {
       IntNode number = new IntNode(Integer.parseInt(token.image));
       return new LiteralExpression(number, loc);
 
-    } else if (kind == JstlParserConstants.DECIMAL) {
+    } else if (kind == JsltParserConstants.DECIMAL) {
       DoubleNode number = new DoubleNode(Double.parseDouble(token.image));
       return new LiteralExpression(number, loc);
 
-    } else if (kind == JstlParserConstants.STRING)
+    } else if (kind == JsltParserConstants.STRING)
       return new LiteralExpression(new TextNode(makeString(ctx, token)), loc);
 
-    else if (kind == JstlParserConstants.TRUE)
+    else if (kind == JsltParserConstants.TRUE)
       return new LiteralExpression(BooleanNode.TRUE, loc);
 
-    else if (kind == JstlParserConstants.FALSE)
+    else if (kind == JsltParserConstants.FALSE)
       return new LiteralExpression(BooleanNode.FALSE, loc);
 
-    else if (kind == JstlParserConstants.DOT ||
-             kind == JstlParserConstants.VARIABLE ||
-             kind == JstlParserConstants.IDENT ||
-             kind == JstlParserConstants.PIDENT)
+    else if (kind == JsltParserConstants.DOT ||
+             kind == JsltParserConstants.VARIABLE ||
+             kind == JsltParserConstants.IDENT ||
+             kind == JsltParserConstants.PIDENT)
       return chainable2Expr(ctx, getChild(node, 0));
 
-    else if (kind == JstlParserConstants.IF) {
+    else if (kind == JsltParserConstants.IF) {
       LetExpression[] letelse = null;
       ExpressionNode theelse = null;
       SimpleNode maybeelse = getLastChild(node);
-      if (maybeelse.jjtGetFirstToken().kind == JstlParserConstants.ELSE) {
+      if (maybeelse.jjtGetFirstToken().kind == JsltParserConstants.ELSE) {
         SimpleNode elseexpr = getLastChild(maybeelse);
         theelse = node2expr(ctx, elseexpr);
         letelse = buildLets(ctx, maybeelse);
@@ -308,24 +252,24 @@ public class Parser {
         loc
       );
 
-    } else if (kind == JstlParserConstants.LBRACKET) {
+    } else if (kind == JsltParserConstants.LBRACKET) {
       Token next = token.next;
-      if (next.kind == JstlParserConstants.FOR)
+      if (next.kind == JsltParserConstants.FOR)
         return buildForExpression(ctx, node);
       else
         return new ArrayExpression(children2Exprs(ctx, node), loc);
 
-    } else if (kind == JstlParserConstants.LCURLY) {
+    } else if (kind == JsltParserConstants.LCURLY) {
       Token next = token.next;
-      if (next.kind == JstlParserConstants.FOR)
+      if (next.kind == JsltParserConstants.FOR)
         return buildObjectComprehension(ctx, node);
       else
         return buildObject(ctx, node);
 
-    } else if (kind == JstlParserConstants.LPAREN) {
+    } else if (kind == JsltParserConstants.LPAREN) {
       // we don't need a node for the parentheses - so just build the
       // child as a single node and use that instead
-      SimpleNode parens = descendTo(node, JstlParserTreeConstants.JJTPARENTHESIS);
+      SimpleNode parens = descendTo(node, JsltParserTreeConstants.JJTPARENTHESIS);
       return node2expr(ctx, getChild(parens, 0));
     }
 
@@ -337,7 +281,7 @@ public class Parser {
   }
 
   private static ExpressionNode chainable2Expr(ParseContext ctx, SimpleNode node) {
-    if (node.id != JstlParserTreeConstants.JJTCHAINABLE)
+    if (node.id != JsltParserTreeConstants.JJTCHAINABLE)
       throw new JstlException("INTERNAL ERROR: Wrong type of node: " + node);
 
     Token token = node.jjtGetFirstToken();
@@ -347,11 +291,11 @@ public class Parser {
 
     // need to special-case the first node
     ExpressionNode start;
-    if (kind == JstlParserConstants.VARIABLE)
+    if (kind == JsltParserConstants.VARIABLE)
       start = new VariableExpression(token.image.substring(1), loc);
 
-    else if (kind == JstlParserConstants.IDENT) {
-      SimpleNode fnode = descendTo(node, JstlParserTreeConstants.JJTFUNCTIONCALL);
+    else if (kind == JsltParserConstants.IDENT) {
+      SimpleNode fnode = descendTo(node, JsltParserTreeConstants.JJTFUNCTIONCALL);
 
       // function or macro call, where the children are the parameters
       Macro mac = ctx.getMacro(token.image);
@@ -367,8 +311,8 @@ public class Parser {
         ctx.rememberFunctionCall((FunctionExpression) start); // so we can resolve later
       }
 
-    } else if (kind == JstlParserConstants.PIDENT) {
-      SimpleNode fnode = descendTo(node, JstlParserTreeConstants.JJTFUNCTIONCALL);
+    } else if (kind == JsltParserConstants.PIDENT) {
+      SimpleNode fnode = descendTo(node, JsltParserTreeConstants.JJTFUNCTIONCALL);
 
       // imported function must already be there and cannot be a macro
       String pident = token.image;
@@ -385,11 +329,11 @@ public class Parser {
       fun.resolve(f);
       start = fun;
 
-    } else if (kind == JstlParserConstants.DOT) {
+    } else if (kind == JsltParserConstants.DOT) {
       token = token.next;
-      if (token.kind != JstlParserConstants.IDENT &&
-          token.kind != JstlParserConstants.STRING &&
-          token.kind != JstlParserConstants.LBRACKET)
+      if (token.kind != JsltParserConstants.IDENT &&
+          token.kind != JsltParserConstants.STRING &&
+          token.kind != JsltParserConstants.LBRACKET)
         return new DotExpression(loc); // there was only a dot
 
       // ok, there was a key or array slicer
@@ -399,7 +343,7 @@ public class Parser {
 
     // then tack on the rest of the chain, if there is any
     if (node.jjtGetNumChildren() > 0 &&
-        getLastChild(node).id == JstlParserTreeConstants.JJTCHAINLINK)
+        getLastChild(node).id == JsltParserTreeConstants.JJTCHAINLINK)
       return buildDotChain(ctx, getLastChild(node), start);
     else
       return start;
@@ -408,7 +352,7 @@ public class Parser {
   private static ExpressionNode buildDotChain(ParseContext ctx,
                                               SimpleNode chainLink,
                                               ExpressionNode parent) {
-    if (chainLink.id != JstlParserTreeConstants.JJTCHAINLINK)
+    if (chainLink.id != JsltParserTreeConstants.JJTCHAINLINK)
       throw new JstlException("INTERNAL ERROR: Wrong type of node: " + chainLink);
 
     ExpressionNode dot = buildChainLink(ctx, chainLink, parent);
@@ -425,12 +369,12 @@ public class Parser {
                                                ExpressionNode parent) {
     Token token = node.jjtGetFirstToken();
 
-    if (token.kind == JstlParserConstants.DOT) {
+    if (token.kind == JsltParserConstants.DOT) {
       // it's a dotkey
       token = token.next; // step to token after DOT
 
       Location loc = makeLocation(ctx, node);
-      if (token.kind == JstlParserConstants.LBRACKET)
+      if (token.kind == JsltParserConstants.LBRACKET)
         return new DotExpression(loc); // it's .[...]
 
       String key = identOrString(ctx, token);
@@ -445,17 +389,17 @@ public class Parser {
     boolean colon = false; // slicer or index?
     ExpressionNode left = null;
     SimpleNode first = getChild(node, 0);
-    if (first.id != JstlParserTreeConstants.JJTCOLON)
+    if (first.id != JsltParserTreeConstants.JJTCOLON)
       left = node2expr(ctx, first);
 
     ExpressionNode right = null;
     SimpleNode last = getLastChild(node);
     if (node.jjtGetNumChildren() != 1 &&
-        last.id != JstlParserTreeConstants.JJTCOLON)
+        last.id != JsltParserTreeConstants.JJTCOLON)
       right = node2expr(ctx, last);
 
     for (int ix = 0; ix < node.jjtGetNumChildren(); ix++)
-      colon = colon || getChild(node, ix).id == JstlParserTreeConstants.JJTCOLON;
+      colon = colon || getChild(node, ix).id == JsltParserTreeConstants.JJTCOLON;
 
     Location loc = makeLocation(ctx, node);
     return new ArraySlicer(left, colon, right, parent, loc);
@@ -469,7 +413,7 @@ public class Parser {
   }
 
   private static String identOrString(ParseContext ctx, Token token) {
-    if (token.kind == JstlParserConstants.STRING)
+    if (token.kind == JsltParserConstants.STRING)
       return makeString(ctx, token);
     else
       return token.image;
@@ -542,7 +486,7 @@ public class Parser {
   private static void processImports(ParseContext ctx, SimpleNode parent) {
     for (int ix = 0; ix < parent.jjtGetNumChildren(); ix++) {
       SimpleNode node = (SimpleNode) parent.jjtGetChild(ix);
-      if (node.firstToken.kind != JstlParserConstants.IMPORT)
+      if (node.firstToken.kind != JsltParserConstants.IMPORT)
         continue;
 
       Token token = node.jjtGetFirstToken(); // 'import'
@@ -572,14 +516,14 @@ public class Parser {
   // collects all the 'let' statements as children of this node
   private static LetExpression[] buildLets(ParseContext ctx, SimpleNode parent) {
     // figure out how many lets there are
-    int letCount = countChildren(parent, JstlParserTreeConstants.JJTLET);
+    int letCount = countChildren(parent, JsltParserTreeConstants.JJTLET);
 
     // collect the lets
     int pos = 0;
     LetExpression[] lets = new LetExpression[letCount];
     for (int ix = 0; ix < parent.jjtGetNumChildren(); ix++) {
       SimpleNode node = (SimpleNode) parent.jjtGetChild(ix);
-      if (node.firstToken.kind != JstlParserConstants.LET)
+      if (node.firstToken.kind != JsltParserConstants.LET)
         continue;
 
       Location loc = makeLocation(ctx, node);
@@ -596,7 +540,7 @@ public class Parser {
     Map<String, FunctionDeclaration> functions = new HashMap();
     for (int ix = 0; ix < parent.jjtGetNumChildren(); ix++) {
       SimpleNode node = (SimpleNode) parent.jjtGetChild(ix);
-      if (node.firstToken.kind != JstlParserConstants.DEF)
+      if (node.firstToken.kind != JsltParserConstants.DEF)
         continue;
 
       String name = node.jjtGetFirstToken().next.image;
@@ -616,8 +560,8 @@ public class Parser {
     token = token.next; // LPAREN
 
     List<String> params = new ArrayList();
-    while (token.kind != JstlParserConstants.RPAREN) {
-      if (token.kind == JstlParserConstants.IDENT)
+    while (token.kind != JsltParserConstants.RPAREN) {
+      if (token.kind == JsltParserConstants.IDENT)
         params.add(token.image);
 
       token = token.next;
@@ -645,18 +589,18 @@ public class Parser {
       return null;
 
     SimpleNode last = getLastChild(node);
-    if (node.id == JstlParserTreeConstants.JJTPAIR) {
+    if (node.id == JsltParserTreeConstants.JJTPAIR) {
       if (node.jjtGetNumChildren() == 1)
         return null; // last in chain was a pair
 
       return collectMatcher(ctx, last);
-    } else if (node.id == JstlParserTreeConstants.JJTMATCHER) {
+    } else if (node.id == JsltParserTreeConstants.JJTMATCHER) {
       List<String> minuses = new ArrayList();
       if (node.jjtGetNumChildren() == 2) // means there was "* - foo : ..."
         collectMinuses(ctx, getChild(node, 0), minuses);
       return new MatcherExpression(node2expr(ctx, last), minuses,
                                    makeLocation(ctx, last));
-    } else if (node.id == JstlParserTreeConstants.JJTLET)
+    } else if (node.id == JsltParserTreeConstants.JJTLET)
       return null; // last item is a let, which is messed up, but legal
     else
       throw new JstlException("INTERNAL ERROR: This is wrong: " + node);
@@ -670,7 +614,7 @@ public class Parser {
     while (true) {
       minuses.add(identOrString(ctx, token));
       token = token.next;
-      if (token.kind == JstlParserConstants.COLON)
+      if (token.kind == JsltParserConstants.COLON)
         break;
       // else: COMMA
       token = token.next;
@@ -679,7 +623,7 @@ public class Parser {
 
   private static List<PairExpression> collectPairs(ParseContext ctx,
                                                    SimpleNode pair) {
-    if (pair != null && pair.id == JstlParserTreeConstants.JJTPAIR) {
+    if (pair != null && pair.id == JsltParserTreeConstants.JJTPAIR) {
       String key = makeString(ctx, pair.jjtGetFirstToken());
       ExpressionNode val = node2expr(ctx, (SimpleNode) pair.jjtGetChild(0));
 

@@ -14,6 +14,8 @@ import static org.junit.Assert.assertEquals;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.schibsted.spt.data.jslt.Parser;
+
 /**
  * Utilities for test cases.
  */

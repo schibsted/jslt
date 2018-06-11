@@ -11,6 +11,8 @@ import static org.junit.Assert.assertEquals;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 
+import com.schibsted.spt.data.jslt.Parser;
+
 /**
  * Verifying that toString works as it should.
  */

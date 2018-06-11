@@ -7,15 +7,15 @@ options {
   TRACK_TOKENS = true;
 }
 
-PARSER_BEGIN(JstlParser)
+PARSER_BEGIN(JsltParser)
 
-package com.schibsted.spt.data.jstl2;
+package com.schibsted.spt.data.jslt.parser;
 
-public class JstlParser {
+public class JsltParser {
 
 }
 
-PARSER_END(JstlParser)
+PARSER_END(JsltParser)
 
 /* WHITE SPACE */
 SPECIAL_TOKEN :

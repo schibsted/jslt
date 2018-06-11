@@ -2,7 +2,7 @@
 package com.schibsted.spt.data.jstl2.impl.lambda;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.schibsted.spt.data.jstl2.Parser;
+import com.schibsted.spt.data.jslt.Parser;
 import com.schibsted.spt.data.jstl2.Expression;
 import com.schibsted.spt.data.jstl2.impl.NodeUtils;
 
