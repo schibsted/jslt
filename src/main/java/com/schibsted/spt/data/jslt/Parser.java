@@ -29,62 +29,127 @@ import com.schibsted.spt.data.jslt.impl.*;
  */
 public class Parser {
 
-  public static Expression compile(Collection<Function> functions,
-                                   File jstl) {
-    return compile(new ParseContext(functions, jstl.getAbsolutePath()), jstl);
-  }
-
-  public static Expression compile(File jstl) {
-    return compile(new ParseContext(jstl.getAbsolutePath()), jstl);
-  }
-
-  private static Expression compile(ParseContext ctx, File jstl) {
-    try (FileReader f = new FileReader(jstl)) {
-      return ParserImpl.compileExpression(ctx, new JsltParser(f));
-    } catch (FileNotFoundException e) {
-      throw new JsltException("Couldn't find file " + jstl);
-    } catch (IOException e) {
-      throw new JsltException("Couldn't read file " + jstl, e);
-    }
-  }
-
-  public static Expression compile(String jstl) {
-    ParseContext ctx = new ParseContext("<unknown>");
-    return ParserImpl.compileExpression(ctx, new JsltParser(new StringReader(jstl)));
-  }
-
-  public static Expression compile(Collection<Function> functions,
-                                   String jstl) {
-    ParseContext ctx = new ParseContext(functions, null);
-    return ParserImpl.compileExpression(ctx, new JsltParser(new StringReader(jstl)));
-  }
-
-  public static Expression compileResource(String jstl) {
-    return compileResource(Collections.EMPTY_SET, jstl);
+  /**
+   * Compile the given JSLT file.
+   */
+  public static Expression compile(File jslt) {
+    return compile(jslt, Collections.EMPTY_SET);
   }
 
   /**
-   * Compile JSLT expression from the Reader. The resourceName is just
-   * a name used in error messages, and has no practical effect.
+   * Compile the given JSLT file with the given predefined functions.
    */
-  public static Expression compile(Collection<Function> functions,
-                                   String resourceName,
-                                   Reader reader) {
-    ParseContext ctx = new ParseContext(functions, resourceName);
-    return ParserImpl.compileExpression(ctx, new JsltParser(reader));
+  public static Expression compile(File jslt, Collection<Function> functions) {
+    try (FileReader f = new FileReader(jslt)) {
+      return new Parser(f)
+        .withSource(jslt.getAbsolutePath())
+        .withFunctions(functions)
+        .compile();
+    } catch (FileNotFoundException e) {
+      throw new JsltException("Couldn't find file " + jslt);
+    } catch (IOException e) {
+      throw new JsltException("Couldn't read file " + jslt, e);
+    }
   }
 
-  public static Expression compileResource(Collection<Function> functions,
-                                           String jslt) {
+  /**
+   * Compile JSLT expression given as an inline string.
+   */
+  public static Expression compileString(String jslt) {
+    return compileString(jslt, Collections.EMPTY_SET);
+  }
+
+  /**
+   * Compile JSLT expression given as an inline string with the given
+   * extension functions.
+   */
+  public static Expression compileString(String jslt,
+                                         Collection<Function> functions) {
+    return new Parser(new StringReader(jslt))
+      .withSource("<inline>")
+      .withFunctions(functions)
+      .compile();
+  }
+
+  /**
+   * Load and compile JSLT expression from the classpath.
+   */
+  public static Expression compileResource(String jslt) {
+    return compileResource(jslt, Collections.EMPTY_SET);
+  }
+
+  /**
+   * Load and compile JSLT expression from the classpath with the
+   * given extension functions.
+   */
+  public static Expression compileResource(String jslt,
+                                           Collection<Function> functions) {
     try (InputStream stream = Parser.class.getClassLoader().getResourceAsStream(jslt)) {
       if (stream == null)
         throw new JsltException("Cannot load resource '" + jslt + "': not found");
 
       Reader reader = new InputStreamReader(stream, "UTF-8");
-      ParseContext ctx = new ParseContext(functions, jslt);
-      return ParserImpl.compileExpression(ctx, new JsltParser(reader));
+      return new Parser(reader)
+        .withSource(jslt)
+        .withFunctions(functions)
+        .compile();
     } catch (IOException e) {
       throw new JsltException("Couldn't read resource " + jslt, e);
     }
+  }
+
+  /**
+   * Compile JSLT expression from the Reader. The source is just a
+   * name used in error messages, and has no practical effect.
+   */
+  public static Expression compile(String source,
+                                   Reader reader,
+                                   Collection<Function> functions) {
+    return new Parser(reader)
+      .withSource(source)
+      .withFunctions(functions)
+      .compile();
+  }
+
+  // ===== FLUENT BUILDER API
+
+  private Collection<Function> functions;
+  private String source;
+  private Reader reader;
+
+  private Parser(String source, Reader reader, Collection<Function> functions) {
+    this.functions = functions;
+    this.source = source;
+    this.reader = reader;
+  }
+
+  /**
+   * Create a Parser reading JSLT source from the given Reader.
+   */
+  public Parser(Reader reader) {
+    this("<unknown>", reader, Collections.EMPTY_SET);
+  }
+
+  /**
+   * Create a new Parser with the given source name. The name is a string
+   * used in error messages.
+   */
+  public Parser withSource(String thisSource) {
+    return new Parser(thisSource, reader, functions);
+  }
+
+  /**
+   * Create a new Parser with the given extension functions.
+   */
+  public Parser withFunctions(Collection<Function> theseFunctions) {
+    return new Parser(source, reader, theseFunctions);
+  }
+
+  /**
+   * Compile the JSLT from the defined parameters.
+   */
+  public Expression compile() {
+    ParseContext ctx = new ParseContext(functions, source);
+    return ParserImpl.compileExpression(ctx, new JsltParser(reader));
   }
 }

@@ -45,7 +45,7 @@ public class TestBase {
     try {
       JsonNode context = mapper.readTree(input);
 
-      Expression expr = Parser.compile(functions, query);
+      Expression expr = Parser.compileString(query, functions);
       JsonNode actual = expr.apply(variables, context);
       if (actual == null)
         throw new JsltException("Returned Java null");
@@ -64,7 +64,7 @@ public class TestBase {
   JsonNode execute(String input, String query) {
     try {
       JsonNode context = mapper.readTree(input);
-      Expression expr = Parser.compile(query);
+      Expression expr = Parser.compileString(query);
       return expr.apply(context);
     } catch (IOException e) {
       throw new RuntimeException(e);
@@ -81,7 +81,7 @@ public class TestBase {
     try {
       JsonNode context = mapper.readTree(input);
 
-      Expression expr = Parser.compile(query);
+      Expression expr = Parser.compileString(query);
       JsonNode actual = expr.apply(context);
       fail("JSTL did not detect error");
     } catch (JsltException e) {

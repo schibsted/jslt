@@ -4,8 +4,15 @@ package com.schibsted.spt.data.jslt;
 import java.lang.reflect.Method;
 import com.schibsted.spt.data.jslt.impl.FunctionWrapper;
 
+/**
+ * Useful methods for working with Functions.
+ */
 public class FunctionUtils {
 
+  /**
+   * Create a JSLT function from a static Java method. This will fail
+   * if the method is overloaded.
+   */
   static public Function wrapStaticMethod(String functionName,
                                           String className,
                                           String methodName)
@@ -24,6 +31,10 @@ public class FunctionUtils {
     return new FunctionWrapper(functionName, method);
   }
 
+  /**
+   * Create a JSLT function from a static Java method.
+   * @param paramTypes Array of types used to match overloaded methods.
+   */
   static public Function wrapStaticMethod(String functionName,
                                           String className,
                                           String methodName,

@@ -250,7 +250,7 @@ public class JsonParseTest {
 
   private void check(String json) {
     try {
-      Expression expr = Parser.compile(json);
+      Expression expr = Parser.compileString(json);
       JsonNode actual = expr.apply(null);
 
       JsonNode expected = mapper.readTree(json);
@@ -263,7 +263,7 @@ public class JsonParseTest {
 
   private void error(String json) {
     try {
-      Parser.compile(json);
+      Parser.compileString(json);
       fail("Successfully parsed " + json);
     } catch (JsltException e) {
       // this is what we want

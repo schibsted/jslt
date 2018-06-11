@@ -88,7 +88,7 @@ public class ToStringTest extends TestBase {
   // ----- UTILITIES
 
   private void verify(String input, String output) {
-    Expression expr = Parser.compile(input);
+    Expression expr = Parser.compileString(input);
     String actual = expr.toString();
 
     assertEquals(output, actual);

@@ -170,7 +170,7 @@ public class FunctionTest extends TestBase {
     try {
       JsonNode context = mapper.readTree("{}");
 
-      Expression expr = Parser.compile("random()");
+      Expression expr = Parser.compileString("random()");
 
       for (int ix = 0; ix < 10; ix++) {
         JsonNode actual = expr.apply(context);

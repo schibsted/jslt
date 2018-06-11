@@ -25,7 +25,7 @@ public class LambdaFunction {
       JsonNode source = NodeUtils.mapper.readTree(input.get("json").asText());
       String jslt = input.get("jslt").asText();
 
-      Expression template = Parser.compile(jslt);
+      Expression template = Parser.compileString(jslt);
       JsonNode output = template.apply(source);
       return NodeUtils.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(output);
     } catch (Throwable e) {
