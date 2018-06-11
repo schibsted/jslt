@@ -1,21 +1,9 @@
 
-// We are deliberately not using the Schibsted JVM because without it the
-// repo builds and runs tests in like 2 seconds
-
 buildscript {
   repositories {
     mavenLocal()
     jcenter()
     mavenCentral()
-    maven {
-        url 'https://artifacts.schibsted.io/artifactory/libs-release-local'
-        credentials {
-            username = project.hasProperty("artifactory_user") ?
-                    "$artifactory_user" : "$System.env.ARTIFACTORY_USER"
-            password = project.hasProperty("artifactory_password") ?
-                    "$artifactory_password" : "$System.env.ARTIFACTORY_PWD"
-        }
-    }
   }
   dependencies {
     classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.5.4"
@@ -43,7 +31,6 @@ dependencies {
   testCompile 'junit:junit:4.12'
 }
 
-// stolen from the Schibsted JVM plugin
 ext {
   timestamp = new Date().format('yyyyMMddHHmm')
   gitrev = "git log -1 HEAD --pretty=tformat:%h".execute().text.trim()
@@ -62,38 +49,15 @@ sourceSets {
  }
 
 task jjtree (type: Exec) {
-  commandLine 'java', '-cp', 'javacc.jar', 'jjtree', '-OUTPUT_DIRECTORY=build/javacc/com/schibsted/spt/data/jstl2', 'src/main/javacc/jstl.jj'
+  commandLine 'java', '-cp', 'javacc.jar', 'jjtree', '-OUTPUT_DIRECTORY=build/javacc/com/schibsted/spt/data/jslt/parser', 'src/main/javacc/jstl.jj'
 }
 
 
 task javacc (type: Exec) {
-  commandLine 'java', '-cp', 'javacc.jar', 'javacc', '-OUTPUT_DIRECTORY=build/javacc/com/schibsted/spt/data/jstl2', 'build/javacc/com/schibsted/spt/data/jstl2/jstl.jj.jj'
+  commandLine 'java', '-cp', 'javacc.jar', 'javacc', '-OUTPUT_DIRECTORY=build/javacc/com/schibsted/spt/data/jslt/parser', 'build/javacc/com/schibsted/spt/data/jslt/parser/jstl.jj.jj'
 }
 compileJava.dependsOn 'javacc'
 javacc.dependsOn 'jjtree'
-
-artifactory {
-  contextUrl = 'https://artifacts.schibsted.io/artifactory/'
-  publish {
-    repository {
-      repoKey = 'libs-release-local'   //The Artifactory repository key to publish to
-      username = project.hasProperty("artifactory_user") ?
-              "$artifactory_user" : "$System.env.ARTIFACTORY_USER"
-      password = project.hasProperty("artifactory_password") ?
-              "$artifactory_password" : "$System.env.ARTIFACTORY_PWD"
-    }
-    defaults {
-      publications ('mavenJava')
-    }
-  }
-}
-publishing {
-  publications {
-      mavenJava(MavenPublication) {
-          from components.java
-      }
-  }
-}
 
 check {
   doLast {
