@@ -1,13 +1,11 @@
 
-package com.schibsted.spt.data.jstl2;
+package com.schibsted.spt.data.jslt;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.schibsted.spt.data.jstl2.impl.Callable;
 
 /**
- * Interface implemented by all function implementations. May replace
- * it with a wrapper that carries the metadata and an inner object
- * that has just the 'call' method.
+ * Interface for function implementations.
  */
 public interface Function extends Callable {
 

@@ -4,6 +4,8 @@ package com.schibsted.spt.data.jstl2;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.IntNode;
 
+import com.schibsted.spt.data.jslt.Function;
+
 public class TestFunction implements Function {
 
   public String getName() {

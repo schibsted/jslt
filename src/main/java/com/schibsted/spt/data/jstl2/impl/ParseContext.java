@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import com.schibsted.spt.data.jstl2.Function;
 import com.schibsted.spt.data.jstl2.JstlException;
+import com.schibsted.spt.data.jslt.Function;
 
 /**
  * Class to encapsulate context information like available functions,

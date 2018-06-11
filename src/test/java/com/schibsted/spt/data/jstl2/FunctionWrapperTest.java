@@ -8,6 +8,7 @@ import static org.junit.Assert.fail;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
+import com.schibsted.spt.data.jslt.Function;
 import com.schibsted.spt.data.jslt.FunctionUtils;
 
 /**

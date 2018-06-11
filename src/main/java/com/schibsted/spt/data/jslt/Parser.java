@@ -23,7 +23,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.schibsted.spt.data.jstl2.impl.*;
 import com.schibsted.spt.data.jslt.parser.*;
-import com.schibsted.spt.data.jstl2.Function;
+import com.schibsted.spt.data.jslt.Function;
 import com.schibsted.spt.data.jstl2.JstlException;
 
 /**

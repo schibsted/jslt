@@ -9,7 +9,7 @@ import java.util.HashMap;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.TextNode;
-import com.schibsted.spt.data.jstl2.Function;
+import com.schibsted.spt.data.jslt.Function;
 import com.schibsted.spt.data.jstl2.JstlException;
 
 public class FunctionWrapper implements Function {

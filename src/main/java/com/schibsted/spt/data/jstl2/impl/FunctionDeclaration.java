@@ -4,7 +4,7 @@ package com.schibsted.spt.data.jstl2.impl;
 import java.util.Map;
 import java.util.HashMap;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.schibsted.spt.data.jstl2.Function;
+import com.schibsted.spt.data.jslt.Function;
 
 public class FunctionDeclaration implements Function {
   private String name;

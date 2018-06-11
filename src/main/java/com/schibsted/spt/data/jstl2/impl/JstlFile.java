@@ -2,8 +2,8 @@
 package com.schibsted.spt.data.jstl2.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.schibsted.spt.data.jstl2.Function;
 import com.schibsted.spt.data.jstl2.JstlException;
+import com.schibsted.spt.data.jslt.Function;
 
 /**
  * Represents a JSTL source code file loaded separately.

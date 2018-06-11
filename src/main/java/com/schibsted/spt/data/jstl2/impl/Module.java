@@ -1,7 +1,7 @@
 
 package com.schibsted.spt.data.jstl2.impl;
 
-import com.schibsted.spt.data.jstl2.Function;
+import com.schibsted.spt.data.jslt.Function;
 
 /**
  * Interface to a module, which can come from loading a JSTL or
