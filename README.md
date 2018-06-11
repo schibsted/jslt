@@ -54,8 +54,8 @@ let user_id = fallback(.actor."spt:userId", .account."@id")
 | `let <name> = <expr>` | Define a variable |
 | `$<name>`             | Refer to a variable |
 | `[for (<expr>) <expr>]` | Transform an array |
-| `{for (<expr>) <expr> : <expr>}` | Transform an Object |
-| `def <name>(<name>, <name>...) <expr> | Declare a function |
+| `{for (<expr>) <expr> : <expr>}` | Transform an object |
+| `def <name>(<name>, <name>...) <expr>` | Declare a function |
 
 ## Status
 
