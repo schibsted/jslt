@@ -39,11 +39,7 @@ def is-ok(board)
   rows-ok($board) and cols-ok($board) and diagonals-ok($board)
 
 def rows-ok(board)
-  all-ok([for ($board)
-    if (sum(.) == null)
-      error("Bad board: " + $board)
-    else
-      sum(.) <= 1])
+  all-ok([for ($board) sum(.) <= 1])
 
 def cols-ok(board)
   // 0, 1, 2, 3, ...
@@ -113,4 +109,4 @@ def filter(array)
   else
     filter($array[1 : ])
 
-queens(8)
+queens(10)
