@@ -8,7 +8,7 @@ import com.schibsted.spt.data.jstl2.impl.ExpressionImpl;
 import com.schibsted.spt.data.jslt.Parser;
 import com.schibsted.spt.data.jslt.Expression;
 
-public class JSTL {
+public class JSLT {
 
   public static void main(String[] args) throws Exception {
     Expression expr = Parser.compile(new File(args[0]));
