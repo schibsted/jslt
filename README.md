@@ -90,7 +90,7 @@ The result is written to standard out.
 
 ## LICENSE
 
-Copyright (c) 2018 Schibsted Products & Technology AS
+Copyright (c) 2018 Schibsted Marketplaces Products & Technology AS
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at `http://www.apache.org/licenses/LICENSE-2.0`
 
