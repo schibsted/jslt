@@ -7,8 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.schibsted.spt.data.jstl2.Function;
-import com.schibsted.spt.data.jstl2.Expression;
-import com.schibsted.spt.data.jstl2.impl.vm.Compiler;
+import com.schibsted.spt.data.jslt.Expression;
 
 /**
  * Wrapper class that translates an external Expression to an
@@ -56,13 +55,6 @@ public class ExpressionImpl implements Expression {
 
     Scope scope = NodeUtils.evalLets(Scope.getRoot(), input, lets);
     return actual.apply(scope, input);
-  }
-
-  public void compile(Compiler compiler) {
-    for (int ix = 0; ix < lets.length; ix++)
-      lets[ix].compile(compiler);
-    actual.compile(compiler);
-    compiler.genEND();
   }
 
   public void dump() {

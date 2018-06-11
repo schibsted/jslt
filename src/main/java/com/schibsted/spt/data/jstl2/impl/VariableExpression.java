@@ -2,7 +2,6 @@
 package com.schibsted.spt.data.jstl2.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.schibsted.spt.data.jstl2.impl.vm.Compiler;
 import com.schibsted.spt.data.jstl2.JstlException;
 
 public class VariableExpression extends AbstractNode {
@@ -19,10 +18,6 @@ public class VariableExpression extends AbstractNode {
       throw new JstlException("No such variable '" + variable + "'",
                               location);
     return value;
-  }
-
-  public void compile(Compiler compiler) {
-    compiler.genPUSHV(variable);
   }
 
   public void dump(int level) {

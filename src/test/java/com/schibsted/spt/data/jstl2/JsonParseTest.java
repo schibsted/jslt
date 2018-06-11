@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NullNode;
 
 import com.schibsted.spt.data.jslt.Parser;
+import com.schibsted.spt.data.jslt.Expression;
 
 /**
  * JSON parsing test cases only. Verifies that Jackson and JSTL

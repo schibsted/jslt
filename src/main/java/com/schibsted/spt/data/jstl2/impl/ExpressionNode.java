@@ -2,7 +2,6 @@
 package com.schibsted.spt.data.jstl2.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.schibsted.spt.data.jstl2.impl.vm.Compiler;
 
 /**
  * Internal interface for the parts of a compiled JSTL 2.0 expression.
@@ -20,9 +19,6 @@ public interface ExpressionNode {
 
   // fills in the contextQuery in ObjectExpression matchers
   public void computeMatchContexts(DotExpression parent);
-
-  // compile to byte-code
-  public void compile(Compiler compiler);
 
   // return self, or optimized version
   public ExpressionNode optimize();

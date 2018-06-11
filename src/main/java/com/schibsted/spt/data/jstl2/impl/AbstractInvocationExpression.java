@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.schibsted.spt.data.jstl2.Function;
 import com.schibsted.spt.data.jstl2.JstlException;
-import com.schibsted.spt.data.jstl2.impl.vm.Compiler;
 
 /**
  * Common superclass for function and macro expressions, to avoid

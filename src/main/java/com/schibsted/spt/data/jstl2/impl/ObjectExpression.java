@@ -12,8 +12,6 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.schibsted.spt.data.jstl2.JstlException;
-import com.schibsted.spt.data.jstl2.impl.vm.Jump;
-import com.schibsted.spt.data.jstl2.impl.vm.Compiler;
 
 public class ObjectExpression extends AbstractNode {
   private LetExpression[] lets;
@@ -99,51 +97,6 @@ public class ObjectExpression extends AbstractNode {
     // apply parameters: literals won't use scope or input, so...
     JsonNode object = apply(null, NullNode.instance);
     return new LiteralExpression(object, location);
-  }
-
-  public void compile(Compiler compiler) {
-    compiler.compileLets(lets);
-
-    compiler.genPUSHO();
-    for (int ix = 0; ix < children.length; ix++) {
-      children[ix].compile(compiler);
-      compiler.genSETK(children[ix].getKey());
-    }
-
-    if (matcher != null)
-      compileMatcher(compiler);
-
-    if (lets.length > 0)
-      compiler.genPOPS();
-  }
-
-  private void compileMatcher(Compiler compiler) {
-    // to understand how this works, see vm-design.txt
-
-    // okay, evaluate
-    compiler.genPUSHI(); // save input on stack
-    compiler.genSWAP();  // result object now on top, input below
-
-    contextQuery.compile(compiler); // find object to match against
-    compiler.genOLD(keys);          // smear filtered object contents onto stack
-
-    int start = compiler.getNextInstruction();
-    compiler.genDUP();   // duplicate key so we have it after the test
-    Jump end = compiler.genJNOT(); // go to end if finished
-    compiler.genSWAP();      // now: value, key, obj
-    compiler.genPOPI();      // value is now the input, stack: key, obj
-
-    matcher.compile(compiler); // compute value to insert
-    // stack is now: newval, key, obj, ...
-    compiler.genDSETK();       // insert into obj
-    compiler.genJUMP(start);   // goto next element
-
-    end.resolve();
-    // <stack from top: terminator, result, saved input>
-    compiler.genPOP();         // get rid of terminator
-    compiler.genSWAP();        // stack now: <saved input, result>
-    compiler.genPOPI();        // restore input from stack
-    // <result now on top of stack>
   }
 
   public void dump(int level) {

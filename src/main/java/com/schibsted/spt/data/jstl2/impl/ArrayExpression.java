@@ -3,7 +3,6 @@ package com.schibsted.spt.data.jstl2.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.schibsted.spt.data.jstl2.impl.vm.Compiler;
 
 public class ArrayExpression extends AbstractNode {
   private ExpressionNode[] children;
@@ -18,14 +17,6 @@ public class ArrayExpression extends AbstractNode {
     for (int ix = 0; ix < children.length; ix++)
       array.add(children[ix].apply(scope, input));
     return array;
-  }
-
-  public void compile(Compiler compiler) {
-    compiler.genPUSHA();
-    for (int ix = 0; ix < children.length; ix++) {
-      children[ix].compile(compiler);
-      compiler.genSETA();
-    }
   }
 
   public void computeMatchContexts(DotExpression parent) {

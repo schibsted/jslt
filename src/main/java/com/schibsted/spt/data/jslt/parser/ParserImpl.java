@@ -22,10 +22,9 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.schibsted.spt.data.jstl2.impl.*;
-import com.schibsted.spt.data.jstl2.impl.vm.Compiler;
 import com.schibsted.spt.data.jstl2.Function;
-import com.schibsted.spt.data.jstl2.Expression;
 import com.schibsted.spt.data.jstl2.JstlException;
+import com.schibsted.spt.data.jslt.Expression;
 
 public class ParserImpl {
 
@@ -86,12 +85,7 @@ public class ParserImpl {
     } else
       ctx.resolveFunctions();
 
-    ExpressionImpl result =
-      new ExpressionImpl(lets, ctx.getDeclaredFunctions(), top);
-
-    //Compiler compiler = new Compiler();
-    //return compiler.compile(root);
-    return result;
+    return new ExpressionImpl(lets, ctx.getDeclaredFunctions(), top);
   }
 
   private static ExpressionNode node2expr(ParseContext ctx, SimpleNode node) {

@@ -11,6 +11,7 @@ import static org.junit.Assert.assertEquals;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import com.schibsted.spt.data.jslt.Parser;
+import com.schibsted.spt.data.jslt.Expression;
 
 /**
  * Test cases for function implementations.

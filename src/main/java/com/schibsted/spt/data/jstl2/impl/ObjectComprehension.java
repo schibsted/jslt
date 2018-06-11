@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.schibsted.spt.data.jstl2.JstlException;
-import com.schibsted.spt.data.jstl2.impl.vm.Compiler;
 
 public class ObjectComprehension extends AbstractNode {
   private ExpressionNode loop;
@@ -49,9 +48,6 @@ public class ObjectComprehension extends AbstractNode {
         object.set(keyNode.asText(), valueNode);
     }
     return object;
-  }
-
-  public void compile(Compiler compiler) {
   }
 
   public void dump(int level) {
