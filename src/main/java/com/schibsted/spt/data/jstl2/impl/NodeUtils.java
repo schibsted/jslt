@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.node.DoubleNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.schibsted.spt.data.jstl2.JstlException;
+import com.schibsted.spt.data.jslt.JsltException;
 
 public class NodeUtils {
   public static final ObjectMapper mapper = new ObjectMapper();
@@ -79,7 +79,7 @@ public class NodeUtils {
     else if (value.isNull() && nullok)
       return null;
 
-    throw new JstlException("Cannot convert " + value + " to array");
+    throw new JsltException("Cannot convert " + value + " to array");
   }
 
   public static JsonNode number(JsonNode value, Location loc) {
@@ -99,7 +99,7 @@ public class NodeUtils {
       return value;
     else if (!value.isTextual()) {
       if (strict)
-        throw new JstlException("Can't convert " + value + " to number", loc);
+        throw new JsltException("Can't convert " + value + " to number", loc);
       else if (fallback == null)
         return NullNode.instance;
       else
@@ -115,7 +115,7 @@ public class NodeUtils {
         return new IntNode(Integer.parseInt(number));
     } catch (NumberFormatException e) {
       if (fallback == null)
-        throw new JstlException("number(" + number + ") failed: not a number",
+        throw new JsltException("number(" + number + ") failed: not a number",
                                 loc);
       else
         return fallback;

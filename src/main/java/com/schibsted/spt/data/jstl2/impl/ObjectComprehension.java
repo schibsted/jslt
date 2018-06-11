@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.schibsted.spt.data.jstl2.JstlException;
+import com.schibsted.spt.data.jslt.JsltException;
 
 public class ObjectComprehension extends AbstractNode {
   private ExpressionNode loop;
@@ -35,14 +35,14 @@ public class ObjectComprehension extends AbstractNode {
     else if (sequence.isObject())
       sequence = NodeUtils.convertObjectToArray(sequence);
     else if (!sequence.isArray())
-      throw new JstlException("Object comprehension can't loop over " + sequence, location);
+      throw new JsltException("Object comprehension can't loop over " + sequence, location);
 
     ObjectNode object = NodeUtils.mapper.createObjectNode();
     for (int ix = 0; ix < sequence.size(); ix++) {
       JsonNode context = sequence.get(ix);
       JsonNode keyNode = key.apply(scope, context);
       if (!keyNode.isTextual())
-        throw new JstlException("Object comprehension must have string as key, not " + keyNode, location);
+        throw new JsltException("Object comprehension must have string as key, not " + keyNode, location);
       JsonNode valueNode = value.apply(scope, context);
       if (NodeUtils.isValue(valueNode))
         object.set(keyNode.asText(), valueNode);

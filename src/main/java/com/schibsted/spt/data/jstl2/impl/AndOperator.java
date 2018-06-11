@@ -3,7 +3,7 @@ package com.schibsted.spt.data.jstl2.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
-import com.schibsted.spt.data.jstl2.JstlException;
+import com.schibsted.spt.data.jslt.JsltException;
 
 public class AndOperator extends AbstractOperator {
 
@@ -22,6 +22,6 @@ public class AndOperator extends AbstractOperator {
   }
 
   public JsonNode perform(JsonNode v1, JsonNode v2) {
-    throw new JstlException("Not implemented");
+    throw new JsltException("Not implemented");
   }
 }

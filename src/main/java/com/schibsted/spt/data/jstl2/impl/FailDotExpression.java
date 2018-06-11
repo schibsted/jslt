@@ -1,7 +1,7 @@
 
 package com.schibsted.spt.data.jstl2.impl;
 
-import com.schibsted.spt.data.jstl2.JstlException;
+import com.schibsted.spt.data.jslt.JsltException;
 
 /**
  * These expression cannot be generated in the syntax, but are used to
@@ -20,6 +20,6 @@ public class FailDotExpression extends DotExpression {
   // matcher (only used for that)
   public void checkOk(Location matcher) {
     // we're actually being used. this is illegal!
-    throw new JstlException("Object matcher used inside array", matcher);
+    throw new JsltException("Object matcher used inside array", matcher);
   }
 }

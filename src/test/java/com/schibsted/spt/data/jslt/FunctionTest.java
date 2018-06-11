@@ -1,5 +1,5 @@
 
-package com.schibsted.spt.data.jstl2;
+package com.schibsted.spt.data.jslt;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -9,9 +9,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
-import com.schibsted.spt.data.jslt.Parser;
-import com.schibsted.spt.data.jslt.Expression;
 
 /**
  * Test cases for function implementations.

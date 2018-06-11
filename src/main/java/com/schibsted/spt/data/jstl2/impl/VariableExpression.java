@@ -2,7 +2,7 @@
 package com.schibsted.spt.data.jstl2.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.schibsted.spt.data.jstl2.JstlException;
+import com.schibsted.spt.data.jslt.JsltException;
 
 public class VariableExpression extends AbstractNode {
   private String variable;
@@ -15,7 +15,7 @@ public class VariableExpression extends AbstractNode {
   public JsonNode apply(Scope scope, JsonNode input) {
     JsonNode value = scope.getValue(variable);
     if (value == null)
-      throw new JstlException("No such variable '" + variable + "'",
+      throw new JsltException("No such variable '" + variable + "'",
                               location);
     return value;
   }

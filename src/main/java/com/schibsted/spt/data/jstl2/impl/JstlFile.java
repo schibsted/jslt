@@ -2,7 +2,7 @@
 package com.schibsted.spt.data.jstl2.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.schibsted.spt.data.jstl2.JstlException;
+import com.schibsted.spt.data.jslt.JsltException;
 import com.schibsted.spt.data.jslt.Function;
 
 /**
@@ -41,7 +41,7 @@ public class JstlFile implements Module, Function {
 
   public JsonNode call(JsonNode input, JsonNode[] arguments) {
     if (!body.hasBody())
-      throw new JstlException("Module '" + prefix + "' has no body, so cannot "+
+      throw new JsltException("Module '" + prefix + "' has no body, so cannot "+
                               "be called as a function");
 
     // make the argument be the input to the template

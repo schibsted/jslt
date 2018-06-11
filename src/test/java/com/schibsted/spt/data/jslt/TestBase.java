@@ -1,5 +1,5 @@
 
-package com.schibsted.spt.data.jstl2;
+package com.schibsted.spt.data.jslt;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -13,10 +13,6 @@ import static org.junit.Assert.assertEquals;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import com.schibsted.spt.data.jslt.Parser;
-import com.schibsted.spt.data.jslt.Function;
-import com.schibsted.spt.data.jslt.Expression;
 
 /**
  * Utilities for test cases.
@@ -52,7 +48,7 @@ public class TestBase {
       Expression expr = Parser.compile(functions, query);
       JsonNode actual = expr.apply(variables, context);
       if (actual == null)
-        throw new JstlException("Returned Java null");
+        throw new JsltException("Returned Java null");
 
       // reparse to handle IntNode(2) != LongNode(2)
       actual = mapper.readTree(mapper.writeValueAsString(actual));
@@ -88,7 +84,7 @@ public class TestBase {
       Expression expr = Parser.compile(query);
       JsonNode actual = expr.apply(context);
       fail("JSTL did not detect error");
-    } catch (JstlException e) {
+    } catch (JsltException e) {
       assertTrue("incorrect error message: '" + e.getMessage() + "'",
                  e.getMessage().indexOf(result) != -1);
     } catch (IOException e) {

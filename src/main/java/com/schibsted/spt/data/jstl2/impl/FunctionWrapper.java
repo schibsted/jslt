@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.schibsted.spt.data.jslt.Function;
-import com.schibsted.spt.data.jstl2.JstlException;
+import com.schibsted.spt.data.jslt.JsltException;
 
 public class FunctionWrapper implements Function {
   private String name;
@@ -50,9 +50,9 @@ public class FunctionWrapper implements Function {
       Object result = method.invoke(null, args);
       return returnConverter.convert(result);
     } catch (IllegalAccessException e) {
-      throw new JstlException("Couldn't call " + method, e);
+      throw new JsltException("Couldn't call " + method, e);
     } catch (InvocationTargetException e) {
-      throw new JstlException("Couldn't call " + method, e);
+      throw new JsltException("Couldn't call " + method, e);
     }
   }
 
@@ -70,7 +70,7 @@ public class FunctionWrapper implements Function {
   private static ToJavaConverter makeJavaConverter(Class type) {
     ToJavaConverter converter = toJava.get(type);
     if (converter == null)
-      throw new JstlException("Cannot build converter to " + type);
+      throw new JsltException("Cannot build converter to " + type);
     return converter;
   }
 
@@ -81,7 +81,7 @@ public class FunctionWrapper implements Function {
       else if (node.isTextual())
         return node.asText();
       else
-        throw new JstlException("Could not convert " + node + " to string");
+        throw new JsltException("Could not convert " + node + " to string");
     }
   }
 
@@ -99,7 +99,7 @@ public class FunctionWrapper implements Function {
   static private ToJsonConverter makeJsonConverter(Class type) {
     ToJsonConverter converter = toJson.get(type);
     if (converter == null)
-      throw new JstlException("Cannot build converter from " + type);
+      throw new JsltException("Cannot build converter from " + type);
     return converter;
   }
 

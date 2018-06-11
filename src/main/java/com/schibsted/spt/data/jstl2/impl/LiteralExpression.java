@@ -3,7 +3,7 @@ package com.schibsted.spt.data.jstl2.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.schibsted.spt.data.jstl2.JstlException;
+import com.schibsted.spt.data.jslt.JsltException;
 
 public class LiteralExpression extends AbstractNode {
   private JsonNode value;
@@ -25,7 +25,7 @@ public class LiteralExpression extends AbstractNode {
     try {
       return NodeUtils.mapper.writeValueAsString(value);
     } catch (JsonProcessingException e) {
-      throw new JstlException("Couldn't serialize literal value: " + e);
+      throw new JsltException("Couldn't serialize literal value: " + e);
     }
   }
 }

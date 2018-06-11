@@ -1,5 +1,5 @@
 
-package com.schibsted.spt.data.jstl2;
+package com.schibsted.spt.data.jslt;
 
 import java.io.IOException;
 import org.junit.Test;
@@ -10,9 +10,6 @@ import static org.junit.Assert.assertEquals;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.NullNode;
-
-import com.schibsted.spt.data.jslt.Parser;
-import com.schibsted.spt.data.jslt.Expression;
 
 /**
  * Verifying that toString works as it should.

@@ -22,9 +22,9 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.schibsted.spt.data.jstl2.impl.*;
-import com.schibsted.spt.data.jstl2.JstlException;
 import com.schibsted.spt.data.jslt.Function;
 import com.schibsted.spt.data.jslt.Expression;
+import com.schibsted.spt.data.jslt.JsltException;
 
 public class ParserImpl {
 
@@ -34,10 +34,10 @@ public class ParserImpl {
       return compile(ctx, (SimpleNode) parser.jjtree.rootNode());
 
     } catch (ParseException e) {
-      throw new JstlException("Parse error: " + e.getMessage(),
+      throw new JsltException("Parse error: " + e.getMessage(),
                               makeLocation(ctx, e.currentToken));
     } catch (TokenMgrError e) {
-      throw new JstlException("Parse error: " + e.getMessage());
+      throw new JsltException("Parse error: " + e.getMessage());
     }
   }
 
@@ -46,14 +46,14 @@ public class ParserImpl {
                                              String jstl) {
     try (InputStream stream = ParserImpl.class.getClassLoader().getResourceAsStream(jstl)) {
       if (stream == null)
-        throw new JstlException("Cannot load resource '" + jstl + "': not found");
+        throw new JsltException("Cannot load resource '" + jstl + "': not found");
 
       Reader reader = new InputStreamReader(stream, "UTF-8");
       ParseContext ctx = new ParseContext(functions, jstl);
       ctx.setParent(parent);
       return compileModule(ctx, new JsltParser(reader));
     } catch (IOException e) {
-      throw new JstlException("Couldn't read resource " + jstl, e);
+      throw new JsltException("Couldn't read resource " + jstl, e);
     }
   }
 
@@ -63,10 +63,10 @@ public class ParserImpl {
       return compile(ctx, (SimpleNode) parser.jjtree.rootNode());
 
     } catch (ParseException e) {
-      throw new JstlException("Parse error: " + e.getMessage(),
+      throw new JsltException("Parse error: " + e.getMessage(),
                               makeLocation(ctx, e.currentToken));
     } catch (TokenMgrError e) {
-      throw new JstlException("Parse error: " + e.getMessage());
+      throw new JsltException("Parse error: " + e.getMessage());
     }
   }
 
@@ -90,7 +90,7 @@ public class ParserImpl {
 
   private static ExpressionNode node2expr(ParseContext ctx, SimpleNode node) {
     if (node.id != JsltParserTreeConstants.JJTEXPR)
-      throw new JstlException("INTERNAL ERROR: Wrong type of node: " + node);
+      throw new JsltException("INTERNAL ERROR: Wrong type of node: " + node);
 
     ExpressionNode first = node2andexpr(ctx, getChild(node, 0));
     if (node.jjtGetNumChildren() == 1) // it's just the base
@@ -102,7 +102,7 @@ public class ParserImpl {
 
   private static ExpressionNode node2andexpr(ParseContext ctx, SimpleNode node) {
     if (node.id != JsltParserTreeConstants.JJTANDEXPR)
-      throw new JstlException("INTERNAL ERROR: Wrong type of node: " + node);
+      throw new JsltException("INTERNAL ERROR: Wrong type of node: " + node);
 
     ExpressionNode first = node2compexpr(ctx, getChild(node, 0));
     if (node.jjtGetNumChildren() == 1) // it's just the base
@@ -114,7 +114,7 @@ public class ParserImpl {
 
   private static ExpressionNode node2compexpr(ParseContext ctx, SimpleNode node) {
     if (node.id != JsltParserTreeConstants.JJTCOMPARATIVEEXPR)
-      throw new JstlException("INTERNAL ERROR: Wrong type of node: " + node);
+      throw new JsltException("INTERNAL ERROR: Wrong type of node: " + node);
 
     ExpressionNode first = node2addexpr(ctx, getChild(node, 0));
     if (node.jjtGetNumChildren() == 1) // it's just the base
@@ -138,12 +138,12 @@ public class ParserImpl {
     else if (comp.kind == JsltParserConstants.SMALLOREQ)
       return new SmallerOrEqualsComparison(first, second, loc);
     else
-      throw new JstlException("INTERNAL ERROR: What kind of comparison is this? " + node);
+      throw new JsltException("INTERNAL ERROR: What kind of comparison is this? " + node);
   }
 
   private static ExpressionNode node2addexpr(ParseContext ctx, SimpleNode node) {
     if (node.id != JsltParserTreeConstants.JJTADDITIVEEXPR)
-      throw new JstlException("INTERNAL ERROR: Wrong type of node: " + node);
+      throw new JsltException("INTERNAL ERROR: Wrong type of node: " + node);
 
     ExpressionNode first = node2mulexpr(ctx, getChild(node, 0));
     if (node.jjtGetNumChildren() == 1) // it's just the base
@@ -159,12 +159,12 @@ public class ParserImpl {
     else if (comp.kind == JsltParserConstants.MINUS)
       return new MinusOperator(first, second, loc);
     else
-      throw new JstlException("INTERNAL ERROR: What kind of operator is this?");
+      throw new JsltException("INTERNAL ERROR: What kind of operator is this?");
   }
 
   private static ExpressionNode node2mulexpr(ParseContext ctx, SimpleNode node) {
     if (node.id != JsltParserTreeConstants.JJTMULTIPLICATIVEEXPR)
-      throw new JstlException("INTERNAL ERROR: Wrong type of node: " + node);
+      throw new JsltException("INTERNAL ERROR: Wrong type of node: " + node);
 
     ExpressionNode first = node2baseExpr(ctx, getChild(node, 0));
     if (node.jjtGetNumChildren() == 1) // it's just the base
@@ -180,12 +180,12 @@ public class ParserImpl {
     else if (comp.kind == JsltParserConstants.SLASH)
       return new DivideOperator(first, second, loc);
     else
-      throw new JstlException("INTERNAL ERROR: What kind of operator is this?");
+      throw new JsltException("INTERNAL ERROR: What kind of operator is this?");
   }
 
   private static ExpressionNode node2baseExpr(ParseContext ctx, SimpleNode node) {
     if (node.id != JsltParserTreeConstants.JJTBASEEXPR)
-      throw new JstlException("INTERNAL ERROR: Wrong type of node: " + node);
+      throw new JsltException("INTERNAL ERROR: Wrong type of node: " + node);
 
     Location loc = makeLocation(ctx, node);
     Token token = node.jjtGetFirstToken();
@@ -269,14 +269,14 @@ public class ParserImpl {
 
     else {
       node.dump(">");
-      throw new JstlException("INTERNAL ERROR: I'm confused now: " +
+      throw new JsltException("INTERNAL ERROR: I'm confused now: " +
                               node.jjtGetNumChildren() + " " + kind);
     }
   }
 
   private static ExpressionNode chainable2Expr(ParseContext ctx, SimpleNode node) {
     if (node.id != JsltParserTreeConstants.JJTCHAINABLE)
-      throw new JstlException("INTERNAL ERROR: Wrong type of node: " + node);
+      throw new JsltException("INTERNAL ERROR: Wrong type of node: " + node);
 
     Token token = node.jjtGetFirstToken();
     int kind = token.kind;
@@ -333,7 +333,7 @@ public class ParserImpl {
       // ok, there was a key or array slicer
       start = buildChainLink(ctx, node, null);
     } else
-      throw new JstlException("INTERNAL ERROR: Now I'm *really* confused!");
+      throw new JsltException("INTERNAL ERROR: Now I'm *really* confused!");
 
     // then tack on the rest of the chain, if there is any
     if (node.jjtGetNumChildren() > 0 &&
@@ -347,7 +347,7 @@ public class ParserImpl {
                                               SimpleNode chainLink,
                                               ExpressionNode parent) {
     if (chainLink.id != JsltParserTreeConstants.JJTCHAINLINK)
-      throw new JstlException("INTERNAL ERROR: Wrong type of node: " + chainLink);
+      throw new JsltException("INTERNAL ERROR: Wrong type of node: " + chainLink);
 
     ExpressionNode dot = buildChainLink(ctx, chainLink, parent);
 
@@ -437,12 +437,12 @@ public class ParserImpl {
         case '/': result[pos++] = '/'; break;
         case 'u':
           if (ix + 5 >= string.length())
-            throw new JstlException("Unfinished Unicode escape sequence",
+            throw new JsltException("Unfinished Unicode escape sequence",
                                     makeLocation(ctx, literal));
           result[pos++] = interpretUnicodeEscape(string, ix + 1);
           ix += 4;
           break;
-        default: throw new JstlException("Unknown escape sequence: \\" + ch,
+        default: throw new JsltException("Unknown escape sequence: \\" + ch,
                                          makeLocation(ctx, literal));
         }
       }
@@ -465,7 +465,7 @@ public class ParserImpl {
     else if (digit >= 'a' && digit <= 'f')
       return (char) ((digit - 'a') + 10);
 
-    throw new JstlException("Bad Unicode escape hex digit: '" + digit + "'");
+    throw new JsltException("Bad Unicode escape hex digit: '" + digit + "'");
   }
 
   private static ExpressionNode[] children2Exprs(ParseContext ctx,
@@ -500,7 +500,7 @@ public class ParserImpl {
   private static JstlFile doImport(ParseContext parent, String source,
                                    SimpleNode node, String prefix) {
     if (parent.isAlreadyImported(source))
-      throw new JstlException("Module '" + source + "' is already imported",
+      throw new JsltException("Module '" + source + "' is already imported",
                               makeLocation(parent, node));
 
     ExpressionImpl expr = compileImport(parent.getExtensions(), parent, source);
@@ -597,7 +597,7 @@ public class ParserImpl {
     } else if (node.id == JsltParserTreeConstants.JJTLET)
       return null; // last item is a let, which is messed up, but legal
     else
-      throw new JstlException("INTERNAL ERROR: This is wrong: " + node);
+      throw new JsltException("INTERNAL ERROR: This is wrong: " + node);
   }
 
   private static void collectMinuses(ParseContext ctx, SimpleNode node,

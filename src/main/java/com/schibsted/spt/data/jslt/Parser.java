@@ -24,7 +24,6 @@ import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.schibsted.spt.data.jstl2.impl.*;
 import com.schibsted.spt.data.jslt.parser.*;
 import com.schibsted.spt.data.jslt.Function;
-import com.schibsted.spt.data.jstl2.JstlException;
 
 /**
  * Parses JSLT expressions to Expression objects for evaluating them.
@@ -44,9 +43,9 @@ public class Parser {
     try (FileReader f = new FileReader(jstl)) {
       return ParserImpl.compileExpression(ctx, new JsltParser(f));
     } catch (FileNotFoundException e) {
-      throw new JstlException("Couldn't find file " + jstl);
+      throw new JsltException("Couldn't find file " + jstl);
     } catch (IOException e) {
-      throw new JstlException("Couldn't read file " + jstl, e);
+      throw new JsltException("Couldn't read file " + jstl, e);
     }
   }
 
@@ -80,13 +79,13 @@ public class Parser {
                                            String jslt) {
     try (InputStream stream = Parser.class.getClassLoader().getResourceAsStream(jslt)) {
       if (stream == null)
-        throw new JstlException("Cannot load resource '" + jslt + "': not found");
+        throw new JsltException("Cannot load resource '" + jslt + "': not found");
 
       Reader reader = new InputStreamReader(stream, "UTF-8");
       ParseContext ctx = new ParseContext(functions, jslt);
       return ParserImpl.compileExpression(ctx, new JsltParser(reader));
     } catch (IOException e) {
-      throw new JstlException("Couldn't read resource " + jslt, e);
+      throw new JsltException("Couldn't read resource " + jslt, e);
     }
   }
 }

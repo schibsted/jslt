@@ -1,9 +1,9 @@
 
-package com.schibsted.spt.data.jstl2;
+package com.schibsted.spt.data.jslt;
 
 import org.junit.Test;
 
-public class JstlTest extends TestBase {
+public class JsltTest extends TestBase {
     @Test
     public void testRewriteObjectRootLevelMatcher() {
         String query =

@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.schibsted.spt.data.jstl2.JstlException;
+import com.schibsted.spt.data.jslt.JsltException;
 
 /**
  * Indexing and slicing of arrays and also strings.
@@ -45,7 +45,7 @@ public class ArraySlicer extends AbstractNode {
       } else {
         String string = sequence.asText();
         if (leftix >= string.length())
-          throw new JstlException("String index out of range: " + leftix, location);
+          throw new JsltException("String index out of range: " + leftix, location);
         return new TextNode("" + string.charAt(leftix));
       }
     }
@@ -72,7 +72,7 @@ public class ArraySlicer extends AbstractNode {
 
     JsonNode node = expr.apply(scope, input);
     if (!node.isNumber())
-      throw new JstlException("Can't index array/string with " + node, location);
+      throw new JsltException("Can't index array/string with " + node, location);
 
     int ix = node.intValue();
     if (ix < 0)

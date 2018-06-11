@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.schibsted.spt.data.jslt.Function;
-import com.schibsted.spt.data.jstl2.JstlException;
+import com.schibsted.spt.data.jslt.JsltException;
 
 /**
  * Common superclass for function and macro expressions, to avoid
@@ -29,7 +29,7 @@ public abstract class AbstractInvocationExpression extends AbstractNode {
     if (arguments.length < callable.getMinArguments() ||
         arguments.length > callable.getMaxArguments()) {
       String kind = (this instanceof FunctionExpression) ? "Function" : "Macro";
-      throw new JstlException(
+      throw new JsltException(
         kind + " '" + callable.getName() + "' needs " +
         callable.getMinArguments() + "-" + callable.getMaxArguments() +
         " arguments, got " + arguments.length, location

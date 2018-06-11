@@ -4,7 +4,7 @@ package com.schibsted.spt.data.jstl2.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.schibsted.spt.data.jstl2.JstlException;
+import com.schibsted.spt.data.jslt.JsltException;
 
 public class ForExpression extends AbstractNode {
   private ExpressionNode valueExpr;
@@ -28,7 +28,7 @@ public class ForExpression extends AbstractNode {
     else if (array.isObject())
       array = NodeUtils.convertObjectToArray(array);
     else if (!array.isArray())
-      throw new JstlException("For loop can't iterate over " + array, location);
+      throw new JsltException("For loop can't iterate over " + array, location);
 
     // may be the same, if no lets
     Scope newscope = scope;

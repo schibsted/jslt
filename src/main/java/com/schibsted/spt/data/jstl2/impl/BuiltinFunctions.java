@@ -28,7 +28,7 @@ import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.DoubleNode;
 
 import com.schibsted.spt.data.jslt.Function;
-import com.schibsted.spt.data.jstl2.JstlException;
+import com.schibsted.spt.data.jslt.JsltException;
 
 /**
  * For now contains all the various function implementations. Should
@@ -159,7 +159,7 @@ public class BuiltinFunctions {
       if (number.isNull())
         return NullNode.instance;
       else if (!number.isNumber())
-        throw new JstlException("round() cannot round a non-number: " + number);
+        throw new JsltException("round() cannot round a non-number: " + number);
 
       return new LongNode(Math.round(number.doubleValue()));
     }
@@ -178,7 +178,7 @@ public class BuiltinFunctions {
       if (number.isNull())
         return NullNode.instance;
       else if (!number.isNumber())
-        throw new JstlException("floor() cannot round a non-number: " + number);
+        throw new JsltException("floor() cannot round a non-number: " + number);
 
       return new LongNode((long) Math.floor(number.doubleValue()));
     }
@@ -197,7 +197,7 @@ public class BuiltinFunctions {
       if (number.isNull())
         return NullNode.instance;
       else if (!number.isNumber())
-        throw new JstlException("ceiling() cannot round a non-number: " + number);
+        throw new JsltException("ceiling() cannot round a non-number: " + number);
 
       return new LongNode((long) Math.ceil(number.doubleValue()));
     }
@@ -234,7 +234,7 @@ public class BuiltinFunctions {
       String string = NodeUtils.toString(arguments[0], false);
       String regexp = NodeUtils.toString(arguments[1], true);
       if (regexp == null)
-        throw new JstlException("test() can't test null regexp");
+        throw new JsltException("test() can't test null regexp");
 
       Pattern p = cache.get(regexp);
       if (p == null) {
@@ -268,7 +268,7 @@ public class BuiltinFunctions {
       String string = NodeUtils.toString(arguments[0], false);
       String regexps = NodeUtils.toString(arguments[1], true);
       if (regexps == null)
-        throw new JstlException("capture() can't match against null regexp");
+        throw new JsltException("capture() can't match against null regexp");
 
       JstlPattern regex = cache.get(regexps);
       if (regex == null) {
@@ -340,7 +340,7 @@ public class BuiltinFunctions {
       String string = NodeUtils.toString(arguments[0], false);
       String split = NodeUtils.toString(arguments[1], true);
       if (split == null)
-        throw new JstlException("split() can't split on null");
+        throw new JsltException("split() can't split on null");
 
       return NodeUtils.toJson(string.split(split));
     }
@@ -480,7 +480,7 @@ public class BuiltinFunctions {
       } else if (obj.isNull())
         return NullNode.instance;
       else
-        throw new JstlException("get-key: can't look up keys in " + obj);
+        throw new JsltException("get-key: can't look up keys in " + obj);
     }
   }
 
@@ -512,7 +512,7 @@ public class BuiltinFunctions {
       else if (value.isObject())
         return NodeUtils.convertObjectToArray(value);
       else
-        throw new JstlException("array() cannot convert " + value);
+        throw new JsltException("array() cannot convert " + value);
     }
   }
 
@@ -568,7 +568,7 @@ public class BuiltinFunctions {
         if (arguments.length == 2)
           return arguments[1]; // return fallback on parse fail
         else
-          throw new JstlException("from-json can't parse " + json + ": " + e);
+          throw new JsltException("from-json can't parse " + json + ": " + e);
       }
     }
   }
@@ -586,7 +586,7 @@ public class BuiltinFunctions {
         String json = NodeUtils.mapper.writeValueAsString(input);
         return new TextNode(json);
       } catch (Exception e) {
-        throw new JstlException("to-json can't serialize " + input + ": " + e);
+        throw new JsltException("to-json can't serialize " + input + ": " + e);
       }
     }
   }
@@ -649,7 +649,7 @@ public class BuiltinFunctions {
         return NodeUtils.toJson(str.indexOf(sub) != -1);
 
       } else
-        throw new JstlException("Contains cannot operate on " + arguments[1]);
+        throw new JsltException("Contains cannot operate on " + arguments[1]);
 
       return BooleanNode.FALSE;
     }
@@ -674,7 +674,7 @@ public class BuiltinFunctions {
         return arguments[0];
 
       else
-        throw new JstlException("Function size() cannot work on " + arguments[0]);
+        throw new JsltException("Function size() cannot work on " + arguments[0]);
     }
   }
 
@@ -688,7 +688,7 @@ public class BuiltinFunctions {
 
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
       String msg = NodeUtils.toString(arguments[0], false);
-      throw new JstlException("error: " + msg);
+      throw new JsltException("error: " + msg);
     }
   }
 
@@ -777,10 +777,10 @@ public class BuiltinFunctions {
         return NodeUtils.toJson((double) (time.getTime() / 1000.0));
       } catch (IllegalArgumentException e) {
         // thrown if format is bad
-        throw new JstlException("parse-time: Couldn't parse format '" + formatstr + "': " + e.getMessage());
+        throw new JsltException("parse-time: Couldn't parse format '" + formatstr + "': " + e.getMessage());
       } catch (ParseException e) {
         if (fallback == null)
-          throw new JstlException("parse-time: " + e.getMessage());
+          throw new JsltException("parse-time: " + e.getMessage());
         else
           return fallback;
       }
@@ -812,7 +812,7 @@ public class BuiltinFunctions {
       if (arguments.length == 3) {
         String zonename = NodeUtils.toString(arguments[2], false);
         if (!zonenames.contains(zonename))
-          throw new JstlException("format-time: Unknown timezone " + zonename);
+          throw new JsltException("format-time: Unknown timezone " + zonename);
         zone = TimeZone.getTimeZone(zonename);
       }
 
@@ -827,7 +827,7 @@ public class BuiltinFunctions {
         return new TextNode(formatted);
       } catch (IllegalArgumentException e) {
         // thrown if format is bad
-        throw new JstlException("format-time: Couldn't parse format '" + formatstr + "': " + e.getMessage());
+        throw new JsltException("format-time: Couldn't parse format '" + formatstr + "': " + e.getMessage());
       }
     }
   }

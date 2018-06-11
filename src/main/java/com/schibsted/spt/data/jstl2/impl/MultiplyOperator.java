@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.node.LongNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.DoubleNode;
-import com.schibsted.spt.data.jstl2.JstlException;
+import com.schibsted.spt.data.jslt.JsltException;
 
 public class MultiplyOperator extends NumericOperator {
 
@@ -28,7 +28,7 @@ public class MultiplyOperator extends NumericOperator {
         str = v2.asText();
         num = v1.intValue();
       } else
-        throw new JstlException("Can't multiply two strings!");
+        throw new JsltException("Can't multiply two strings!");
 
       StringBuilder buf = new StringBuilder();
       for ( ; num > 0; num--)

@@ -2,7 +2,7 @@
 package com.schibsted.spt.data.jstl2.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.schibsted.spt.data.jstl2.JstlException;
+import com.schibsted.spt.data.jslt.JsltException;
 
 public abstract class ComparisonOperator extends AbstractOperator {
 
@@ -26,7 +26,7 @@ public abstract class ComparisonOperator extends AbstractOperator {
 
     }
 
-    throw new JstlException("Can't compare " + v1 + " and " + v2, location);
+    throw new JsltException("Can't compare " + v1 + " and " + v2, location);
   }
 
 }

@@ -1,5 +1,5 @@
 
-package com.schibsted.spt.data.jstl2;
+package com.schibsted.spt.data.jslt;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -7,9 +7,6 @@ import org.junit.Test;
 import static org.junit.Assert.fail;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
-
-import com.schibsted.spt.data.jslt.Function;
-import com.schibsted.spt.data.jslt.FunctionUtils;
 
 /**
  * Test cases for the function wrapper implementations.

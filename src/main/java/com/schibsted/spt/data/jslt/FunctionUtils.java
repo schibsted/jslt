@@ -4,8 +4,6 @@ package com.schibsted.spt.data.jslt;
 import java.lang.reflect.Method;
 import com.schibsted.spt.data.jstl2.impl.FunctionWrapper;
 
-import com.schibsted.spt.data.jstl2.JstlException;
-
 public class FunctionUtils {
 
   static public Function wrapStaticMethod(String functionName,
@@ -20,7 +18,7 @@ public class FunctionUtils {
         if (method == null)
           method = methods[ix];
         else
-          throw new JstlException("More than one method named '" + methodName + "'");
+          throw new JsltException("More than one method named '" + methodName + "'");
       }
 
     return new FunctionWrapper(functionName, method);

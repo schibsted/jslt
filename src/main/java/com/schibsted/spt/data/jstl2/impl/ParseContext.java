@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import com.schibsted.spt.data.jstl2.JstlException;
+import com.schibsted.spt.data.jslt.JsltException;
 import com.schibsted.spt.data.jslt.Function;
 
 /**
@@ -80,7 +80,7 @@ public class ParseContext {
       String name = fun.getFunctionName();
       Function f = getFunction(name);
       if (f == null)
-        throw new JstlException("No such function: '" + name + "'",
+        throw new JsltException("No such function: '" + name + "'",
                                 fun.getLocation());
       fun.resolve(f);
     }
@@ -105,11 +105,11 @@ public class ParseContext {
   public Function getImportedFunction(String prefix, String name, Location loc) {
     Module m = modules.get(prefix);
     if (m == null)
-      throw new JstlException("No such module '" + prefix + "'", loc);
+      throw new JsltException("No such module '" + prefix + "'", loc);
 
     Function f = m.getFunction(name);
     if (f == null)
-      throw new JstlException("No such function '" + name+ "' in module '" + prefix + "'", loc);
+      throw new JsltException("No such function '" + name+ "' in module '" + prefix + "'", loc);
 
     return f;
   }
