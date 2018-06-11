@@ -1,5 +1,5 @@
 
-package com.schibsted.spt.data.jstl2;
+package com.schibsted.spt.data.jslt.cli;
 
 import java.io.File;
 import com.fasterxml.jackson.databind.JsonNode;
