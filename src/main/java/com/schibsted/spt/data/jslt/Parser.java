@@ -26,6 +26,9 @@ import com.schibsted.spt.data.jslt.parser.*;
 import com.schibsted.spt.data.jstl2.Function;
 import com.schibsted.spt.data.jstl2.JstlException;
 
+/**
+ * Parses JSLT expressions to Expression objects for evaluating them.
+ */
 public class Parser {
 
   public static Expression compile(Collection<Function> functions,

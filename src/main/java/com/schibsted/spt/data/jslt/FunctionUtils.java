@@ -1,8 +1,11 @@
 
-package com.schibsted.spt.data.jstl2;
+package com.schibsted.spt.data.jslt;
 
 import java.lang.reflect.Method;
 import com.schibsted.spt.data.jstl2.impl.FunctionWrapper;
+
+import com.schibsted.spt.data.jstl2.Function;
+import com.schibsted.spt.data.jstl2.JstlException;
 
 public class FunctionUtils {
 
