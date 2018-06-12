@@ -14,14 +14,7 @@ JSLT can be used as:
 Here is an example transform:
 
 ```
-let user_id = fallback(.actor."spt:userId", .account."@id")
-
 {
-    "event_type" :  if (contains("backend", .schema)) (
-      "Backend - "+ ."@type" +" "+ .object."@type"
-    ) else
-      ."@type" + " " + .object."@type",
-    "device_id" : sha256-hex( $salt + .device.environmentId ),
     "time": round(parse-time(.published, "yyyy-MM-dd'T'HH:mm:ssX") * 1000),
     "device_manufacturer": .device.manufacturer,
     "device_model": .device.model,
@@ -29,9 +22,8 @@ let user_id = fallback(.actor."spt:userId", .account."@id")
     "os_name": .device.osType,
     "os_version": .device.osVersion,
     "platform": .device.platformType,
-    "user_id" : if ($user_id) sha256-hex( $salt + $user_id) ,
     "user_properties": {
-        "is_logged_in" : boolean($user_id)
+        "is_logged_in" : boolean(.actor."spt:userId")
     }
 }
 ```
@@ -56,6 +48,7 @@ let user_id = fallback(.actor."spt:userId", .account."@id")
 | `[for (<expr>) <expr>]` | Transform an array |
 | `{for (<expr>) <expr> : <expr>}` | Transform an object |
 | `def <name>(<name>, <name>...) <expr>` | Declare a function |
+| `// <anything up to end of line>` | Comment |
 
 ## Status
 
@@ -75,7 +68,18 @@ To include JSLT in your project, depend on *coming*
 
 JSLT depends on Jackson.
 
-*introduce API here (but review first)*
+To transform one `JsonNode` into another, do:
+
+```
+import com.schibsted.spt.data.jslt.Parser;
+import com.schibsted.spt.data.jslt.Expression;
+
+JsonNode input = ...;
+Expression jslt = Parser.compileString(transform);
+JsonNode output = jslt.apply(input);
+```
+
+For more alternatives, see the javadoc. *coming*
 
 ## Command-line
 
@@ -83,7 +87,7 @@ To run transforms on the command-line, first build with `./gradlew
 clean shadowJar`. Then you can run with:
 
 ```
-java -cp build/libs/*.jar com.schibsted.spt.data.jstl2.JSTL transform.jstl input.json
+java -cp build/libs/*.jar com.schibsted.spt.data.jslt.cli.JSLT transform.jslt input.json
 ```
 
 The result is written to standard out.
