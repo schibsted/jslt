@@ -34,6 +34,8 @@ Here is an example transform:
 
 [**Function documentation**](functions.md).
 
+[![Build Status](https://travis-ci.org/schibsted/jslt.svg?branch=master)](https://travis-ci.org/schibsted/jslt)
+
 ## Quick reference
 
 | Operation     | Explanation |
