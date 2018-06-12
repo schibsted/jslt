@@ -98,6 +98,9 @@ public class ObjectExpression extends AbstractNode {
   }
 
   public ExpressionNode optimize() {
+    for (int ix = 0; ix < lets.length; ix++)
+      lets[ix].optimize();
+
     boolean allLiterals = matcher == null; // not static otherwise
     for (int ix = 0; ix < children.length; ix++) {
       children[ix] = (PairExpression) children[ix].optimize();
