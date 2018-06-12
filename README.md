@@ -105,6 +105,7 @@ Unless required by applicable law or agreed to in writing, software distributed 
 ## What is missing
 
 Things to be done:
+  * Add API for pluggable import resolution.
   * Move the tests out into JSON files.
   * Write a proper spec with EBNF and everything.
   * Fix the syntax ambiguity problem with `let`.

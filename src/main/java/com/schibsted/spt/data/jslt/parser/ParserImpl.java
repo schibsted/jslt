@@ -92,14 +92,14 @@ public class ParserImpl {
     SimpleNode expr = getLastChild(root);
 
     ExpressionNode top = null;
-    if (expr.id == JsltParserTreeConstants.JJTEXPR) {
+    if (expr.id == JsltParserTreeConstants.JJTEXPR)
       top = node2expr(ctx, expr);
-      ctx.resolveFunctions();
-      top = top.optimize();
-    } else
-      ctx.resolveFunctions();
+    ctx.resolveFunctions();
 
-    return new ExpressionImpl(lets, ctx.getDeclaredFunctions(), top);
+    ExpressionImpl impl =
+      new ExpressionImpl(lets, ctx.getDeclaredFunctions(), top);
+    impl.optimize();
+    return impl;
   }
 
   private static ExpressionNode node2expr(ParseContext ctx, SimpleNode node) {

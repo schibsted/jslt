@@ -77,6 +77,17 @@ public class ExpressionImpl implements Expression {
     actual.dump(0);
   }
 
+  public void optimize() {
+    for (int ix = 0; ix < lets.length; ix++)
+      lets[ix].optimize();
+    for (Function f : functions.values())
+      if ((f instanceof FunctionDeclaration))
+        ((FunctionDeclaration) f).optimize();
+
+    if (actual != null)
+      actual = actual.optimize();
+  }
+
   public String toString() {
     // FIXME: letexprs
     return actual.toString();

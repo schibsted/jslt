@@ -67,6 +67,15 @@ public class ForExpression extends AbstractNode {
     loopExpr.computeMatchContexts(new DotExpression(location));
   }
 
+  public ExpressionNode optimize() {
+    for (int ix = 0; ix < lets.length; ix++)
+      lets[ix].optimize();
+
+    valueExpr = valueExpr.optimize();
+    loopExpr = loopExpr.optimize();
+    return this;
+  }
+
   public void dump(int level) {
     System.out.println(NodeUtils.indent(level) + "for (");
     valueExpr.dump(level + 1);

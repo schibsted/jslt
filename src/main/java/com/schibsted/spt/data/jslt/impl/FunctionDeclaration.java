@@ -60,4 +60,11 @@ public class FunctionDeclaration implements Function {
     // evaluate body
     return body.apply(scope, input);
   }
+
+  public void optimize() {
+    for (int ix = 0; ix < lets.length; ix++)
+      lets[ix].optimize();
+
+    body = body.optimize();
+  }
 }

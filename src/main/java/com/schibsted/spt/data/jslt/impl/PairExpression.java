@@ -18,7 +18,7 @@ package com.schibsted.spt.data.jslt.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**
- * Represents a "key" : <expr> pair inside a JSON object.
+ * Represents a ("key" : expr) pair inside a JSON object.
  */
 public class PairExpression extends AbstractNode {
   private String key;

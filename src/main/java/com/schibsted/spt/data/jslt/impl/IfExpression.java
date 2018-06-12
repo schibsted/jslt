@@ -62,6 +62,21 @@ public class IfExpression extends AbstractNode {
     }
   }
 
+  public ExpressionNode optimize() {
+    for (int ix = 0; ix < thenlets.length; ix++)
+      thenlets[ix].optimize();
+    if (elselets != null) {
+      for (int ix = 0; ix < elselets.length; ix++)
+        elselets[ix].optimize();
+    }
+
+    test = test.optimize();
+    then = then.optimize();
+    if (orelse != null)
+      orelse = orelse.optimize();
+    return this;
+  }
+
   public void dump(int level) {
     System.out.println(NodeUtils.indent(level) + "if (");
     test.dump(level + 1);
