@@ -6,8 +6,3 @@ cache:
 jdk:
 - oraclejdk8
 script: ./gradlew check
-deploy:
-- provider: script
-  script: "./gradlew artifactoryPublish"
-  on:
-    branch: master
