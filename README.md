@@ -66,7 +66,15 @@ more queries.
 
 ## Using the library
 
-To include JSLT in your project, depend on *coming*
+To include JSLT in your project, depend on:
+
+```
+<dependency>
+  <groupId>com.schibsted.spt.data</groupId>
+  <artifactId>jslt</artifactId>
+  <version>0.0.17.201806130856.3f09ff5</version>
+</dependency>
+```
 
 JSLT depends on Jackson.
 
@@ -81,7 +89,8 @@ Expression jslt = Parser.compileString(transform);
 JsonNode output = jslt.apply(input);
 ```
 
-For more alternatives, see the javadoc. *coming*
+For more alternatives, see [the
+javadoc](http://javadoc.io/doc/com.schibsted.spt.data/jslt).
 
 ## Command-line
 
