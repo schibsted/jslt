@@ -108,7 +108,7 @@ Things to be done:
   * Add API for pluggable import resolution.
   * Move the tests out into JSON files.
   * Write a proper spec with EBNF and everything.
-  * Fix the syntax ambiguity problem with `let`.
+  * Fix the syntax ambiguity problem with `let` and `def`.
   * Implement toString() throughout the object tree, so that it's
     possible to turn expressions back to strings.
   * Optimizer:
