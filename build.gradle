@@ -142,8 +142,10 @@ publishing {
         maven {
             url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
             credentials {
-                username sonatypeUsername
-                password sonatypePassword
+                // these are stored in a secret gradle.properties that is not
+                // in the repo, so we need a fallback
+                username ((project.hasProperty('sonatypeUsername')) ? sonatypeUsername : "no username")
+                password ((project.hasProperty('sonatypePassword')) ? sonatypePassword : "no password")
             }
         }
     }
