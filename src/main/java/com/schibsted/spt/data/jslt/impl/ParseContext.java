@@ -20,8 +20,9 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import com.schibsted.spt.data.jslt.JsltException;
 import com.schibsted.spt.data.jslt.Function;
+import com.schibsted.spt.data.jslt.JsltException;
+import com.schibsted.spt.data.jslt.ResourceResolver;
 
 /**
  * Class to encapsulate context information like available functions,
@@ -41,8 +42,10 @@ public class ParseContext {
   private Map<String, Module> modules;
   private Collection<FunctionExpression> funcalls; // delayed function resolution
   private ParseContext parent;
+  private ResourceResolver resolver;
 
-  public ParseContext(Collection<Function> extensions, String source) {
+  public ParseContext(Collection<Function> extensions, String source,
+                      ResourceResolver resolver) {
     this.extensions = extensions;
     this.functions = new HashMap();
     for (Function func : extensions)
@@ -51,10 +54,11 @@ public class ParseContext {
     this.source = source;
     this.funcalls = new ArrayList();
     this.modules = new HashMap();
+    this.resolver = resolver;
   }
 
   public ParseContext(String source) {
-    this(Collections.EMPTY_SET, source);
+    this(Collections.EMPTY_SET, source, new ClasspathResourceResolver());
   }
 
   public void setParent(ParseContext parent) {
@@ -126,5 +130,9 @@ public class ParseContext {
       throw new JsltException("No such function '" + name+ "' in module '" + prefix + "'", loc);
 
     return f;
+  }
+
+  public ResourceResolver getResolver() {
+    return resolver;
   }
 }

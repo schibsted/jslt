@@ -57,17 +57,13 @@ public class ParserImpl {
 
   private static ExpressionImpl compileImport(Collection<Function> functions,
                                              ParseContext parent,
-                                             String jstl) {
-    try (InputStream stream = ParserImpl.class.getClassLoader().getResourceAsStream(jstl)) {
-      if (stream == null)
-        throw new JsltException("Cannot load resource '" + jstl + "': not found");
-
-      Reader reader = new InputStreamReader(stream, "UTF-8");
-      ParseContext ctx = new ParseContext(functions, jstl);
+                                             String jslt) {
+    try (Reader reader = parent.getResolver().resolve(jslt)) {
+      ParseContext ctx = new ParseContext(functions, jslt, parent.getResolver());
       ctx.setParent(parent);
       return compileModule(ctx, new JsltParser(reader));
     } catch (IOException e) {
-      throw new JsltException("Couldn't read resource " + jstl, e);
+      throw new JsltException("Couldn't read resource " + jslt, e);
     }
   }
 

@@ -130,18 +130,22 @@ public class Parser {
   private Collection<Function> functions;
   private String source;
   private Reader reader;
+  private ResourceResolver resolver;
 
-  private Parser(String source, Reader reader, Collection<Function> functions) {
+  private Parser(String source, Reader reader, Collection<Function> functions,
+                 ResourceResolver resolver) {
     this.functions = functions;
     this.source = source;
     this.reader = reader;
+    this.resolver = resolver;
   }
 
   /**
    * Create a Parser reading JSLT source from the given Reader.
    */
   public Parser(Reader reader) {
-    this("<unknown>", reader, Collections.EMPTY_SET);
+    this("<unknown>", reader, Collections.EMPTY_SET,
+         new ClasspathResourceResolver());
   }
 
   /**
@@ -149,21 +153,28 @@ public class Parser {
    * used in error messages.
    */
   public Parser withSource(String thisSource) {
-    return new Parser(thisSource, reader, functions);
+    return new Parser(thisSource, reader, functions, resolver);
   }
 
   /**
    * Create a new Parser with the given extension functions.
    */
   public Parser withFunctions(Collection<Function> theseFunctions) {
-    return new Parser(source, reader, theseFunctions);
+    return new Parser(source, reader, theseFunctions, resolver);
+  }
+
+  /**
+   * Create a new Parser with the given resource resolver.
+   */
+  public Parser withResourceResolver(ResourceResolver thisResolver) {
+    return new Parser(source, reader, functions, thisResolver);
   }
 
   /**
    * Compile the JSLT from the defined parameters.
    */
   public Expression compile() {
-    ParseContext ctx = new ParseContext(functions, source);
+    ParseContext ctx = new ParseContext(functions, source, resolver);
     return ParserImpl.compileExpression(ctx, new JsltParser(reader));
   }
 }
