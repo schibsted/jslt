@@ -72,11 +72,11 @@ To include JSLT in your project, depend on:
 <dependency>
   <groupId>com.schibsted.spt.data</groupId>
   <artifactId>jslt</artifactId>
-  <version>0.0.17.201806130856.3f09ff5</version>
+  <version>0.1.0</version>
 </dependency>
 ```
 
-JSLT depends on Jackson.
+At runtime JSLT depends on Jackson, and nothing else.
 
 To transform one `JsonNode` into another, do:
 

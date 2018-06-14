@@ -38,8 +38,17 @@ ext {
 }
 
 group 'com.schibsted.spt.data'
-version "0.0.17.$timestamp.$gitrev"
+version "0.1.0"
 project.description "A JSON query and transformation language"
+
+check {
+  doLast {
+    println 'Test report in build/reports/tests/test/index.html'
+  }
+}
+
+// ===========================================================================
+// javacc integration
 
 sourceSets {
     main {
@@ -61,11 +70,8 @@ task javacc (type: Exec) {
 compileJava.dependsOn 'javacc'
 javacc.dependsOn 'jjtree'
 
-check {
-  doLast {
-    println 'Test report in build/reports/tests/test/index.html'
-  }
-}
+// ===========================================================================
+// Sonatype Maven central publishing
 
 task sourceJar(type: Jar) {
     classifier "sources"
@@ -100,9 +106,9 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             customizePom(pom)
-            groupId 'com.schibsted.spt.data'
+            groupId group
             artifactId 'jslt'
-            version "0.0.17.$timestamp.$gitrev"
+            version version
 
             from components.java
 
