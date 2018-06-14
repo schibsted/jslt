@@ -37,7 +37,7 @@ public class LambdaFunction {
 
       // now we can do the thing
       JsonNode source = NodeUtils.mapper.readTree(input.get("json").asText());
-      String jslt = input.get("jslt").asText();
+      String jslt = input.get("jstl").asText();
 
       Expression template = Parser.compileString(jslt);
       JsonNode output = template.apply(source);

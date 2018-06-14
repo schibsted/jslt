@@ -1,4 +1,4 @@
-ARTIFACT_PATH=../build/libs/jstl*-all.jar
+ARTIFACT_PATH=../build/libs/jslt*-all.jar
 ARTIFACT=`basename $ARTIFACT_PATH`
 set -e
 aws s3 cp $ARTIFACT_PATH s3://spt-data-dev-lmg/lambda/jstl2/

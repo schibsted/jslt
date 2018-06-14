@@ -30,6 +30,9 @@
 </style>
 <script>
 function send() {
+  var out = document.getElementById('result');
+  out.firstChild.nodeValue = '...wait...';
+
   var input = document.getElementById('input').value
   var jstl = document.getElementById('jstl').value
   var data = JSON.stringify(JSON.stringify({"json" : input,
