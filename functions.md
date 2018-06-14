@@ -1,7 +1,7 @@
 
-# JSTL 2.0 functions
+# JSLT functions
 
-This page documents all the functions that are built in to JSTL 2.0.
+This page documents all the functions that are built in to JSLT.
 
 <!-- GENERAL ===============================================================-->
 

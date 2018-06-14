@@ -1,19 +1,19 @@
 
-# JSTL 2.0 tutorial
+# JSLT tutorial
 
-In JSTL 2.0 you write expressions. The expression evaluates to JSON.
-So the result can be an object, a number, a string, null, etc.
+In JSLT you write expressions. The expression evaluates to JSON.  So
+the result can be an object, a number, a string, null, etc.
 
-JSON is a subset of JSTL 2.0, so anywhere you can write an expression
-you can write JSON. JSON evaluates to itself.
+JSON is a subset of JSLT, so anywhere you can write an expression you
+can write JSON. JSON evaluates to itself.
 
-This is valid JSTL 2.0, and will produce itself:
+This is valid JSLT, and will produce itself:
 
 ```
 {"foo" : {"bar" : [1,2,3,4,5]}}
 ```
 
-JSTL is always evaluated against an input, which is called "the
+JSLT is always evaluated against an input, which is called "the
 context node." If the JSON above is the input you can do simple
 navigation with dot expressions. `.` always returns the context node,
 so that would give us back the same JSON.
@@ -72,7 +72,7 @@ which would then produce:
 
 ## Functions
 
-JSTL has a number of built-in functions, like `size`, which returns
+JSLT has a number of built-in functions, like `size`, which returns
 the number of elements in an object or array, or the number of
 characters in a string. The function syntax is the common one, so we
 could also write:
@@ -352,7 +352,7 @@ inside `for` (before the expression), and inside `if`. Variables
 defined inside an object, `for`, or `if` are only visible inside those
 expressions.
 
-It's also possible to set variables from the code running a JSTL 2.0
+It's also possible to set variables from the code running a JSLT
 transform, so that the value is "injected" into the transform. This
 can be useful for configuration, passwords, and similar values.
 
@@ -397,8 +397,8 @@ declaration will shadow the original.
 ## Import statements
 
 In order to make it possible to modularize transforms by reusing code
-JSTL allows you to import JSTL modules from files. These are exactly
-like ordinary JSTL templates, except that the final expression after
+JSLT allows you to import JSLT modules from files. These are exactly
+like ordinary JSLT templates, except that the final expression after
 the variable and function declarations is not required.
 
 If the two functions above were saved in a file named `utilities.jstl`
