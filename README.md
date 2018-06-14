@@ -51,6 +51,8 @@ Here is an example transform:
 | `{for (<expr>) <expr> : <expr>}` | Transform an object |
 | `def <name>(<name>, <name>...) <expr>` | Declare a function |
 | `// <anything up to end of line>` | Comment |
+| `{ <key> : <expr> }`               | Object constructor |
+| `{ <key> : <expr>, * : . }`        | Specify one key, copy rest of input |
 
 ## Status
 
