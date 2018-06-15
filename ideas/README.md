@@ -10,6 +10,9 @@ It's mostly new features, but not exclusively.
 * [Predicates](predicates.md)
 * [The `filter` macro](filter.md)
 * [The `for` filter](for-filter.md)
+* [Convenient query API](query-api.md)
+
+If you have feedback, feel free to open an issue to discuss.
 
 ## Implemented ideas
 
