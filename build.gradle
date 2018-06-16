@@ -19,6 +19,7 @@ apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'maven-publish'
 apply plugin: 'maven'
 apply plugin: 'signing'
+apply plugin: 'jacoco'
 
 repositories {
   mavenLocal()
@@ -27,7 +28,7 @@ repositories {
 }
 
 dependencies {
-  compile "com.fasterxml.jackson.core:jackson-databind:2.9.5"
+  compile 'com.fasterxml.jackson.core:jackson-databind:2.9.6'
 
   testCompile 'junit:junit:4.12'
 }
