@@ -41,18 +41,18 @@ Here is an example transform:
 | Operation     | Explanation |
 | ------------- | ------------- |
 | `.`             | The context node  |
-| `.<name>`       | Get value of key `"<name>"` inside an object  |
-| `.[<index>]`          | Get value `<index>` inside an array |
-| `.[<from> : <to>]`     | Array slicing |
-| `if (<expr>) <expr> else <expr>` | If test to decide which value to return |
+| `.<name>`       | [Get value of key](tutorial.md#dot-accessors) `"<name>"` inside an object  |
+| `.[<index>]`          | [Get value](tutorial.md#array-indexing) `<index>` inside an array |
+| `.[<from> : <to>]`     | [Array slicing](tutorial.md#array-indexing) |
+| `if (<expr>) <expr> else <expr>` | [If test](tutorial.md#if-expressions) to decide which value to return |
 | `let <name> = <expr>` | Define a variable |
 | `$<name>`             | Refer to a variable |
-| `[for (<expr>) <expr>]` | Transform an array |
-| `{for (<expr>) <expr> : <expr>}` | Transform an object |
+| `[for (<expr>) <expr>]` | [Transform an array](tutorial.md#for-expressions) |
+| `{for (<expr>) <expr> : <expr>}` | [Transform an object](tutorial.md#object-for-expressions) |
 | `def <name>(<name>, <name>...) <expr>` | Declare a function |
 | `// <anything up to end of line>` | Comment |
-| `{ <key> : <expr> }`               | Object constructor |
-| `{ <key> : <expr>, * : . }`        | Specify one key, copy rest of input |
+| `{ <key> : <expr> }`               | [Object constructor](tutorial.md#json-construction) |
+| `{ <key> : <expr>, * : . }`        | Specify one key, [copy rest of input](tutorial.md#object-matching) |
 
 ## Status
 
