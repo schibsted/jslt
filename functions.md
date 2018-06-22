@@ -80,17 +80,42 @@ Returns a random number between `0.0` and `1.0`.
 
 True iff the argument is a string.
 
+Examples:
+
+```
+is-string(null)  => false
+is-string("123") => true
+is-string(123)   => false
+```
+
 ### _string(object) -> string_
 
 Converts _object_ into a string representation of the object.
 Numbers, null, and boolean become the JSON representation of the
 object inside a string.
 
+Examples:
+
+```
+string(null)  => "null"
+string(123)   => "123"
+string("123") => "123"
+```
+
 ### _test(input, regexp) -> boolean_
 
 True iff _input_ matches the _regexp_. It's sufficient for the regexp
 to match part of the string, unless the anchors  `^` and `$` are used.
 If _input_ is null the function returns `false`.
+
+Some examples:
+
+```
+test("123", "\d+")       => Error (\d not a known escape code)
+test("123", "\\d+")      => true
+test("abc123", "\\d+")   => true (matching part is enough)
+test("^abc123$", "\\d+") => false
+```
 
 ### _capture(input, regexp) -> object_
 
@@ -99,10 +124,42 @@ key for every named group in the regexp. If _input_ is null the
 function returns `null`. If the regexp doesn't match an empty object
 is returned.
 
+Given the following input:
+
+```
+{"schema" : "http://schemas.schibsted.io/thing/pulse-simple.json#1.json"}
+```
+
+we can match it with:
+
+```
+capture(.schema, "http://(?<host>[^/]+)/(?<rest>.+)")
+```
+
+The two named groups will match different parts of the string, and so
+the output will be one key for each named group:
+
+```
+{
+  "host" : "schemas.schibsted.io",
+  "rest" : "thing/pulse-simple.json#1.json"
+}
+```
+
 ### _split(input, regexp) -> array_
 
 Splits the _input_ string with the _regexp_ and returns an array of
 strings. If _input_ is `null` the function returns `null`.
+
+Examples:
+
+```
+split("1,2,3,4,5", ",") => ["1", "2", "3", "4", "5"]
+split("1,2,3,4,5", ";") => "1,2,3,4,5"
+split(null, ";")        => null
+split(",2", ",")        => ["", "2"]
+split("2,", ",")        => ["2"]
+```
 
 ### _join(array, separator) -> string_
 
@@ -110,23 +167,62 @@ Returns a string produced by concatenating the elements of the array
 (converted to strings using the `string` function) with _separator_
 between each element. If _array_ is `null` the function returns `null`.
 
+Examples:
+
+```
+join(["a", "b", "c"], " ") => "a b c"
+join(["a", " ")            => "a"
+join(null, "-")            => null
+join([1], "-")             => "1"
+```
+
 ### _lowercase(string) -> string_
 
 Converts the input string to lowercase. Note that this is a naive
-function that only handles ASCII characters.
+function that does not handle all the special Unicode cases.
+
+Examples:
+
+```
+lowercase("ABCÆØÅ") => "abcæøå"
+lowercase(null)     => null
+```
 
 ### _uppercase(string) -> string_
 
 Converts the input string to uppercase. Note that this is a naive
 function that only handles ASCII characters.
 
+Examples:
+
+```
+uppercase("abcæøå") => "ABCÆØÅ"
+uppercase(null)     => null
+```
+
 ### _starts-with(tested, prefix) -> boolean_
 
 True iff the `tested` string starts with `prefix`.
 
+Examples:
+
+```
+starts-with("prohibition", "pro") => true
+starts-with("prohibition", "pre") => false
+starts-with(null, "pre")          => false
+```
+
 ### _ends-with(tested, suffix) -> boolean_
 
 True iff the `tested` string ends with `suffix`.
+
+Examples:
+
+```
+ends-with("prohibition", "pro") => false
+ends-with("prohibition", "ion") => true
+ends-with(null, "ion")          =>
+```
 
 ### _from-json(string, fallback?) -> value_
 
@@ -136,13 +232,28 @@ return `null`.
 
 If the optional `fallback` argument is not specified JSON parse errors
 will cause an error. If it is specified that value will be returned if
-the JSON cannot be parsed. So `from-json("[1,2", "BAD")` will return
-`"BAD"`.
+the JSON cannot be parsed.
+
+Examples:
+
+```
+from-json("[1,2]")       => [1, 2]
+from-json("[1,2", "BAD") => "BAD"
+from-json("[1,2")        => error
+```
 
 ### _to-json(value) -> string_
 
 The opposite of `from-json`, in that it takes any JSON value and
 returns it serialized as a string.
+
+Examples:
+
+```
+to-json([1, 2])          => "[1, 2]"
+from-json("[1,2", "BAD") => "BAD"
+from-json("[1,2")        => error
+```
 
 <!-- BOOLEAN ================================================================-->
 
@@ -153,14 +264,52 @@ returns it serialized as a string.
 Converts the input value to a boolean. Everything is considered to be
 `true`, except `null`, `[]`, `{}`, `""`, `false`, and `0`.
 
+Examples:
+
+```
+boolean(null)  => false
+boolean("")    => false
+boolean(" ")   => true
+boolean(0)     => false
+boolean(1)     => true
+boolean(true)  => true
+boolean(false) => true
+boolean([])    => false
+boolean([1])   => true
+```
+
 ### _not(boolean) -> boolean_
 
 Returns the opposite boolean value from the parameter. The input is
 quietly converted to boolean, so `not(null)` will return `true`.
 
+Examples:
+
+```
+not(null)  => true
+not("")    => true
+not(" ")   => false
+not(0)     => true
+not(1)     => false
+not(true)  => false
+not(false) => false
+not([])    => true
+not([1])   => false
+```
+
 ### _is-boolean(value) -> boolean_
 
 True iff `value` is a boolean.
+
+Examples:
+
+```
+is-boolean(null)  => false
+is-boolean(true)  => true
+is-boolean(false) => true
+is-boolean("")    => false
+is-boolean(" ")   => false
+```
 
 <!-- OBJECT =================================================================-->
 
@@ -170,12 +319,33 @@ True iff `value` is a boolean.
 
 True iff `value` is an object.
 
+Examples:
+
+```
+is-object(null)  => false
+is-object({})    => true
+is-object([])    => false
+is-object("")    => false
+```
+
 ### _get-key(object, key) -> value_
 
 Does the same as `.key` on `object`, with the difference that here the
 key can be dynamic. That is, it can come from a variable, be looked up
 in input data, and so on. If the key does not exist, `null` is returned.
 
+Example:
+
+```
+let lookup = {
+  "no" : "Norway,
+  "se" : "Sweden"
+}
+
+get-key($lookup, "no")
+```
+
+This will return `"Norway"`.
 
 <!-- ARRAY ==================================================================-->
 
@@ -197,10 +367,31 @@ Objects are converted to arrays of the form:
 ]
 ```
 
+Examples:
+
+```
+array(null)   => null
+array([1, 2]) => [1, 2]
+array("123")  => error
+
+array({"a": 1, "b": 2}) =>
+  [
+    {"key" : "a", "value" : 1},
+    {"key" : "b", "value" : 2}
+  ]
+```
+
 ### _is-array(value) -> boolean_
 
 True iff `value` is an array.
 
+Examples:
+
+```
+is-array(null)   => false
+is-array([1, 2]) => true
+is-array("123")  => false
+```
 
 <!-- TIME ===================================================================-->
 
@@ -210,6 +401,13 @@ True iff `value` is an array.
 
 Returns the number of seconds since midnight, January 1, 1970 UTC in
 the UTC timezone. Milliseconds are returned as decimals of the number.
+
+Examples:
+
+```
+now()        -> 1.529677371698E9
+round(now()) -> 1529677391
+```
 
 ### _parse-time(time, format, fallback?) -> double_
 
@@ -222,8 +420,25 @@ If `fallback` is not specified, the function will cause an error if
 `time` is of the wrong type or does not match the format. If
 `fallback` is specified that value will be returned instead.
 
+Examples:
+
+```
+parse-time("2018-05-30T11:46:37Z", "yyyy-MM-dd'T'HH:mm:ssX") => 1.527680797E9
+parse-time("2018-05-30T11:46:37", "yyyy-MM-dd'T'HH:mm:ssX")  => error
+parse-time("2018-05-30T11:46:37", "yyyy-MM-dd'T'HH:mm:ssX", null)  => null
+parse-time(null, "yyyy-MM-dd'T'HH:mm:ssX")                   => null
+```
+
 ### _format-time(timestamp, format, timezone?) -> string_
 
 Formats `timestamp` (the number of seconds since epoch) with `format`
 and returns the formatted string. The timezone is assumed to be UTC,
 but this can be overridden with the `timezone` argument.
+
+Examples:
+
+```
+format-time(1529677391, "yyyy-MM-dd'T'HH:mm:ss") => "2018-06-22T14:23:11"
+format-time(0, "yyyy-MM-dd")                     => "1970-01-01"
+format-time(null, "yyyy-MM-dd")                  => null
+```

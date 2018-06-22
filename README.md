@@ -45,11 +45,11 @@ Here is an example transform:
 | `.[<index>]`          | [Get value](tutorial.md#array-indexing) `<index>` inside an array |
 | `.[<from> : <to>]`     | [Array slicing](tutorial.md#array-indexing) |
 | `if (<expr>) <expr> else <expr>` | [If test](tutorial.md#if-expressions) to decide which value to return |
-| `let <name> = <expr>` | Define a variable |
-| `$<name>`             | Refer to a variable |
+| `let <name> = <expr>` | [Define a variable](tutorial.md#variables) |
+| `$<name>`             | [Refer to a variable](tutorial.md#variables) |
 | `[for (<expr>) <expr>]` | [Transform an array](tutorial.md#for-expressions) |
 | `{for (<expr>) <expr> : <expr>}` | [Transform an object](tutorial.md#object-for-expressions) |
-| `def <name>(<name>, <name>...) <expr>` | Declare a function |
+| `def <name>(<name>, <name>...) <expr>` | [Declare a function](tutorial.md#function-declarations) |
 | `// <anything up to end of line>` | Comment |
 | `{ <key> : <expr> }`               | [Object constructor](tutorial.md#json-construction) |
 | `{ <key> : <expr>, * : . }`        | Specify one key, [copy rest of input](tutorial.md#object-matching) |
@@ -122,6 +122,7 @@ Things to be done:
   * Implement toString() throughout the object tree, so that it's
     possible to turn expressions back to strings.
   * Optimizer:
+     * Optimize `... and boolean( ... )` by removing `boolean()`.
      * Implement parse tree traversal API.
      * Make sure entire tree is traversed (inside function decls and
        variables, for example).

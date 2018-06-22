@@ -109,4 +109,4 @@ def filter(array)
   else
     filter($array[1 : ])
 
-queens(10)
+queens(8)
