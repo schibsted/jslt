@@ -21,15 +21,42 @@ is `false`.
 If _sequence_ is an object, _element_ is converted to a string, and
 must be a key in the object.
 
+Examples:
+
+```
+contains(null, [1, 2, 3])      => false
+contains(1, [1, 2, 3])         => true
+contains(0, [1, 2, 3])         => false
+contains("no", {"no" : false}) => true
+contains(1, {"1" : false})     => true
+contains("ab", "abc")          => true
+```
+
 ### _size(sequence) -> integer_
 
 Returns the number of elements in the sequence, which can be an array,
 an object, or a string. If _sequence_ is _null_ it returns _null_.
 
+Examples:
+
+```
+size([1, 2, 3]) => 3
+size({"1" : 3}) => 1
+size("abcdef")  => 6
+size(null)      => null
+```
+
 ### _error(message)_
 
 Halts the transform with an error. The message is the message given to
 the user.
+
+Examples:
+
+```
+if (not(is-array(.things)))
+  error("'things' is not an array")
+```
 
 
 <!-- NUMERIC ===============================================================-->
@@ -39,6 +66,15 @@ the user.
 ### _is-number(object) -> boolean_
 
 True iff the argument is a number.
+
+Examples:
+
+```
+is-number(null) => false
+is-number(1)    => true
+is-number(1.0)  => true
+is-number("1")  => false
+```
 
 ### _number(object, fallback?) -> integer|float_
 
@@ -51,10 +87,29 @@ If `fallback` is specified then if `object` is of the wrong type, or
 if it is a string that cannot be parsed, then the `fallback` value is
 returned.
 
+Examples:
+
+```
+number(23)   => 23
+number("23") => 23
+number(23.0) => 23
+number(null) => null
+number("ab") => error
+```
+
 ### _round(float) -> integer_
 
 Rounds its argument to the nearest integer. Integers and `null` are
 returned untouched. All other types cause an error.
+
+Examples:
+
+```
+round(1)    => 1
+round(1.0)  => 1
+round(1.51) => 2
+round(null) => null
+```
 
 ### _floor(float) -> integer_
 
@@ -62,15 +117,39 @@ Rounds its argument to the nearest integer equal to or less than
 _float_.  Integers and `null` are returned untouched. All other types
 cause an error.
 
+Examples:
+
+```
+floor(1)    => 1
+floor(1.0)  => 1
+floor(1.51) => 1
+floor(null) => null
+```
+
 ### _ceiling(float) -> integer_
 
 Rounds its argument to the nearest integer equal to or greater than
 _float_.  Integers and `null` are returned untouched. All other types
 cause an error.
 
+Examples:
+
+```
+ceiling(1)    => 1
+ceiling(1.0)  => 1
+ceiling(1.51) => 2
+ceiling(null) => null
+```
+
 ### _random() -> float_
 
 Returns a random number between `0.0` and `1.0`.
+
+Examples:
+
+```
+random() => 0.24712712424
+```
 
 <!-- STRING =================================================================-->
 
