@@ -815,7 +815,7 @@ public class BuiltinFunctions {
 
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
       JsonNode number = NodeUtils.number(arguments[0], null);
-      if (number == null)
+      if (number == null || number.isNull())
         return NullNode.instance;
 
       double timestamp = number.asDouble();

@@ -826,6 +826,13 @@ public class FunctionTest extends TestBase {
           "Unknown timezone");
   }
 
+  @Test
+  public void testFormatDateTimeNull() {
+    check("{}",
+          "format-time(null, \"yyyy-MM-dd HH:mm:ssz\")",
+          "null");
+  }
+
   // ===== ERROR
 
   @Test
