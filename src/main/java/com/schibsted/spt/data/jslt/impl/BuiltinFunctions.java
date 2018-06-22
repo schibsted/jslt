@@ -597,10 +597,10 @@ public class BuiltinFunctions {
 
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
       try {
-        String json = NodeUtils.mapper.writeValueAsString(input);
+        String json = NodeUtils.mapper.writeValueAsString(arguments[0]);
         return new TextNode(json);
       } catch (Exception e) {
-        throw new JsltException("to-json can't serialize " + input + ": " + e);
+        throw new JsltException("to-json can't serialize " + arguments[0] + ": " + e);
       }
     }
   }

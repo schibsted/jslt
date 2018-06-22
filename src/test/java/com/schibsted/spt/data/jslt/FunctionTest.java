@@ -201,6 +201,11 @@ public class FunctionTest extends TestBase {
   }
 
   @Test
+  public void testTestMatchesPartButAnchored() {
+    check("{}", "test(\"abcdef\", \"^abc$\")", "false");
+  }
+
+  @Test
   public void testTestString() {
     check("{}", "test(23123, \"\\\\d+\")", "true");
   }
@@ -932,6 +937,15 @@ public class FunctionTest extends TestBase {
           " to-json(.) ",
           " \"{\\\"foo\\\":{\\\"bar\\\":22}}\" ");
   }
+
+  @Test
+  public void testToJsonArray() {
+    check(" 22 ",
+          " to-json([1, 2]) ",
+          " \"[1,2]\" ");
+  }
+
+  // ===== test()
 
   @Test
   public void testTestFunction() {
