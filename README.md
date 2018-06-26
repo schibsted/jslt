@@ -54,18 +54,6 @@ Here is an example transform:
 | `{ <key> : <expr> }`               | [Object constructor](tutorial.md#json-construction) |
 | `{ <key> : <expr>, * : . }`        | Specify one key, [copy rest of input](tutorial.md#object-matching) |
 
-## Status
-
-The language design is not finished, so features may be added. The
-language as it stands is not likely to change.
-
-The entire language is implemented, and all of the function library.
-Functions may be added.
-
-The language has been used in production at Schibsted since January
-2018, performing about 9 billion transforms per day, and many times
-more queries.
-
 ## Using the library
 
 To include JSLT in your project, depend on:
@@ -104,6 +92,26 @@ java -cp build/libs/*.jar com.schibsted.spt.data.jslt.cli.JSLT transform.jslt in
 ```
 
 The result is written to standard out.
+
+## Feedback
+
+If you have questions about how to use JSLT, please ask the question
+on StackOverflow, with the tag `jslt`.
+
+If you have problems, feature requests, or think you found a bug,
+please open an issue.
+
+## Status
+
+The language design is not finished, so features may be added. The
+language as it stands is not likely to change.
+
+The entire language is implemented, and all of the function library.
+Functions may be added.
+
+The language has been used in production at Schibsted since January
+2018, performing about 9 billion transforms per day, and many times
+more queries.
 
 ## LICENSE
 
