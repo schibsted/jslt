@@ -871,8 +871,22 @@ public class FunctionTest extends TestBase {
   }
 
   @Test
+  public void testGetKeyFromNullFallback() {
+    check(" { \"foo\" : 24 } ",
+          " get-key(null, \"key\", 0) ",
+          " null ");
+  }
+
+  @Test
   public void testGetKeyFromNonObject() {
     error(" get-key(24, \"key\") ", "24");
+  }
+
+  @Test
+  public void testGetNonexistentKeyFallback() {
+    check(" { \"foo\" : 24 } ",
+          " get-key(., \"bar\", 0) ",
+          " 0 ");
   }
 
   // ===== FROM-JSON

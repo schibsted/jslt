@@ -407,11 +407,15 @@ is-object([])    => false
 is-object("")    => false
 ```
 
-### _get-key(object, key) -> value_
+### _get-key(object, key, fallback?) -> value_
 
 Does the same as `.key` on `object`, with the difference that here the
 key can be dynamic. That is, it can come from a variable, be looked up
-in input data, and so on. If the key does not exist, `null` is returned.
+in input data, and so on.
+
+If the key does not exist, `null` is returned if the `fallback`
+argument is not given. If `fallback` is specified the fallback value
+will be returned if the key does not exist.
 
 Example:
 
@@ -424,7 +428,19 @@ let lookup = {
 get-key($lookup, "no")
 ```
 
-This will return `"Norway"`.
+This will return `"Norway"`. If we use the fallback:
+
+```
+let lookup = {
+  "no" : "Norway,
+  "se" : "Sweden"
+}
+
+get-key($lookup, "dk", "<unknown>")
+```
+
+it will return `"<unknown>"`.
+
 
 <!-- ARRAY ==================================================================-->
 

@@ -476,7 +476,7 @@ public class BuiltinFunctions {
   public static class GetKey extends AbstractFunction {
 
     public GetKey() {
-      super("get-key", 2, 2);
+      super("get-key", 2, 3);
     }
 
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
@@ -487,9 +487,12 @@ public class BuiltinFunctions {
       JsonNode obj = arguments[0];
       if (obj.isObject()) {
         JsonNode value = obj.get(key);
-        if (value == null)
-          return NullNode.instance;
-        else
+        if (value == null) {
+          if (arguments.length == 2)
+            return NullNode.instance;
+          else
+            return arguments[2]; // fallback argument
+        } else
           return value;
       } else if (obj.isNull())
         return NullNode.instance;
