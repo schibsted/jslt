@@ -8,6 +8,8 @@ import static org.junit.Assert.fail;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 /**
  * Test cases for the function wrapper implementations.
  */
@@ -24,5 +26,26 @@ public class FunctionWrapperTest extends TestBase {
     check("{}", "url-decode(\"foo\", \"utf-8\")", "\"foo\"",
           Collections.EMPTY_MAP,
           functions);
+  }
+
+  @Test
+  public void testWrapStaticMethodLong() throws Exception {
+    Collection<Function> functions = Collections.singleton(
+      FunctionUtils.wrapStaticMethod("time-millis",
+                                     "java.lang.System", "currentTimeMillis")
+    );
+    String query = "time-millis()";
+
+    long before = System.currentTimeMillis();
+
+    JsonNode context = mapper.readTree("{}");
+    Expression expr = Parser.compileString(query, functions);
+    JsonNode actual = expr.apply(context);
+    long value = actual.asLong();
+
+    long after = System.currentTimeMillis();
+
+    assertTrue(before <= value);
+    assertTrue(value <= after);
   }
 }
