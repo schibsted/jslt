@@ -38,6 +38,14 @@ public abstract class ComparisonOperator extends AbstractOperator {
       String s2 = v2.asText();
       return (double) s1.compareTo(s2);
 
+    } else if (v1.isNull() || v2.isNull()) {
+      // null is equal to itself, and considered the smallest of all
+      if (v1.isNull() && v2.isNull())
+        return 0;
+      else if (v1.isNull())
+        return -1;
+      else
+        return 1;
     }
 
     throw new JsltException("Can't compare " + v1 + " and " + v2, location);

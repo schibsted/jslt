@@ -142,6 +142,16 @@ public class QueryTest extends TestBase {
   }
 
   @Test
+  public void testEqualsNull() {
+    check("{}", "2 == null", "false");
+  }
+
+  @Test
+  public void testNullEqualsNull() {
+    check("{}", "null == null", "true");
+  }
+
+  @Test
   public void testEqualsBitMoreComplex() {
     check("{\"foo\" : {\"bar\" : 123}}", ".foo.bar == 123", "true");
   }
@@ -202,6 +212,21 @@ public class QueryTest extends TestBase {
   }
 
   @Test
+  public void testBiggerOrEqualNull() {
+    check("{}", "2 >= null", "true");
+  }
+
+  @Test
+  public void testNullBiggerOrEqual() {
+    check("{}", "null >= 2", "false");
+  }
+
+  @Test
+  public void testNullBiggerOrEqualNull() {
+    check("{}", "null >= null", "true");
+  }
+
+  @Test
   public void testBiggerFalse() {
     check("{}", "123 > 321", "false");
   }
@@ -229,6 +254,21 @@ public class QueryTest extends TestBase {
   @Test
   public void testBiggerTrueString() {
     check("{}", "\"def\" > \"abc\"", "true");
+  }
+
+  @Test
+  public void testBiggerNull() {
+    check("{}", "2 > null", "true");
+  }
+
+  @Test
+  public void testNullBiggerNull() {
+    check("{}", "null > null", "false");
+  }
+
+  @Test
+  public void testNullBigger() {
+    check("{}", "null > 2", "false");
   }
 
   @Test
