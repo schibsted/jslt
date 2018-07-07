@@ -627,21 +627,24 @@ public class ParserImpl {
 
   private static List<PairExpression> collectPairs(ParseContext ctx,
                                                    SimpleNode pair) {
+    return collectPairs(ctx, pair, new ArrayList());
+  }
+
+  private static List<PairExpression> collectPairs(ParseContext ctx,
+                                                   SimpleNode pair,
+                                                   List<PairExpression> pairs) {
     if (pair != null && pair.id == JsltParserTreeConstants.JJTPAIR) {
       String key = makeString(ctx, pair.jjtGetFirstToken());
       ExpressionNode val = node2expr(ctx, (SimpleNode) pair.jjtGetChild(0));
 
-      List<PairExpression> pairs;
-      if (pair.jjtGetNumChildren() == 1)
-        pairs = new ArrayList(); // no more pairs
-      else
-        pairs = collectPairs(ctx, getLastChild(pair));
-
       pairs.add(new PairExpression(key, val, makeLocation(ctx, pair)));
+      if (pair.jjtGetNumChildren() > 1)
+        collectPairs(ctx, getLastChild(pair), pairs);
+
       return pairs;
     } else
       // has to be a matcher, so we're done
-      return new ArrayList();
+      return pairs;
   }
 
   private static ObjectComprehension buildObjectComprehension(ParseContext ctx, SimpleNode node) {

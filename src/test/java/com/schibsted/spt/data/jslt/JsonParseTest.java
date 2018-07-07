@@ -1,6 +1,7 @@
 
 package com.schibsted.spt.data.jslt;
 
+import java.util.Iterator;
 import java.io.IOException;
 import org.junit.Test;
 import static org.junit.Assert.fail;
@@ -248,6 +249,16 @@ public class JsonParseTest {
     check("1E1");
   }
 
+  @Test
+  public void testObjectKeyOrder() {
+    Expression expr = Parser.compileString("{\"a\":1, \"b\":2}");
+    JsonNode actual = expr.apply(null);
+
+    Iterator<String> it = actual.fieldNames();
+    assertEquals("a", it.next());
+    assertEquals("b", it.next());
+  }
+
   private void check(String json) {
     try {
       Expression expr = Parser.compileString(json);
@@ -269,5 +280,4 @@ public class JsonParseTest {
       // this is what we want
     }
   }
-
 }
