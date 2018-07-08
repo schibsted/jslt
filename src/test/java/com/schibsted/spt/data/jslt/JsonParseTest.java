@@ -1,8 +1,16 @@
 
 package com.schibsted.spt.data.jslt;
 
-import java.util.Iterator;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.io.IOException;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+
 import org.junit.Test;
 import static org.junit.Assert.fail;
 import static org.junit.Assert.assertTrue;
@@ -10,256 +18,22 @@ import static org.junit.Assert.assertEquals;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.NullNode;
 
 /**
- * JSON parsing test cases only. Verifies that Jackson and JSTL
- * produce the same JSON structure.
+ * JSON parsing test cases. Verifies that Jackson and JSLT produce the
+ * same JSON structure.
  */
+@RunWith(Parameterized.class)
 public class JsonParseTest {
-  private ObjectMapper mapper = new ObjectMapper();
+  private static ObjectMapper mapper = new ObjectMapper();
+  private String json;
 
-  @Test
-  public void testNull() {
-    check("null");
+  public JsonParseTest(String json) {
+    this.json = json;
   }
 
   @Test
-  public void testTrue() {
-    check("true");
-  }
-
-  @Test
-  public void testFalse() {
-    check("false");
-  }
-
-  @Test
-  public void testInteger() {
-    check("1");
-  }
-
-  @Test
-  public void testBigInteger() {
-    check("1321");
-  }
-
-  @Test
-  public void testNegativeInteger() {
-    check("-1321");
-  }
-
-  @Test
-  public void testDecimal() {
-    check("13.21");
-  }
-
-  @Test
-  public void testNegativeDecimal() {
-    check("-13.21");
-  }
-
-  @Test
-  public void testEmptyString() {
-    check("\"\"");
-  }
-
-  @Test
-  public void testString() {
-    check("\"foo\"");
-  }
-
-  @Test
-  public void testEmptyArray() {
-    check("[]");
-  }
-
-  @Test
-  public void testShortArray() {
-    check("[1]");
-  }
-
-  @Test
-  public void testWhitespace() {
-    check(" [ 1 ] ");
-  }
-
-  @Test
-  public void testLongerArray() {
-    check("[1,2,3,4,5]");
-  }
-
-  @Test
-  public void testNestedArray() {
-    check("[[1,2],[3,[4,5]]]");
-  }
-
-  @Test
-  public void testEmptyObject() {
-    check("{}");
-  }
-
-  @Test
-  public void testNestedSmallObject() {
-    check("{\"empty\" : {\"id\" : 1}}");
-  }
-
-  @Test
-  public void testComplicatedObject() {
-    check("{\"foo\" : \"bar\", \"array\" : [7,6,5,4,null], \"koko\":233}");
-  }
-
-  @Test
-  public void testEscapedQuote() {
-    check("\" \\\" \""); // \\\" -> \" in the actual string that's parsed
-  }
-
-  @Test
-  public void testEscapedBackslash() {
-    check("\" \\\\ \""); // \\\\ -> \\ in the actual string that's parsed
-  }
-
-  @Test
-  public void testEscapedNewline() {
-    check("\" \\n \""); // \\n -> \n in the actual string that's parsed
-  }
-
-  @Test
-  public void testEscapedReturn() {
-    check("\" \\r \"");
-  }
-
-  @Test
-  public void testEscapedSlash() {
-    check("\" \\/ \"");
-  }
-
-  @Test
-  public void testEscapedBackspace() {
-    check("\" \\b \"");
-  }
-
-  @Test
-  public void testEscapedTab() {
-    check("\" \\t \"");
-  }
-
-  @Test
-  public void testEscapedFormFeed() {
-    check("\" \\f \"");
-  }
-
-  @Test
-  public void testUndefinedEscape() {
-    error("\" \\d \"");
-  }
-
-  @Test
-  public void testUnfinishedUnicodeEscape1() {
-    error("\"\\u\"");
-  }
-
-  @Test
-  public void testUnfinishedUnicodeEscape2() {
-    error("\"\\u0\"");
-  }
-
-  @Test
-  public void testUnfinishedUnicodeEscape3() {
-    error("\"\\u00\"");
-  }
-
-  @Test
-  public void testUnfinishedUnicodeEscape4() {
-    error("\"\\u004\"");
-  }
-
-  @Test
-  public void testUnicodeEscape() {
-    check("\"\\u0061\"");
-  }
-
-  @Test
-  public void testUnicodeEscapeLowerCase() {
-    check("\"\\u00ff\"");
-  }
-
-  @Test
-  public void testUnicodeEscapeUpperCase() {
-    check("\"\\u00FF\"");
-  }
-
-  @Test
-  public void testMustAllowZero() {
-    check("0");
-  }
-
-  @Test
-  public void testMustAllowZeroPointZero() {
-    check("0.0");
-  }
-
-  @Test
-  public void testInitialZeroInNumber() {
-    error("0123");
-  }
-
-  @Test
-  public void testInitialZeroInNegativeNumber() {
-    error("-0123");
-  }
-
-  @Test
-  public void testInitialZeroInFloat() {
-    error("0123.0");
-  }
-
-  @Test
-  public void testInitialZeroInNegativeFloat() {
-    error("-0123.0");
-  }
-
-  @Test
-  public void test_eFloatPlus() {
-    check("1e+1");
-  }
-
-  @Test
-  public void test_EFloatPlus() {
-    check("1E+1");
-  }
-
-  @Test
-  public void test_eFloatMinus() {
-    check("1e-1");
-  }
-
-  @Test
-  public void test_EFloatMinus() {
-    check("1E-1");
-  }
-
-  @Test
-  public void test_eFloat() {
-    check("1e1");
-  }
-
-  @Test
-  public void test_EFloat() {
-    check("1E1");
-  }
-
-  @Test
-  public void testObjectKeyOrder() {
-    Expression expr = Parser.compileString("{\"a\":1, \"b\":2}");
-    JsonNode actual = expr.apply(null);
-
-    Iterator<String> it = actual.fieldNames();
-    assertEquals("a", it.next());
-    assertEquals("b", it.next());
-  }
-
-  private void check(String json) {
+  public void check() {
     try {
       Expression expr = Parser.compileString(json);
       JsonNode actual = expr.apply(null);
@@ -272,12 +46,78 @@ public class JsonParseTest {
     }
   }
 
-  private void error(String json) {
-    try {
-      Parser.compileString(json);
-      fail("Successfully parsed " + json);
-    } catch (JsltException e) {
-      // this is what we want
-    }
+  // @Test
+  // public void testUndefinedEscape() {
+  //   error("\" \\d \"");
+  // }
+
+  // @Test
+  // public void testUnfinishedUnicodeEscape1() {
+  //   error("\"\\u\"");
+  // }
+
+  // @Test
+  // public void testUnfinishedUnicodeEscape2() {
+  //   error("\"\\u0\"");
+  // }
+
+  // @Test
+  // public void testUnfinishedUnicodeEscape3() {
+  //   error("\"\\u00\"");
+  // }
+
+  // @Test
+  // public void testUnfinishedUnicodeEscape4() {
+  //   error("\"\\u004\"");
+  // }
+
+  // @Test
+  // public void testInitialZeroInNumber() {
+  //   error("0123");
+  // }
+
+  // @Test
+  // public void testInitialZeroInNegativeNumber() {
+  //   error("-0123");
+  // }
+
+  // @Test
+  // public void testInitialZeroInFloat() {
+  //   error("0123.0");
+  // }
+
+  // @Test
+  // public void testInitialZeroInNegativeFloat() {
+  //   error("-0123.0");
+  // }
+
+  // @Test
+  // public void testObjectKeyOrder() {
+  //   Expression expr = Parser.compileString("{\"a\":1, \"b\":2}");
+  //   JsonNode actual = expr.apply(null);
+
+  //   Iterator<String> it = actual.fieldNames();
+  //   assertEquals("a", it.next());
+  //   assertEquals("b", it.next());
+  // }
+
+  // private void error(String json) {
+  //   try {
+  //     Parser.compileString(json);
+  //     fail("Successfully parsed " + json);
+  //   } catch (JsltException e) {
+  //     // this is what we want
+  //   }
+  //  }
+
+  @Parameters
+  public static Collection<Object[]> data() {
+    JsonNode json = TestUtils.loadJson("json-parse-tests.json");
+    JsonNode tests = json.get("tests");
+
+    List<Object[]> strings = new ArrayList();
+    for (int ix = 0; ix < tests.size(); ix++)
+      strings.add(new Object[] { tests.get(ix).asText() });
+    return strings;
   }
 }

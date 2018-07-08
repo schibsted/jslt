@@ -1,0 +1,14 @@
+{
+    "description" : "Tests that should cause the JSLT parser to declare JSON syntax error.",
+    "tests" : [
+        "\" \\d \"",
+        "\"\\u\"",
+        "\"\\u0\"",
+        "\"\\u00\"",
+        "\"\\u004\"",
+        "0123",
+        "-0123",
+        "0123.0",
+        "-0123.0"
+    ]
+}
