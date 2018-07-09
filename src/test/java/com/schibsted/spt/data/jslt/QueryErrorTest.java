@@ -20,24 +20,23 @@ import static org.junit.Assert.assertEquals;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.NullNode;
 
 /**
- * Test cases verifying queries against an input.
+ * Checks that JSLT queries produce certain runtime errors.
  */
 @RunWith(Parameterized.class)
-public class QueryTest extends TestBase {
+public class QueryErrorTest extends TestBase {
+
   private static ObjectMapper mapper = new ObjectMapper();
   private String input;
   private String query;
-  private String output;
-  private Map<String, JsonNode> variables;
+  private String error;
 
-  public QueryTest(String input, String query, String output,
-                   Map<String, JsonNode> variables) {
+  public QueryErrorTest(String input, String query, String error) {
     this.input = input;
     this.query = query;
-    this.output = output;
-    this.variables = variables;
+    this.error = error;
   }
 
   @Test
@@ -46,16 +45,11 @@ public class QueryTest extends TestBase {
       JsonNode context = mapper.readTree(input);
 
       Expression expr = Parser.compileString(query);
-      JsonNode actual = expr.apply(variables, context);
-      if (actual == null)
-        throw new JsltException("Returned Java null");
-
-      // reparse to handle IntNode(2) != LongNode(2)
-      actual = mapper.readTree(mapper.writeValueAsString(actual));
-
-      JsonNode expected = mapper.readTree(output);
-
-      assertEquals("actual class " + actual.getClass() + ", expected class " + expected.getClass(), expected, actual);
+      JsonNode actual = expr.apply(context);
+      fail("JSTL did not detect error");
+    } catch (JsltException e) {
+      assertTrue("incorrect error message: '" + e.getMessage() + "'",
+                 e.getMessage().indexOf(error) != -1);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -63,7 +57,7 @@ public class QueryTest extends TestBase {
 
   @Parameters
   public static Collection<Object[]> data() {
-    JsonNode json = TestUtils.loadJson("query-tests.json");
+    JsonNode json = TestUtils.loadJson("query-error-tests.json");
     JsonNode tests = json.get("tests");
 
     List<Object[]> strings = new ArrayList();
@@ -72,22 +66,9 @@ public class QueryTest extends TestBase {
       strings.add(new Object[] {
           test.get("input").asText(),
           test.get("query").asText(),
-          test.get("output").asText(),
-          toMap(test.get("variables"))
+          test.get("error").asText()
         });
     }
     return strings;
-  }
-
-  private static Map<String, JsonNode> toMap(JsonNode json) {
-    Map<String, JsonNode> variables = new HashMap();
-    if (json != null) {
-      Iterator<String> it = json.fieldNames();
-      while (it.hasNext()) {
-        String field = it.next();
-        variables.put(field, json.get(field));
-      }
-    }
-    return variables;
   }
 }

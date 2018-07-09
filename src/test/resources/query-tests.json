@@ -1,0 +1,686 @@
+{
+    "description" : "Test that do a query against the input to produce output. Note that variables may be defined outside the query.",
+    "tests" : [
+   {
+      "output" : "0.7",
+      "query" : "2.5 - 1.8",
+      "input" : "{}"
+   },
+   {
+      "output" : "false",
+      "input" : "{}",
+      "query" : "123.0 > 321"
+   },
+   {
+      "input" : "{}",
+      "query" : "\"abc\" <= \"def\"",
+      "output" : "true"
+   },
+   {
+      "output" : "320",
+      "input" : "{}",
+      "query" : "if (true) 320 else 240"
+   },
+   {
+      "output" : "true",
+      "query" : ".foo == \"bar\" and .foo != \"baz\"",
+      "input" : "{\"foo\" : \"bar\"}"
+   },
+   {
+      "output" : "true",
+      "input" : "{}",
+      "query" : "321 >= 123.0"
+   },
+   {
+      "output" : "{\"prefixfoo\" : 22}",
+      "query" : "{for (.) \"prefix\" + .key : .value}",
+      "input" : "{\"foo\" : 22}"
+   },
+   {
+      "input" : "{}",
+      "query" : "321 <= 123.0",
+      "output" : "false"
+   },
+   {
+      "output" : "0.5",
+      "query" : "16 / 32",
+      "input" : "{}"
+   },
+   {
+      "output" : "true",
+      "input" : "{\"foo\" : {\"bar\" : 123}}",
+      "query" : ".foo.bar == 123"
+   },
+   {
+      "output" : "true",
+      "query" : ".foo or false",
+      "input" : "{\"foo\" : \"bar\"}"
+   },
+   {
+      "input" : "{}",
+      "query" : "\"def\" >= \"abc\"",
+      "output" : "true"
+   },
+   {
+      "input" : "{\"foo\" : \"bar\"}",
+      "query" : ".bar or true or .foo",
+      "output" : "true"
+   },
+   {
+      "query" : "123 >= 123",
+      "input" : "{}",
+      "output" : "true"
+   },
+   {
+      "input" : "{}",
+      "query" : "123 == 321",
+      "output" : "false"
+   },
+   {
+      "input" : "[{\"key\" : \"foo\", \"value\" : 22}]",
+      "query" : "{for (.) .key : .value}",
+      "output" : "{\"foo\" : 22}"
+   },
+   {
+      "output" : "\"foonull\"",
+      "input" : "{}",
+      "query" : "\"foo\" + null"
+   },
+   {
+      "input" : "[]",
+      "query" : "{for (.) .key : .value}",
+      "output" : "{}"
+   },
+   {
+      "output" : "[{\"number\":1},{\"number\":2},{\"number\":3},{\"number\":4}]",
+      "input" : "[]",
+      "query" : "[for (split(\"1,2,3,4\", \",\")) {   \"number\" : number(.) }]"
+   },
+   {
+      "output" : "null",
+      "query" : "[for (null) number(.)]",
+      "input" : "[]"
+   },
+   {
+      "query" : ".[1 : ]",
+      "input" : "\"12345\"",
+      "output" : "\"2345\""
+   },
+   {
+      "output" : "false",
+      "input" : "{}",
+      "query" : ".foo\n// comment\nand false"
+   },
+   {
+      "input" : "{\"foo\" : 2}",
+      "query" : ".bar",
+      "output" : "null"
+   },
+   {
+      "output" : "0.5",
+      "input" : "{}",
+      "query" : "16.0 / 32.0"
+   },
+   {
+      "query" : ".",
+      "input" : "{}",
+      "output" : "{}"
+   },
+   {
+      "output" : "{\"foo\":14,\"bar\":44}",
+      "input" : "{\"bar\":44}",
+      "query" : ". + {\"foo\":14}"
+   },
+   {
+      "input" : "{}",
+      "query" : "321 < 123",
+      "output" : "false"
+   },
+   {
+      "query" : ".[ : 20]",
+      "input" : "[1,2,3,4,5]",
+      "output" : "[1,2,3,4,5]"
+   },
+   {
+      "output" : "[2,3,4,5]",
+      "input" : "[1,2,3,4,5]",
+      "query" : ".[1 : ]"
+   },
+   {
+      "query" : ".foo and true",
+      "input" : "{\"foo\" : \"bar\"}",
+      "output" : "true"
+   },
+   {
+      "input" : "{}",
+      "query" : "if (null) 320 else 240",
+      "output" : "240"
+   },
+   {
+      "input" : "{}",
+      "query" : "if (false) 320 else 240",
+      "output" : "240"
+   },
+   {
+      "input" : "{}",
+      "query" : "22 + 18",
+      "output" : "40"
+   },
+   {
+      "output" : "\"foo5\"",
+      "query" : "\"foo\" + 5",
+      "input" : "{}"
+   },
+   {
+      "query" : "[for (.) number(.)]",
+      "input" : "[\"1\", \"2\", \"3\"]",
+      "output" : "[1,2,3]"
+   },
+   {
+      "input" : "{}",
+      "query" : "[] + [4,5]",
+      "output" : "[4,5]"
+   },
+   {
+      "query" : "123.0 < 321",
+      "input" : "{}",
+      "output" : "true"
+   },
+   {
+      "query" : "123 < 321",
+      "input" : "{}",
+      "output" : "true"
+   },
+   {
+      "query" : ".[ : -1]",
+      "input" : "\"12345\"",
+      "output" : "\"1234\""
+   },
+   {
+      "output" : "{\"foo\" : 22}",
+      "query" : "{for (.) .key : if (.value > 10) .value}",
+      "input" : "{\"foo\" : 22, \"bar\": 2}"
+   },
+   {
+      "input" : "{\"foo\" : \"bar\"}",
+      "query" : ".foo and false or .foo and true",
+      "output" : "true"
+   },
+   {
+      "input" : "{}",
+      "query" : "123.0 >= 321",
+      "output" : "false"
+   },
+   {
+      "output" : "\"foobarbaz\"",
+      "query" : "\"foo\" + \"bar\" + \"baz\"",
+      "input" : "{}"
+   },
+   {
+      "output" : "4.0",
+      "query" : "2.2 + 1.8",
+      "input" : "{}"
+   },
+   {
+      "query" : "2 >= null",
+      "input" : "{}",
+      "output" : "true"
+   },
+   {
+      "output" : "true",
+      "input" : "{}",
+      "query" : "321 >= 123"
+   },
+   {
+      "output" : "true",
+      "input" : "{}",
+      "query" : "123 <= 321"
+   },
+   {
+      "query" : "\"foo\" + \"bar\"",
+      "input" : "{}",
+      "output" : "\"foobar\""
+   },
+   {
+      "output" : "false",
+      "query" : "123 != 123",
+      "input" : "{}"
+   },
+   {
+      "output" : "false",
+      "query" : "\"abc\" >= \"def\"",
+      "input" : "{}"
+   },
+   {
+      "query" : "if (false) 320",
+      "input" : "{}",
+      "output" : "null"
+   },
+   {
+      "query" : "321 <= 123",
+      "input" : "{}",
+      "output" : "false"
+   },
+   {
+      "query" : ".foo //",
+      "input" : "{}",
+      "output" : "null"
+   },
+   {
+      "output" : "42",
+      "query" : "$foo",
+      "variables" : {
+         "foo" : 42
+      },
+      "input" : "{}"
+   },
+   {
+      "output" : "true",
+      "query" : "123 <= 123",
+      "input" : "{}"
+   },
+   {
+      "output" : "321",
+      "input" : "{}",
+      "query" : "let obj = {\"foo\" : {\"bar\":321}} $obj.foo.bar"
+   },
+   {
+      "output" : "2",
+      "input" : "{\"@foo\" : 2}",
+      "query" : ".\"@foo\""
+   },
+   {
+      "query" : "2 + null",
+      "input" : "{}",
+      "output" : "null"
+   },
+   {
+      "output" : "false",
+      "query" : "2 == null",
+      "input" : "{}"
+   },
+   {
+      "input" : "{}",
+      "query" : "123 == 123",
+      "output" : "true"
+   },
+   {
+      "output" : "12",
+      "input" : "{}",
+      "query" : "5 * 2 + 2"
+   },
+   {
+      "query" : ".foo and false",
+      "input" : "{\"foo\" : \"bar\"}",
+      "output" : "false"
+   },
+   {
+      "output" : "true",
+      "query" : "2 > null",
+      "input" : "{}"
+   },
+   {
+      "output" : "true",
+      "input" : "{}",
+      "query" : "321 > 123"
+   },
+   {
+      "query" : ".foo.bar.baz",
+      "input" : "{\"foo\" : {\"bar\" : {\"baz\" : 221}}}",
+      "output" : "221"
+   },
+   {
+      "input" : "{\"foo\" : \"bar\"}",
+      "query" : ".foo and true and 22",
+      "output" : "true"
+   },
+   {
+      "output" : "true",
+      "query" : "123 == (120 + 3)",
+      "input" : "{}"
+   },
+   {
+      "query" : "[1,2,3] + [4,5]",
+      "input" : "{}",
+      "output" : "[1,2,3,4,5]"
+   },
+   {
+      "query" : "2.5 * 4.0",
+      "input" : "{}",
+      "output" : "10.0"
+   },
+   {
+      "input" : "\"12345\"",
+      "query" : ".[1 : 4]",
+      "output" : "\"234\""
+   },
+   {
+      "output" : "[1,2,3,4]",
+      "query" : ".[ : 4]",
+      "input" : "[1,2,3,4,5]"
+   },
+   {
+      "query" : "123 == .foo.bar",
+      "input" : "{\"foo\" : {\"bar\" : 123}}",
+      "output" : "true"
+   },
+   {
+      "output" : "true",
+      "query" : "123.0 <= 321",
+      "input" : "{}"
+   },
+   {
+      "output" : "2",
+      "input" : "{}",
+      "query" : "let foo = (5)\n2"
+   },
+   {
+      "output" : "\"foo5\"",
+      "input" : "{}",
+      "query" : "\"foo\" + number(5)"
+   },
+   {
+      "output" : "\"foobar\"",
+      "query" : "if (false) \"5\" else \"foo\" + \"bar\"",
+      "input" : "{}"
+   },
+   {
+      "input" : "null",
+      "query" : ".[0]",
+      "output" : "null"
+   },
+   {
+      "output" : "\"foofoofoo\"",
+      "query" : "\"foo\" * 3",
+      "input" : "{}"
+   },
+   {
+      "output" : "\"5bar\"",
+      "input" : "{}",
+      "query" : "(if (true) \"5\" else \"foo\") + \"bar\""
+   },
+   {
+      "query" : ".[ : -1]",
+      "input" : "[1,2,3,4,5]",
+      "output" : "[1,2,3,4]"
+   },
+   {
+      "output" : "false",
+      "query" : "null >= 2",
+      "input" : "{}"
+   },
+   {
+      "output" : "null",
+      "query" : "2 - null",
+      "input" : "{}"
+   },
+   {
+      "output" : "false",
+      "query" : ".bar or false",
+      "input" : "{\"foo\" : \"bar\"}"
+   },
+   {
+      "query" : "123 > 321",
+      "input" : "{}",
+      "output" : "false"
+   },
+   {
+      "output" : "{\"foo\" : 22}",
+      "query" : "{for (.) .key : .value}",
+      "input" : "{\"foo\" : 22}"
+   },
+   {
+      "input" : "{}",
+      "query" : "if (true) \"5\" else \"foo\" + \"bar\"",
+      "output" : "\"5\""
+   },
+   {
+      "output" : "false",
+      "query" : "123 != 123.0",
+      "input" : "{}"
+   },
+   {
+      "output" : "{\"foo\":false,\"bar\":44}",
+      "input" : "{\"bar\":44,\"foo\":false}",
+      "query" : ". + {\"foo\":14}"
+   },
+   {
+      "output" : "true",
+      "query" : "\"abc\" < \"def\"",
+      "input" : "{}"
+   },
+   {
+      "query" : "number( $num )",
+      "input" : "{}",
+      "variables" : {
+         "num" : "22"
+      },
+      "output" : "22"
+   },
+   {
+      "input" : "{}",
+      "query" : "null > 2",
+      "output" : "false"
+   },
+   {
+      "output" : "321",
+      "query" : "let obj = {\"foo\" : 321} $obj.foo",
+      "input" : "{}"
+   },
+   {
+      "output" : "false",
+      "query" : ".foo and false or .bar and true",
+      "input" : "{\"foo\" : \"bar\"}"
+   },
+   {
+      "input" : "{}",
+      "query" : "2.5 * 4",
+      "output" : "10.0"
+   },
+   {
+      "input" : "{}",
+      "query" : "number(\"22\")",
+      "output" : "22"
+   },
+   {
+      "input" : "{}",
+      "query" : "2 + 2 * 5",
+      "output" : "12"
+   },
+   {
+      "input" : "[1,2,3,4,5]",
+      "query" : ".[0]",
+      "output" : "1"
+   },
+   {
+      "input" : "{}",
+      "query" : "20 - 2 * 5",
+      "output" : "10"
+   },
+   {
+      "query" : ".bar.bar",
+      "input" : "{\"foo\" : {\"bar\" : 22}}",
+      "output" : "null"
+   },
+   {
+      "input" : "{}",
+      "query" : "\"def\" > \"abc\"",
+      "output" : "true"
+   },
+   {
+      "output" : "true",
+      "query" : "false or .foo",
+      "input" : "{\"foo\" : \"bar\"}"
+   },
+   {
+      "query" : "20 - 10 / 2",
+      "input" : "{}",
+      "output" : "15"
+   },
+   {
+      "input" : "{}",
+      "query" : "null >= null",
+      "output" : "true"
+   },
+   {
+      "output" : "null",
+      "query" : ".[0].bar",
+      "input" : "[]"
+   },
+   {
+      "query" : "123 != 321",
+      "input" : "{}",
+      "output" : "true"
+   },
+   {
+      "output" : "true",
+      "query" : "321 > 123.0",
+      "input" : "{}"
+   },
+   {
+      "output" : "null",
+      "query" : ".foo // this used to break",
+      "input" : "{}"
+   },
+   {
+      "output" : "2",
+      "query" : ".foo",
+      "input" : "{\"foo\" : 2}"
+   },
+   {
+      "output" : "false",
+      "query" : "321 < 123.0",
+      "input" : "{}"
+   },
+   {
+      "output" : "15",
+      "input" : "{}",
+      "query" : "3 * 5"
+   },
+   {
+      "output" : "null",
+      "query" : "2.5 * null",
+      "input" : "{}"
+   },
+   {
+      "input" : "[]",
+      "query" : "split(\"a,b,c,d\", \",\")[0]",
+      "output" : "\"a\""
+   },
+   {
+      "input" : "{}",
+      "query" : "\"abc\" > \"def\"",
+      "output" : "false"
+   },
+   {
+      "output" : "true",
+      "input" : "{\"foo\" : \"bar\"}",
+      "query" : ".foo or true"
+   },
+   {
+      "input" : "{}",
+      "query" : "\"def\" < \"abc\"",
+      "output" : "false"
+   },
+   {
+      "output" : "true",
+      "query" : "null == null",
+      "input" : "{}"
+   },
+   {
+      "input" : "{}",
+      "query" : "123 >= 321",
+      "output" : "false"
+   },
+   {
+      "input" : "",
+      "query" : ".foo",
+      "output" : "null"
+   },
+   {
+      "query" : "if (true) 320",
+      "input" : "{}",
+      "output" : "320"
+   },
+   {
+      "input" : "{}",
+      "query" : "null > null",
+      "output" : "false"
+   },
+   {
+      "output" : "22",
+      "input" : "{\"foo\" : {\"bar\" : 22}}",
+      "query" : ".foo.bar"
+   },
+   {
+      "input" : "\"12345\"",
+      "query" : ".[0]",
+      "output" : "\"1\""
+   },
+   {
+      "output" : "[]",
+      "query" : "[for (.) number(.)]",
+      "input" : "[]"
+   },
+   {
+      "output" : "null",
+      "query" : "let obj = {\"foo\" : 321} $obj.foo.bar",
+      "input" : "{}"
+   },
+   {
+      "output" : "[2,3,4]",
+      "query" : ".[1 : 4]",
+      "input" : "[1,2,3,4,5]"
+   },
+   {
+      "output" : "[{\"key\" : \"foo\", \"value\" : 1},  {\"key\" : \"bar\", \"value\" : 2}]",
+      "input" : "{\"foo\":1,\"bar\":2}",
+      "query" : "[for (.) let v = . $v]"
+   },
+   {
+      "query" : ".[ : 20]",
+      "input" : "\"12345\"",
+      "output" : "\"12345\""
+   },
+   {
+      "output" : "50.0",
+      "query" : "5 * 2.5 * 4",
+      "input" : "{}"
+   },
+   {
+      "input" : "{}",
+      "query" : "22 - 18",
+      "output" : "4"
+   },
+   {
+      "output" : "4",
+      "input" : "{}",
+      "query" : "16 / 4"
+   },
+   {
+      "input" : "{}",
+      "query" : "\"def\" <= \"abc\"",
+      "output" : "false"
+   },
+   {
+      "output" : "[{\"key\" : \"foo\", \"value\" : 1},  {\"key\" : \"bar\", \"value\" : 2}]",
+      "query" : "[for (.) .]",
+      "input" : "{\"foo\":1,\"bar\":2}"
+   },
+   {
+      "query" : "{for (.foo) .key : .value}",
+      "input" : "{}",
+      "output" : "null"
+   },
+   {
+      "query" : ". + {\"foo\":14}",
+      "input" : "{}",
+      "output" : "{\"foo\":14}"
+   },
+   {
+      "input" : "{}",
+      "query" : "123 == 123.0",
+      "output" : "true"
+   }
+    ]
+}
