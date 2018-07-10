@@ -93,6 +93,11 @@ java -cp build/libs/*.jar com.schibsted.spt.data.jslt.cli.JSLT transform.jslt in
 
 The result is written to standard out.
 
+## Extension functions
+
+You can implement your own functions and add them to the language.
+See [the extension function tutorial](extensions.md).
+
 ## Feedback
 
 If you have questions about how to use JSLT, please ask the question
