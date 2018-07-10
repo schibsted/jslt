@@ -48,4 +48,19 @@ public class FunctionWrapperTest extends TestBase {
     assertTrue(before <= value);
     assertTrue(value <= after);
   }
+
+  @Test
+  public void testWrapStaticMethodNumeric() throws Exception {
+    Collection<Function> functions = Collections.singleton(
+      FunctionUtils.wrapStaticMethod("pow",
+                                     "java.lang.Math", "pow")
+    );
+    String query = "pow(2, 10)";
+
+    JsonNode context = mapper.readTree("{}");
+    Expression expr = Parser.compileString(query, functions);
+    JsonNode actual = expr.apply(context);
+
+    assertTrue(actual.asInt() == 1024);
+  }
 }

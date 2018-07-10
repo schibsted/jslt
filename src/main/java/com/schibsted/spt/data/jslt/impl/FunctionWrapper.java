@@ -25,6 +25,8 @@ import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.LongNode;
+import com.fasterxml.jackson.databind.node.FloatNode;
+import com.fasterxml.jackson.databind.node.DoubleNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.schibsted.spt.data.jslt.Function;
 import com.schibsted.spt.data.jslt.JsltException;
@@ -85,6 +87,8 @@ public class FunctionWrapper implements Function {
     toJava.put(int.class, new IntJavaConverter());
     toJava.put(long.class, new LongJavaConverter());
     toJava.put(boolean.class, new BooleanJavaConverter());
+    toJava.put(double.class, new DoubleJavaConverter());
+    toJava.put(float.class, new DoubleJavaConverter());
   }
 
   private static ToJavaConverter makeJavaConverter(Class type) {
@@ -132,6 +136,15 @@ public class FunctionWrapper implements Function {
     }
   }
 
+  static class DoubleJavaConverter implements ToJavaConverter {
+    public Object convert(JsonNode node) {
+      if (!node.isNumber())
+        throw new JsltException("Cannot convert " + node + " to double");
+      else
+        return node.asDouble();
+    }
+  }
+
   // ===== TO JSON
 
   interface ToJsonConverter {
@@ -144,6 +157,8 @@ public class FunctionWrapper implements Function {
     toJson.put(long.class, new LongJsonConverter());
     toJson.put(int.class, new IntJsonConverter());
     toJson.put(boolean.class, new BooleanJsonConverter());
+    toJson.put(double.class, new DoubleJsonConverter());
+    toJson.put(float.class, new FloatJsonConverter());
   }
 
   static private ToJsonConverter makeJsonConverter(Class type) {
@@ -188,6 +203,24 @@ public class FunctionWrapper implements Function {
         return BooleanNode.TRUE;
       else
         return BooleanNode.FALSE;
+    }
+  }
+
+  static class DoubleJsonConverter implements ToJsonConverter {
+    public JsonNode convert(Object node) {
+      if (node == null)
+        return NullNode.instance;
+      else
+        return new DoubleNode((Double) node);
+    }
+  }
+
+  static class FloatJsonConverter implements ToJsonConverter {
+    public JsonNode convert(Object node) {
+      if (node == null)
+        return NullNode.instance;
+      else
+        return new FloatNode((Float) node);
     }
   }
 }
