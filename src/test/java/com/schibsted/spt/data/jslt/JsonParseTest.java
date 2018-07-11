@@ -43,6 +43,8 @@ public class JsonParseTest {
       assertEquals("actual class " + actual.getClass() + ", expected class " + expected.getClass(), expected, actual);
     } catch (IOException e) {
       throw new RuntimeException(e);
+    } catch (JsltException e) {
+      throw new RuntimeException("Parsing '" + json + "' failed", e);
     }
   }
 
