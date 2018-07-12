@@ -833,6 +833,13 @@ public class FunctionTest extends TestBase {
           "null");
   }
 
+  @Test
+  public void testDateTimeRoundTrip() {
+    check("{}",
+          "format-time(parse-time(\"2017-01-10\", \"yyyy-MM-dd\"), \"yyyy-MM-dd\")",
+          "\"2017-01-10\"");
+  }
+
   // ===== ERROR
 
   @Test
