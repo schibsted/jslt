@@ -118,6 +118,11 @@ The language has been used in production at Schibsted since January
 2018, performing about 9 billion transforms per day, and many times
 more queries.
 
+## Other implementations
+
+Anthony Sparks is working on a
+[VM-based implementation in Java](https://github.com/tonysparks/jslt2)
+
 ## LICENSE
 
 Copyright (c) 2018 Schibsted Marketplaces Products & Technology AS

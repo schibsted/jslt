@@ -234,7 +234,7 @@ public class BuiltinFunctions {
   // ===== TEST
 
   public static class Test extends AbstractFunction {
-    static Map<String, Pattern> cache = new HashMap();
+    static Map<String, Pattern> cache = new BoundedCache(1000);
 
     public Test() {
       super("test", 2, 2);
@@ -268,7 +268,7 @@ public class BuiltinFunctions {
   // parse the regexps. (lots of swearing omitted.)
 
   public static class Capture extends AbstractFunction {
-    static Map<String, JstlPattern> cache = new HashMap();
+    static Map<String, JstlPattern> cache = new BoundedCache(1000);
 
     public Capture() {
       super("capture", 2, 2);
