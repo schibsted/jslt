@@ -130,6 +130,8 @@ def is-value(v)
 }]
 ```
 
+Taken from [JOLT](https://github.com/bazaarvoice/jolt/issues/626).
+
 ## N-queens
 
 If you want something more hardcore, look at [solving the N-queens
