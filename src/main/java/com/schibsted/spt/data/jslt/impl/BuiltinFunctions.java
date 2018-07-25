@@ -840,7 +840,7 @@ public class BuiltinFunctions {
       try {
         SimpleDateFormat format = new SimpleDateFormat(formatstr);
         format.setTimeZone(zone);
-        String formatted = format.format((long) timestamp * 1000);
+        String formatted = format.format(Math.round(timestamp * 1000));
         return new TextNode(formatted);
       } catch (IllegalArgumentException e) {
         // thrown if format is bad
