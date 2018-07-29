@@ -488,6 +488,22 @@ is-array([1, 2]) => true
 is-array("123")  => false
 ```
 
+### _flatten(array) -> array_
+
+Flattens an array containing other arrays so that every value inside a
+sub-array is contained directly in the output array. All sub-arrays at
+any level of nesting are flattened, but objects and other values are
+left untouched.
+
+Examples:
+
+```
+flatten([[1,2], [3,4]])         => [1,2,3,4]
+flatten([1, 2, 3, 4])           => [1,2,3,4]
+flatten([1, [2, [3, [4, []]]]]) => [1,2,3,4]
+flatten(null)                   => null
+```
+
 <!-- TIME ===================================================================-->
 
 ## Time functions

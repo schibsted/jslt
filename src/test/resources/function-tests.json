@@ -691,6 +691,31 @@
       "query" : "number(\"42.0\")",
       "input" : "{}",
       "output" : "42.0"
+   },
+   {
+      "query" : "flatten([])",
+      "input" : "{}",
+      "output" : "[]"
+   },
+   {
+      "query" : "flatten([1,2,3])",
+      "input" : "{}",
+      "output" : "[1,2,3]"
+   },
+   {
+      "query" : "flatten([1,[2],3])",
+      "input" : "{}",
+      "output" : "[1,2,3]"
+   },
+   {
+      "query" : "flatten([1,[],[2, [3, 4, [5]],6],7])",
+      "input" : "{}",
+      "output" : "[1,2,3,4,5,6,7]"
+   },
+   {
+      "query" : "flatten(null)",
+      "input" : "{}",
+      "output" : "null"
    }
 ]
 }

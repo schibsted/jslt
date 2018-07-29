@@ -94,6 +94,7 @@ public class BuiltinFunctions {
     // ARRAY
     functions.put("array", new BuiltinFunctions.Array());
     functions.put("is-array", new BuiltinFunctions.IsArray());
+    functions.put("flatten", new BuiltinFunctions.Flatten());
 
     // TIME
     functions.put("now", new BuiltinFunctions.Now());
@@ -530,6 +531,37 @@ public class BuiltinFunctions {
         return NodeUtils.convertObjectToArray(value);
       else
         throw new JsltException("array() cannot convert " + value);
+    }
+  }
+
+  // ===== FLATTEN
+
+  public static class Flatten extends AbstractFunction {
+
+    public Flatten() {
+      super("flatten", 1, 1);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      JsonNode value = arguments[0];
+      if (value.isNull())
+        return value;
+      else if (!value.isArray())
+        throw new JsltException("flatten() cannot operate on " + value);
+
+      ArrayNode array = NodeUtils.mapper.createArrayNode();
+      flatten(array, value);
+      return array;
+    }
+
+    private void flatten(ArrayNode array, JsonNode current) {
+      for (int ix = 0; ix < current.size(); ix++) {
+        JsonNode node = current.get(ix);
+        if (node.isArray())
+          flatten(array, node);
+        else
+          array.add(node);
+      }
     }
   }
 
