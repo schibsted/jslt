@@ -1,0 +1,111 @@
+{
+    "description" : "Same as query-error-tests.json, but this time testing the various functions.",
+    "tests" :
+[
+  {
+    "error": "Oh no",
+    "query": "error(\"Oh no\")",
+    "input": "{}"
+  },
+  {
+    "error": "Unknown timezone",
+    "query": "format-time(125641293.0, \"yyyy-MM-dd HH:mm:ss\", \"fjsjdjsjs\")",
+    "input": "{}"
+  },
+  {
+    "error": "Unparseable",
+    "query": "parse-time(\"1973-12-25 05:22:33\", \"yyyy-MM-dd HH:mm:ssz\")",
+    "input": "{}"
+  },
+  {
+    "error": "argument",
+    "query": "number()",
+    "input": "{}"
+  },
+  {
+    "error": "parse",
+    "query": " from-json(\"[1,2,\") ",
+    "input": "{}"
+  },
+  {
+    "error": "null",
+    "query": "capture(\"blurgh\", null)",
+    "input": "{}"
+  },
+  {
+    "error": "false",
+    "query": "contains(123, false)",
+    "input": "{}"
+  },
+  {
+    "error": "number",
+    "query": "round([1,2,3,4])",
+    "input": "{}"
+  },
+  {
+    "error": "true",
+    "query": "size(true)",
+    "input": "{}"
+  },
+  {
+    "error": "[1,2,3,4]",
+    "query": "number([1,2,3,4])",
+    "input": "{}"
+  },
+  {
+    "error": "true",
+    "query": "array(true)",
+    "input": "{}"
+  },
+  {
+    "error": "Couldn't parse format",
+    "query": "parse-time(\"1973-12-25 05:22:33\", \"yyyy-MM-dd gnugugg HH:mm:ssz\")",
+    "input": "{}"
+  },
+  {
+    "error": "george",
+    "query": "number(\"george\")",
+    "input": "{}"
+  },
+  {
+    "error": "Couldn't parse format",
+    "query": "format-time(125641293.0, \"yyyy-MM-dd dfkdfjkdf HH:mm:ss\")",
+    "input": "{}"
+  },
+  {
+    "error": "null",
+    "query": "test(23123, null)",
+    "input": "{}"
+  },
+  {
+    "error": "Couldn't parse format",
+    "query": "parse-time(\"1973-12-25 05:22:33\", \"yyyy-MM-dd gnugugg HH:mm:ssz\", null)",
+    "input": "{}"
+  },
+  {
+    "error": "null",
+    "query": "split(\"1,2,3\", null)",
+    "input": "{}"
+  },
+  {
+    "error": "number",
+    "query": "floor([1,2,3,4])",
+    "input": "{}"
+  },
+  {
+    "error": "{}",
+    "query": "number({})",
+    "input": "{}"
+  },
+  {
+    "error": "24",
+    "query": " get-key(24, \"key\") ",
+    "input": "{}"
+  },
+  {
+    "error": "number",
+    "query": "ceiling([1,2,3,4])",
+    "input": "{}"
+  }
+]
+}

@@ -63,7 +63,14 @@ public class QueryTest extends TestBase {
 
   @Parameters
   public static Collection<Object[]> data() {
-    JsonNode json = TestUtils.loadJson("query-tests.json");
+    List<Object[]> strings = new ArrayList();
+    strings.addAll(loadTests("query-tests.json"));
+    strings.addAll(loadTests("function-tests.json"));
+    return strings;
+  }
+
+  private static Collection<Object[]> loadTests(String resource) {
+    JsonNode json = TestUtils.loadJson(resource);
     JsonNode tests = json.get("tests");
 
     List<Object[]> strings = new ArrayList();

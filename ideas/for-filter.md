@@ -36,6 +36,8 @@ The for-filter is clearly more readable:
 [for (.Reservations.Instances) .InstanceId if (.EbsOptimized)]
 ```
 
+See also [this solution](https://github.com/schibsted/jslt/issues/14#issuecomment-407806222) to an issue raised by a user.
+
 ## Syntactic ambiguity
 
 One issue is whether we may have an ambiguity at the end of the

@@ -2,8 +2,11 @@
 package com.schibsted.spt.data.jslt;
 
 import java.util.Iterator;
+import java.util.Collections;
+import java.io.IOException;
 import org.junit.Test;
 import org.junit.Ignore;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -22,6 +25,43 @@ public class StaticTests extends TestBase {
     Iterator<String> it = actual.fieldNames();
     assertEquals("a", it.next());
     assertEquals("b", it.next());
+  }
+
+  @Test
+  public void testRandomFunction() {
+    try {
+      JsonNode context = mapper.readTree("{}");
+
+      Expression expr = Parser.compileString("random()");
+
+      for (int ix = 0; ix < 10; ix++) {
+        JsonNode actual = expr.apply(context);
+        assertTrue(actual.isNumber());
+        double value = actual.doubleValue();
+        assertTrue(value > 0.0 && value < 1.0);
+      }
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @Test
+  public void testJavaExtensionFunction() {
+    check("{}", "test()", "42", Collections.EMPTY_MAP,
+          Collections.singleton(new TestFunction()));
+  }
+
+  @Test
+  public void testNowFunction() {
+    JsonNode now1 = execute("{}", "now()");
+    double now2 = System.currentTimeMillis();
+    long delta = 1000; // milliseconds of wriggle-room
+
+    assertTrue(now1.isDouble());
+    assertTrue("now1 (" + now1 + ") << now2 (" + now2 + ")",
+               (now1.asDouble() * 1000) < (now2 + delta));
+    assertTrue("now1 (" + now1 + ") >> now2 (" + now2 + ")",
+               (now1.asDouble() * 1000) > (now2 - delta));
   }
 
   @Test @Ignore // this takes a while to run, so we don't usually do it

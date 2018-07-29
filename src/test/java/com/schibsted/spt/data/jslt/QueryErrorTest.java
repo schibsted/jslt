@@ -57,7 +57,14 @@ public class QueryErrorTest extends TestBase {
 
   @Parameters
   public static Collection<Object[]> data() {
-    JsonNode json = TestUtils.loadJson("query-error-tests.json");
+    List<Object[]> strings = new ArrayList();
+    strings.addAll(loadTests("query-error-tests.json"));
+    strings.addAll(loadTests("function-error-tests.json"));
+    return strings;
+  }
+
+  private static Collection<Object[]> loadTests(String resource) {
+    JsonNode json = TestUtils.loadJson(resource);
     JsonNode tests = json.get("tests");
 
     List<Object[]> strings = new ArrayList();
