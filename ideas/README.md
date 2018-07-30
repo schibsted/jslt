@@ -11,6 +11,7 @@ It's mostly new features, but not exclusively.
 * [The `filter` macro](filter.md)
 * [The `for` filter](for-filter.md)
 * [Convenient query API](query-api.md)
+* [Group by](group-by.md)
 
 If you have feedback, feel free to open an issue to discuss.
 
