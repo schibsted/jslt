@@ -70,6 +70,10 @@ which would then produce:
 }
 ```
 
+Note that if the expression evaluates to `null`, `{}`, or `[]` then
+the entire key is omitted from the constructed object. This is to
+avoid producing objects with lots of no-value keys.
+
 ## Functions
 
 JSLT has a number of built-in functions, like `size`, which returns
@@ -234,6 +238,10 @@ and get:
   "custom_bar" : 2
 }
 ```
+
+Just as with object constructors, if the expression evaluates to
+`null`, `{}`, or `[]` then the entire key is omitted from the
+constructed object.
 
 ## Operators
 
