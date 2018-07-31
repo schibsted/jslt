@@ -68,12 +68,14 @@ public class ObjectComprehension extends AbstractNode {
         newscope = NodeUtils.evalLets(scope, context, lets);
 
       if (ifExpr == null || NodeUtils.isTrue(ifExpr.apply(newscope, context))) {
-        JsonNode keyNode = key.apply(newscope, context);
-        if (!keyNode.isTextual())
-          throw new JsltException("Object comprehension must have string as key, not " + keyNode, location);
         JsonNode valueNode = value.apply(newscope, context);
-        if (NodeUtils.isValue(valueNode))
+        if (NodeUtils.isValue(valueNode)) {
+          // if there is no value, no need to evaluate the key
+          JsonNode keyNode = key.apply(newscope, context);
+          if (!keyNode.isTextual())
+            throw new JsltException("Object comprehension must have string as key, not " + keyNode, location);
           object.set(keyNode.asText(), valueNode);
+        }
       }
     }
     return object;
