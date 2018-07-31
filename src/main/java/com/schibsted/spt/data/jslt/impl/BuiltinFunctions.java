@@ -821,7 +821,7 @@ public class BuiltinFunctions {
 
       try {
         SimpleDateFormat format = new SimpleDateFormat(formatstr);
-        format.setTimeZone(new SimpleTimeZone(SimpleTimeZone.UTC_TIME, "UTC"));
+        format.setTimeZone(new SimpleTimeZone(0, "UTC"));
         Date time = format.parse(text);
         return NodeUtils.toJson((double) (time.getTime() / 1000.0));
       } catch (IllegalArgumentException e) {
@@ -857,7 +857,7 @@ public class BuiltinFunctions {
 
       String formatstr = NodeUtils.toString(arguments[1], false);
 
-      TimeZone zone = new SimpleTimeZone(SimpleTimeZone.UTC_TIME, "UTC");
+      TimeZone zone = new SimpleTimeZone(0, "UTC");
       if (arguments.length == 3) {
         String zonename = NodeUtils.toString(arguments[2], false);
         if (!zonenames.contains(zonename))
