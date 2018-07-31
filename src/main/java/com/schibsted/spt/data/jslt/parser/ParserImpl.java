@@ -413,7 +413,17 @@ public class ParserImpl {
     ExpressionNode valueExpr = node2expr(ctx, getChild(node, 0));
     LetExpression[] lets = buildLets(ctx, node);
     ExpressionNode loopExpr = node2expr(ctx, getLastChild(node));
-    return new ForExpression(valueExpr, lets, loopExpr, makeLocation(ctx, node));
+
+    ExpressionNode ifExpr = null;
+    if (node.jjtGetNumChildren() > 2 + lets.length) {
+      // there is an if expression, so what we thought was the loopExpr
+      // was actually the ifExpr
+      ifExpr = loopExpr;
+      // now get the correct loopExpr
+      loopExpr = node2expr(ctx, (SimpleNode) getChild(node, node.jjtGetNumChildren() - 2));
+    }
+
+    return new ForExpression(valueExpr, lets, loopExpr, ifExpr, makeLocation(ctx, node));
   }
 
   private static String identOrString(ParseContext ctx, Token token) {
@@ -648,15 +658,20 @@ public class ParserImpl {
   }
 
   private static ObjectComprehension buildObjectComprehension(ParseContext ctx, SimpleNode node) {
-    // children: loop-expr let* key-expr value-expr
+    // children: loop-expr let* key-expr value-expr if-expr?
     ExpressionNode loopExpr = node2expr(ctx, getChild(node, 0));
     LetExpression[] lets = buildLets(ctx, node);
 
     int ix = lets.length + 1;
 
     ExpressionNode keyExpr = node2expr(ctx, getChild(node, ix));
-    ExpressionNode valueExpr = node2expr(ctx, getLastChild(node));
-    return new ObjectComprehension(loopExpr, lets, keyExpr, valueExpr,
+    ExpressionNode valueExpr = node2expr(ctx, getChild(node, ix + 1));
+
+    ExpressionNode ifExpr = null;
+    if (node.jjtGetNumChildren() > lets.length + 3) // there is an if
+      ifExpr = node2expr(ctx, getLastChild(node));
+
+    return new ObjectComprehension(loopExpr, lets, keyExpr, valueExpr, ifExpr,
                                    makeLocation(ctx, node));
   }
 

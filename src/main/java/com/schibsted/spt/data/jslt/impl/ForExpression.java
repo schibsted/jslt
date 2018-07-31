@@ -24,15 +24,18 @@ public class ForExpression extends AbstractNode {
   private ExpressionNode valueExpr;
   private LetExpression[] lets;
   private ExpressionNode loopExpr;
+  private ExpressionNode ifExpr;
 
   public ForExpression(ExpressionNode valueExpr,
                        LetExpression[] lets,
                        ExpressionNode loopExpr,
+                       ExpressionNode ifExpr,
                        Location location) {
     super(location);
     this.valueExpr = valueExpr;
     this.lets = lets;
     this.loopExpr = loopExpr;
+    this.ifExpr = ifExpr;
   }
 
   public JsonNode apply(Scope scope, JsonNode input) {
@@ -55,7 +58,8 @@ public class ForExpression extends AbstractNode {
       if (lets.length > 0)
         newscope = NodeUtils.evalLets(scope, value, lets);
 
-      result.add(loopExpr.apply(newscope, value));
+      if (ifExpr == null || NodeUtils.isTrue(ifExpr.apply(newscope, value)))
+        result.add(loopExpr.apply(newscope, value));
     }
     return result;
   }
@@ -73,6 +77,8 @@ public class ForExpression extends AbstractNode {
 
     valueExpr = valueExpr.optimize();
     loopExpr = loopExpr.optimize();
+    if (ifExpr != null)
+      ifExpr = ifExpr.optimize();
     return this;
   }
 
@@ -84,6 +90,8 @@ public class ForExpression extends AbstractNode {
   }
 
   public String toString() {
-    return "[for (" + valueExpr + ") " + loopExpr + "]";
+    return "[for (" + valueExpr + ") " + loopExpr +
+      ((ifExpr != null) ? (" if(" + ifExpr + ")") : "") +
+      "]";
   }
 }

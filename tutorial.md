@@ -104,39 +104,6 @@ using the built-in type conversion functions. In general, if a
 parameter is `null` (because of missing data in the source JSON) then
 the function will just return `null`.
 
-## For expressions
-
-The `for` expression lets you take an array and transform it into a
-new array, by evaluating an expression on each of the array elements.
-The syntax is
-
-```
-[for (<expr>)
-  <expr>]
-```
-
-The first expression, inside the parenthesis, evaluates to an array,
-which we loop over. For each element in it the second expression is
-evaluated (with `.` now referring to the current array element).
-
-So if we want an array of strings instead, we can say:
-
-```
-{
-  "array" : [for (.foo.bar) string(.)],
-  "size"  : size(.foo.bar)
-}
-```
-
-This will produce:
-
-```
-{
-  "array" : ["1","2","3","4","5"],
-  "size" : 5
-}
-```
-
 ## If expressions
 
 We also have `if` tests, which use the syntax:
@@ -176,6 +143,71 @@ if (.foo.bar != null)
   }
 else
   "No array today"
+```
+
+## For expressions
+
+The `for` expression lets you take an array and transform it into a
+new array, by evaluating an expression on each of the array elements.
+The syntax is
+
+```
+[for (<expr>)
+  <expr>]
+```
+
+The first expression, inside the parenthesis, evaluates to an array,
+which we loop over. For each element in it the second expression is
+evaluated (with `.` now referring to the current array element).
+
+So if we want an array of strings instead, we can say:
+
+```
+{
+  "array" : [for (.foo.bar) string(.)],
+  "size"  : size(.foo.bar)
+}
+```
+
+This will produce:
+
+```
+{
+  "array" : ["1","2","3","4","5"],
+  "size" : 5
+}
+```
+
+You can also bind variables inside the `for`. The example below
+produces the same output as the first example.
+
+```
+{
+  "array" : [for (.foo.bar)
+               let s = string(.)
+               $s],
+  "size"  : size(.foo.bar)
+}
+```
+
+The for expression also supports filtering the array using an `if`
+expression at the end. With that we could write:
+
+```
+let filtered = [for (.foo.bar) string(.) if (. > 3)]
+{
+  "array" : $filtered,
+  "size"  : size($filtered)
+}
+```
+
+Now the output would be:
+
+```
+{
+  "array" : ["4","5"],
+  "size" : 2
+}
 ```
 
 ## Object for expressions
@@ -242,6 +274,23 @@ and get:
 Just as with object constructors, if the expression evaluates to
 `null`, `{}`, or `[]` then the entire key is omitted from the
 constructed object.
+
+You can bind variables inside the object for, and filter with an `if`
+expression, in the same way as in the array for. Thus we could write:
+
+```
+{for (.)
+  "custom_" + .key : .value
+  if (.key != "bar")}
+```
+
+and get:
+
+```
+{
+  "custom_foo" : 1
+}
+```
 
 ## Operators
 

@@ -206,7 +206,9 @@ void Array() :
 {}
 {
   <LBRACKET>
-    (<FOR> <LPAREN> Expr() <RPAREN> (Let())* Expr() |
+    (<FOR> <LPAREN> Expr() <RPAREN> (Let())* Expr()
+     (<IF> <LPAREN> Expr() <RPAREN>)?
+    |
      (Expr() (<COMMA> Expr())*)?)
   <RBRACKET>
 }
@@ -246,6 +248,7 @@ void ObjectComprehension() :
     <FOR> <LPAREN> Expr() <RPAREN>
       (Let())*
       Expr() <COLON> Expr()
+      (<IF> <LPAREN> Expr() <RPAREN>)?
   <RCURLY>
 }
 

@@ -31,17 +31,20 @@ public class ObjectComprehension extends AbstractNode {
   private LetExpression[] lets;
   private ExpressionNode key;
   private ExpressionNode value;
+  private ExpressionNode ifExpr;
 
   public ObjectComprehension(ExpressionNode loop,
                              LetExpression[] lets,
                              ExpressionNode key,
                              ExpressionNode value,
+                             ExpressionNode ifExpr,
                              Location location) {
     super(location);
     this.loop = loop;
     this.lets = lets;
     this.key = key;
     this.value = value;
+    this.ifExpr = ifExpr;
   }
 
   public JsonNode apply(Scope scope, JsonNode input) {
@@ -64,12 +67,14 @@ public class ObjectComprehension extends AbstractNode {
       if (lets.length > 0)
         newscope = NodeUtils.evalLets(scope, context, lets);
 
-      JsonNode keyNode = key.apply(newscope, context);
-      if (!keyNode.isTextual())
-        throw new JsltException("Object comprehension must have string as key, not " + keyNode, location);
-      JsonNode valueNode = value.apply(newscope, context);
-      if (NodeUtils.isValue(valueNode))
-        object.set(keyNode.asText(), valueNode);
+      if (ifExpr == null || NodeUtils.isTrue(ifExpr.apply(newscope, context))) {
+        JsonNode keyNode = key.apply(newscope, context);
+        if (!keyNode.isTextual())
+          throw new JsltException("Object comprehension must have string as key, not " + keyNode, location);
+        JsonNode valueNode = value.apply(newscope, context);
+        if (NodeUtils.isValue(valueNode))
+          object.set(keyNode.asText(), valueNode);
+      }
     }
     return object;
   }
