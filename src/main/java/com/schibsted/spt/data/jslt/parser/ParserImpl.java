@@ -650,10 +650,13 @@ public class ParserImpl {
   private static ObjectComprehension buildObjectComprehension(ParseContext ctx, SimpleNode node) {
     // children: loop-expr let* key-expr value-expr
     ExpressionNode loopExpr = node2expr(ctx, getChild(node, 0));
-    int ix = node.jjtGetNumChildren() - 2;
+    LetExpression[] lets = buildLets(ctx, node);
+
+    int ix = lets.length + 1;
+
     ExpressionNode keyExpr = node2expr(ctx, getChild(node, ix));
     ExpressionNode valueExpr = node2expr(ctx, getLastChild(node));
-    return new ObjectComprehension(loopExpr, keyExpr, valueExpr,
+    return new ObjectComprehension(loopExpr, lets, keyExpr, valueExpr,
                                    makeLocation(ctx, node));
   }
 

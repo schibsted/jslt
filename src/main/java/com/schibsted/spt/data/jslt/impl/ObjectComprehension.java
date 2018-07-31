@@ -33,11 +33,13 @@ public class ObjectComprehension extends AbstractNode {
   private ExpressionNode value;
 
   public ObjectComprehension(ExpressionNode loop,
+                             LetExpression[] lets,
                              ExpressionNode key,
                              ExpressionNode value,
                              Location location) {
     super(location);
     this.loop = loop;
+    this.lets = lets;
     this.key = key;
     this.value = value;
   }
@@ -51,13 +53,21 @@ public class ObjectComprehension extends AbstractNode {
     else if (!sequence.isArray())
       throw new JsltException("Object comprehension can't loop over " + sequence, location);
 
+    // may be the same, if no lets
+    Scope newscope = scope;
+
     ObjectNode object = NodeUtils.mapper.createObjectNode();
     for (int ix = 0; ix < sequence.size(); ix++) {
       JsonNode context = sequence.get(ix);
-      JsonNode keyNode = key.apply(scope, context);
+
+      // must evaluate lets over again for each value because of context
+      if (lets.length > 0)
+        newscope = NodeUtils.evalLets(scope, context, lets);
+
+      JsonNode keyNode = key.apply(newscope, context);
       if (!keyNode.isTextual())
         throw new JsltException("Object comprehension must have string as key, not " + keyNode, location);
-      JsonNode valueNode = value.apply(scope, context);
+      JsonNode valueNode = value.apply(newscope, context);
       if (NodeUtils.isValue(valueNode))
         object.set(keyNode.asText(), valueNode);
     }
