@@ -218,6 +218,11 @@
       "output" : "null"
    },
    {
+      "output" : "[{\"number\":1},{\"number\":2},{\"number\":3},{\"number\":4}]",
+      "input" : "[]",
+      "query" : "[for (split(\"1,2,3,4\", \",\")) {   \"number\" : number(.) }]"
+   },
+   {
       "query" : "lowercase(22)",
       "output" : "\"22\"",
       "input" : "{}"

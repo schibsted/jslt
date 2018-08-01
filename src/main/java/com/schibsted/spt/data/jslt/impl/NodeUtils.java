@@ -15,6 +15,7 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.Iterator;
 import java.util.Collections;
@@ -120,19 +121,22 @@ public class NodeUtils {
         return fallback;
     }
 
-    // let's look at this number
+    // let's look at this number. There are a ton of number formats,
+    // so just let Jackson handle it.
     String number = value.asText();
+    JsonNode numberNode = null;
     try {
-      if (number.indexOf('.') != -1)
-        return new DoubleNode(Double.parseDouble(number));
-      else
-        return new IntNode(Integer.parseInt(number));
-    } catch (NumberFormatException e) {
+        numberNode = mapper.readTree(number);
+    } catch (IOException e) {}
+
+    if (numberNode == null || !numberNode.isNumber()) {
       if (fallback == null)
         throw new JsltException("number(" + number + ") failed: not a number",
                                 loc);
       else
         return fallback;
+    } else {
+        return numberNode;
     }
   }
 
