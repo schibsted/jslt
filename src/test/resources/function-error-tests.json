@@ -53,6 +53,16 @@
     "input": "{}"
   },
   {
+    "input": "\"-NaN\"",
+    "query": "number(.)",
+    "error": "number"
+  },
+  {
+    "input": "\"Infinity\"",
+    "query": "number(.)",
+    "error": "number"
+  },
+  {
     "error": "true",
     "query": "array(true)",
     "input": "{}"

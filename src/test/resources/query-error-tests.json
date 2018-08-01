@@ -68,16 +68,6 @@
       "error" : "number"
    },
    {
-     "input": "\"-NaN\"",
-     "query": "number(.)",
-     "error": "number"
-   },
-   {
-     "input": "\"Infinity\"",
-     "query": "number(.)",
-     "error": "number"
-   },
-   {
       "error" : "string",
       "query" : "{for ({\"foo\":22}) .value : .key}",
       "input" : "{}"
