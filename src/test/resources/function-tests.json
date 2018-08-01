@@ -168,6 +168,16 @@
       "query" : "split(\"abc\", \",\")"
    },
    {
+      "input" : "1514764800",
+      "output" : "\"2018-01-01 00:00:00.000\"",
+      "query" : "format-time(., \"yyyy-MM-dd HH:mm:ss.SSS\")"
+   },
+   {
+      "output" : "1.5147648E9",
+      "input" : "\"2018-01-01 00:00:00.000\"",
+      "query" : "parse-time(., \"yyyy-MM-dd HH:mm:ss.SSS\")"
+   },
+   {
       "input" : "125641293.0",
       "output" : "\"1973-12-25 05:21:33CET\"",
       "query" : "format-time(., \"yyyy-MM-dd HH:mm:ssz\", \"CET\")"
