@@ -29,7 +29,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.FileNotFoundException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.IntNode;
+import com.fasterxml.jackson.databind.node.LongNode;
 import com.fasterxml.jackson.databind.node.DoubleNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.TextNode;
@@ -213,8 +215,14 @@ public class ParserImpl {
       return new LiteralExpression(NullNode.instance, loc);
 
     else if (kind == JsltParserConstants.INTEGER) {
-      IntNode number = new IntNode(Integer.parseInt(token.image));
-      return new LiteralExpression(number, loc);
+      JsonNode numberObj;
+      long number = Long.parseLong(token.image);
+      if (number > Integer.MAX_VALUE || number < Integer.MIN_VALUE)
+        numberObj = new LongNode(number);
+      else
+        numberObj = new IntNode((int) number);
+
+      return new LiteralExpression(numberObj, loc);
 
     } else if (kind == JsltParserConstants.DECIMAL) {
       DoubleNode number = new DoubleNode(Double.parseDouble(token.image));
