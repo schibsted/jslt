@@ -221,3 +221,9 @@ model {
         dependsOn project.tasks.signArchives
     }
 }
+
+jar {
+  manifest {
+    attributes("Automatic-Module-Name": "com.schibsted.spt.data.jstl")
+  }
+}

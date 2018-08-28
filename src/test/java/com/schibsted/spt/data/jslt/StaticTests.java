@@ -117,4 +117,11 @@ public class StaticTests extends TestBase {
     return new String(buf);
   }
 
+  @Test
+  public void testDecenteralizedUUIDFunction() {
+    JsonNode dUUIDNew = execute("{}", "d-uuid:new()");
+
+    assertTrue(dUUIDNew.isTextual());
+  }
+
 }
