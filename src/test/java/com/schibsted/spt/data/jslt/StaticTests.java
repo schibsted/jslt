@@ -18,6 +18,18 @@ import com.fasterxml.jackson.databind.node.TextNode;
 public class StaticTests extends TestBase {
 
   @Test
+  public void testExceptionWithNoLocation() {
+    try {
+      Expression expr = Parser.compileString("contains(2, 2)");
+      JsonNode actual = expr.apply(null);
+    } catch (JsltException e) {
+      assertTrue(e.getSource() == null);
+      assertEquals(-1, e.getLine());
+      assertEquals(-1, e.getColumn());
+    }
+  }
+
+  @Test
   public void testObjectKeyOrder() {
     Expression expr = Parser.compileString("{\"a\":1, \"b\":2}");
     JsonNode actual = expr.apply(null);

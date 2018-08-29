@@ -62,20 +62,29 @@ public class JsltException extends RuntimeException {
    * What file/resource did the error occur in? Can be null.
    */
   public String getSource() {
-    return location.getSource();
+    if (location == null)
+      return null;
+    else
+      return location.getSource();
   }
 
   /**
    * What line did the error occur on? -1 if unknown.
    */
   public int getLine() {
-    return location.getLine();
+    if (location == null)
+      return -1;
+    else
+      return location.getLine();
   }
 
   /**
    * What column did the error occur on? -1 if unknown.
    */
   public int getColumn() {
-    return location.getColumn();
+    if (location == null)
+      return -1;
+    else
+      return location.getColumn();
   }
 }
