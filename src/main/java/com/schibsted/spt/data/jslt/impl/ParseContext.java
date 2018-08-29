@@ -15,14 +15,22 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
+import java.net.URISyntaxException;
+import java.util.ServiceLoader;
+import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import com.schibsted.spt.data.jslt.Function;
 import com.schibsted.spt.data.jslt.JsltException;
 import com.schibsted.spt.data.jslt.ResourceResolver;
+
+import static com.schibsted.spt.data.jslt.impl.JSLTFunctions.iteratorToStream;
 
 /**
  * Class to encapsulate context information like available functions,
@@ -43,6 +51,7 @@ public class ParseContext {
   private Collection<FunctionExpression> funcalls; // delayed function resolution
   private ParseContext parent;
   private ResourceResolver resolver;
+  final BuiltinFunctions builtinFunctions;
 
   public ParseContext(Collection<Function> extensions, String source,
                       ResourceResolver resolver) {
@@ -55,6 +64,33 @@ public class ParseContext {
     this.funcalls = new ArrayList();
     this.modules = new HashMap();
     this.resolver = resolver;
+    this.builtinFunctions = new BuiltinFunctions();
+    init();
+  }
+
+  private void init(){
+    final ServiceLoader<JSLTFunctions> jsltFunctions =
+            ServiceLoader.<JSLTFunctions>load(JSLTFunctions.class);
+
+    if (jsltFunctions != null) {
+        final Map<String, JSLTFunctions> moduleMap = iteratorToStream(jsltFunctions.iterator(), true).parallel()
+                .filter(distinctByKey(function -> getPrefix(function)))
+                .collect(Collectors.toMap(function -> getPrefix(function),function -> function));
+        modules.putAll(moduleMap);
+    }
+  }
+
+  public static <T> Predicate<T> distinctByKey(java.util.function.Function<? super T, ?> keyExtractor) {
+    Set<Object> seen = ConcurrentHashMap.newKeySet();
+    return t -> seen.add(keyExtractor.apply(t));
+  }
+
+  private String getPrefix(JSLTFunctions function) {
+    try {
+      return function.getNamespace().getPrefix();
+    } catch (URISyntaxException use) {
+      throw new RuntimeException(use.getMessage());
+    }
   }
 
   public ParseContext(String source) {
@@ -67,13 +103,14 @@ public class ParseContext {
 
   public Function getFunction(String name) {
     Function func = functions.get(name);
-    if (func == null)
-      func = BuiltinFunctions.functions.get(name);
+    if (func == null) {
+      func = builtinFunctions.getFunction(name);
+    }
     return func;
   }
 
   public Macro getMacro(String name) {
-    return BuiltinFunctions.macros.get(name);
+    return builtinFunctions.macros().get(name);
   }
 
   public String getSource() {

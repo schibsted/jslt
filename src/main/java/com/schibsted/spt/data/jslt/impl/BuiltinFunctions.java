@@ -15,21 +15,11 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.Date;
-import java.util.Arrays;
-import java.util.TreeSet;
-import java.util.HashSet;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.TimeZone;
-import java.util.SimpleTimeZone;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.NullNode;
@@ -41,108 +31,78 @@ import com.fasterxml.jackson.databind.node.LongNode;
 import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.DoubleNode;
 
-import com.schibsted.spt.data.jslt.Function;
-import com.schibsted.spt.data.jslt.JsltException;
+import com.schibsted.spt.data.jslt.*;
 
 /**
  * For now contains all the various function implementations. Should
  * probably be broken up into separate files and use annotations to
  * capture a lot of this information instead.
  */
-public class BuiltinFunctions {
+public class BuiltinFunctions implements JSLTFunctions {
 
   // this will be replaced with a proper Context. need to figure out
   // relationship between compile-time and run-time context first.
-  public static Map<String, Function> functions = new HashMap();
-  static {
-    // GENERAL
-    functions.put("contains", new BuiltinFunctions.Contains());
-    functions.put("size", new BuiltinFunctions.Size());
-    functions.put("error", new BuiltinFunctions.Error());
+  @Override
+  public Map<String, Function> functions() {
+      final  Map<String, Function> functions = new HashMap();
+      // GENERAL
+      functions.put("contains", new BuiltinFunctions.Contains());
+      functions.put("size", new BuiltinFunctions.Size());
+      functions.put("error", new BuiltinFunctions.Error());
 
-    // NUMERIC
-    functions.put("is-number", new BuiltinFunctions.IsNumber());
-    functions.put("number", new BuiltinFunctions.Number());
-    functions.put("round", new BuiltinFunctions.Round());
-    functions.put("floor", new BuiltinFunctions.Floor());
-    functions.put("ceiling", new BuiltinFunctions.Ceiling());
-    functions.put("random", new BuiltinFunctions.Random());
+      // NUMERIC
+      functions.put("is-number", new BuiltinFunctions.IsNumber());
+      functions.put("number", new BuiltinFunctions.Number());
+      functions.put("round", new BuiltinFunctions.Round());
+      functions.put("floor", new BuiltinFunctions.Floor());
+      functions.put("ceiling", new BuiltinFunctions.Ceiling());
+      functions.put("random", new BuiltinFunctions.Random());
 
-    // STRING
-    functions.put("is-string", new BuiltinFunctions.IsString());
-    functions.put("string", new BuiltinFunctions.ToString());
-    functions.put("test", new BuiltinFunctions.Test());
-    functions.put("capture", new BuiltinFunctions.Capture());
-    functions.put("split", new BuiltinFunctions.Split());
-    functions.put("join", new BuiltinFunctions.Join());
-    functions.put("lowercase", new BuiltinFunctions.Lowercase());
-    functions.put("uppercase", new BuiltinFunctions.Uppercase());
-    functions.put("starts-with", new BuiltinFunctions.StartsWith());
-    functions.put("ends-with", new BuiltinFunctions.EndsWith());
-    functions.put("from-json", new BuiltinFunctions.FromJson());
-    functions.put("to-json", new BuiltinFunctions.ToJson());
+      // STRING
+      functions.put("is-string", new BuiltinFunctions.IsString());
+      functions.put("string", new BuiltinFunctions.ToString());
+      functions.put("test", new BuiltinFunctions.Test());
+      functions.put("capture", new BuiltinFunctions.Capture());
+      functions.put("split", new BuiltinFunctions.Split());
+      functions.put("join", new BuiltinFunctions.Join());
+      functions.put("lowercase", new BuiltinFunctions.Lowercase());
+      functions.put("uppercase", new BuiltinFunctions.Uppercase());
+      functions.put("starts-with", new BuiltinFunctions.StartsWith());
+      functions.put("ends-with", new BuiltinFunctions.EndsWith());
+      functions.put("from-json", new BuiltinFunctions.FromJson());
+      functions.put("to-json", new BuiltinFunctions.ToJson());
 
-    // BOOLEAN
-    functions.put("not", new BuiltinFunctions.Not());
-    functions.put("boolean", new BuiltinFunctions.Boolean());
-    functions.put("is-boolean", new BuiltinFunctions.IsBoolean());
+      // BOOLEAN
+      functions.put("not", new BuiltinFunctions.Not());
+      functions.put("boolean", new BuiltinFunctions.Boolean());
+      functions.put("is-boolean", new BuiltinFunctions.IsBoolean());
 
-    // OBJECT
-    functions.put("is-object", new BuiltinFunctions.IsObject());
-    functions.put("get-key", new BuiltinFunctions.GetKey());
+      // OBJECT
+      functions.put("is-object", new BuiltinFunctions.IsObject());
+      functions.put("get-key", new BuiltinFunctions.GetKey());
 
-    // ARRAY
-    functions.put("array", new BuiltinFunctions.Array());
-    functions.put("is-array", new BuiltinFunctions.IsArray());
-    functions.put("flatten", new BuiltinFunctions.Flatten());
+      // ARRAY
+      functions.put("array", new BuiltinFunctions.Array());
+      functions.put("is-array", new BuiltinFunctions.IsArray());
+      functions.put("flatten", new BuiltinFunctions.Flatten());
 
-    // TIME
-    functions.put("now", new BuiltinFunctions.Now());
-    functions.put("parse-time", new BuiltinFunctions.ParseTime());
-    functions.put("format-time", new BuiltinFunctions.FormatTime());
+      // TIME
+      functions.put("now", new BuiltinFunctions.Now());
+      functions.put("parse-time", new BuiltinFunctions.ParseTime());
+      functions.put("format-time", new BuiltinFunctions.FormatTime());
+      return functions;
   }
 
-  public static Map<String, Macro> macros = new HashMap();
-  static {
-    macros.put("fallback", new BuiltinFunctions.Fallback());
+  @Override
+  public Map<String, Macro> macros() {
+      final Map<String, Macro> macros = new HashMap();
+      macros.put("fallback", new BuiltinFunctions.Fallback());
+      return macros;
   }
 
-  private static abstract class AbstractCallable implements Callable {
-    private String name;
-    private int min;
-    private int max;
-
-    public AbstractCallable(String name, int min, int max) {
-      this.name = name;
-      this.min = min;
-      this.max = max;
-    }
-
-    public String getName() {
-      return name;
-    }
-
-    public int getMinArguments() {
-      return min;
-    }
-
-    public int getMaxArguments() {
-      return max;
-    }
-  }
-
-  private static abstract class AbstractFunction extends AbstractCallable implements Function {
-
-    public AbstractFunction(String name, int min, int max) {
-      super(name, min, max);
-    }
-  }
-
-  private static abstract class AbstractMacro extends AbstractCallable implements Macro {
-
-    public AbstractMacro(String name, int min, int max) {
-      super(name, min, max);
-    }
+  @Override
+  public Function getFunction(String name) {
+    return functions().get(name);
   }
 
   // ===== NUMBER
