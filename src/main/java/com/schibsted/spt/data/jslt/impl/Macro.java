@@ -16,6 +16,7 @@
 package com.schibsted.spt.data.jslt.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.schibsted.spt.data.jslt.Callable;
 
 /**
  * Interface implemented by all macros. A macro is like a function,

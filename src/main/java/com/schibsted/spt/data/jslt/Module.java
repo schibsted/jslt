@@ -13,20 +13,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.schibsted.spt.data.jslt.impl;
-
-import com.fasterxml.jackson.databind.JsonNode;
+package com.schibsted.spt.data.jslt;
 
 /**
- * Common interface for macros and functions, in order to reduce code
- * duplication.
+ * Interface to a module, which can come from loading a JSLT or from
+ * injecting collections of functions.
  */
-public interface Callable {
+public interface Module {
 
-  public String getName();
+  /**
+   * Returns the function with the given name. The return value is a
+   * Callable, because the method may also return a macro.
+   */
+  public Callable getCallable(String name);
 
-  public int getMinArguments();
-
-  public int getMaxArguments();
+  // the module may also be callable, but we don't represent that part
+  // of the functionality here
 
 }

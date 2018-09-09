@@ -15,18 +15,22 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
+import java.util.Map;
+import com.schibsted.spt.data.jslt.Module;
+import com.schibsted.spt.data.jslt.Callable;
 import com.schibsted.spt.data.jslt.Function;
 
 /**
- * Interface to a module, which can come from loading a JSTL or
- * (perhaps in the future, from injecting collections of functions
- * etc).
+ * In-memory module.
  */
-public interface Module {
+public class ModuleImpl implements Module {
+  Map<String, Function> functions;
 
-  public Function getFunction(String name);
+  public ModuleImpl(Map<String, Function> functions) {
+    this.functions = functions;
+  }
 
-  // the module may also be callable, but we don't represent that part
-  // of the functionality here
-
+  public Callable getCallable(String name) {
+    return functions.get(name);
+  }
 }

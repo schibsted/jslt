@@ -221,3 +221,9 @@ model {
         dependsOn project.tasks.signArchives
     }
 }
+
+test {
+  testLogging {
+    showStandardStreams = true
+  }
+}

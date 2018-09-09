@@ -1,16 +1,23 @@
 
 package com.schibsted.spt.data.jslt;
 
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Collections;
 import java.io.IOException;
+import java.io.StringReader;
 import org.junit.Test;
 import org.junit.Ignore;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.TextNode;
+
+import com.schibsted.spt.data.jslt.Module;
+import com.schibsted.spt.data.jslt.impl.ModuleImpl;
 
 /**
  * Tests that cannot be expressed in JSON.
@@ -127,6 +134,26 @@ public class StaticTests extends TestBase {
     for (int ix = 0; ix < length; ix++)
       buf[ix++] = (char) ('a' + ((char) (Math.random() * 26)));
     return new String(buf);
+  }
+
+  @Test
+  public void testNamedModule() {
+    Map<String, Function> functions = new HashMap();
+    functions.put("test", new TestFunction());
+    ModuleImpl module = new ModuleImpl(functions);
+
+    Map<String, Module> modules = new HashMap();
+    modules.put("the test module", module);
+
+    StringReader jslt = new StringReader(
+      "import \"the test module\" as t t:test()"
+    );
+    Expression expr = new Parser(jslt)
+      .withNamedModules(modules)
+      .compile();
+
+    JsonNode result = expr.apply(null);
+    assertEquals(new IntNode(42), result);
   }
 
 }

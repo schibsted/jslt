@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import com.schibsted.spt.data.jslt.Module;
+import com.schibsted.spt.data.jslt.Callable;
 import com.schibsted.spt.data.jslt.Function;
 import com.schibsted.spt.data.jslt.JsltException;
 import com.schibsted.spt.data.jslt.ResourceResolver;
@@ -43,9 +45,14 @@ public class ParseContext {
   private Collection<FunctionExpression> funcalls; // delayed function resolution
   private ParseContext parent;
   private ResourceResolver resolver;
+  /**
+   * Named modules listed under their identifiers.
+   */
+  private Map<String, Module> namedModules;
 
   public ParseContext(Collection<Function> extensions, String source,
-                      ResourceResolver resolver) {
+                      ResourceResolver resolver,
+                      Map<String, Module> namedModules) {
     this.extensions = extensions;
     this.functions = new HashMap();
     for (Function func : extensions)
@@ -55,10 +62,12 @@ public class ParseContext {
     this.funcalls = new ArrayList();
     this.modules = new HashMap();
     this.resolver = resolver;
+    this.namedModules = namedModules;
   }
 
   public ParseContext(String source) {
-    this(Collections.EMPTY_SET, source, new ClasspathResourceResolver());
+    this(Collections.EMPTY_SET, source, new ClasspathResourceResolver(),
+         Collections.EMPTY_MAP);
   }
 
   public void setParent(ParseContext parent) {
@@ -112,6 +121,14 @@ public class ParseContext {
     modules.put(prefix, module);
   }
 
+  public Module getNamedModule(String identifier) {
+    return namedModules.get(identifier);
+  }
+
+  public Map<String, Module> getNamedModules() {
+    return namedModules;
+  }
+
   public boolean isAlreadyImported(String module) {
     if (source != null && module.equals(source))
       return true;
@@ -120,12 +137,12 @@ public class ParseContext {
     return false;
   }
 
-  public Function getImportedFunction(String prefix, String name, Location loc) {
+  public Callable getImportedCallable(String prefix, String name, Location loc) {
     Module m = modules.get(prefix);
     if (m == null)
       throw new JsltException("No such module '" + prefix + "'", loc);
 
-    Function f = m.getFunction(name);
+    Callable f = m.getCallable(name);
     if (f == null)
       throw new JsltException("No such function '" + name+ "' in module '" + prefix + "'", loc);
 

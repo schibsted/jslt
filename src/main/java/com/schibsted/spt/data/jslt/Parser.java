@@ -131,13 +131,15 @@ public class Parser {
   private String source;
   private Reader reader;
   private ResourceResolver resolver;
+  private Map<String, Module> modules;
 
   private Parser(String source, Reader reader, Collection<Function> functions,
-                 ResourceResolver resolver) {
+                 ResourceResolver resolver, Map<String, Module> modules) {
     this.functions = functions;
     this.source = source;
     this.reader = reader;
     this.resolver = resolver;
+    this.modules = modules;
   }
 
   /**
@@ -145,7 +147,7 @@ public class Parser {
    */
   public Parser(Reader reader) {
     this("<unknown>", reader, Collections.EMPTY_SET,
-         new ClasspathResourceResolver());
+         new ClasspathResourceResolver(), Collections.EMPTY_MAP);
   }
 
   /**
@@ -153,28 +155,38 @@ public class Parser {
    * used in error messages.
    */
   public Parser withSource(String thisSource) {
-    return new Parser(thisSource, reader, functions, resolver);
+    return new Parser(thisSource, reader, functions, resolver, modules);
   }
 
   /**
    * Create a new Parser with the given extension functions.
    */
   public Parser withFunctions(Collection<Function> theseFunctions) {
-    return new Parser(source, reader, theseFunctions, resolver);
+    return new Parser(source, reader, theseFunctions, resolver, modules);
   }
 
   /**
    * Create a new Parser with the given resource resolver.
    */
   public Parser withResourceResolver(ResourceResolver thisResolver) {
-    return new Parser(source, reader, functions, thisResolver);
+    return new Parser(source, reader, functions, thisResolver, modules);
+  }
+
+  /**
+   * Create a new Parser with the given modules registered. The keys
+   * in the map are the module "names", and importing these names will
+   * bind a prefix to the modules in this map. The names can follow
+   * any syntax.
+   */
+  public Parser withNamedModules(Map<String, Module> thisModules) {
+    return new Parser(source, reader, functions, resolver, thisModules);
   }
 
   /**
    * Compile the JSLT from the defined parameters.
    */
   public Expression compile() {
-    ParseContext ctx = new ParseContext(functions, source, resolver);
+    ParseContext ctx = new ParseContext(functions, source, resolver, modules);
     return ParserImpl.compileExpression(ctx, new JsltParser(reader));
   }
 }

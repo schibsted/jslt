@@ -18,32 +18,14 @@ package com.schibsted.spt.data.jslt;
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**
- * Interface for function implementations.
+ * Common interface for macros and functions.
  */
-public interface Function extends Callable {
+public interface Callable {
 
-  // --- repeated from Callable
-
-  /**
-   * The name of the function.
-   */
   public String getName();
 
-  /**
-   * The minimum number of arguments allowed.
-   */
   public int getMinArguments();
 
-  /**
-   * The maximum number of arguments allowed.
-   */
   public int getMaxArguments();
-
-  // --- own methods
-
-  /**
-   * Perform the function on the given JSON input with the given arguments.
-   */
-  public JsonNode call(JsonNode input, JsonNode[] arguments);
 
 }

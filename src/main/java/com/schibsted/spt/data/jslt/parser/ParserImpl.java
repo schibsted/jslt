@@ -37,6 +37,8 @@ import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
+import com.schibsted.spt.data.jslt.Module;
+import com.schibsted.spt.data.jslt.Callable;
 import com.schibsted.spt.data.jslt.Function;
 import com.schibsted.spt.data.jslt.Expression;
 import com.schibsted.spt.data.jslt.JsltException;
@@ -61,7 +63,7 @@ public class ParserImpl {
                                              ParseContext parent,
                                              String jslt) {
     try (Reader reader = parent.getResolver().resolve(jslt)) {
-      ParseContext ctx = new ParseContext(functions, jslt, parent.getResolver());
+      ParseContext ctx = new ParseContext(functions, jslt, parent.getResolver(), parent.getNamedModules());
       ctx.setParent(parent);
       return compileModule(ctx, new JsltParser(reader));
     } catch (IOException e) {
@@ -320,7 +322,8 @@ public class ParserImpl {
         start = new FunctionExpression(
           token.image, children2Exprs(ctx, fnode), loc
         );
-        ctx.rememberFunctionCall((FunctionExpression) start); // so we can resolve later
+        // remember, so we can resolve later
+        ctx.rememberFunctionCall((FunctionExpression) start);
       }
 
     } else if (kind == JsltParserConstants.PIDENT) {
@@ -333,13 +336,16 @@ public class ParserImpl {
       String name = pident.substring(colon + 1);
 
       // throws exception if something fails
-      Function f = ctx.getImportedFunction(prefix, name, loc);
+      Callable c = ctx.getImportedCallable(prefix, name, loc);
 
-      FunctionExpression fun = new FunctionExpression(
-        pident, children2Exprs(ctx, fnode), loc
-      );
-      fun.resolve(f);
-      start = fun;
+      if (c instanceof Function) {
+        FunctionExpression fun = new FunctionExpression(
+          pident, children2Exprs(ctx, fnode), loc
+        );
+        fun.resolve((Function) c);
+        start = fun;
+      } else
+        start = new MacroExpression((Macro) c, children2Exprs(ctx, fnode), loc);
 
     } else if (kind == JsltParserConstants.DOT) {
       token = token.next;
@@ -518,10 +524,16 @@ public class ParserImpl {
       token = token.next; // prefix
       String prefix = token.image;
 
-      JstlFile module = doImport(ctx, source, node, prefix);
-
-      ctx.registerModule(prefix, module);
-      ctx.addDeclaredFunction(prefix, module);
+      // first check if it's a named module
+      Module module = ctx.getNamedModule(source);
+      if (module != null)
+        ctx.registerModule(prefix, module);
+      else {
+        // it's not, so load
+        JstlFile file = doImport(ctx, source, node, prefix);
+        ctx.registerModule(prefix, file);
+        ctx.addDeclaredFunction(prefix, file);
+      }
     }
   }
 
