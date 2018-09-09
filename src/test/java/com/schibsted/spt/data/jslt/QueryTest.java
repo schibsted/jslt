@@ -66,6 +66,7 @@ public class QueryTest extends TestBase {
     List<Object[]> strings = new ArrayList();
     strings.addAll(loadTests("query-tests.json"));
     strings.addAll(loadTests("function-tests.json"));
+    strings.addAll(loadTests("experimental-tests.json"));
     return strings;
   }
 

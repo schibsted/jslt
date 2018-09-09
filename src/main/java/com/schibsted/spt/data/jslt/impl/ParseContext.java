@@ -63,11 +63,13 @@ public class ParseContext {
     this.modules = new HashMap();
     this.resolver = resolver;
     this.namedModules = namedModules;
+
+    namedModules.put(ExperimentalModule.URI, new ExperimentalModule());
   }
 
   public ParseContext(String source) {
     this(Collections.EMPTY_SET, source, new ClasspathResourceResolver(),
-         Collections.EMPTY_MAP);
+         new HashMap());
   }
 
   public void setParent(ParseContext parent) {

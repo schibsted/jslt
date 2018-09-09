@@ -1,0 +1,41 @@
+{
+  "description" : "Tests for the experimental module.",
+  "tests": [
+    {
+      "input" : "{}",
+      "output" : "{}",
+      "query" : "import \"http://jslt.schibsted.com/2018/experimental\" as exp  exp:group-by(., ., .)"
+    },
+    {
+      "input" : "null",
+      "output" : "null",
+      "query" : "import \"http://jslt.schibsted.com/2018/experimental\" as exp  exp:group-by(., ., .)"
+    },
+    {
+      "input" : "[{\"a\" : 1}]",
+      "output" : "{\"a\" : [1]}",
+      "query" : "import \"http://jslt.schibsted.com/2018/experimental\" as exp  exp:group-by(flatten([for (.) array(.)]), .key, .value)"
+    },
+    {
+      "input" : "[{\"a\" : 1}, {\"a\" : 2}]",
+      "output" : "{\"a\" : [1, 2]}",
+      "query" : "import \"http://jslt.schibsted.com/2018/experimental\" as exp  exp:group-by(flatten([for (.) array(.)]), .key, .value)"
+    },
+    {
+      "input" : "[{\"a\" : 1}, {\"a\" : 2}, {\"b\" : 2}]",
+      "output" : "{\"a\" : [1, 2], \"b\" : [2]}",
+      "query" : "import \"http://jslt.schibsted.com/2018/experimental\" as exp  exp:group-by(flatten([for (.) array(.)]), .key, .value)"
+    },
+    {
+      "input" : "[{\"a\" : 1}, {\"a\" : 2}, {\"b\" : 2}]",
+      "output" : "{\"null\" : [null, null, null]}",
+      "query" : "import \"http://jslt.schibsted.com/2018/experimental\" as exp  exp:group-by(., .key, .value)"
+    },
+    {
+      "input" : "{\"elements\": [{\"e_1\": {\"exposed\": \"v_1\", \"placement\": \"v_2\", \"widget\": \"v_3\"} }, {\"e_2\": {\"exposed\": \"v_3\", \"placement\": \"v_4\", \"widget\": \"v_5\"} }, {\"e_3\": {\"exposed\": \"v_5\", \"placement\": \"v_6\", \"widget\": \"v_7\"}  }]}",
+      "output" : "{\"exposed\" : [\"v_1\", \"v_3\", \"v_5\"], \"placement\" : [\"v_2\", \"v_4\", \"v_6\"], \"widget\" : [\"v_3\", \"v_5\", \"v_7\"]}",
+      "query" : "import \"http://jslt.schibsted.com/2018/experimental\" as exp  exp:group-by(flatten([for (.elements) [for (.) array(.value)] ]), .key, .value)"
+
+}
+  ]
+}

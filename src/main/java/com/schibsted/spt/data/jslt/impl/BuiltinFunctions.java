@@ -108,30 +108,6 @@ public class BuiltinFunctions {
     macros.put("fallback", new BuiltinFunctions.Fallback());
   }
 
-  private static abstract class AbstractCallable implements Callable {
-    private String name;
-    private int min;
-    private int max;
-
-    public AbstractCallable(String name, int min, int max) {
-      this.name = name;
-      this.min = min;
-      this.max = max;
-    }
-
-    public String getName() {
-      return name;
-    }
-
-    public int getMinArguments() {
-      return min;
-    }
-
-    public int getMaxArguments() {
-      return max;
-    }
-  }
-
   private static abstract class AbstractFunction extends AbstractCallable implements Function {
 
     public AbstractFunction(String name, int min, int max) {

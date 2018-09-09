@@ -147,7 +147,7 @@ public class Parser {
    */
   public Parser(Reader reader) {
     this("<unknown>", reader, Collections.EMPTY_SET,
-         new ClasspathResourceResolver(), Collections.EMPTY_MAP);
+         new ClasspathResourceResolver(), new HashMap());
   }
 
   /**
