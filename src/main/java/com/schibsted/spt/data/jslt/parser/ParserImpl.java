@@ -582,9 +582,11 @@ public class ParserImpl {
       LetExpression[] lets = buildLets(ctx, node);
 
       SimpleNode expr = (SimpleNode) getLastChild(node);
-      ctx.addDeclaredFunction(name, new FunctionDeclaration(
+      FunctionDeclaration func = new FunctionDeclaration(
         name, params, lets, node2expr(ctx, expr)
-      ));
+      );
+      func.computeMatchContexts(null);
+      ctx.addDeclaredFunction(name, func);
     }
   }
 

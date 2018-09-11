@@ -25,15 +25,17 @@ import com.schibsted.spt.data.jslt.JsltException;
  * used to detect that the matcher is used in an illegal location.
  */
 public class FailDotExpression extends DotExpression {
+  private String where;
 
-  public FailDotExpression(Location location) {
+  public FailDotExpression(Location location, String where) {
     super(location);
+    this.where = where;
   }
 
   // verify that we've build a correct DotExpression for our object
   // matcher (only used for that)
   public void checkOk(Location matcher) {
     // we're actually being used. this is illegal!
-    throw new JsltException("Object matcher used inside array", matcher);
+    throw new JsltException("Object matcher used inside " + where, matcher);
   }
 }

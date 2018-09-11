@@ -67,4 +67,12 @@ public class FunctionDeclaration implements Function {
 
     body = body.optimize();
   }
+
+  public void computeMatchContexts(DotExpression parent) {
+    // not allowed to use object matcher inside declared functions
+    FailDotExpression fail = new FailDotExpression(null, "function declaration");
+    for (int ix = 0; ix < lets.length; ix++)
+      lets[ix].computeMatchContexts(fail);
+    body.computeMatchContexts(fail);
+  }
 }

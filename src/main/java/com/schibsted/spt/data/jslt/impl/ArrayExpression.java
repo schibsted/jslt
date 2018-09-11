@@ -34,7 +34,7 @@ public class ArrayExpression extends AbstractNode {
   }
 
   public void computeMatchContexts(DotExpression parent) {
-    FailDotExpression fail = new FailDotExpression(location);
+    FailDotExpression fail = new FailDotExpression(location, "array");
     for (int ix = 0; ix < children.length; ix++)
       children[ix].computeMatchContexts(fail);
   }

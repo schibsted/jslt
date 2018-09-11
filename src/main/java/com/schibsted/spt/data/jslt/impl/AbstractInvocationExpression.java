@@ -52,6 +52,11 @@ public abstract class AbstractInvocationExpression extends AbstractNode {
     }
   }
 
+  public void computeMatchContexts(DotExpression parent) {
+    for (int ix = 0; ix < arguments.length; ix++)
+      arguments[ix].computeMatchContexts(parent);
+  }
+
   public ExpressionNode optimize() {
     for (int ix = 0; ix < arguments.length; ix++)
       arguments[ix] = arguments[ix].optimize();

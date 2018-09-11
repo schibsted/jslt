@@ -76,7 +76,12 @@
       "input" : "{}",
       "query" : "232 + [4,5]",
       "error" : "convert"
-   }
+   },
+      {
+        "input" : "{}",
+        "query" : "def func1(o) { * : . } func1(.)",
+        "error" : "matcher"
+      }
 ]
 
 }
