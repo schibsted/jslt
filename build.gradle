@@ -61,7 +61,7 @@ sourceSets {
  }
 
 task jjtree (type: Exec) {
-  commandLine 'java', '-cp', 'javacc.jar', 'jjtree', '-OUTPUT_DIRECTORY=build/javacc/com/schibsted/spt/data/jslt/parser', 'src/main/javacc/jslt.jj'
+  commandLine 'java', '-cp', 'javacc.jar', 'jjtree', '-OUTPUT_DIRECTORY=build/javacc/com/schibsted/spt/data/jslt/parser', 'core/src/main/javacc/jslt.jj'
 }
 
 
