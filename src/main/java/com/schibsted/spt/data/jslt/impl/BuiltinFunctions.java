@@ -771,7 +771,7 @@ public class BuiltinFunctions {
     }
 
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      return NodeUtils.toJson(arguments[0].isInt());
+      return NodeUtils.toJson(arguments[0].isIntegralNumber());
     }
   }
 
@@ -784,7 +784,7 @@ public class BuiltinFunctions {
     }
 
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      return NodeUtils.toJson(arguments[0].isDouble());
+      return NodeUtils.toJson(arguments[0].isFloatingPointNumber());
     }
   }
 

@@ -78,7 +78,7 @@ is-number("1")  => false
 
 ### _is-integer(object) -> boolean_
 
-True iff the argument is a integral number.
+True iff the argument is an integral number.
 
 Examples:
 
