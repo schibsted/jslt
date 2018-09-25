@@ -3,7 +3,7 @@
   "tests": [
     {
       "input" : "{}",
-      "output" : "{}",
+      "output" : "[]",
       "query" : "import \"http://jslt.schibsted.com/2018/experimental\" as exp  exp:group-by(., ., .)"
     },
     {
@@ -13,29 +13,35 @@
     },
     {
       "input" : "[{\"a\" : 1}]",
-      "output" : "{\"a\" : [1]}",
+      "output" : "[{\"key\" : \"a\", \"values\" : [1]}]",
       "query" : "import \"http://jslt.schibsted.com/2018/experimental\" as exp  exp:group-by(flatten([for (.) array(.)]), .key, .value)"
     },
     {
       "input" : "[{\"a\" : 1}, {\"a\" : 2}]",
-      "output" : "{\"a\" : [1, 2]}",
+      "output" : "[{\"key\" : \"a\", \"values\" : [1, 2]}]",
       "query" : "import \"http://jslt.schibsted.com/2018/experimental\" as exp  exp:group-by(flatten([for (.) array(.)]), .key, .value)"
     },
     {
       "input" : "[{\"a\" : 1}, {\"a\" : 2}, {\"b\" : 2}]",
-      "output" : "{\"a\" : [1, 2], \"b\" : [2]}",
+      "output" : "[{\"key\" : \"a\", \"values\" : [1, 2]}, {\"key\" : \"b\", \"values\" : [2]}]",
       "query" : "import \"http://jslt.schibsted.com/2018/experimental\" as exp  exp:group-by(flatten([for (.) array(.)]), .key, .value)"
     },
     {
       "input" : "[{\"a\" : 1}, {\"a\" : 2}, {\"b\" : 2}]",
-      "output" : "{\"null\" : [null, null, null]}",
+      "output" : "[{\"key\" : null, \"values\" : [null, null, null]}]",
       "query" : "import \"http://jslt.schibsted.com/2018/experimental\" as exp  exp:group-by(., .key, .value)"
     },
     {
       "input" : "{\"elements\": [{\"e_1\": {\"exposed\": \"v_1\", \"placement\": \"v_2\", \"widget\": \"v_3\"} }, {\"e_2\": {\"exposed\": \"v_3\", \"placement\": \"v_4\", \"widget\": \"v_5\"} }, {\"e_3\": {\"exposed\": \"v_5\", \"placement\": \"v_6\", \"widget\": \"v_7\"}  }]}",
       "output" : "{\"exposed\" : [\"v_1\", \"v_3\", \"v_5\"], \"placement\" : [\"v_2\", \"v_4\", \"v_6\"], \"widget\" : [\"v_3\", \"v_5\", \"v_7\"]}",
-      "query" : "import \"http://jslt.schibsted.com/2018/experimental\" as exp  exp:group-by(flatten([for (.elements) [for (.) array(.value)] ]), .key, .value)"
-
-}
+      "query" : "import \"http://jslt.schibsted.com/2018/experimental\" as exp  {for (exp:group-by(flatten([for (.elements) [for (.) array(.value)] ]), .key, .value)) .key : .values}",
+      "comment" : "the array output is ordering-sensitive, so we need to map that to an object which doesn't have this problem"
+    },
+    {
+      "input" : "[1]",
+      "output" : "[{\"key\" : 1, \"values\" : [1]}]",
+      "query" : "import \"http://jslt.schibsted.com/2018/experimental\" as exp  exp:group-by(., ., .)",
+      "comment": "testing that the keys don't turn into strings"
+    }
   ]
 }

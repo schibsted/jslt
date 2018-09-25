@@ -68,19 +68,27 @@ public class ExperimentalModule implements Module {
         throw new JsltException("Can't group-by on " + array);
 
       // now start grouping
-      ObjectNode result = NodeUtils.mapper.createObjectNode();
+      Map<JsonNode, ArrayNode> groups = new HashMap();
       for (int ix = 0; ix < array.size(); ix++) {
         JsonNode groupInput = array.get(ix);
         JsonNode key = parameters[1].apply(scope, groupInput);
         JsonNode value = parameters[2].apply(scope, groupInput);
 
-        String keyString = NodeUtils.toString(key, false);
-        ArrayNode values = (ArrayNode) result.get(keyString);
+        ArrayNode values = (ArrayNode) groups.get(key);
         if (values == null) {
           values = NodeUtils.mapper.createArrayNode();
-          result.set(keyString, values);
+          groups.put(key, values);
         }
         values.add(value);
+      }
+
+      // grouping is done, build JSON output
+      ArrayNode result = NodeUtils.mapper.createArrayNode();
+      for (JsonNode key : groups.keySet()) {
+        ObjectNode group = NodeUtils.mapper.createObjectNode();
+        group.set("key", key);
+        group.set("values", groups.get(key));
+        result.add(group);
       }
 
       return result;
