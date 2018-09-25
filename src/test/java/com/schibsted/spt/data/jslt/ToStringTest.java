@@ -53,6 +53,16 @@ public class ToStringTest extends TestBase {
   }
 
   @Test
+  public void testFunctionIsInteger() {
+    verify("is-integer(22)", "is-integer(22)");
+  }
+
+  @Test
+  public void testFunctionIsDecimal() {
+    verify("is-decimal(22.0)", "is-decimal(22.0)");
+  }
+
+  @Test
   public void testFunction2() {
     verify("number(\"22\", null)", "number(\"22\", null)");
   }

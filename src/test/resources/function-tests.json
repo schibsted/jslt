@@ -328,6 +328,51 @@
       "input" : "{}"
    },
    {
+      "query" : "is-number(\"a\")",
+      "output" : "false",
+      "input" : "{}"
+   },
+   {
+      "query" : "is-integer(null)",
+      "output" : "false",
+      "input" : "{}"
+   },
+   {
+      "query" : "is-integer(1)",
+      "output" : "true",
+      "input" : "{}"
+   },
+   {
+      "query" : "is-integer(1.0)",
+      "output" : "false",
+      "input" : "{}"
+   },
+   {
+      "query" : "is-integer(\"1\")",
+      "output" : "false",
+      "input" : "{}"
+   },
+   {
+      "query" : "is-decimal(null)",
+      "output" : "false",
+      "input" : "{}"
+   },
+   {
+      "query" : "is-decimal(1)",
+      "output" : "false",
+      "input" : "{}"
+   },
+   {
+      "query" : "is-decimal(1.0)",
+      "output" : "true",
+      "input" : "{}"
+   },
+   {
+      "query" : "is-decimal(\"1.0\")",
+      "output" : "false",
+      "input" : "{}"
+   },
+   {
       "input" : "\"1973-12-25 04:21:33\"",
       "output" : "125641293",
       "query" : "round(parse-time(., \"yyyy-MM-dd HH:mm:ss\"))"

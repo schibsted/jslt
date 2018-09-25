@@ -76,6 +76,33 @@ is-number(1.0)  => true
 is-number("1")  => false
 ```
 
+### _is-integer(object) -> boolean_
+
+True iff the argument is a integral number.
+
+Examples:
+
+```
+is-integer(null) => false
+is-integer(1)    => true
+is-integer(1.0)  => false
+is-integer("1")  => false
+```
+
+### _is-decimal(object) -> boolean_
+
+True iff the argument is a floating-point number. In this regard
+`1.0` is considered floating-point number and `1` is not.
+
+Examples:
+
+```
+is-decimal(null) => false
+is-decimal(1)    => false
+is-decimal(1.0)  => true
+is-decimal("1.0")  => false
+```
+
 ### _number(object, fallback?) -> integer|float_
 
 Converts the argument into a number, if possible. Decimals and floats
