@@ -11,10 +11,13 @@ import org.junit.Test;
 import org.junit.Ignore;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
+import java.math.BigInteger;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.TextNode;
+import com.fasterxml.jackson.databind.node.FloatNode;
+import com.fasterxml.jackson.databind.node.BigIntegerNode;
 
 import com.schibsted.spt.data.jslt.Module;
 import com.schibsted.spt.data.jslt.impl.ModuleImpl;
@@ -81,6 +84,32 @@ public class StaticTests extends TestBase {
                (now1.asDouble() * 1000) < (now2 + delta));
     assertTrue("now1 (" + now1 + ") >> now2 (" + now2 + ")",
                (now1.asDouble() * 1000) > (now2 - delta));
+  }
+
+  @Test
+  public void testIsDecimalFunction() {
+    // check that is-decimal still works even if input
+    // is a FloatNode and not a DoubleNode
+    Expression expr = Parser.compileString("is-decimal(.)");
+
+    JsonNode context = new FloatNode(1.0f);
+    JsonNode actual = expr.apply(context);
+
+    assertTrue(actual.isBoolean());
+    assertTrue(actual.booleanValue());
+  }
+
+  @Test
+  public void testIsIntegerFunction() {
+    // check that is-integer still works if input
+    // is a BigIntegerNode not just IntNode
+    Expression expr = Parser.compileString("is-integer(.)");
+
+    JsonNode context = new BigIntegerNode(BigInteger.ONE);
+    JsonNode actual = expr.apply(context);
+
+    assertTrue(actual.isBoolean());
+    assertTrue(actual.booleanValue());
   }
 
   @Test @Ignore // this takes a while to run, so we don't usually do it

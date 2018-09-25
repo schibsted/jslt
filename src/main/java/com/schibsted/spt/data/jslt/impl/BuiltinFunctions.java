@@ -63,6 +63,8 @@ public class BuiltinFunctions {
 
     // NUMERIC
     functions.put("is-number", new BuiltinFunctions.IsNumber());
+    functions.put("is-integer", new BuiltinFunctions.IsInteger());
+    functions.put("is-decimal", new BuiltinFunctions.IsDecimal());
     functions.put("number", new BuiltinFunctions.Number());
     functions.put("round", new BuiltinFunctions.Round());
     functions.put("floor", new BuiltinFunctions.Floor());
@@ -757,6 +759,32 @@ public class BuiltinFunctions {
 
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
       return NodeUtils.toJson(arguments[0].isNumber());
+    }
+  }
+
+  // ===== IS-INTEGER
+
+  public static class IsInteger extends AbstractFunction {
+
+    public IsInteger() {
+      super("is-integer", 1, 1);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      return NodeUtils.toJson(arguments[0].isIntegralNumber());
+    }
+  }
+
+  // ===== IS-DECIMAL
+
+  public static class IsDecimal extends AbstractFunction {
+
+    public IsDecimal() {
+      super("is-decimal", 1, 1);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      return NodeUtils.toJson(arguments[0].isFloatingPointNumber());
     }
   }
 
