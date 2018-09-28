@@ -1,0 +1,3 @@
+rootProject.name = 'core'
+include 'core'
+include 'extras'
