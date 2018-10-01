@@ -543,6 +543,18 @@ all([true, true, false])        => false
 all(null)                       => false
 ```
 
+### _any(array) -> boolean_
+
+True iff any elements of `array` evaluates to `true`.
+
+Examples:
+
+```
+any([false, false, false])      => false
+any([false, false, true])       => false
+any(null)                       => false
+```
+
 <!-- TIME ===================================================================-->
 
 ## Time functions
