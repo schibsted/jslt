@@ -102,6 +102,7 @@ public class BuiltinFunctions {
     functions.put("array", new BuiltinFunctions.Array());
     functions.put("is-array", new BuiltinFunctions.IsArray());
     functions.put("flatten", new BuiltinFunctions.Flatten());
+    functions.put("all", new BuiltinFunctions.All());
 
     // TIME
     functions.put("now", new BuiltinFunctions.Now());
@@ -609,6 +610,30 @@ public class BuiltinFunctions {
     }
   }
 
+  // ===== ALL
+
+  public static class All extends AbstractFunction {
+
+    public All() {
+      super("all", 1, 1);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      JsonNode value = arguments[0];
+      if (value.isNull())
+        return BooleanNode.FALSE;
+      else if (!value.isArray())
+        throw new JsltException("all() cannot operate on " + value);
+
+
+      for (int ix = 0; ix < value.size(); ix++) {
+        JsonNode node = value.get(ix);
+        if (!NodeUtils.isTrue(node)) return BooleanNode.FALSE;
+      }
+      return BooleanNode.TRUE;
+    }
+
+  }
   // ===== STARTS-WITH
 
   public static class StartsWith extends AbstractFunction {

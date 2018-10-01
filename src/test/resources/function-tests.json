@@ -821,6 +821,21 @@
       "query" : "sum([17])",
       "input" : "{}",
       "output" : "17"
+   },
+   {
+      "query" : "all([true, true])",
+      "input" : "{}",
+      "output" : "true"
+   },
+   {
+      "query" : "all([true, false])",
+      "input" : "{}",
+      "output" : "false"
+   },
+   {
+      "query" : "all(null)",
+      "input" : "{}",
+      "output" : "false"
    }
 ]
 }
