@@ -531,6 +531,18 @@ flatten([1, [2, [3, [4, []]]]]) => [1,2,3,4]
 flatten(null)                   => null
 ```
 
+### _all(array) -> boolean_
+
+True iff all elements of `array` evaluates to `true`
+
+Examples:
+
+```
+all([true, true, true])         => true
+all([true, true, false])        => false
+all(null)                       => false
+```
+
 <!-- TIME ===================================================================-->
 
 ## Time functions

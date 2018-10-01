@@ -55,7 +55,8 @@ public class QueryTest extends TestBase {
 
       JsonNode expected = mapper.readTree(output);
 
-      assertEquals("actual class " + actual.getClass() + ", expected class " + expected.getClass(), expected, actual);
+      assertEquals("actual class " + actual.getClass() + ", expected class " + expected.getClass() +
+          " in  query " + this.query, expected, actual);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

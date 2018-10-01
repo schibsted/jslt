@@ -776,6 +776,21 @@
       "query" : "flatten(null)",
       "input" : "{}",
       "output" : "null"
+   },
+   {
+      "query" : "all([true, true])",
+      "input" : "{}",
+      "output" : "true"
+   },
+   {
+      "query" : "all([true, false])",
+      "input" : "{}",
+      "output" : "false"
+   },
+   {
+      "query" : "all(null)",
+      "input" : "{}",
+      "output" : "false"
    }
 ]
 }

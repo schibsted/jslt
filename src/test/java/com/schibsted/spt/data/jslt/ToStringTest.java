@@ -63,6 +63,11 @@ public class ToStringTest extends TestBase {
   }
 
   @Test
+  public void testFunctionAll() {
+    verify("all([true, false])", "all([true,false])");
+  }
+
+  @Test
   public void testFunction2() {
     verify("number(\"22\", null)", "number(\"22\", null)");
   }
