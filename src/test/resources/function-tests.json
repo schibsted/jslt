@@ -836,6 +836,21 @@
       "query" : "all(null)",
       "input" : "{}",
       "output" : "false"
+   },
+   {
+      "query" : "any([false, false])",
+      "input" : "{}",
+      "output" : "false"
+   },
+   {
+      "query" : "any([false, true])",
+      "input" : "{}",
+      "output" : "true"
+   },
+   {
+      "query" : "any(null)",
+      "input" : "{}",
+      "output" : "false"
    }
 ]
 }

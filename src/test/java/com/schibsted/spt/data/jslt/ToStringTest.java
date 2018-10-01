@@ -63,8 +63,13 @@ public class ToStringTest extends TestBase {
   }
 
   @Test
-  public void testFunctionAll() {
+  public void testFunctionAny() {
     verify("all([true, false])", "all([true,false])");
+  }
+
+  @Test
+  public void testFunctionAll() {
+    verify("any([true, false])", "any([true,false])");
   }
 
   @Test
