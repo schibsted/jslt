@@ -58,6 +58,16 @@ if (not(is-array(.things)))
   error("'things' is not an array")
 ```
 
+### _fallback(arg1,arg2,...)_
+
+Returns the first argument that evaluates to `true`.  
+
+Examples:
+
+```
+fallback(.not_existing_key, .another_not_existing, 1)  => 1
+fallback(null, [], {}, "", false, 0, "value") => "value"
+```
 
 <!-- NUMERIC ===============================================================-->
 
