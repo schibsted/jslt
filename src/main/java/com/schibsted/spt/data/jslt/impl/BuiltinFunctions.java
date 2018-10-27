@@ -70,6 +70,7 @@ public class BuiltinFunctions {
     functions.put("floor", new BuiltinFunctions.Floor());
     functions.put("ceiling", new BuiltinFunctions.Ceiling());
     functions.put("random", new BuiltinFunctions.Random());
+    functions.put("randint", new BuiltinFunctions.RandInt());
 
     // STRING
     functions.put("is-string", new BuiltinFunctions.IsString());
@@ -208,6 +209,26 @@ public class BuiltinFunctions {
 
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
       return new DoubleNode(random.nextDouble());
+    }
+  }
+
+  // ===== RANDINT
+
+  public static class RandInt extends AbstractFunction {
+    private static java.util.Random random = new java.util.Random();
+
+    public RandInt() { super("randint", 1, 1); }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      if (!arguments[0].isInt())
+        throw new JsltException("randint() expects a positive integer as argument");
+
+      Integer bound = arguments[0].asInt();
+
+      if (bound <= 0)
+        throw new JsltException("randint() expects a positive integer as argument");
+
+      return new IntNode(random.nextInt(bound));
     }
   }
 

@@ -188,6 +188,16 @@ Examples:
 random() => 0.24712712424
 ```
 
+### _randint(bound) -> integer_
+
+Returns a random integer between 0 and _bound-1_, where _bound_ is a positive integer.
+
+Examples:
+
+```
+randint(10) => 7
+```
+
 <!-- STRING =================================================================-->
 
 ## String functions

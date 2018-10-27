@@ -68,6 +68,24 @@ public class StaticTests extends TestBase {
   }
 
   @Test
+  public void testRandIntFunction() {
+    try {
+      JsonNode context = mapper.readTree("{}");
+
+      Expression expr = Parser.compileString("randint(10)");
+
+      for (int ix = 0; ix < 10; ix++) {
+        JsonNode actual = expr.apply(context);
+        assertTrue(actual.isNumber());
+        double value = actual.intValue();
+        assertTrue(value >=0 && value < 10);
+      }
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @Test
   public void testJavaExtensionFunction() {
     check("{}", "test()", "42", Collections.EMPTY_MAP,
           Collections.singleton(new TestFunction()));
