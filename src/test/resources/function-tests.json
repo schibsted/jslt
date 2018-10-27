@@ -623,6 +623,11 @@
       "query" : "uppercase(\"foo\")"
    },
    {
+      "input" : "{}",
+      "output" : "101574",
+      "query" : "hash-code(\"foo\")"
+   },
+   {
       "output" : "false",
       "input" : "{}",
       "query" : "boolean(\"\")"

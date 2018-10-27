@@ -316,6 +316,19 @@ uppercase("abcæøå") => "ABCÆØÅ"
 uppercase(null)     => null
 ```
 
+### hash-code(string) -> integer_
+
+Converts the input string into a hash code. The hash code is computed
+as:
+     * s[0]*31^(n-1) + s[1]*31^(n-2) + ... + s[n-1] *
+
+Examples:
+
+```
+hash-code("foo") => 101574
+hash-code(null)  => null
+```
+
 ### _starts-with(tested, prefix) -> boolean_
 
 True iff the `tested` string starts with `prefix`.

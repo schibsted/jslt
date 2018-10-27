@@ -80,6 +80,7 @@ public class BuiltinFunctions {
     functions.put("join", new BuiltinFunctions.Join());
     functions.put("lowercase", new BuiltinFunctions.Lowercase());
     functions.put("uppercase", new BuiltinFunctions.Uppercase());
+    functions.put("hash-code", new BuiltinFunctions.HashCode());
     functions.put("starts-with", new BuiltinFunctions.StartsWith());
     functions.put("ends-with", new BuiltinFunctions.EndsWith());
     functions.put("from-json", new BuiltinFunctions.FromJson());
@@ -373,6 +374,24 @@ public class BuiltinFunctions {
 
       String string = NodeUtils.toString(arguments[0], false);
       return new TextNode(string.toUpperCase());
+    }
+  }
+
+  // ===== HASH-CODE
+
+  public static class HashCode extends AbstractFunction {
+
+    public HashCode() {
+      super("hash-code", 1, 1);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      // if input string is missing then we're doing nothing
+      if (arguments[0].isNull())
+        return arguments[0]; // null
+
+      String string = NodeUtils.toString(arguments[0], false);
+      return new IntNode(string.hashCode());
     }
   }
 
