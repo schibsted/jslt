@@ -316,11 +316,11 @@ uppercase("abcæøå") => "ABCÆØÅ"
 uppercase(null)     => null
 ```
 
-### hash-code(string) -> integer_
+### _hash-code(string) -> integer_
 
 Converts the input string into a hash code. The hash code is computed
 as:
-     * s[0]*31^(n-1) + s[1]*31^(n-2) + ... + s[n-1] *
+_s[0]*31^(n-1) + s[1]*31^(n-2) + ... + s[n-1]_
 
 Examples:
 
