@@ -316,17 +316,15 @@ uppercase("abcæøå") => "ABCÆØÅ"
 uppercase(null)     => null
 ```
 
-### _hash-code(string) -> integer_
+### _sha256(string) -> string_
 
-Converts the input string into a hash code. The hash code is computed
-as:
-_s[0]*31^(n-1) + s[1]*31^(n-2) + ... + s[n-1]_
+Generates the SHA256 hash of the input string.
 
 Examples:
 
 ```
-hash-code("foo") => 101574
-hash-code(null)  => null
+sha256("foo") => "2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae"
+sha256(null)  => null
 ```
 
 ### _starts-with(tested, prefix) -> boolean_

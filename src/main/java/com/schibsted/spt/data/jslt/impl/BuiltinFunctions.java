@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.TreeSet;
 import java.util.HashSet;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.TimeZone;
 import java.util.SimpleTimeZone;
 import java.util.regex.Pattern;
@@ -30,6 +29,10 @@ import java.util.regex.Matcher;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+import javax.xml.bind.DatatypeConverter;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.NullNode;
@@ -41,7 +44,6 @@ import com.fasterxml.jackson.databind.node.LongNode;
 import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.DoubleNode;
 
-import com.schibsted.spt.data.jslt.Callable;
 import com.schibsted.spt.data.jslt.Function;
 import com.schibsted.spt.data.jslt.JsltException;
 
@@ -80,7 +82,7 @@ public class BuiltinFunctions {
     functions.put("join", new BuiltinFunctions.Join());
     functions.put("lowercase", new BuiltinFunctions.Lowercase());
     functions.put("uppercase", new BuiltinFunctions.Uppercase());
-    functions.put("hash-code", new BuiltinFunctions.HashCode());
+    functions.put("sha256", new BuiltinFunctions.Sha256());
     functions.put("starts-with", new BuiltinFunctions.StartsWith());
     functions.put("ends-with", new BuiltinFunctions.EndsWith());
     functions.put("from-json", new BuiltinFunctions.FromJson());
@@ -377,12 +379,13 @@ public class BuiltinFunctions {
     }
   }
 
-  // ===== HASH-CODE
 
-  public static class HashCode extends AbstractFunction {
+  // ===== SHA256
 
-    public HashCode() {
-      super("hash-code", 1, 1);
+  public static class Sha256 extends AbstractFunction {
+
+    public Sha256() {
+      super("sha256", 1, 1);
     }
 
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
@@ -390,8 +393,17 @@ public class BuiltinFunctions {
       if (arguments[0].isNull())
         return arguments[0]; // null
 
-      String string = NodeUtils.toString(arguments[0], false);
-      return new IntNode(string.hashCode());
+      String message = NodeUtils.toString(arguments[0], false);
+      MessageDigest messageDigest;
+      try {
+        messageDigest = MessageDigest.getInstance("SHA-256");
+      } catch (NoSuchAlgorithmException e) {
+        throw new InternalError(e);
+      }
+      byte[] bytes = messageDigest.digest(message.getBytes(UTF_8));
+      String string = DatatypeConverter.printHexBinary(bytes).toLowerCase();
+
+      return new TextNode(string);
     }
   }
 
