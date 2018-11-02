@@ -623,6 +623,21 @@
       "query" : "uppercase(\"foo\")"
    },
    {
+      "input" : "{}",
+      "output" : "\"2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae\"",
+      "query" : "sha256-hex(\"foo\")"
+   },
+   {
+      "input" : "{}",
+      "output" : "true",
+      "query" : "sha256-hex(\"42\") == sha256-hex(42)"
+   },
+   {
+      "input" : "{}",
+      "output" : "null",
+      "query" : "sha256-hex(null)"
+   },
+   {
       "output" : "false",
       "input" : "{}",
       "query" : "boolean(\"\")"
