@@ -58,9 +58,9 @@ if (not(is-array(.things)))
   error("'things' is not an array")
 ```
 
-### _fallback(arg1,arg2,...)_
+### _fallback(arg1, arg2, ...)_
 
-Returns the first argument that evaluates to `true`.  
+Returns the first argument that evaluates to `true`.
 
 Examples:
 
