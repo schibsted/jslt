@@ -316,7 +316,7 @@ uppercase("abcæøå") => "ABCÆØÅ"
 uppercase(null)     => null
 ```
 
-### _sha256(string) -> string_
+### _sha256-hex(string) -> string_
 
 Generates the SHA256 hash of the input string.
 

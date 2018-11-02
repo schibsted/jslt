@@ -82,7 +82,7 @@ public class BuiltinFunctions {
     functions.put("join", new BuiltinFunctions.Join());
     functions.put("lowercase", new BuiltinFunctions.Lowercase());
     functions.put("uppercase", new BuiltinFunctions.Uppercase());
-    functions.put("sha256", new BuiltinFunctions.Sha256());
+    functions.put("sha256-hex", new BuiltinFunctions.Sha256());
     functions.put("starts-with", new BuiltinFunctions.StartsWith());
     functions.put("ends-with", new BuiltinFunctions.EndsWith());
     functions.put("from-json", new BuiltinFunctions.FromJson());
@@ -383,9 +383,15 @@ public class BuiltinFunctions {
   // ===== SHA256
 
   public static class Sha256 extends AbstractFunction {
+    final MessageDigest messageDigest;
 
     public Sha256() {
-      super("sha256", 1, 1);
+      super("sha256-hex", 1, 1);
+      try {
+        messageDigest = MessageDigest.getInstance("SHA-256");
+      } catch (NoSuchAlgorithmException e) {
+        throw new JsltException("sha256-hex: could not find sha256 algorithm " + e);
+      }
     }
 
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
@@ -394,13 +400,8 @@ public class BuiltinFunctions {
         return arguments[0]; // null
 
       String message = NodeUtils.toString(arguments[0], false);
-      MessageDigest messageDigest;
-      try {
-        messageDigest = MessageDigest.getInstance("SHA-256");
-      } catch (NoSuchAlgorithmException e) {
-        throw new InternalError(e);
-      }
-      byte[] bytes = messageDigest.digest(message.getBytes(UTF_8));
+
+      byte[] bytes = this.messageDigest.digest(message.getBytes(UTF_8));
       String string = DatatypeConverter.printHexBinary(bytes).toLowerCase();
 
       return new TextNode(string);
