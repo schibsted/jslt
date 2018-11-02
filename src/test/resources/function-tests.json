@@ -628,6 +628,16 @@
       "query" : "sha256-hex(\"foo\")"
    },
    {
+      "input" : "{}",
+      "output" : "true",
+      "query" : "sha256-hex(\"42\") == sha256-hex(42)"
+   },
+   {
+      "input" : "{}",
+      "output" : "null",
+      "query" : "sha256-hex(null)"
+   },
+   {
       "output" : "false",
       "input" : "{}",
       "query" : "boolean(\"\")"
