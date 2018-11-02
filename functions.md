@@ -318,13 +318,15 @@ uppercase(null)     => null
 
 ### _sha256-hex(string) -> string_
 
-Generates the SHA256 hash of the input string.
+Generates a string with the hexadecimal representation of the SHA256 hash of the input string.
 
 Examples:
 
 ```
-sha256("foo") => "2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae"
-sha256(null)  => null
+sha256-hex("foo") => "2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae"
+sha256-hex("42")  => "73475cb40a568e8da8a045ced110137e159f890ac4da883b6b17dc651b3a8049"
+sha256-hex(42)    => "73475cb40a568e8da8a045ced110137e159f890ac4da883b6b17dc651b3a8049"
+sha256-hex(null)  => null
 ```
 
 ### _starts-with(tested, prefix) -> boolean_
