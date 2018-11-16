@@ -258,6 +258,11 @@
       "output" : "[1,2,3]"
    },
    {
+      "query" : "number({\"hurble\":[1,2,3]}, null)",
+      "input" : "{}",
+      "output" : "null"
+   },
+   {
       "query" : " get-key(., \"bar\", 0) ",
       "output" : " 0 ",
       "input" : " { \"foo\" : 24 } "

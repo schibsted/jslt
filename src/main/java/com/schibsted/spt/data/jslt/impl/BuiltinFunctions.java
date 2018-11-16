@@ -139,7 +139,7 @@ public class BuiltinFunctions {
       if (arguments.length == 1)
         return NodeUtils.number(arguments[0], true, null);
       else
-        return NodeUtils.number(arguments[0], true, null, arguments[1]);
+        return NodeUtils.number(arguments[0], false, null, arguments[1]);
     }
   }
 
