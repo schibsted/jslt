@@ -110,9 +110,14 @@ public class NodeUtils {
   public static JsonNode number(JsonNode value, boolean strict, Location loc,
                                 JsonNode fallback) {
     // check what type this is
-    if (value.isNumber() || value.isNull())
+    if (value.isNumber())
       return value;
-    else if (!value.isTextual()) {
+    else if (value.isNull()) {
+      if (fallback == null)
+        return value;
+      else
+        return fallback;
+    } else if (!value.isTextual()) {
       if (strict)
         throw new JsltException("Can't convert " + value + " to number", loc);
       else if (fallback == null)

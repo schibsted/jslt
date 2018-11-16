@@ -263,6 +263,11 @@
       "output" : "null"
    },
    {
+      "query" : "number(null, 243)",
+      "input" : "{}",
+      "output" : "243"
+   },
+   {
       "query" : " get-key(., \"bar\", 0) ",
       "output" : " 0 ",
       "input" : " { \"foo\" : 24 } "
