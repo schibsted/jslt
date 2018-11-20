@@ -801,6 +801,26 @@
       "query" : "flatten(null)",
       "input" : "{}",
       "output" : "null"
+   },
+   {
+      "query" : "sum([1,2,3,4,5])",
+      "input" : "{}",
+      "output" : "15"
+   },
+   {
+      "query" : "sum(null)",
+      "input" : "{}",
+      "output" : "null"
+   },
+   {
+      "query" : "sum([])",
+      "input" : "{}",
+      "output" : "0"
+   },
+   {
+      "query" : "sum([17])",
+      "input" : "{}",
+      "output" : "17"
    }
 ]
 }

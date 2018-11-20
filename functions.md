@@ -188,6 +188,21 @@ Examples:
 random() => 0.24712712424
 ```
 
+### _sum(array) -> number_
+
+Returns the sum of all the numbers in the array. The parameter must be
+an array, and all values in it must be numbers.
+
+Examples:
+
+```
+sum([1,2,3])    => 6
+sum([1])        => 1
+sum([1.0, 2.0]) => 3.0
+sum([])         => 0
+sum(null)       => null
+```
+
 <!-- STRING =================================================================-->
 
 ## String functions

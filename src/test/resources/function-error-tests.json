@@ -121,6 +121,16 @@
     "error": "number",
     "query": "ceiling([1,2,3,4])",
     "input": "{}"
+  },
+  {
+    "error": "number",
+    "query": "sum([1,2,\"3\"])",
+    "input": "{}"
+  },
+  {
+    "error": "array",
+    "query": "sum(23232)",
+    "input": "{}"
   }
 ]
 }

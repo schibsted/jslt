@@ -72,6 +72,7 @@ public class BuiltinFunctions {
     functions.put("floor", new BuiltinFunctions.Floor());
     functions.put("ceiling", new BuiltinFunctions.Ceiling());
     functions.put("random", new BuiltinFunctions.Random());
+    functions.put("sum", new BuiltinFunctions.Sum());
 
     // STRING
     functions.put("is-string", new BuiltinFunctions.IsString());
@@ -211,6 +212,38 @@ public class BuiltinFunctions {
 
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
       return new DoubleNode(random.nextDouble());
+    }
+  }
+
+  // ===== SUM
+
+  public static class Sum extends AbstractFunction {
+
+    public Sum() {
+      super("sum", 1, 1);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      JsonNode array = arguments[0];
+      if (array.isNull())
+        return NullNode.instance;
+      else if (!array.isArray())
+        throw new JsltException("sum(): argument must be array, was " + array);
+
+      double sum = 0.0;
+      boolean integral = true;
+      for (int ix = 0; ix < array.size(); ix++) {
+        JsonNode value = array.get(ix);
+        if (!value.isNumber())
+          throw new JsltException("sum(): array must contain numbers, found " + value);
+        integral &= value.isIntegralNumber();
+
+        sum += value.doubleValue();
+      }
+      if (integral)
+        return new LongNode((long) sum);
+      else
+        return new DoubleNode(sum);
     }
   }
 
