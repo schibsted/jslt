@@ -701,6 +701,21 @@
         "input" : "{}",
         "query" : "{for ([4,5,6]) let key = string(.) $key : .}",
         "output" : "{\"4\" : 4, \"5\" : 5, \"6\" : 6}"
+      },
+      {
+        "input" : "{\"foo\" : \"bar\"}",
+        "query" : "{ \"a\": \"b\" } + { \"type\" : \"Anonymized-View\", * : .}",
+        "output" : "{ \"a\": \"b\", \"type\" : \"Anonymized-View\", \"foo\" : \"bar\"}"
+      },
+      {
+        "input" : "{\"foo\" : {\"bar\" : \"baz\"}}",
+        "query" : "{ \"foo\" : { \"a\": \"b\" } + { \"type\" : \"Anonymized-View\", * : . }}",
+        "output" : "{ \"foo\" : { \"a\": \"b\", \"type\" : \"Anonymized-View\", \"bar\" : \"baz\" }}"
+      },
+      {
+        "input" : "{\"foo\" : \"bar\"}",
+        "query" : "let v = { \"type\" : \"Anonymized-View\", * : .} $v",
+        "output" : "{\"type\" : \"Anonymized-View\", \"foo\" : \"bar\"}"
       }
     ]
 }

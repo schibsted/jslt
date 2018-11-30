@@ -39,8 +39,11 @@ public class ExpressionImpl implements Expression {
     this.actual = actual;
 
     // traverse tree and set up context queries
+    DotExpression root = new DotExpression(null);
     if (actual != null)
-      actual.computeMatchContexts(new DotExpression(null));
+      actual.computeMatchContexts(root);
+    for (int ix = 0; ix < lets.length; ix++)
+      lets[ix].computeMatchContexts(root);
   }
 
   public Function getFunction(String name) {

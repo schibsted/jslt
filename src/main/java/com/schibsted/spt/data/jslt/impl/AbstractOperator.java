@@ -51,6 +51,12 @@ public abstract class AbstractOperator extends AbstractNode {
     return this;
   }
 
+  public void computeMatchContexts(DotExpression parent) {
+    // operators are transparent to the object matcher
+    left.computeMatchContexts(parent);
+    right.computeMatchContexts(parent);
+  }
+
   public abstract JsonNode perform(JsonNode v1, JsonNode v2);
 
   public String toString() {
