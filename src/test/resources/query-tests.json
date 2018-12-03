@@ -648,14 +648,44 @@
       "input" : "{}"
    },
    {
+      "output" : "11.5",
+      "query" : "5 + 2.5 + 4",
+      "input" : "{}"
+   },
+   {
+      "output" : "16.0",
+      "query" : "5 + 2.5 + 4 + 3 + 1.5",
+      "input" : "{}"
+   },
+   {
+      "output" : "false",
+      "query" : "5 + 2 == 2 - 5",
+      "input" : "{}"
+   },
+   {
       "input" : "{}",
       "query" : "22 - 18",
       "output" : "4"
    },
    {
+      "input" : "{}",
+      "query" : "22 - 18 - 1",
+      "output" : "3"
+   },
+   {
       "output" : "4",
       "input" : "{}",
       "query" : "16 / 4"
+   },
+   {
+      "output" : "2",
+      "input" : "{}",
+      "query" : "16 / 4 / 2"
+   },
+   {
+       "output" : "[\"h11\"]",
+       "input" : "{}",
+       "query" : "let x = 1 [\"h\" + $x + 1]"
    },
    {
       "input" : "{}",

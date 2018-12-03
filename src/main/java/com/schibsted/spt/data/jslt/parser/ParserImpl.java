@@ -159,42 +159,51 @@ public class ParserImpl {
     if (node.id != JsltParserTreeConstants.JJTADDITIVEEXPR)
       throw new JsltException("INTERNAL ERROR: Wrong type of node: " + node);
 
-    ExpressionNode first = node2mulexpr(ctx, getChild(node, 0));
-    if (node.jjtGetNumChildren() == 1) // it's just the base
-      return first;
+    ExpressionNode root = node2mulexpr(ctx, getChild(node, 0));
 
-    ExpressionNode second = node2addexpr(ctx, getChild(node, 2));
+    int ix = 0;
+    while (node.jjtGetNumChildren() > ix * 2 + 1) {
+      ExpressionNode next = node2mulexpr(ctx, getChild(node, 2 + ix * 2));
 
-    // get the operator
-    Location loc = makeLocation(ctx, node);
-    Token comp = getChild(node, 1).jjtGetFirstToken();
-    if (comp.kind == JsltParserConstants.PLUS)
-      return new PlusOperator(first, second, loc);
-    else if (comp.kind == JsltParserConstants.MINUS)
-      return new MinusOperator(first, second, loc);
-    else
-      throw new JsltException("INTERNAL ERROR: What kind of operator is this?");
+      // get the operator
+      Location loc = makeLocation(ctx, node);
+      Token comp = getChild(node, 1 + ix * 2).jjtGetFirstToken();
+      if (comp.kind == JsltParserConstants.PLUS)
+        root = new PlusOperator(root, next, loc);
+      else if (comp.kind == JsltParserConstants.MINUS)
+        root = new MinusOperator(root, next, loc);
+      else
+        throw new JsltException("INTERNAL ERROR: What kind of operator is this?");
+
+      ix += 1;
+    }
+
+    return root;
   }
 
   private static ExpressionNode node2mulexpr(ParseContext ctx, SimpleNode node) {
     if (node.id != JsltParserTreeConstants.JJTMULTIPLICATIVEEXPR)
       throw new JsltException("INTERNAL ERROR: Wrong type of node: " + node);
 
-    ExpressionNode first = node2baseExpr(ctx, getChild(node, 0));
-    if (node.jjtGetNumChildren() == 1) // it's just the base
-      return first;
+    ExpressionNode root = node2baseExpr(ctx, getChild(node, 0));
 
-    ExpressionNode second = node2mulexpr(ctx, getChild(node, 2));
+    int ix = 0;
+    while (node.jjtGetNumChildren() > ix * 2 + 1) {
+      ExpressionNode next = node2baseExpr(ctx, getChild(node, 2 + ix * 2));
 
-    // get the operator
-    Location loc = makeLocation(ctx, node);
-    Token comp = getChild(node, 1).jjtGetFirstToken();
-    if (comp.kind == JsltParserConstants.STAR)
-      return new MultiplyOperator(first, second, loc);
-    else if (comp.kind == JsltParserConstants.SLASH)
-      return new DivideOperator(first, second, loc);
-    else
-      throw new JsltException("INTERNAL ERROR: What kind of operator is this?");
+      // get the operator
+      Location loc = makeLocation(ctx, node);
+      Token comp = getChild(node, 1 + ix * 2).jjtGetFirstToken();
+      if (comp.kind == JsltParserConstants.STAR)
+        root = new MultiplyOperator(root, next, loc);
+      else if (comp.kind == JsltParserConstants.SLASH)
+        root = new DivideOperator(root, next, loc);
+      else
+        throw new JsltException("INTERNAL ERROR: What kind of operator is this?");
+      ix += 1;
+    }
+
+    return root;
   }
 
   private static ExpressionNode node2baseExpr(ParseContext ctx, SimpleNode node) {
