@@ -131,6 +131,16 @@
     "error": "array",
     "query": "sum(23232)",
     "input": "{}"
+  },
+  {
+    "error": "array",
+    "query": "any(23232)",
+    "input": "{}"
+  },
+  {
+    "error": "array",
+    "query": "all(23232)",
+    "input": "{}"
   }
 ]
 }

@@ -622,14 +622,14 @@ public class BuiltinFunctions {
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
       JsonNode value = arguments[0];
       if (value.isNull())
-        return BooleanNode.FALSE;
+        return value;
       else if (!value.isArray())
-        throw new JsltException("all() cannot operate on " + value);
-
+        throw new JsltException("all() requires an array, not " + value);
 
       for (int ix = 0; ix < value.size(); ix++) {
         JsonNode node = value.get(ix);
-        if (!NodeUtils.isTrue(node)) return BooleanNode.FALSE;
+        if (!NodeUtils.isTrue(node))
+          return BooleanNode.FALSE;
       }
       return BooleanNode.TRUE;
     }
@@ -647,14 +647,14 @@ public class BuiltinFunctions {
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
       JsonNode value = arguments[0];
       if (value.isNull())
-        return BooleanNode.FALSE;
+        return value;
       else if (!value.isArray())
-        throw new JsltException("any() cannot operate on " + value);
-
+        throw new JsltException("any() requires an array, not " + value);
 
       for (int ix = 0; ix < value.size(); ix++) {
         JsonNode node = value.get(ix);
-        if (NodeUtils.isTrue(node)) return BooleanNode.TRUE;
+        if (NodeUtils.isTrue(node))
+          return BooleanNode.TRUE;
       }
       return BooleanNode.FALSE;
     }

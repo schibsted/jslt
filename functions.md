@@ -578,7 +578,9 @@ Examples:
 ```
 all([true, true, true])         => true
 all([true, true, false])        => false
-all(null)                       => false
+all(null)                       => null
+all([])                         => true
+all("")                         => error
 ```
 
 ### _any(array) -> boolean_
@@ -589,8 +591,10 @@ Examples:
 
 ```
 any([false, false, false])      => false
-any([false, false, true])       => false
-any(null)                       => false
+any([false, false, true])       => true
+any(null)                       => null
+any([])                         => false
+any("")                         => error
 ```
 
 <!-- TIME ===================================================================-->

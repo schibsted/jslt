@@ -823,6 +823,11 @@
       "output" : "17"
    },
    {
+      "query" : "all([])",
+      "input" : "{}",
+      "output" : "true"
+   },
+   {
       "query" : "all([true, true])",
       "input" : "{}",
       "output" : "true"
@@ -834,6 +839,11 @@
    },
    {
       "query" : "all(null)",
+      "input" : "{}",
+      "output" : "null"
+   },
+   {
+      "query" : "any([])",
       "input" : "{}",
       "output" : "false"
    },
@@ -850,7 +860,7 @@
    {
       "query" : "any(null)",
       "input" : "{}",
-      "output" : "false"
+      "output" : "null"
    }
 ]
 }
