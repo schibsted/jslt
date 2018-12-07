@@ -50,7 +50,7 @@ public class JsonParseTest {
 
   @Parameters
   public static Collection<Object[]> data() {
-    JsonNode json = TestUtils.loadJson("json-parse-tests.json");
+    JsonNode json = TestUtils.loadFile("json-parse-tests.json");
     JsonNode tests = json.get("tests");
 
     List<Object[]> strings = new ArrayList();

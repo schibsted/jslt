@@ -46,7 +46,7 @@ public class QueryErrorTest extends TestBase {
 
       Expression expr = Parser.compileString(query);
       JsonNode actual = expr.apply(context);
-      fail("JSTL did not detect error");
+      fail("JSLT did not detect error");
     } catch (JsltException e) {
       assertTrue("incorrect error message: '" + e.getMessage() + "'",
                  e.getMessage().indexOf(error) != -1);
@@ -60,16 +60,22 @@ public class QueryErrorTest extends TestBase {
     List<Object[]> strings = new ArrayList();
     strings.addAll(loadTests("query-error-tests.json"));
     strings.addAll(loadTests("function-error-tests.json"));
+    strings.addAll(loadTests("function-declaration-tests.yaml"));
     return strings;
   }
 
   private static Collection<Object[]> loadTests(String resource) {
-    JsonNode json = TestUtils.loadJson(resource);
+    JsonNode json = TestUtils.loadFile(resource);
     JsonNode tests = json.get("tests");
 
     List<Object[]> strings = new ArrayList();
     for (int ix = 0; ix < tests.size(); ix++) {
       JsonNode test = tests.get(ix);
+      if (!test.has("error"))
+        // not an error test, so skip it
+        // this works because we load the same file in QueryTest
+        continue;
+
       strings.add(new Object[] {
           test.get("input").asText(),
           test.get("query").asText(),

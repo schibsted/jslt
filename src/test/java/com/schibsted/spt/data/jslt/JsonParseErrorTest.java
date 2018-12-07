@@ -45,7 +45,7 @@ public class JsonParseErrorTest {
 
   @Parameters
   public static Collection<Object[]> data() {
-    JsonNode json = TestUtils.loadJson("json-parse-error-tests.json");
+    JsonNode json = TestUtils.loadFile("json-parse-error-tests.json");
     JsonNode tests = json.get("tests");
 
     List<Object[]> strings = new ArrayList();

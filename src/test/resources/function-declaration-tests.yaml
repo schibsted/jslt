@@ -1,0 +1,94 @@
+
+# Using YAML instead of JSON here because that means we can have
+# comments, line-breaks, and we don't have to escape strings all the
+# time.
+
+# If you really need JSON it's easy enough to convert this file from
+# YAML.
+
+tests:
+  -
+   input: {}
+   query: >
+            def id(param)
+              $param
+            id(5)
+   output: 5
+
+  -
+   input: {}
+   query: >
+            def plus(n1, n2)
+              $n1 + $n2
+            plus(2, 3)
+   output: 5
+
+  -
+   input: {}
+   query: >
+     def length(array)
+       if ($array)
+         1 + length($array[1 : ])
+       else
+         0
+     length([1, 2, 3, 4, 5, 6])
+   output: 6
+
+  -
+   input: {}
+   query: >
+     def size(array)
+       5 // all arrays have 5 elements
+     size([1, 2])
+   output: 5
+
+  -
+   input: {}
+   query: >
+     def a(value)
+       if ($value > 0)
+         b($value - 1)
+       else
+         $value
+     def b(value)
+       if ($value > 0)
+         a($value - 2)
+       else
+         $value - 1
+     a(5)
+   output: -1
+
+  -
+   input: {}
+   query: >
+     def a()
+       25
+     a(5)
+   error: arguments
+
+  -
+   input: {}
+   query: >
+     let var = 2
+     def a()
+       25
+     a()
+   output: 25
+
+  -
+   input: {}
+   query: >
+     def a(p)
+       let v = $p
+       $v
+     a(25)
+   output: 25
+
+#  -
+#   input: {}
+#   query: >
+#            let other = 5
+#            def test(obj)
+#              $obj $ + $other
+#            test(10)
+#   output: 15

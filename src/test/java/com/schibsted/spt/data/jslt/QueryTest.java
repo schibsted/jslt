@@ -56,6 +56,8 @@ public class QueryTest extends TestBase {
       JsonNode expected = mapper.readTree(output);
 
       assertEquals("" + expected + " != " + actual + " in query " + query + ", actual class " + actual.getClass() + ", expected class " + expected.getClass(), expected, actual);
+    } catch (JsltException e) {
+      throw new RuntimeException("Failure on query " + query + ": " + e, e);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -67,16 +69,22 @@ public class QueryTest extends TestBase {
     strings.addAll(loadTests("query-tests.json"));
     strings.addAll(loadTests("function-tests.json"));
     strings.addAll(loadTests("experimental-tests.json"));
+    strings.addAll(loadTests("function-declaration-tests.yaml"));
     return strings;
   }
 
   private static Collection<Object[]> loadTests(String resource) {
-    JsonNode json = TestUtils.loadJson(resource);
+    JsonNode json = TestUtils.loadFile(resource);
     JsonNode tests = json.get("tests");
 
     List<Object[]> strings = new ArrayList();
     for (int ix = 0; ix < tests.size(); ix++) {
       JsonNode test = tests.get(ix);
+      if (!test.has("output"))
+        // not a query test, so skip it
+        // this works because we load the same file in QueryErrorTest
+        continue;
+
       strings.add(new Object[] {
           test.get("input").asText(),
           test.get("query").asText(),
