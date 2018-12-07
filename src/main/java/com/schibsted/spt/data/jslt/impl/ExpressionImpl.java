@@ -36,6 +36,11 @@ public class ExpressionImpl implements Expression {
   private ExpressionNode actual;
   private int stackFrameSize;
 
+  // contains the mapping from external parameters (variables set from
+  // outside at query-time) to slots, so that we can put the
+  // parameters into the scope when evaluating the query
+  private Map<String, Integer> parameterSlots;
+
   public ExpressionImpl(LetExpression[] lets, Map<String, Function> functions,
                         ExpressionNode actual) {
     this.lets = lets;
@@ -59,7 +64,8 @@ public class ExpressionImpl implements Expression {
   }
 
   public JsonNode apply(Map<String, JsonNode> variables, JsonNode input) {
-    return apply(Scope.makeScope(variables, stackFrameSize), input);
+    Scope scope = Scope.makeScope(variables, stackFrameSize, parameterSlots);
+    return apply(scope, input);
   }
 
   public JsonNode apply(JsonNode input) {
@@ -90,6 +96,7 @@ public class ExpressionImpl implements Expression {
       child.prepare(ctx);
 
     stackFrameSize = ctx.scope.getStackFrameSize();
+    parameterSlots = ctx.scope.getParameterSlots();
   }
 
   public void optimize() {

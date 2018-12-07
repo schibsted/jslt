@@ -35,6 +35,10 @@ public class ScopeManager {
   private Deque<ScopeFrame> current;
   private StackFrame currentFrame;
 
+  // this is where we track the slots for parameters that must be
+  // supplied from the outside
+  private Map<String, Integer> parameterSlots;
+
   public static final int UNFOUND = 0xFFFFFFFF;
 
   public ScopeManager() {
@@ -42,11 +46,16 @@ public class ScopeManager {
     this.scopes = new ArrayDeque();
     this.current = scopes;
     this.currentFrame = globalFrame;
+    this.parameterSlots = new HashMap();
     enterScope();
   }
 
   public int getStackFrameSize() {
     return currentFrame.nextSlot;
+  }
+
+  public Map<String, Integer> getParameterSlots() {
+    return parameterSlots;
   }
 
   /**
@@ -114,15 +123,12 @@ public class ScopeManager {
       }
     }
 
-    // FIXME FIXME FIXME
-    // if we got here it means the variable was not found and we fail
-    // HOWEVER, that's not the right solution, because what it means
-    // is this variable must be defined from the outside. so what we
-    // really should do is create a global slot for it and carry on
-
-    // throw new JsltException("Reference to undefined variable " + name,
-    //                         variable.getLocation());
-    return UNFOUND; // FIXME it ain't right, but least we can move on
+    // if we got here it means the variable was not found. that means
+    // it's not defined inside the JSLT expression, so it has to be
+    // supplied as a parameter from outside during evaluation
+    int slot = scopes.getLast().registerVariable(name, variable.getLocation());
+    parameterSlots.put(name, slot);
+    return slot;
   }
 
   private static class ScopeFrame {

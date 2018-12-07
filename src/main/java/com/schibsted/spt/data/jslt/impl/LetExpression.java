@@ -31,6 +31,7 @@ public class LetExpression extends AbstractNode {
     super(location);
     this.variable = variable;
     this.value = value;
+    this.slot = ScopeManager.UNFOUND;
   }
 
   public String getVariable() {

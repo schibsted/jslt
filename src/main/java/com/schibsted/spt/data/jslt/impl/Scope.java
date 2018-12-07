@@ -23,12 +23,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 public class Scope {
   public static Scope getRoot(int stackFrameSize) {
-    return new Scope(null, stackFrameSize);
+    return new Scope(stackFrameSize);
   }
 
   public static Scope makeScope(Map<String, JsonNode> variables,
-                                int stackFrameSize) {
-    return new Scope(variables, stackFrameSize);
+                                int stackFrameSize,
+                                Map<String, Integer> parameterSlots) {
+    Scope scope = new Scope(stackFrameSize);
+    for (String variable : variables.keySet())
+      scope.setValue(parameterSlots.get(variable), variables.get(variable));
+    return scope;
   }
 
   private JsonNode[] globalStackFrame;
@@ -36,7 +40,7 @@ public class Scope {
   private static final int BITMASK = 0x10000000;
   private static final int INVERSE = 0xEFFFFFFF;
 
-  private Scope(Map<String, JsonNode> variables, int stackFrameSize) {
+  private Scope(int stackFrameSize) {
     this.globalStackFrame = new JsonNode[stackFrameSize];
     this.localStackFrames = new ArrayDeque();
   }
