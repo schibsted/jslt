@@ -1,0 +1,20 @@
+
+// JSLT transform which flattens nested objects into flat objects
+//   {"a" : {"b" : 1}} => {"a_b" : 1}
+
+def flatten-object(obj)
+  let flat = {for ($obj) .key : .value if (not(is-object(.value)))}
+
+  let nested = [for ($obj)
+     let outerkey = (.key)
+       [for (flatten-object(array(.value))) {
+         "key" : $outerkey + "_" + .key,
+         "value" : if (is-object(.value)) flatten-object(.value) else .value
+       }]
+     if (is-object(.value))]
+
+  let flattened = (flatten($nested))
+
+  $flat + {for ($flattened) .key : .value}
+
+flatten-object(.)
