@@ -84,11 +84,53 @@ tests:
      a(25)
    output: 25
 
-#  -
-#   input: {}
-#   query: >
-#            let other = 5
-#            def test(obj)
-#              $obj $ + $other
-#            test(10)
-#   output: 15
+  -
+   input: {}
+   query: >
+     let other = 5
+     def test(obj)
+       $obj + $other
+     test(10)
+   output: 15
+
+  -
+   input: {}
+   query: >
+     let other = 5
+     def test(obj)
+       let other = 0
+       $obj + $other
+     test(10)
+   output: 10
+
+  -
+   input: {}
+   query: >
+     let other = 5
+     def test(a)
+       let other = 0
+       [for ($a)
+         let other = -5
+         . + $other
+       ]
+     test([10])
+   output: "[5]"
+
+  -
+   input: {}
+   query: >
+     import "module-with-global-var.jslt" as m
+     let global = "variable is"
+     m:variable($global)
+   output: variable is global
+
+  -
+   input: {}
+   query: >
+     let other = 5
+     def test(obj)
+       let other = 0
+       let other = "oops"
+       $obj + $other
+     test(10)
+   error: other
