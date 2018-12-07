@@ -35,6 +35,7 @@ public class ExpressionImpl implements Expression {
   private Map<String, Function> functions;
   private ExpressionNode actual;
   private int stackFrameSize;
+  private JsonNode[] globalStackFrame;
 
   // contains the mapping from external parameters (variables set from
   // outside at query-time) to slots, so that we can put the
@@ -78,6 +79,11 @@ public class ExpressionImpl implements Expression {
     if (input == null)
       input = NullNode.instance;
 
+    // if imported modules have global variables we need to set those
+    // before we start
+    if (globalStackFrame != null)
+      scope.insertModuleGlobals(globalStackFrame);
+
     NodeUtils.evalLets(scope, input, lets);
     return actual.apply(scope, input);
   }
@@ -89,6 +95,7 @@ public class ExpressionImpl implements Expression {
   }
 
   public void prepare(PreparationContext ctx) {
+    ctx.scope.enterScope();
     for (int ix = 0; ix < lets.length; ix++)
       lets[ix].register(ctx.scope);
 
@@ -97,6 +104,18 @@ public class ExpressionImpl implements Expression {
 
     stackFrameSize = ctx.scope.getStackFrameSize();
     parameterSlots = ctx.scope.getParameterSlots();
+    ctx.scope.leaveScope();
+  }
+
+  /**
+   * This is used to initialize global variables when the
+   * ExpressionImpl is a module. Called once during compilation.
+   * The values are then remembered forever.
+   */
+  public void evaluateLetsOnly(Scope scope) {
+    // the context node is null: all references to it in modules are
+    // verboten, anyway
+    NodeUtils.evalLets(scope, null, lets);
   }
 
   public void optimize() {
@@ -124,5 +143,13 @@ public class ExpressionImpl implements Expression {
   public String toString() {
     // FIXME: letexprs
     return actual.toString();
+  }
+
+  public int getStackFrameSize() {
+    return stackFrameSize;
+  }
+
+  public void setInitialScope(Scope startScope) {
+    this.globalStackFrame = startScope.getGlobalStackFrame();
   }
 }

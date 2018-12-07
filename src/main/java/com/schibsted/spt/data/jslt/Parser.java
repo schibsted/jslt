@@ -186,7 +186,8 @@ public class Parser {
    * Compile the JSLT from the defined parameters.
    */
   public Expression compile() {
-    ParseContext ctx = new ParseContext(functions, source, resolver, modules);
+    ParseContext ctx = new ParseContext(functions, source, resolver, modules,
+                                        new PreparationContext());
     return ParserImpl.compileExpression(ctx, new JsltParser(reader));
   }
 }

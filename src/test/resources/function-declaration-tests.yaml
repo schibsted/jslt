@@ -127,6 +127,27 @@ tests:
   -
    input: {}
    query: >
+     import "module-with-several-global-vars.jslt" as m
+     m:fun(2)
+   output: 16
+
+  -
+   input: {}
+   query: >
+     import "module-whose-global-vars-call-functions.jslt" as m
+     m:bar(2)
+   output: 6
+
+  -
+   input: {}
+   query: >
+     import "module-with-global-var-from-builtin-function.jslt" as m
+     m:foo(2)
+   output: 6
+
+  -
+   input: {}
+   query: >
      let other = 5
      def test(obj)
        let other = 0

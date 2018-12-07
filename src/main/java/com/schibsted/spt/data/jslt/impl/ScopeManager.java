@@ -47,7 +47,6 @@ public class ScopeManager {
     this.current = scopes;
     this.currentFrame = globalFrame;
     this.parameterSlots = new HashMap();
-    enterScope();
   }
 
   public int getStackFrameSize() {
