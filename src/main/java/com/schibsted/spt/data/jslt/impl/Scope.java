@@ -40,7 +40,7 @@ public class Scope {
   private static final int BITMASK = 0x10000000;
   private static final int INVERSE = 0xEFFFFFFF;
 
-  private Scope(int stackFrameSize) {
+  public Scope(int stackFrameSize) {
     this.globalStackFrame = new JsonNode[stackFrameSize];
     this.localStackFrames = new ArrayDeque();
   }

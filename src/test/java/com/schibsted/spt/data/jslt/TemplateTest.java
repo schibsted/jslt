@@ -327,6 +327,19 @@ public class TemplateTest extends TestBase {
   }
 
   @Test
+  public void testHandleTrickyTransformV2() {
+    check("{\"provider\" : {\"@id\" : 22}}",
+          "{" +
+          "  \"provider\": {" +
+          "    let urn = .provider.\"@id\""+
+          "    \"urn\" : $urn " +
+          "  }," +
+          "  * : ." +
+          "}",
+          "{\"provider\" : {\"urn\" : 22}}");
+  }
+
+  @Test
   public void testObjectLetUsingVariable() {
     check("{\"foo\" : 22}",
           "{" +

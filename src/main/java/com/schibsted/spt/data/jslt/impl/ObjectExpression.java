@@ -115,7 +115,7 @@ public class ObjectExpression extends AbstractNode {
     // we're a static object expression. we can just make the object and
     // turn that into a literal, instead of creating it over and over
     // apply parameters: literals won't use scope or input, so...
-    JsonNode object = apply(null, NullNode.instance);
+    JsonNode object = apply(new OptimizerScope(), NullNode.instance);
     return new LiteralExpression(object, location);
   }
 
