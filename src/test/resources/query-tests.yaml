@@ -1,0 +1,60 @@
+
+# Basic tests.
+
+tests:
+  -
+   input: {}
+   query: >
+     let v = 1
+     [for ([1,2,3,4])
+       let v = 2
+       . + $v]
+   output: "[3,4,5,6]"
+
+  -
+   input: {}
+   query: >
+     let v = 1
+     if ($v != .)
+       let v = 5
+       $v
+     else
+       $v
+   output: 5
+
+  -
+   input: "{\"a\" : 2}"
+   query: >
+     let v = 1
+     {for (.) let v = 2 .key : .value + $v}
+   output: "{\"a\" : 4}"
+
+  -
+   input: 3
+   query: >
+     let v = 1
+     {
+       let v = 2
+       "a" : $v,
+       "b" : $v + 2,
+       "c" : $v + .
+     }
+   output: "{\"a\" : 2, \"b\" : 4, \"c\" : 5}"
+
+  -
+   input: "{\"foo\" : 1}"
+   query: >
+     let v = 1
+     {
+       * : . + $v
+     }
+   output: "{\"foo\" : 2}"
+
+  -
+   input: "{\"foo\" : 1}"
+   query: >
+     let v = 1
+     {
+       * : .
+     }
+   output: "{\"foo\" : 1}"

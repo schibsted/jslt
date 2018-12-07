@@ -25,6 +25,7 @@ import com.schibsted.spt.data.jslt.JsltException;
 
 public class FunctionExpression extends AbstractInvocationExpression {
   private Function function; // null before resolution
+  private FunctionDeclaration declared; // non-null if a declared function
   private String name;
 
   public FunctionExpression(String name, ExpressionNode[] arguments,
@@ -40,6 +41,8 @@ public class FunctionExpression extends AbstractInvocationExpression {
   public void resolve(Function function) {
     super.resolve(function);
     this.function = function;
+    if (function instanceof FunctionDeclaration)
+      this.declared = (FunctionDeclaration) function;
   }
 
   public JsonNode apply(Scope scope, JsonNode input) {
@@ -47,6 +50,9 @@ public class FunctionExpression extends AbstractInvocationExpression {
     for (int ix = 0; ix < params.length; ix++)
       params[ix] = arguments[ix].apply(scope, input);
 
-    return function.call(input, params);
+    if (declared != null)
+      return declared.call(scope, input, params);
+    else
+      return function.call(input, params);
   }
 }

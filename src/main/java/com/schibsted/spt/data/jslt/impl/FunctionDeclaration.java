@@ -19,17 +19,24 @@ import java.util.Map;
 import java.util.HashMap;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.schibsted.spt.data.jslt.Function;
+import com.schibsted.spt.data.jslt.JsltException;
 
-public class FunctionDeclaration implements Function {
+public class FunctionDeclaration extends AbstractNode
+  implements Function, ExpressionNode {
+
   private String name;
   private String[] parameters;
+  private int[] parameterSlots;
   private LetExpression[] lets;
   private ExpressionNode body;
+  private int stackFrameSize;
 
   public FunctionDeclaration(String name, String[] parameters,
                              LetExpression[] lets, ExpressionNode body) {
+    super(null);
     this.name = name;
     this.parameters = parameters;
+    this.parameterSlots = new int[parameters.length];
     this.lets = lets;
     this.body = body;
   }
@@ -46,26 +53,37 @@ public class FunctionDeclaration implements Function {
     return parameters.length;
   }
 
+  // FIXME: how the hell did we end up with this?
   public JsonNode call(JsonNode input, JsonNode[] arguments) {
-    // build scope inside function body, params first
-    Map<String, JsonNode> params = new HashMap(arguments.length);
-    for (int ix = 0; ix < arguments.length; ix++)
-      params.put(parameters[ix], arguments[ix]);
-    Scope scope = Scope.makeScope(params);
-
-    // then lets
-    if (lets.length > 0)
-      scope = NodeUtils.evalLets(scope, input, lets);
-
-    // evaluate body
-    return body.apply(scope, input);
+    throw new JsltException("INTERNAL ERROR!");
   }
 
-  public void optimize() {
+  public JsonNode call(Scope scope, JsonNode input, JsonNode[] arguments) {
+    scope.enterFunction(stackFrameSize);
+
+    // bind the arguments into the function scope
+    for (int ix = 0; ix < arguments.length; ix++)
+      scope.setValue(parameterSlots[ix], arguments[ix]);
+
+    // then bind the lets
+    NodeUtils.evalLets(scope, input, lets);
+
+    // evaluate body
+    JsonNode value = body.apply(scope, input);
+    scope.leaveFunction();
+    return value;
+  }
+
+  public ExpressionNode optimize() {
     for (int ix = 0; ix < lets.length; ix++)
       lets[ix].optimize();
 
     body = body.optimize();
+    return this;
+  }
+
+  public JsonNode apply(Scope scope, JsonNode context) {
+    throw new JsltException("INTERNAL ERROR");
   }
 
   public void computeMatchContexts(DotExpression parent) {
@@ -74,5 +92,22 @@ public class FunctionDeclaration implements Function {
     for (int ix = 0; ix < lets.length; ix++)
       lets[ix].computeMatchContexts(fail);
     body.computeMatchContexts(fail);
+  }
+
+  public void prepare(PreparationContext ctx) {
+    ctx.scope.enterFunction();
+
+    for (int ix = 0; ix < parameters.length; ix++)
+      parameterSlots[ix] = ctx.scope.registerVariable(parameters[ix], location);
+
+    for (int ix = 0; ix < lets.length; ix++) {
+      lets[ix].register(ctx.scope);
+      lets[ix].prepare(ctx);
+    }
+
+    body.prepare(ctx);
+
+    stackFrameSize = ctx.scope.getStackFrameSize();
+    ctx.scope.leaveFunction();
   }
 }

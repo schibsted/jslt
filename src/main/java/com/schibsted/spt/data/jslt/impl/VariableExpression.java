@@ -20,14 +20,20 @@ import com.schibsted.spt.data.jslt.JsltException;
 
 public class VariableExpression extends AbstractNode {
   private String variable;
+  private int slot;
 
   public VariableExpression(String variable, Location location) {
     super(location);
     this.variable = variable;
+    this.slot = ScopeManager.UNFOUND;
+  }
+
+  public String getVariable() {
+    return variable;
   }
 
   public JsonNode apply(Scope scope, JsonNode input) {
-    JsonNode value = scope.getValue(variable);
+    JsonNode value = scope.getValue(slot);
     if (value == null)
       throw new JsltException("No such variable '" + variable + "'",
                               location);
@@ -35,6 +41,10 @@ public class VariableExpression extends AbstractNode {
   }
 
   public void dump(int level) {
+  }
+
+  public void prepare(PreparationContext ctx) {
+    slot = ctx.scope.resolveVariable(this);
   }
 
   public String toString() {

@@ -17,35 +17,49 @@ package com.schibsted.spt.data.jslt.impl;
 
 import java.util.Map;
 import java.util.Collections;
+import java.util.Deque;
+import java.util.ArrayDeque;
 import com.fasterxml.jackson.databind.JsonNode;
 
 public class Scope {
-  private static Scope root = new Scope(Collections.EMPTY_MAP, null);
-
-  public static Scope getRoot() {
-    return root;
+  public static Scope getRoot(int stackFrameSize) {
+    return new Scope(null, stackFrameSize);
   }
 
-  public static Scope makeScope(Map<String, JsonNode> variables) {
-    return new Scope(variables, null);
+  public static Scope makeScope(Map<String, JsonNode> variables,
+                                int stackFrameSize) {
+    return new Scope(variables, stackFrameSize);
   }
 
-  public static Scope makeScope(Map<String, JsonNode> variables, Scope parent) {
-    return new Scope(variables, parent);
+  private JsonNode[] globalStackFrame;
+  private Deque<JsonNode[]> localStackFrames;
+  private static final int BITMASK = 0x10000000;
+  private static final int INVERSE = 0xEFFFFFFF;
+
+  private Scope(Map<String, JsonNode> variables, int stackFrameSize) {
+    this.globalStackFrame = new JsonNode[stackFrameSize];
+    this.localStackFrames = new ArrayDeque();
   }
 
-  private Scope parent;
-  private Map<String, JsonNode> variables;
-
-  private Scope(Map<String, JsonNode> variables, Scope parent) {
-    this.parent = parent;
-    this.variables = variables;
+  public void enterFunction(int stackFrameSize) {
+    localStackFrames.push(new JsonNode[stackFrameSize]);
   }
 
-  public JsonNode getValue(String variable) {
-    JsonNode value = variables.get(variable);
-    if (value == null && parent != null)
-      value = parent.getValue(variable);
-    return value;
+  public void leaveFunction() {
+    localStackFrames.pop();
+  }
+
+  public JsonNode getValue(int slot) {
+    if ((slot & BITMASK) != 0)
+      return globalStackFrame[slot & INVERSE];
+    else
+      return localStackFrames.peek()[slot];
+  }
+
+  public void setValue(int slot, JsonNode value) {
+    if ((slot & BITMASK) != 0)
+      globalStackFrame[slot & INVERSE] = value;
+    else
+      localStackFrames.peek()[slot] = value;
   }
 }

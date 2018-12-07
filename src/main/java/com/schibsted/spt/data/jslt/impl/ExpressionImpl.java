@@ -16,6 +16,9 @@
 package com.schibsted.spt.data.jslt.impl;
 
 import java.util.Map;
+import java.util.List;
+import java.util.Arrays;
+import java.util.ArrayList;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NullNode;
@@ -31,6 +34,7 @@ public class ExpressionImpl implements Expression {
   private LetExpression[] lets;
   private Map<String, Function> functions;
   private ExpressionNode actual;
+  private int stackFrameSize;
 
   public ExpressionImpl(LetExpression[] lets, Map<String, Function> functions,
                         ExpressionNode actual) {
@@ -55,22 +59,20 @@ public class ExpressionImpl implements Expression {
   }
 
   public JsonNode apply(Map<String, JsonNode> variables, JsonNode input) {
-    // Jackson 2.9.2 can parse to Java null. See unit test
-    // QueryTest.testNullInput. so we have to handle that
-    if (input == null)
-      input = NullNode.instance;
-
-    Scope scope = NodeUtils.evalLets(Scope.makeScope(variables), input, lets);
-    return actual.apply(scope, input);
+    return apply(Scope.makeScope(variables, stackFrameSize), input);
   }
 
   public JsonNode apply(JsonNode input) {
+    return apply(Scope.getRoot(stackFrameSize), input);
+  }
+
+  public JsonNode apply(Scope scope, JsonNode input) {
     // Jackson 2.9.2 can parse to Java null. See unit test
     // QueryTest.testNullInput. so we have to handle that
     if (input == null)
       input = NullNode.instance;
 
-    Scope scope = NodeUtils.evalLets(Scope.getRoot(), input, lets);
+    NodeUtils.evalLets(scope, input, lets);
     return actual.apply(scope, input);
   }
 
@@ -78,6 +80,16 @@ public class ExpressionImpl implements Expression {
     for (int ix = 0; ix < lets.length; ix++)
       lets[ix].dump(0);
     actual.dump(0);
+  }
+
+  public void prepare(PreparationContext ctx) {
+    for (int ix = 0; ix < lets.length; ix++)
+      lets[ix].register(ctx.scope);
+
+    for (ExpressionNode child : getChildren())
+      child.prepare(ctx);
+
+    stackFrameSize = ctx.scope.getStackFrameSize();
   }
 
   public void optimize() {
@@ -89,6 +101,17 @@ public class ExpressionImpl implements Expression {
 
     if (actual != null)
       actual = actual.optimize();
+  }
+
+  public List<ExpressionNode> getChildren() {
+    List<ExpressionNode> children = new ArrayList();
+    children.addAll(Arrays.asList(lets));
+    for (Function f : functions.values())
+      if ((f instanceof FunctionDeclaration))
+        children.add((FunctionDeclaration) f);
+    if (actual != null)
+      children.add(actual);
+    return children;
   }
 
   public String toString() {

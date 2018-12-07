@@ -15,6 +15,8 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
+import java.util.List;
+import java.util.Collections;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NullNode;
@@ -23,6 +25,7 @@ import com.fasterxml.jackson.databind.node.BooleanNode;
 public class LetExpression extends AbstractNode {
   private String variable;
   private ExpressionNode value;
+  private int slot; // this variable's position in the stack frame
 
   public LetExpression(String variable, ExpressionNode value, Location location) {
     super(location);
@@ -32,6 +35,10 @@ public class LetExpression extends AbstractNode {
 
   public String getVariable() {
     return variable;
+  }
+
+  public int getSlot() {
+    return slot;
   }
 
   public JsonNode apply(Scope scope, JsonNode input) {
@@ -48,8 +55,16 @@ public class LetExpression extends AbstractNode {
     value.dump(level + 1);
   }
 
+  public List<ExpressionNode> getChildren() {
+    return Collections.singletonList(value);
+  }
+
   public ExpressionNode optimize() {
     value = value.optimize();
     return this;
+  }
+
+  public void register(ScopeManager scope) {
+    slot = scope.registerVariable(variable, location);
   }
 }

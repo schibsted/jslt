@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Collection;
-import java.io.IOException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -56,10 +55,8 @@ public class QueryTest extends TestBase {
       JsonNode expected = mapper.readTree(output);
 
       assertEquals("" + expected + " != " + actual + " in query " + query + ", actual class " + actual.getClass() + ", expected class " + expected.getClass(), expected, actual);
-    } catch (JsltException e) {
+    } catch (Exception e) {
       throw new RuntimeException("Failure on query " + query + ": " + e, e);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
     }
   }
 
@@ -67,6 +64,7 @@ public class QueryTest extends TestBase {
   public static Collection<Object[]> data() {
     List<Object[]> strings = new ArrayList();
     strings.addAll(loadTests("query-tests.json"));
+    strings.addAll(loadTests("query-tests.yaml"));
     strings.addAll(loadTests("function-tests.json"));
     strings.addAll(loadTests("experimental-tests.json"));
     strings.addAll(loadTests("function-declaration-tests.yaml"));

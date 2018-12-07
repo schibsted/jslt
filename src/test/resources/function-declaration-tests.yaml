@@ -122,7 +122,7 @@ tests:
      import "module-with-global-var.jslt" as m
      let global = "variable is"
      m:variable($global)
-   output: variable is global
+   output: "\"variable is global\""
 
   -
    input: {}
@@ -134,3 +134,22 @@ tests:
        $obj + $other
      test(10)
    error: other
+
+  -
+   input: {}
+   query: >
+     let other = 5
+     let other = 2
+     $other + 5
+   error: other
+
+  -
+   input: {}
+   query: >
+     def fib(n)
+       if ($n == 1 or $n == 2)
+         1
+       else
+         fib($n - 2) + fib($n - 1) + $n
+       fib(5)
+   output: 20

@@ -98,6 +98,7 @@ public class ParserImpl {
 
     ExpressionImpl impl =
       new ExpressionImpl(lets, ctx.getDeclaredFunctions(), top);
+    impl.prepare(new PreparationContext());
     impl.optimize();
     return impl;
   }

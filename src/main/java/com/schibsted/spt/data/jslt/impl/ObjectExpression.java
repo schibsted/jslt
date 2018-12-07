@@ -19,6 +19,9 @@ import java.util.Set;
 import java.util.Map;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Arrays;
+import java.util.ArrayList;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.NullNode;
@@ -52,7 +55,7 @@ public class ObjectExpression extends AbstractNode {
   }
 
   public JsonNode apply(Scope scope, JsonNode input) {
-    scope = NodeUtils.evalLets(scope, input, lets);
+    NodeUtils.evalLets(scope, input, lets);
 
     ObjectNode object = NodeUtils.mapper.createObjectNode();
     for (int ix = 0; ix < children.length; ix++) {
@@ -114,6 +117,28 @@ public class ObjectExpression extends AbstractNode {
     // apply parameters: literals won't use scope or input, so...
     JsonNode object = apply(null, NullNode.instance);
     return new LiteralExpression(object, location);
+  }
+
+  public void prepare(PreparationContext ctx) {
+    ctx.scope.enterScope();
+
+    for (int ix = 0; ix < lets.length; ix++) {
+      lets[ix].register(ctx.scope);
+    }
+
+    for (ExpressionNode child : getChildren())
+      child.prepare(ctx);
+
+    ctx.scope.leaveScope();
+  }
+
+  public List<ExpressionNode> getChildren() {
+    List<ExpressionNode> children = new ArrayList();
+    children.addAll(Arrays.asList(lets));
+    children.addAll(Arrays.asList(this.children));
+    if (matcher != null)
+      children.add(matcher);
+    return children;
   }
 
   public void dump(int level) {

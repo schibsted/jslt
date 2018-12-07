@@ -15,6 +15,8 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
+import java.util.List;
+import java.util.ArrayList;
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**
@@ -55,6 +57,13 @@ public abstract class AbstractOperator extends AbstractNode {
     // operators are transparent to the object matcher
     left.computeMatchContexts(parent);
     right.computeMatchContexts(parent);
+  }
+
+  public List<ExpressionNode> getChildren() {
+    List<ExpressionNode> children = new ArrayList(2);
+    children.add(left);
+    children.add(right);
+    return children;
   }
 
   public abstract JsonNode perform(JsonNode v1, JsonNode v2);

@@ -15,6 +15,9 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
+import java.util.List;
+import java.util.Arrays;
+import java.util.ArrayList;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NullNode;
@@ -23,8 +26,8 @@ public class IfExpression extends AbstractNode {
   private ExpressionNode test;
   private LetExpression[] thenlets;
   private ExpressionNode then;
-  private LetExpression[] elselets;
-  private ExpressionNode orelse;
+  private LetExpression[] elselets; // can be null
+  private ExpressionNode orelse; // can be null
 
   public IfExpression(ExpressionNode test,
                       LetExpression[] thenlets,
@@ -41,13 +44,16 @@ public class IfExpression extends AbstractNode {
   }
 
   public JsonNode apply(Scope scope, JsonNode input) {
-    if (NodeUtils.isTrue(test.apply(scope, input)))
-      return then.apply(NodeUtils.evalLets(scope, input, thenlets), input);
+    if (NodeUtils.isTrue(test.apply(scope, input))) {
+      NodeUtils.evalLets(scope, input, thenlets);
+      return then.apply(scope, input);
+    }
 
     // test was false, so return null or else
-    if (orelse != null)
-      return orelse.apply(NodeUtils.evalLets(scope, input, elselets), input);
-    else
+    if (orelse != null) {
+      NodeUtils.evalLets(scope, input, elselets);
+      return orelse.apply(scope, input);
+    } else
       return NullNode.instance;
   }
 
@@ -75,6 +81,43 @@ public class IfExpression extends AbstractNode {
     if (orelse != null)
       orelse = orelse.optimize();
     return this;
+  }
+
+
+  public void prepare(PreparationContext ctx) {
+    test.prepare(ctx);
+
+    // then
+    ctx.scope.enterScope();
+    for (int ix = 0; ix < thenlets.length; ix++) {
+      thenlets[ix].prepare(ctx);
+      thenlets[ix].register(ctx.scope);
+    }
+    then.prepare(ctx);
+    ctx.scope.leaveScope();
+
+    // else
+    if (orelse != null) {
+      ctx.scope.enterScope();
+      for (int ix = 0; ix < elselets.length; ix++) {
+        elselets[ix].prepare(ctx);
+        elselets[ix].register(ctx.scope);
+      }
+      orelse.prepare(ctx);
+      ctx.scope.leaveScope();
+    }
+  }
+
+  public List<ExpressionNode> getChildren() {
+    List<ExpressionNode> children = new ArrayList();
+    children.add(test);
+    children.addAll(Arrays.asList(thenlets));
+    children.add(then);
+    if (elselets != null)
+      children.addAll(Arrays.asList(elselets));
+    if (orelse != null)
+      children.add(orelse);
+    return children;
   }
 
   public void dump(int level) {

@@ -19,6 +19,9 @@ import java.util.Set;
 import java.util.Map;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Arrays;
+import java.util.ArrayList;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.TextNode;
@@ -56,22 +59,19 @@ public class ObjectComprehension extends AbstractNode {
     else if (!sequence.isArray())
       throw new JsltException("Object comprehension can't loop over " + sequence, location);
 
-    // may be the same, if no lets
-    Scope newscope = scope;
-
     ObjectNode object = NodeUtils.mapper.createObjectNode();
     for (int ix = 0; ix < sequence.size(); ix++) {
       JsonNode context = sequence.get(ix);
 
       // must evaluate lets over again for each value because of context
       if (lets.length > 0)
-        newscope = NodeUtils.evalLets(scope, context, lets);
+        NodeUtils.evalLets(scope, context, lets);
 
-      if (ifExpr == null || NodeUtils.isTrue(ifExpr.apply(newscope, context))) {
-        JsonNode valueNode = value.apply(newscope, context);
+      if (ifExpr == null || NodeUtils.isTrue(ifExpr.apply(scope, context))) {
+        JsonNode valueNode = value.apply(scope, context);
         if (NodeUtils.isValue(valueNode)) {
           // if there is no value, no need to evaluate the key
-          JsonNode keyNode = key.apply(newscope, context);
+          JsonNode keyNode = key.apply(scope, context);
           if (!keyNode.isTextual())
             throw new JsltException("Object comprehension must have string as key, not " + keyNode, location);
           object.set(keyNode.asText(), valueNode);
@@ -79,6 +79,29 @@ public class ObjectComprehension extends AbstractNode {
       }
     }
     return object;
+  }
+
+  public void prepare(PreparationContext ctx) {
+    ctx.scope.enterScope();
+
+    for (int ix = 0; ix < lets.length; ix++)
+      lets[ix].register(ctx.scope);
+
+    for (ExpressionNode child : getChildren())
+      child.prepare(ctx);
+
+    ctx.scope.leaveScope();
+  }
+
+  public List<ExpressionNode> getChildren() {
+    List<ExpressionNode> children = new ArrayList();
+    children.addAll(Arrays.asList(lets));
+    children.add(loop);
+    children.add(key);
+    children.add(value);
+    if (ifExpr != null)
+      children.add(ifExpr);
+    return children;
   }
 
   public void dump(int level) {

@@ -326,6 +326,32 @@ public class TemplateTest extends TestBase {
           "{}");
   }
 
+  @Test
+  public void testObjectLetUsingVariable() {
+    check("{\"foo\" : 22}",
+          "{" +
+          "  let v = .foo " +
+          "  let vv = $v + 10 " +
+          "  \"bar\" : $vv + 10, " +
+          "  * : ." +
+          "}",
+          "{\"foo\" : 22, \"bar\" : 42}");
+  }
+
+  @Test
+  public void testObjectLetAfterFunction() {
+    check("{\"foo\" : 22}",
+          "def fun(v) " +
+          "  $v / 2 " +
+          "{" +
+          "  let v = .foo " +
+          "  let vv = $v + 10 " +
+          "  \"bar\" : fun($vv + 10), " +
+          "  * : ." +
+          "}",
+          "{\"foo\" : 22, \"bar\" : 21}");
+  }
+
   // "matching-8.jstl" should "fail" in {
   //   fail("matching-8.jstl", "empty.json")
   // }
