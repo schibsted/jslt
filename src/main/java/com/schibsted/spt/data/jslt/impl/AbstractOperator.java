@@ -50,7 +50,13 @@ public abstract class AbstractOperator extends AbstractNode {
   public ExpressionNode optimize() {
     left = left.optimize();
     right = right.optimize();
-    return this;
+
+    // if the two operands are literals we can just evaluate the
+    // result right now and be done with it
+    if (left instanceof LiteralExpression && right instanceof LiteralExpression)
+      return new LiteralExpression(apply(null, null), location);
+    else
+      return this;
   }
 
   public void computeMatchContexts(DotExpression parent) {
