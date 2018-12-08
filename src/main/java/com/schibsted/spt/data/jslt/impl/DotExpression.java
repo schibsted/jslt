@@ -77,4 +77,10 @@ public class DotExpression extends AbstractNode {
     if (parent != null)
       ((DotExpression) parent).checkOk(matcher);
   }
+
+  public ExpressionNode optimize() {
+    if (parent != null)
+      parent = parent.optimize();
+    return this;
+  }
 }

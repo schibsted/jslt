@@ -113,8 +113,10 @@ public class ScopeManager {
   /**
    * Registers a variable.
    */
-  public int registerVariable(LetExpression let) {
-    return current.peek().registerVariable(new LetInfo(let));
+  public VariableInfo registerVariable(LetExpression let) {
+    LetInfo info = new LetInfo(let);
+    current.peek().registerVariable(info);
+    return info;
   }
 
   /**
@@ -124,33 +126,32 @@ public class ScopeManager {
     return current.peek().registerVariable(new ParameterInfo(parameter, loc));
   }
 
-  public int resolveVariable(VariableExpression variable) {
+  public VariableInfo resolveVariable(VariableExpression variable) {
     String name = variable.getVariable();
 
     // traversing the scopes from top to bottom
     for (ScopeFrame scope : current) {
-      int slot = scope.resolveVariable(name);
-      if (slot != UNFOUND) // we found it
-        return slot; // level is already part of the slot
+      VariableInfo var = scope.resolveVariable(name);
+      if (var != null)
+        return var;
     }
 
     // might have to traverse global scope, too
     if (functionScopes != null) {
       for (ScopeFrame scope : scopes) {
-        int slot = scope.resolveVariable(name);
-        if (slot != UNFOUND) // we found it
-          return slot; // level is already part of the slot
+        VariableInfo var = scope.resolveVariable(name);
+        if (var != null)
+          return var;
       }
     }
 
     // if we got here it means the variable was not found. that means
     // it's not defined inside the JSLT expression, so it has to be
     // supplied as a parameter from outside during evaluation
-    int slot = scopes.getLast().registerVariable(
-      new ParameterInfo(name, variable.getLocation())
-    );
+    VariableInfo var = new ParameterInfo(name, variable.getLocation());
+    int slot = scopes.getLast().registerVariable(var);
     parameterSlots.put(name, slot);
-    return slot;
+    return var;
   }
 
   /**
@@ -186,67 +187,12 @@ public class ScopeManager {
       return slot;
     }
 
-    public int resolveVariable(String name) {
-      if (variables.containsKey(name))
-        return variables.get(name).getSlot();
-      return UNFOUND;
+    public VariableInfo resolveVariable(String name) {
+      return variables.get(name);
     }
   }
 
   private static class StackFrame {
     private int nextSlot;
-  }
-
-  /**
-   * Class encapsulating what we know about a specific variable. Keeps
-   * track of the stack frame slot, but mostly used for optimizations.
-   */
-  private static abstract class VariableInfo {
-    private int slot;
-    private Location location;
-
-    public VariableInfo(Location location) {
-      this.location = location;
-    }
-
-    public abstract String getName();
-
-    public void setSlot(int slot) {
-      this.slot = slot;
-    }
-
-    public int getSlot() {
-      return slot;
-    }
-
-    public Location getLocation() {
-      return location;
-    }
-  }
-
-  private static class ParameterInfo extends VariableInfo {
-    private String name;
-
-    public ParameterInfo(String name, Location location) {
-      super(location);
-      this.name = name;
-    }
-
-    public String getName() {
-      return name;
-    }
-  }
-
-  private static class LetInfo extends VariableInfo {
-    private LetExpression let;
-
-    public LetInfo(LetExpression let) {
-      super(let.getLocation());
-      this.let = let;
-    }
-
-    public String getName() {
-      return let.getVariable();
-    }
   }
 }

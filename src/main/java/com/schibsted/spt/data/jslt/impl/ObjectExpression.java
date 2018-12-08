@@ -104,6 +104,9 @@ public class ObjectExpression extends AbstractNode {
     for (int ix = 0; ix < lets.length; ix++)
       lets[ix].optimize();
 
+    if (matcher != null)
+      matcher.optimize();
+
     boolean allLiterals = matcher == null; // not static otherwise
     for (int ix = 0; ix < children.length; ix++) {
       children[ix] = (PairExpression) children[ix].optimize();

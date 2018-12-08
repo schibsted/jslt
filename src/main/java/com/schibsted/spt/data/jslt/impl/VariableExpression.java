@@ -21,6 +21,7 @@ import com.schibsted.spt.data.jslt.JsltException;
 public class VariableExpression extends AbstractNode {
   private String variable;
   private int slot;
+  private VariableInfo info;
 
   public VariableExpression(String variable, Location location) {
     super(location);
@@ -41,10 +42,25 @@ public class VariableExpression extends AbstractNode {
   }
 
   public void dump(int level) {
+    System.out.println(NodeUtils.indent(level) + this);
   }
 
   public void prepare(PreparationContext ctx) {
-    slot = ctx.scope.resolveVariable(this);
+    info = ctx.scope.resolveVariable(this);
+    slot = info.getSlot();
+    info.incrementUsageCount();
+  }
+
+  public ExpressionNode optimize() {
+    // if the variable is assigned to a literal then there's no point
+    // in actually having a variable. we can just insert the literal
+    // in the expression tree and be done with it.
+    ExpressionNode declaration = info.getDeclaration();
+    // will be null if the variable is a parameter
+    if (declaration != null && (declaration instanceof LiteralExpression))
+      return declaration;
+    else
+      return this;
   }
 
   public String toString() {

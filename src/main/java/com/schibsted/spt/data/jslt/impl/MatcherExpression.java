@@ -51,4 +51,9 @@ public class MatcherExpression extends AbstractNode {
 
   public void dump(int level) {
   }
+
+  public ExpressionNode optimize() {
+    expr = expr.optimize();
+    return this;
+  }
 }

@@ -119,8 +119,8 @@ public class ExpressionImpl implements Expression {
   }
 
   public void optimize() {
-    for (int ix = 0; ix < lets.length; ix++)
-      lets[ix].optimize();
+    lets = OptimizeUtils.optimizeLets(lets);
+
     for (Function f : functions.values())
       if ((f instanceof FunctionDeclaration))
         ((FunctionDeclaration) f).optimize();

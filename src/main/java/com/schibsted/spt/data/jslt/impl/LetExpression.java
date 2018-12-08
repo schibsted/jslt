@@ -26,6 +26,7 @@ public class LetExpression extends AbstractNode {
   private String variable;
   private ExpressionNode value;
   private int slot; // this variable's position in the stack frame
+  private VariableInfo info;
 
   public LetExpression(String variable, ExpressionNode value, Location location) {
     super(location);
@@ -66,6 +67,11 @@ public class LetExpression extends AbstractNode {
   }
 
   public void register(ScopeManager scope) {
-    slot = scope.registerVariable(this);
+    info = scope.registerVariable(this);
+    slot = info.getSlot();
+  }
+
+  public ExpressionNode getDeclaration() {
+    return value;
   }
 }
