@@ -53,7 +53,11 @@ public class FunctionDeclaration extends AbstractNode
     return parameters.length;
   }
 
-  // FIXME: how the hell did we end up with this?
+  // this method is here because the Function signature requires it,
+  // but we can't actually use it, because a declared function needs
+  // (or at least may need) access to the global scope. in order to be
+  // able to treat FunctionDeclaration like other Functions we resort
+  // to this solution for now.
   public JsonNode call(JsonNode input, JsonNode[] arguments) {
     throw new JsltException("INTERNAL ERROR!");
   }
@@ -82,6 +86,8 @@ public class FunctionDeclaration extends AbstractNode
     return this;
   }
 
+  // the ExpressionNode API requires this method, but it doesn't
+  // actually make any sense for a Function
   public JsonNode apply(Scope scope, JsonNode context) {
     throw new JsltException("INTERNAL ERROR");
   }
@@ -98,7 +104,7 @@ public class FunctionDeclaration extends AbstractNode
     ctx.scope.enterFunction();
 
     for (int ix = 0; ix < parameters.length; ix++)
-      parameterSlots[ix] = ctx.scope.registerVariable(parameters[ix], location);
+      parameterSlots[ix] = ctx.scope.registerParameter(parameters[ix], location);
 
     for (int ix = 0; ix < lets.length; ix++) {
       lets[ix].register(ctx.scope);

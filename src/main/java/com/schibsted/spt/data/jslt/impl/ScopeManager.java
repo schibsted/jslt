@@ -23,7 +23,24 @@ import com.schibsted.spt.data.jslt.JsltException;
 
 /**
  * Keeps track of declared variables and maps them to their slots in
- * the stack frames.
+ * the stack frames. A stack frame is just an array, with one slot for
+ * each variable. There are two kinds of stack frame: the global one,
+ * which has top-level variables plus those from the top level of
+ * modules. The second type is inside a function.
+ *
+ * <p>When a variable is declared so that it shadows an outer variable
+ * those two get different slots, even though they have the same name.
+ *
+ * <p>The slot number combines two values in one: which stack frame
+ * the variable resolves to, and its position in that frame. The first
+ * bit says which frame, and the rest of the bits are left for the
+ * slot number.
+ *
+ * <p>Basically:
+ * <ul>
+ *  <li>If first bit set: function frame
+ *  <li>If first bit not set: global frame.
+ * </ul>
  */
 public class ScopeManager {
   private StackFrame globalFrame;
@@ -93,14 +110,18 @@ public class ScopeManager {
     current.pop();
   }
 
-  public int registerVariable(String variable, Location loc) {
-    // the slot combines two values in one: which stack frame the
-    // variable resolves to, and its position in that frame. the first
-    // bit says which frame, and the rest is left for the slot number.
-    // basically:
-    //  - if first bit set: function frame
-    //  - if first bit not set: global frame
-    return current.peek().registerVariable(variable, loc);
+  /**
+   * Registers a variable.
+   */
+  public int registerVariable(LetExpression let) {
+    return current.peek().registerVariable(new LetInfo(let));
+  }
+
+  /**
+   * Registers a parameter to a function.
+   */
+  public int registerParameter(String parameter, Location loc) {
+    return current.peek().registerVariable(new ParameterInfo(parameter, loc));
   }
 
   public int resolveVariable(VariableExpression variable) {
@@ -125,15 +146,23 @@ public class ScopeManager {
     // if we got here it means the variable was not found. that means
     // it's not defined inside the JSLT expression, so it has to be
     // supplied as a parameter from outside during evaluation
-    int slot = scopes.getLast().registerVariable(name, variable.getLocation());
+    int slot = scopes.getLast().registerVariable(
+      new ParameterInfo(name, variable.getLocation())
+    );
     parameterSlots.put(name, slot);
     return slot;
   }
 
+  /**
+   * A scope frame is smaller than a stack frame: each object, object
+   * comprehension, for expression, and if expression will have its
+   * own scope frame. These need to be handled separately because of
+   * the shadowing of variables.
+   */
   private static class ScopeFrame {
     private boolean inFunction;
     private StackFrame parent;
-    private Map<String, Integer> variables;
+    private Map<String, VariableInfo> variables;
 
     public ScopeFrame(boolean inFunction, StackFrame parent) {
       this.inFunction = inFunction;
@@ -141,27 +170,83 @@ public class ScopeManager {
       this.parent = parent;
     }
 
-    public int registerVariable(String variable, Location loc) {
+    public int registerVariable(VariableInfo variable) {
+      String name = variable.getName();
+
       // see if we have a case of duplicate declaration
-      if (variables.containsKey(variable))
+      if (variables.containsKey(name))
         throw new JsltException("Duplicate variable declaration " +
-                                variable, loc);
+                                name, variable.getLocation());
 
       // okay, register this variable
       int level = inFunction ? 0 : 0x10000000;
       int slot = level | parent.nextSlot++; // first free position
-      variables.put(variable, slot);
+      variable.setSlot(slot);
+      variables.put(name, variable);
       return slot;
     }
 
     public int resolveVariable(String name) {
       if (variables.containsKey(name))
-        return variables.get(name);
+        return variables.get(name).getSlot();
       return UNFOUND;
     }
   }
 
   private static class StackFrame {
     private int nextSlot;
+  }
+
+  /**
+   * Class encapsulating what we know about a specific variable. Keeps
+   * track of the stack frame slot, but mostly used for optimizations.
+   */
+  private static abstract class VariableInfo {
+    private int slot;
+    private Location location;
+
+    public VariableInfo(Location location) {
+      this.location = location;
+    }
+
+    public abstract String getName();
+
+    public void setSlot(int slot) {
+      this.slot = slot;
+    }
+
+    public int getSlot() {
+      return slot;
+    }
+
+    public Location getLocation() {
+      return location;
+    }
+  }
+
+  private static class ParameterInfo extends VariableInfo {
+    private String name;
+
+    public ParameterInfo(String name, Location location) {
+      super(location);
+      this.name = name;
+    }
+
+    public String getName() {
+      return name;
+    }
+  }
+
+  private static class LetInfo extends VariableInfo {
+    private LetExpression let;
+
+    public LetInfo(LetExpression let) {
+      super(let.getLocation());
+      this.let = let;
+    }
+
+    public String getName() {
+      return let.getVariable();
+    }
   }
 }

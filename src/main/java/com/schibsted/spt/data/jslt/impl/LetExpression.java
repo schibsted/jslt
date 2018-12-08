@@ -66,6 +66,6 @@ public class LetExpression extends AbstractNode {
   }
 
   public void register(ScopeManager scope) {
-    slot = scope.registerVariable(variable, location);
+    slot = scope.registerVariable(this);
   }
 }

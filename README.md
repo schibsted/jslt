@@ -140,7 +140,7 @@ Unless required by applicable law or agreed to in writing, software distributed 
 ## What is missing
 
 Things to be done:
-  * Move the tests out into JSON files.
+  * Move the tests out into YAML files.
   * Write a proper spec with EBNF and everything.
   * Fix the syntax ambiguity problem with `let` and `def`.
   * Implement toString() throughout the object tree, so that it's
@@ -154,8 +154,6 @@ Things to be done:
        would be valuable.
      * Inlining of functions.
      * Eliminate unused variables.
-  * Avoid building more scope objects than necessary and avoid
-    creating deep scope trees that require a lot of lookup.
   * Use property-based testing and fuzz testing to harden the parser.
 
 See also [the list of ideas](ideas/).
