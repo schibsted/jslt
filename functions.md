@@ -203,6 +203,17 @@ sum([])         => 0
 sum(null)       => null
 ```
 
+### _mod(a,d) -> integer_
+
+Returns the modulo/modulus operation using a as dividend and d as divisor. The modulo is equal to the remainder after the division of a (dividend) by d (divisor).
+
+```
+mod(10, 1) => 10
+mod(10, 2) => 5
+mod(10, 3) => 1
+mod(10, 4) => 2
+mod(10, 5) => 0
+```
 <!-- STRING =================================================================-->
 
 ## String functions
