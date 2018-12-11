@@ -272,8 +272,8 @@ public class BuiltinFunctions {
       else if (!divisor.isNumber())
         throw new JsltException("modulo() the divisor operand cannot be a non-number: " + divisor);
 
-      if (dividend.isFloatingPointNumber() || divisor.isFloatingPointNumber()) {
-        return new DoubleNode(dividend.doubleValue() % divisor.doubleValue());
+      if (!dividend.isIntegralNumber() || !divisor.isIntegralNumber()) {
+        throw new JsltException("modulo: Operands must be integral types");
       } else {
         return new LongNode(dividend.longValue() % divisor.longValue());
       }

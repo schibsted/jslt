@@ -901,16 +901,6 @@
       "query": "mod(-10,-3)",
       "input" : "{}",
       "output": "-1"
-   },
-   {
-      "query": "mod(10.5,3)",
-      "input" : "{}",
-      "output": "1.5"
-   },
-   {
-      "query": "mod(10,3.4)",
-      "input" : "{}",
-      "output": "3.2"
    }
 ]
 }
