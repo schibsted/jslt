@@ -272,7 +272,11 @@ public class BuiltinFunctions {
       else if (!divisor.isNumber())
         throw new JsltException("modulo() the divisor operand cannot be a non-number: " + divisor);
 
-      return new LongNode(dividend.longValue() % divisor.longValue());
+      if (dividend.isFloatingPointNumber() || divisor.isFloatingPointNumber()) {
+        return new DoubleNode(dividend.doubleValue() % divisor.doubleValue());
+      } else {
+        return new LongNode(dividend.longValue() % divisor.longValue());
+      }
     }
   }
 
