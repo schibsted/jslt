@@ -73,6 +73,7 @@ public class BuiltinFunctions {
     functions.put("ceiling", new BuiltinFunctions.Ceiling());
     functions.put("random", new BuiltinFunctions.Random());
     functions.put("sum", new BuiltinFunctions.Sum());
+    functions.put("hash-int", new BuiltinFunctions.HashInt());
 
     // STRING
     functions.put("is-string", new BuiltinFunctions.IsString());
@@ -246,6 +247,20 @@ public class BuiltinFunctions {
         return new LongNode((long) sum);
       else
         return new DoubleNode(sum);
+    }
+  }
+
+  // ===== HASH-INT
+
+  public static class HashInt extends AbstractFunction {
+
+    public HashInt() {
+      super("hash-int", 1, 1);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      JsonNode node = arguments[0];
+      return new IntNode(node.hashCode());
     }
   }
 

@@ -861,6 +861,46 @@
       "query" : "any(null)",
       "input" : "{}",
       "output" : "null"
+   },
+   {
+      "query" : "hash-int(.)",
+      "input" : "{}",
+      "output" : "0"
+   },
+   {
+      "query" : "hash-int(null)",
+      "input" : "{}",
+      "output" : "4"
+   },
+   {
+      "query" : "hash-int(.)",
+      "input" : "{ \"test\" : \"test\" }",
+      "output" : "0"
+   },
+   {
+      "query" : "hash-int(.)",
+      "input" : "{    \"test\":     \"test\" }",
+      "output" : "0"
+   },
+   {
+      "query" : "hash-int(.)",
+      "input" : "{ \"test\" : \"test\", \"a\": 2 }",
+      "output" : "99"
+   },
+   {
+      "query" : "hash-int(.test)",
+      "input" : "{ \"test\" : \"test\" }",
+      "output" : "3556498"
+   },
+   {
+      "query" : "hash-int(\"test\")",
+      "input" : "{ \"test\" : \"test\" }",
+      "output" : "3556498"
+   },
+   {
+      "query" : "hash-int(123)",
+      "input" : "{ \"test\" : \"test\", \"a\": 2 }",
+      "output" : "123"
    }
 ]
 }

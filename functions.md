@@ -203,6 +203,20 @@ sum([])         => 0
 sum(null)       => null
 ```
 
+### _hashint(object) -> int_
+
+Returns a hash value of the given object. It differs from `sha256-hex` in that
+it gives a numeric integral hash value instead of a string.
+
+Examples:
+
+```
+hash-int("test") => 3556498
+hash-int({}) => 0
+hash-int(123) => 123
+hash-int(null) => 4
+```
+
 <!-- STRING =================================================================-->
 
 ## String functions
