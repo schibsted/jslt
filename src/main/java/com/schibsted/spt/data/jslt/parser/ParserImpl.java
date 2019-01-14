@@ -16,8 +16,10 @@
 package com.schibsted.spt.data.jslt.parser;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.List;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -624,8 +626,21 @@ public class ParserImpl {
     List<PairExpression> pairs = collectPairs(ctx, last);
     PairExpression[] children = new PairExpression[pairs.size()];
     children = pairs.toArray(children);
+    checkForDuplicates(children);
     return new ObjectExpression(lets, children, matcher,
                                 makeLocation(ctx, node));
+  }
+
+  private static void checkForDuplicates(PairExpression[] pairs) {
+    Set<String> seen = new HashSet(pairs.length);
+    for (int ix = 0; ix < pairs.length; ix++) {
+      if (seen.contains(pairs[ix].getKey()))
+        throw new JsltException("Invalid object declaration, duplicate key " +
+                                "'" + pairs[ix].getKey() + "'",
+                                pairs[ix].getLocation());
+
+      seen.add(pairs[ix].getKey());
+    }
   }
 
   private static MatcherExpression collectMatcher(ParseContext ctx,
