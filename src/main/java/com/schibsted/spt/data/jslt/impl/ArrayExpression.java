@@ -15,6 +15,8 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
+import java.util.List;
+import java.util.Arrays;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
@@ -37,6 +39,10 @@ public class ArrayExpression extends AbstractNode {
     FailDotExpression fail = new FailDotExpression(location, "array");
     for (int ix = 0; ix < children.length; ix++)
       children[ix].computeMatchContexts(fail);
+  }
+
+  public List<ExpressionNode> getChildren() {
+    return Arrays.asList(children);
   }
 
   public ExpressionNode optimize() {

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Collection;
-import java.io.IOException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,13 +45,13 @@ public class QueryErrorTest extends TestBase {
 
       Expression expr = Parser.compileString(query);
       JsonNode actual = expr.apply(context);
-      fail("JSLT did not detect error");
+      fail("JSLT did not detect error in " + query);
     } catch (JsltException e) {
       assertTrue("incorrect error message: '" + e.getMessage() + "', " +
                  "correct: '" + error + "'",
                  e.getMessage().indexOf(error) != -1);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
+    } catch (Exception e) {
+      throw new RuntimeException("Failure on query " + query + ": " + e, e);
     }
   }
 

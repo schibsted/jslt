@@ -1,0 +1,5 @@
+
+let v = size(split("a b c", " "))
+
+def foo(b)
+  $b * $v

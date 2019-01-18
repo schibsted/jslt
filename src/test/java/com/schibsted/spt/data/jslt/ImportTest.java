@@ -94,5 +94,5 @@ public class ImportTest extends TestBase {
   }
 
   // FIXME: verify that function passed in to top-level parser is also
-  // available when parsing imported modulesx
+  // available when parsing imported modules
 }

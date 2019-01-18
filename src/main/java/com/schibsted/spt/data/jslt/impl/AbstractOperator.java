@@ -15,6 +15,8 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
+import java.util.List;
+import java.util.ArrayList;
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**
@@ -48,13 +50,26 @@ public abstract class AbstractOperator extends AbstractNode {
   public ExpressionNode optimize() {
     left = left.optimize();
     right = right.optimize();
-    return this;
+
+    // if the two operands are literals we can just evaluate the
+    // result right now and be done with it
+    if (left instanceof LiteralExpression && right instanceof LiteralExpression)
+      return new LiteralExpression(apply(null, null), location);
+    else
+      return this;
   }
 
   public void computeMatchContexts(DotExpression parent) {
     // operators are transparent to the object matcher
     left.computeMatchContexts(parent);
     right.computeMatchContexts(parent);
+  }
+
+  public List<ExpressionNode> getChildren() {
+    List<ExpressionNode> children = new ArrayList(2);
+    children.add(left);
+    children.add(right);
+    return children;
   }
 
   public abstract JsonNode perform(JsonNode v1, JsonNode v2);

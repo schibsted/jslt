@@ -548,7 +548,7 @@
       "query" : "ends-with(\"heypådey\", \"dey\")"
    },
    {
-      "query" : "fallback(22, true + false)",
+      "query" : "fallback(22, true + not(false))",
       "input" : "{}",
       "output" : "22"
    },

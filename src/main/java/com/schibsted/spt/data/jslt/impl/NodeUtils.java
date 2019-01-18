@@ -33,13 +33,15 @@ import com.schibsted.spt.data.jslt.JsltException;
 public class NodeUtils {
   public static final ObjectMapper mapper = new ObjectMapper();
 
-  public static Scope evalLets(Scope scope, JsonNode input, LetExpression[] lets) {
+  public static void evalLets(Scope scope, JsonNode input, LetExpression[] lets) {
+    if (lets == null)
+      return;
+
     for (int ix = 0; ix < lets.length; ix++) {
       String var = lets[ix].getVariable();
       JsonNode val = lets[ix].apply(scope, input);
-      scope = Scope.makeScope(Collections.singletonMap(var, val), scope);
+      scope.setValue(lets[ix].getSlot(), val);
     }
-    return scope;
   }
 
   public static boolean isTrue(JsonNode value) {

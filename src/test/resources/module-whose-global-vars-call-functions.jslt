@@ -1,0 +1,9 @@
+
+let x = 2
+let y = foo($x)
+
+def foo(v)
+  $v * $x
+
+def bar(v)
+  $v + $y

@@ -335,4 +335,58 @@ public class TemplateTest extends TestBase {
           "duplicate");
   }
 
+  public void testHandleTrickyTransformV2() {
+    check("{\"provider\" : {\"@id\" : 22}}",
+          "{" +
+          "  \"provider\": {" +
+          "    let urn = .provider.\"@id\""+
+          "    \"urn\" : $urn " +
+          "  }," +
+          "  * : ." +
+          "}",
+          "{\"provider\" : {\"urn\" : 22}}");
+  }
+
+  @Test
+  public void testObjectLetUsingVariable() {
+    check("{\"foo\" : 22}",
+          "{" +
+          "  let v = .foo " +
+          "  let vv = $v + 10 " +
+          "  \"bar\" : $vv + 10, " +
+          "  * : ." +
+          "}",
+          "{\"foo\" : 22, \"bar\" : 42}");
+  }
+
+  @Test
+  public void testObjectLetAfterFunction() {
+    check("{\"foo\" : 22}",
+          "def fun(v) " +
+          "  $v / 2 " +
+          "{" +
+          "  let v = .foo " +
+          "  let vv = $v + 10 " +
+          "  \"bar\" : fun($vv + 10), " +
+          "  * : ." +
+          "}",
+          "{\"foo\" : 22, \"bar\" : 21}");
+  }
+
+  // "matching-8.jstl" should "fail" in {
+  //   fail("matching-8.jstl", "empty.json")
+  // }
+
+  // "matching-10.jstl" should "remove 'type' and 'id'" in {
+  //   verify("matching-10.jstl", "simple.json", "matching-10.json")
+  // }
+
+  // "matching-remove.jstl" should "remove 'type'" in {
+  //   verify("matching-remove.jstl", "simple.json", "matching-remove.json")
+  // }
+
+  // "matching-nested.jstl" should "remove 'baz'" in {
+  //   verify("matching-nested.jstl", "matching-nested.json", "matching-nested-out.json")
+  // }
+
 }

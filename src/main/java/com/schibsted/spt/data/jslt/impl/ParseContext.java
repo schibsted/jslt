@@ -49,10 +49,15 @@ public class ParseContext {
    * Named modules listed under their identifiers.
    */
   private Map<String, Module> namedModules;
+  /**
+   * Variable declaration and usage tracking.
+   */
+  private PreparationContext preparationContext;
 
   public ParseContext(Collection<Function> extensions, String source,
                       ResourceResolver resolver,
-                      Map<String, Module> namedModules) {
+                      Map<String, Module> namedModules,
+                      PreparationContext preparationContext) {
     this.extensions = extensions;
     this.functions = new HashMap();
     for (Function func : extensions)
@@ -63,17 +68,22 @@ public class ParseContext {
     this.modules = new HashMap();
     this.resolver = resolver;
     this.namedModules = namedModules;
+    this.preparationContext = preparationContext;
 
     namedModules.put(ExperimentalModule.URI, new ExperimentalModule());
   }
 
   public ParseContext(String source) {
     this(Collections.EMPTY_SET, source, new ClasspathResourceResolver(),
-         new HashMap());
+         new HashMap(), new PreparationContext());
   }
 
   public void setParent(ParseContext parent) {
     this.parent = parent;
+  }
+
+  public PreparationContext getPreparationContext() {
+    return preparationContext;
   }
 
   public Function getFunction(String name) {
@@ -153,5 +163,13 @@ public class ParseContext {
 
   public ResourceResolver getResolver() {
     return resolver;
+  }
+
+  public Scope evaluateGlobalModuleVariables(int stackFrameSize) {
+    Scope scope = Scope.getRoot(stackFrameSize);
+    for (Module m : modules.values())
+      if (m instanceof JstlFile)
+        ((JstlFile) m).evaluateLetsOnly(scope);
+    return scope;
   }
 }
