@@ -205,21 +205,38 @@ sum(null)       => null
 
 ### _mod(a,d) -> integer_
 
-Returns the modulo/modulus operation using a as dividend and d as divisor. 
-JSLT mod() uses the same semantics as [Java Remainder operator %](https://docs.oracle.com/javase/specs/jls/se7/html/jls-15.html#jls-15.17.3) with the exception
-that real numbers are not supported.
+Returns `a` modulo `d`. This function is the same as the familiar `%`
+operator in most programming languages, except that it behaves
+differently for negative numbers. The result is always in the range
+`0..abs(d)`.
+
+Mathematically, the function is defined as:
 
 ```
-mod(10, 2) => 0
-mod(10, 3) => 1
-mod(-10, 3) => -1
-mod(10, -3) => 1
-mod(-10, -3) => -1
-mod(10, 4) => 2
-mod(null, 2) => null
+a = d * floor(a / d) + mod(a, d)
+```
+
+Note, however, that the division operator in question here is
+Euclidean division. An explanation is given in [Division and Modulus
+for Computer Scientists, Daan Leijen,
+2001](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/divmodnote-letter.pdf). For
+more background, see [the original pull
+request](https://github.com/schibsted/jslt/pull/43).
+
+Examples:
+
+```
+mod(10, 2)    => 0
+mod(10, 3)    => 1
+mod(10, 4)    => 2
+mod(-10, 3)   => 2
+mod(-10, -3)  => 2
+mod(10, -3)   => 1
+mod(null, 2)  => null
 mod(10, null) => null
-mod(10.5, 2) => error
-mod(10, 2.1) => error
+mod(10.5, 2)  => error
+mod(10, 2.1)  => error
+mod(10, "2")  => error
 ```
 
 <!-- STRING =================================================================-->

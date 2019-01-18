@@ -250,7 +250,6 @@ public class BuiltinFunctions {
     }
   }
 
-
   // ===== MODULO
 
   public static class Modulo extends AbstractFunction {
@@ -264,18 +263,31 @@ public class BuiltinFunctions {
       if (dividend.isNull())
         return NullNode.instance;
       else if (!dividend.isNumber())
-        throw new JsltException("modulo() the dividend operand cannot be a non-number: " + dividend);
+        throw new JsltException("mod(): dividend cannot be a non-number: " + dividend);
 
       JsonNode divisor = arguments[1];
       if (divisor.isNull())
         return NullNode.instance;
       else if (!divisor.isNumber())
-        throw new JsltException("modulo() the divisor operand cannot be a non-number: " + divisor);
+        throw new JsltException("mod(): divisor cannot be a non-number: " + divisor);
 
       if (!dividend.isIntegralNumber() || !divisor.isIntegralNumber()) {
-        throw new JsltException("modulo: Operands must be integral types");
+        throw new JsltException("mod(): operands must be integral types");
       } else {
-        return new LongNode(dividend.longValue() % divisor.longValue());
+        long D = dividend.longValue();
+        long d = divisor.longValue();
+        if (d == 0)
+          throw new JsltException("mod(): cannot divide by zero");
+
+        long r = D % d;
+        if (r < 0) {
+          if (d > 0)
+            r += d;
+          else
+            r -= d;
+        }
+
+        return new LongNode(r);
       }
     }
   }

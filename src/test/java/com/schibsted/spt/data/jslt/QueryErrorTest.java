@@ -48,7 +48,8 @@ public class QueryErrorTest extends TestBase {
       JsonNode actual = expr.apply(context);
       fail("JSLT did not detect error");
     } catch (JsltException e) {
-      assertTrue("incorrect error message: '" + e.getMessage() + "'",
+      assertTrue("incorrect error message: '" + e.getMessage() + "', " +
+                 "correct: '" + error + "'",
                  e.getMessage().indexOf(error) != -1);
     } catch (IOException e) {
       throw new RuntimeException(e);

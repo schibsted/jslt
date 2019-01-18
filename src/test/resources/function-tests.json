@@ -890,7 +890,7 @@
    {
       "query": "mod(-10,3)",
       "input" : "{}",
-      "output": "-1"
+      "output": "2"
    },
    {
       "query": "mod(10,-3)",
@@ -900,7 +900,7 @@
    {
       "query": "mod(-10,-3)",
       "input" : "{}",
-      "output": "-1"
+      "output": "2"
    }
 ]
 }
