@@ -141,6 +141,16 @@
     "error": "array",
     "query": "all(23232)",
     "input": "{}"
+  },
+  {
+    "error": "modulo: Operands must be integral types",
+    "query": "mod(10.1, 2)",
+    "input": "{}"
+  },
+  {
+    "error": "modulo: Operands must be integral types",
+    "query": "mod(10, 2.1)",
+    "input": "{}"
   }
 ]
 }

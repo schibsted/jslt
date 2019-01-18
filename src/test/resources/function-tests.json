@@ -861,6 +861,46 @@
       "query" : "any(null)",
       "input" : "{}",
       "output" : "null"
+   },
+   {
+      "query": "mod(10,3)",
+      "input" : "{}",
+      "output": "1"
+   },
+   {
+      "query": "mod(10,4)",
+      "input" : "{}",
+      "output": "2"
+   },
+   {
+      "query": "mod(10,5)",
+      "input" : "{}",
+      "output": "0"
+   },
+   {
+      "query": "mod(null,5)",
+      "input" : "{}",
+      "output": "null"
+   },
+   {
+      "query": "mod(10,null)",
+      "input" : "{}",
+      "output": "null"
+   },
+   {
+      "query": "mod(-10,3)",
+      "input" : "{}",
+      "output": "-1"
+   },
+   {
+      "query": "mod(10,-3)",
+      "input" : "{}",
+      "output": "1"
+   },
+   {
+      "query": "mod(-10,-3)",
+      "input" : "{}",
+      "output": "-1"
    }
 ]
 }

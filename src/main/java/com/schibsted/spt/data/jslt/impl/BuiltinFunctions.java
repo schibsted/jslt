@@ -73,6 +73,7 @@ public class BuiltinFunctions {
     functions.put("ceiling", new BuiltinFunctions.Ceiling());
     functions.put("random", new BuiltinFunctions.Random());
     functions.put("sum", new BuiltinFunctions.Sum());
+    functions.put("mod", new BuiltinFunctions.Modulo());
 
     // STRING
     functions.put("is-string", new BuiltinFunctions.IsString());
@@ -246,6 +247,36 @@ public class BuiltinFunctions {
         return new LongNode((long) sum);
       else
         return new DoubleNode(sum);
+    }
+  }
+
+
+  // ===== MODULO
+
+  public static class Modulo extends AbstractFunction {
+
+    public Modulo() {
+      super("modulo", 2, 2);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      JsonNode dividend = arguments[0];
+      if (dividend.isNull())
+        return NullNode.instance;
+      else if (!dividend.isNumber())
+        throw new JsltException("modulo() the dividend operand cannot be a non-number: " + dividend);
+
+      JsonNode divisor = arguments[1];
+      if (divisor.isNull())
+        return NullNode.instance;
+      else if (!divisor.isNumber())
+        throw new JsltException("modulo() the divisor operand cannot be a non-number: " + divisor);
+
+      if (!dividend.isIntegralNumber() || !divisor.isIntegralNumber()) {
+        throw new JsltException("modulo: Operands must be integral types");
+      } else {
+        return new LongNode(dividend.longValue() % divisor.longValue());
+      }
     }
   }
 
