@@ -314,7 +314,11 @@ and get
 ```
 
 You can also combine boolean values with `and` and `or`. `not` is a
-function.
+function. So you can write a boolean expression as:
+
+```
+.foo.bar > 2 and not(contains(.baz, ["george", "harry"]))
+```
 
 ## Object matching
 

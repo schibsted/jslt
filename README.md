@@ -55,6 +55,9 @@ Here is an example transform:
 | `// <anything up to end of line>` | Comment |
 | `{ <key> : <expr> }`               | [Object constructor](tutorial.md#json-construction) |
 | `{ <key> : <expr>, * : . }`        | Specify one key, [copy rest of input](tutorial.md#object-matching) |
+| `5 * 7 + 23.2`        | Arithmetic operations |
+| `7 < 5`        | Comparators |
+| `7 < 5 and .foo == "yes"` | Boolean operators |
 
 ## Using the library
 
