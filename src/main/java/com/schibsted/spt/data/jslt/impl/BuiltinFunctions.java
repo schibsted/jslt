@@ -117,13 +117,6 @@ public class BuiltinFunctions {
     macros.put("fallback", new BuiltinFunctions.Fallback());
   }
 
-  private static abstract class AbstractFunction extends AbstractCallable implements Function {
-
-    public AbstractFunction(String name, int min, int max) {
-      super(name, min, max);
-    }
-  }
-
   private static abstract class AbstractMacro extends AbstractCallable implements Macro {
 
     public AbstractMacro(String name, int min, int max) {

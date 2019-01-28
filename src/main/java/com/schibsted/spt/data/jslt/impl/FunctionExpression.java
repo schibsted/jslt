@@ -55,4 +55,25 @@ public class FunctionExpression extends AbstractInvocationExpression {
     else
       return function.call(input, params);
   }
+
+  private static final int OPTIMIZE_ARRAY_CONTAINS_MIN = 10;
+  public ExpressionNode optimize() {
+    super.optimize();
+
+    // if the second argument to contains() is an array with a large
+    // number of elements, don't do a linear search. instead, use an
+    // optimized version of the function that uses a HashSet
+    if (function == BuiltinFunctions.functions.get("contains") &&
+        arguments.length == 2 &&
+        (arguments[1] instanceof LiteralExpression)) {
+
+      JsonNode v = arguments[1].apply(null, null);
+      if (v.isArray() && v.size() > OPTIMIZE_ARRAY_CONTAINS_MIN) {
+        // we use resolve to make sure all references are updated
+        resolve(new OptimizedStaticContainsFunction(v));
+      }
+    }
+
+    return this;
+  }
 }
