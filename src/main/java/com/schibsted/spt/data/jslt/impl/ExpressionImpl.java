@@ -35,7 +35,7 @@ public class ExpressionImpl implements Expression {
   private Map<String, Function> functions;
   private ExpressionNode actual;
   private int stackFrameSize;
-  private JsonNode[] globalStackFrame;
+  private JstlFile[] fileModules;
 
   // contains the mapping from external parameters (variables set from
   // outside at query-time) to slots, so that we can put the
@@ -79,12 +79,15 @@ public class ExpressionImpl implements Expression {
     if (input == null)
       input = NullNode.instance;
 
-    // if imported modules have global variables we need to set those
-    // before we start
-    if (globalStackFrame != null)
-      scope.insertModuleGlobals(globalStackFrame);
+    // evaluate lets in global modules
+    if (fileModules != null) {
+      for (int ix = 0; ix < fileModules.length; ix++)
+        fileModules[ix].evaluateLetsOnly(scope, input);
+    }
 
+    // evaluate own lets
     NodeUtils.evalLets(scope, input, lets);
+
     return actual.apply(scope, input);
   }
 
@@ -112,10 +115,8 @@ public class ExpressionImpl implements Expression {
    * ExpressionImpl is a module. Called once during compilation.
    * The values are then remembered forever.
    */
-  public void evaluateLetsOnly(Scope scope) {
-    // the context node is null: all references to it in modules are
-    // verboten, anyway
-    NodeUtils.evalLets(scope, null, lets);
+  public void evaluateLetsOnly(Scope scope, JsonNode input) {
+    NodeUtils.evalLets(scope, input, lets);
   }
 
   public void optimize() {
@@ -149,7 +150,8 @@ public class ExpressionImpl implements Expression {
     return stackFrameSize;
   }
 
-  public void setInitialScope(Scope startScope) {
-    this.globalStackFrame = startScope.getGlobalStackFrame();
+  public void setGlobalModules(List<JstlFile> fileModules) {
+    this.fileModules = new JstlFile[fileModules.size()];
+    this.fileModules = fileModules.toArray(this.fileModules);
   }
 }

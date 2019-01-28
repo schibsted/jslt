@@ -16,6 +16,7 @@
 package com.schibsted.spt.data.jslt.impl;
 
 import java.util.Map;
+import java.util.List;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,10 +40,18 @@ public class ParseContext {
    */
   private String source;
   /**
-   * Imported modules listed under their prefixes.
+   * Imported modules listed under their prefixes. This is scoped per
+   * source file, since each has a different name-module mapping.
    */
   private Map<String, Module> modules;
-  private Collection<FunctionExpression> funcalls; // delayed function resolution
+  /**
+   * Tracks all loaded JSLT files. Shared between all contexts.
+   */
+  private List<JstlFile> files;
+  /**
+   * Function expressions, used for delayed name-to-function resolution.
+   */
+  private Collection<FunctionExpression> funcalls;
   private ParseContext parent;
   private ResourceResolver resolver;
   /**
@@ -57,6 +66,7 @@ public class ParseContext {
   public ParseContext(Collection<Function> extensions, String source,
                       ResourceResolver resolver,
                       Map<String, Module> namedModules,
+                      List<JstlFile> files,
                       PreparationContext preparationContext) {
     this.extensions = extensions;
     this.functions = new HashMap();
@@ -64,6 +74,7 @@ public class ParseContext {
       functions.put(func.getName(), func);
 
     this.source = source;
+    this.files = files;
     this.funcalls = new ArrayList();
     this.modules = new HashMap();
     this.resolver = resolver;
@@ -75,7 +86,7 @@ public class ParseContext {
 
   public ParseContext(String source) {
     this(Collections.EMPTY_SET, source, new ClasspathResourceResolver(),
-         new HashMap(), new PreparationContext());
+         new HashMap(), new ArrayList(), new PreparationContext());
   }
 
   public void setParent(ParseContext parent) {
@@ -165,11 +176,11 @@ public class ParseContext {
     return resolver;
   }
 
-  public Scope evaluateGlobalModuleVariables(int stackFrameSize) {
-    Scope scope = Scope.getRoot(stackFrameSize);
-    for (Module m : modules.values())
-      if (m instanceof JstlFile)
-        ((JstlFile) m).evaluateLetsOnly(scope);
-    return scope;
+  public List<JstlFile> getFiles() {
+    return files;
+  }
+
+  public void registerJsltFile(JstlFile file) {
+    files.add(file);
   }
 }

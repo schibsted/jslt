@@ -66,21 +66,4 @@ public class Scope {
     else
       localStackFrames.peek()[slot] = value;
   }
-
-  public void insertModuleGlobals(JsonNode[] globals) {
-    for (int ix = 0; ix < globals.length; ix++)
-      if (globals[ix] != null)
-        globalStackFrame[ix] = globals[ix];
-  }
-
-  public JsonNode[] getGlobalStackFrame() {
-    return globalStackFrame;
-  }
-
-  public boolean hasGlobalValuesSet() {
-    for (int ix = 0; ix < globalStackFrame.length; ix++)
-      if (globalStackFrame[ix] != null)
-        return true;
-    return false;
-  }
 }

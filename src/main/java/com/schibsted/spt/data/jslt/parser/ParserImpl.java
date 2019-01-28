@@ -52,14 +52,9 @@ public class ParserImpl {
     try {
       parser.Start();
       ExpressionImpl expr = compile(ctx, (SimpleNode) parser.jjtree.rootNode());
-
-      // we need to evaluate the global variables in all the modules,
-      // if there are any, once and for all, and remember their values
-      Scope scope = ctx.evaluateGlobalModuleVariables(expr.getStackFrameSize());
-      if (scope.hasGlobalValuesSet())
-        expr.setInitialScope(scope);
-
+      expr.setGlobalModules(ctx.getFiles());
       return expr;
+
     } catch (ParseException e) {
       throw new JsltException("Parse error: " + e.getMessage(),
                               makeLocation(ctx, e.currentToken));
@@ -72,7 +67,7 @@ public class ParserImpl {
                                              ParseContext parent,
                                              String jslt) {
     try (Reader reader = parent.getResolver().resolve(jslt)) {
-      ParseContext ctx = new ParseContext(functions, jslt, parent.getResolver(), parent.getNamedModules(), parent.getPreparationContext());
+      ParseContext ctx = new ParseContext(functions, jslt, parent.getResolver(), parent.getNamedModules(), parent.getFiles(), parent.getPreparationContext());
       ctx.setParent(parent);
       return compileModule(ctx, new JsltParser(reader));
     } catch (IOException e) {
@@ -552,6 +547,7 @@ public class ParserImpl {
         JstlFile file = doImport(ctx, source, node, prefix);
         ctx.registerModule(prefix, file);
         ctx.addDeclaredFunction(prefix, file);
+        ctx.registerJsltFile(file);
       }
     }
   }

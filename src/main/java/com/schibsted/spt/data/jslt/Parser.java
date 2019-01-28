@@ -187,6 +187,7 @@ public class Parser {
    */
   public Expression compile() {
     ParseContext ctx = new ParseContext(functions, source, resolver, modules,
+                                        new ArrayList(),
                                         new PreparationContext());
     return ParserImpl.compileExpression(ctx, new JsltParser(reader));
   }
