@@ -26,12 +26,17 @@ public class Scope {
     return new Scope(stackFrameSize);
   }
 
+  /**
+   * Creates an initialized scope with values for variables supplied
+   * by client code into the JSLT expression.
+   */
   public static Scope makeScope(Map<String, JsonNode> variables,
                                 int stackFrameSize,
                                 Map<String, Integer> parameterSlots) {
     Scope scope = new Scope(stackFrameSize);
     for (String variable : variables.keySet())
-      scope.setValue(parameterSlots.get(variable), variables.get(variable));
+      if (parameterSlots.containsKey(variable)) // check that variable exists
+        scope.setValue(parameterSlots.get(variable), variables.get(variable));
     return scope;
   }
 

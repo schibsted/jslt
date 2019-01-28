@@ -183,6 +183,17 @@ tests:
      m:foo()
    output: 22
 
+  # we're testing what happens when there is an external variable
+  # (a parameter) that's not actually referred to
+  -
+   input: {}
+   query: >
+     import "module-as-function-with-global.jslt" as m
+     m("variable is")
+   output: "\"variable is global\""
+   variables:
+     thevar: itsvalue # not actually referred to
+
   -
    input: {}
    query: >
