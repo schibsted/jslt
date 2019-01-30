@@ -28,6 +28,7 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.schibsted.spt.data.jslt.JsltException;
+import com.schibsted.spt.data.jslt.filters.JsonFilter;
 
 public class ObjectComprehension extends AbstractNode {
   private ExpressionNode loop;
@@ -35,19 +36,22 @@ public class ObjectComprehension extends AbstractNode {
   private ExpressionNode key;
   private ExpressionNode value;
   private ExpressionNode ifExpr;
+  private JsonFilter filter;
 
   public ObjectComprehension(ExpressionNode loop,
                              LetExpression[] lets,
                              ExpressionNode key,
                              ExpressionNode value,
                              ExpressionNode ifExpr,
-                             Location location) {
+                             Location location,
+                             JsonFilter filter) {
     super(location);
     this.loop = loop;
     this.lets = lets;
     this.key = key;
     this.value = value;
     this.ifExpr = ifExpr;
+    this.filter = filter;
   }
 
   public JsonNode apply(Scope scope, JsonNode input) {
@@ -69,7 +73,7 @@ public class ObjectComprehension extends AbstractNode {
 
       if (ifExpr == null || NodeUtils.isTrue(ifExpr.apply(scope, context))) {
         JsonNode valueNode = value.apply(scope, context);
-        if (NodeUtils.isValue(valueNode)) {
+        if (filter.filter(valueNode)) {
           // if there is no value, no need to evaluate the key
           JsonNode keyNode = key.apply(scope, context);
           if (!keyNode.isTextual())

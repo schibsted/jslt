@@ -45,6 +45,7 @@ import com.schibsted.spt.data.jslt.Function;
 import com.schibsted.spt.data.jslt.Expression;
 import com.schibsted.spt.data.jslt.JsltException;
 import com.schibsted.spt.data.jslt.impl.*;
+import com.schibsted.spt.data.jslt.filters.JsonFilter;
 
 public class ParserImpl {
 
@@ -67,7 +68,7 @@ public class ParserImpl {
                                              ParseContext parent,
                                              String jslt) {
     try (Reader reader = parent.getResolver().resolve(jslt)) {
-      ParseContext ctx = new ParseContext(functions, jslt, parent.getResolver(), parent.getNamedModules(), parent.getFiles(), parent.getPreparationContext());
+      ParseContext ctx = new ParseContext(functions, jslt, parent.getResolver(), parent.getNamedModules(), parent.getFiles(), parent.getPreparationContext(), parent.getObjectFilter());
       ctx.setParent(parent);
       return compileModule(ctx, new JsltParser(reader));
     } catch (IOException e) {
@@ -632,7 +633,8 @@ public class ParserImpl {
     children = pairs.toArray(children);
     checkForDuplicates(children);
     return new ObjectExpression(lets, children, matcher,
-                                makeLocation(ctx, node));
+                                makeLocation(ctx, node),
+                                ctx.getObjectFilter());
   }
 
   private static void checkForDuplicates(PairExpression[] pairs) {
@@ -722,7 +724,8 @@ public class ParserImpl {
       ifExpr = node2expr(ctx, getLastChild(node));
 
     return new ObjectComprehension(loopExpr, lets, keyExpr, valueExpr, ifExpr,
-                                   makeLocation(ctx, node));
+                                   makeLocation(ctx, node),
+                                   ctx.getObjectFilter());
   }
 
   private static SimpleNode getChild(SimpleNode node, int ix) {

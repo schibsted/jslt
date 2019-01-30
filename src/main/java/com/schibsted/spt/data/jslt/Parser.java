@@ -37,6 +37,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.schibsted.spt.data.jslt.parser.*;
 import com.schibsted.spt.data.jslt.impl.*;
+import com.schibsted.spt.data.jslt.filters.*;
 
 /**
  * Parses JSLT expressions to Expression objects for evaluating them.
@@ -132,14 +133,17 @@ public class Parser {
   private Reader reader;
   private ResourceResolver resolver;
   private Map<String, Module> modules;
+  private JsonFilter objectFilter;
 
   private Parser(String source, Reader reader, Collection<Function> functions,
-                 ResourceResolver resolver, Map<String, Module> modules) {
+                 ResourceResolver resolver, Map<String, Module> modules,
+                 JsonFilter filter) {
     this.functions = functions;
     this.source = source;
     this.reader = reader;
     this.resolver = resolver;
     this.modules = modules;
+    this.objectFilter = filter;
   }
 
   /**
@@ -147,7 +151,8 @@ public class Parser {
    */
   public Parser(Reader reader) {
     this("<unknown>", reader, Collections.EMPTY_SET,
-         new ClasspathResourceResolver(), new HashMap());
+         new ClasspathResourceResolver(), new HashMap(),
+         new DefaultJsonFilter());
   }
 
   /**
@@ -155,21 +160,24 @@ public class Parser {
    * used in error messages.
    */
   public Parser withSource(String thisSource) {
-    return new Parser(thisSource, reader, functions, resolver, modules);
+    return new Parser(thisSource, reader, functions, resolver, modules,
+                      objectFilter);
   }
 
   /**
    * Create a new Parser with the given extension functions.
    */
   public Parser withFunctions(Collection<Function> theseFunctions) {
-    return new Parser(source, reader, theseFunctions, resolver, modules);
+    return new Parser(source, reader, theseFunctions, resolver, modules,
+                      objectFilter);
   }
 
   /**
    * Create a new Parser with the given resource resolver.
    */
   public Parser withResourceResolver(ResourceResolver thisResolver) {
-    return new Parser(source, reader, functions, thisResolver, modules);
+    return new Parser(source, reader, functions, thisResolver, modules,
+                      objectFilter);
   }
 
   /**
@@ -179,7 +187,31 @@ public class Parser {
    * any syntax.
    */
   public Parser withNamedModules(Map<String, Module> thisModules) {
-    return new Parser(source, reader, functions, resolver, thisModules);
+    return new Parser(source, reader, functions, resolver, thisModules,
+                      objectFilter);
+  }
+
+  /**
+   * Create a new Parser with the given filter for object values. For
+   * all key/value pairs in objects being created, if this filter
+   * returns false when given the value, the key/value pair is
+   * omitted.
+   */
+  public Parser withObjectFilter(String filter) {
+    Expression parsedFilter = Parser.compileString(filter);
+    return new Parser(source, reader, functions, resolver, modules,
+                      new JsltJsonFilter(parsedFilter));
+  }
+
+  /**
+   * Create a new Parser with the given filter for object values. For
+   * all key/value pairs in objects being created, if this filter
+   * returns false when given the value, the key/value pair is
+   * omitted.
+   */
+  public Parser withObjectFilter(JsonFilter filter) {
+    return new Parser(source, reader, functions, resolver, modules,
+                      filter);
   }
 
   /**
@@ -188,7 +220,8 @@ public class Parser {
   public Expression compile() {
     ParseContext ctx = new ParseContext(functions, source, resolver, modules,
                                         new ArrayList(),
-                                        new PreparationContext());
+                                        new PreparationContext(),
+                                        objectFilter);
     return ParserImpl.compileExpression(ctx, new JsltParser(reader));
   }
 }

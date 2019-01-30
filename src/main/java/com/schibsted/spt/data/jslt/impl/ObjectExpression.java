@@ -29,6 +29,7 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.schibsted.spt.data.jslt.JsltException;
+import com.schibsted.spt.data.jslt.filters.JsonFilter;
 
 public class ObjectExpression extends AbstractNode {
   private LetExpression[] lets;
@@ -36,15 +37,18 @@ public class ObjectExpression extends AbstractNode {
   private DotExpression contextQuery; // find object to match
   private MatcherExpression matcher;
   private Set<String> keys; // the keys defined in this template
+  private JsonFilter filter;
 
   public ObjectExpression(LetExpression[] lets,
                           PairExpression[] children,
                           MatcherExpression matcher,
-                          Location location) {
+                          Location location,
+                          JsonFilter filter) {
     super(location);
     this.lets = lets;
     this.children = children;
     this.matcher = matcher;
+    this.filter = filter;
 
     this.keys = new HashSet();
     for (int ix = 0; ix < children.length; ix++)
@@ -60,7 +64,7 @@ public class ObjectExpression extends AbstractNode {
     ObjectNode object = NodeUtils.mapper.createObjectNode();
     for (int ix = 0; ix < children.length; ix++) {
       JsonNode value = children[ix].apply(scope, input);
-      if (NodeUtils.isValue(value))
+      if (filter.filter(value))
         object.put(children[ix].getKey(), value);
     }
 

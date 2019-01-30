@@ -26,6 +26,8 @@ import com.schibsted.spt.data.jslt.Callable;
 import com.schibsted.spt.data.jslt.Function;
 import com.schibsted.spt.data.jslt.JsltException;
 import com.schibsted.spt.data.jslt.ResourceResolver;
+import com.schibsted.spt.data.jslt.filters.JsonFilter;
+import com.schibsted.spt.data.jslt.filters.DefaultJsonFilter;
 
 /**
  * Class to encapsulate context information like available functions,
@@ -62,12 +64,17 @@ public class ParseContext {
    * Variable declaration and usage tracking.
    */
   private PreparationContext preparationContext;
+  /**
+   * Filter used to determine what object key/value pairs to keep.
+   */
+  private JsonFilter objectFilter;
 
   public ParseContext(Collection<Function> extensions, String source,
                       ResourceResolver resolver,
                       Map<String, Module> namedModules,
                       List<JstlFile> files,
-                      PreparationContext preparationContext) {
+                      PreparationContext preparationContext,
+                      JsonFilter objectFilter) {
     this.extensions = extensions;
     this.functions = new HashMap();
     for (Function func : extensions)
@@ -80,13 +87,15 @@ public class ParseContext {
     this.resolver = resolver;
     this.namedModules = namedModules;
     this.preparationContext = preparationContext;
+    this.objectFilter = objectFilter;
 
     namedModules.put(ExperimentalModule.URI, new ExperimentalModule());
   }
 
   public ParseContext(String source) {
     this(Collections.EMPTY_SET, source, new ClasspathResourceResolver(),
-         new HashMap(), new ArrayList(), new PreparationContext());
+         new HashMap(), new ArrayList(), new PreparationContext(),
+         new DefaultJsonFilter());
   }
 
   public void setParent(ParseContext parent) {
@@ -182,5 +191,9 @@ public class ParseContext {
 
   public void registerJsltFile(JstlFile file) {
     files.add(file);
+  }
+
+  public JsonFilter getObjectFilter() {
+    return objectFilter;
   }
 }
