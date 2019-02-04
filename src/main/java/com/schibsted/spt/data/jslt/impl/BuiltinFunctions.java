@@ -43,6 +43,9 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.LongNode;
 import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.DoubleNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import com.schibsted.spt.data.jslt.Function;
 import com.schibsted.spt.data.jslt.JsltException;
@@ -254,13 +257,23 @@ public class BuiltinFunctions {
 
   public static class HashInt extends AbstractFunction {
 
+    private static ObjectMapper mapper = new ObjectMapper();
+    private static ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
+
     public HashInt() {
       super("hash-int", 1, 1);
     }
 
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
       JsonNode node = arguments[0];
-      return new IntNode(node.hashCode());
+      if (node.isNull())
+        return NullNode.instance;
+      try {
+        String jsonString = writer.writeValueAsString(node);
+        return new IntNode(jsonString.hashCode());
+      } catch (JsonProcessingException e) {
+        return NullNode.instance;
+      }
     }
   }
 

@@ -865,42 +865,32 @@
    {
       "query" : "hash-int(.)",
       "input" : "{}",
-      "output" : "0"
+      "output" : "119320"
+   },
+   {
+      "query" : "hash-int(.)",
+      "input" : "{    }",
+      "output" : "119320"
    },
    {
       "query" : "hash-int(null)",
       "input" : "{}",
-      "output" : "4"
+      "output" : "null"
    },
    {
       "query" : "hash-int(.)",
-      "input" : "{ \"test\" : \"test\" }",
-      "output" : "0"
+      "input" : "1",
+      "output" : "49"
    },
    {
       "query" : "hash-int(.)",
-      "input" : "{    \"test\":     \"test\" }",
-      "output" : "0"
+      "input" : "[]",
+      "output" : "88536"
    },
    {
       "query" : "hash-int(.)",
-      "input" : "{ \"test\" : \"test\", \"a\": 2 }",
-      "output" : "99"
-   },
-   {
-      "query" : "hash-int(.test)",
-      "input" : "{ \"test\" : \"test\" }",
-      "output" : "3556498"
-   },
-   {
-      "query" : "hash-int(\"test\")",
-      "input" : "{ \"test\" : \"test\" }",
-      "output" : "3556498"
-   },
-   {
-      "query" : "hash-int(123)",
-      "input" : "{ \"test\" : \"test\", \"a\": 2 }",
-      "output" : "123"
+      "input" : "\"a\"",
+      "output" : "35715"
    }
 ]
 }
