@@ -106,6 +106,16 @@ public class ArraySlicer extends AbstractNode {
     return children;
   }
 
+  public ExpressionNode optimize() {
+    if (left != null)
+      this.left = left.optimize();
+    if (right != null)
+      this.right = right.optimize();
+
+    this.parent = parent.optimize();
+    return this;
+  }
+
   public void dump(int level) {
     if (parent != null)
       parent.dump(level);

@@ -58,3 +58,10 @@ tests:
        * : .
      }
    output: "{\"foo\" : 1}"
+
+  -
+   input: {}
+   query: >
+     let foo = "something"
+     $foo[4 : ]
+   output: '"thing"'
