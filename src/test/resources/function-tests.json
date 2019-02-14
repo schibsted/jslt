@@ -956,6 +956,51 @@
       "query": "replace(\"\", \".\", \"xx\")",
       "input" : "\"some text\"",
       "output": "\"\""
+   },
+   {
+      "query": "trim(.)",
+      "input" : "\"some text\"",
+      "output": "\"some text\""
+   },
+   {
+      "query": "trim(.)",
+      "input" : "null",
+      "output": "null"
+   },
+   {
+      "query": "trim(.)",
+      "input" : "\"\"",
+      "output": "\"\""
+   },
+   {
+      "query": "trim(.)",
+      "input" : "\" abc\"",
+      "output": "\"abc\""
+   },
+   {
+      "query": "trim(.)",
+      "input" : "\"abc   \"",
+      "output": "\"abc\""
+   },
+   {
+      "query": "trim(.)",
+      "input" : "\" \\t\\n\\r abc   \"",
+      "output": "\"abc\""
+   },
+   {
+      "query": "trim(.)",
+      "input" : "222",
+      "output": "\"222\""
+   },
+   {
+      "query": "trim(.)",
+      "input" : "\"      \"",
+      "output": "\"\""
+   },
+   {
+      "query": "trim(.)",
+      "input" : "\"a\"",
+      "output": "\"a\""
    }
 ]
 }

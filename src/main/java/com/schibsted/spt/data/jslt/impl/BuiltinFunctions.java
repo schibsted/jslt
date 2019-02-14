@@ -90,6 +90,7 @@ public class BuiltinFunctions {
     functions.put("from-json", new BuiltinFunctions.FromJson());
     functions.put("to-json", new BuiltinFunctions.ToJson());
     functions.put("replace", new BuiltinFunctions.Replace());
+    functions.put("trim", new BuiltinFunctions.Trim());
 
     // BOOLEAN
     functions.put("not", new BuiltinFunctions.Not());
@@ -814,12 +815,55 @@ public class BuiltinFunctions {
 
       return new TextNode(new String(buf, 0, bufix));
     }
+  }
 
-    private static int copy(String input, char[] buf, int bufix,
-                            int from, int to) {
-      for (int ix = from; ix < to; ix++)
-        buf[bufix++] = input.charAt(ix);
-      return bufix;
+  // ===== TRIM
+
+  public static class Trim extends AbstractFunction {
+
+    public Trim() {
+      super("trim", 1, 1);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      String string = NodeUtils.toString(arguments[0], true);
+      if (string == null)
+        return NullNode.instance;
+
+      int prefix = 0; // first non-space character
+
+      // first: find leading spaces
+      for (;
+           prefix < string.length() && isSpace(string, prefix);
+           prefix++)
+        ;
+
+      // if the whole thing is spaces we're done
+      if (prefix == string.length())
+        return new TextNode("");
+
+      int suffix = string.length() - 1; // last non-space character
+
+      // second: find trailing spaces
+      for (;
+           suffix >= 0 && isSpace(string, suffix);
+           suffix--)
+        ;
+
+      // INV suffix >= prefix (they're equal if non-space part is 1 character)
+
+      // if there are no leading or trailing spaces: keep input
+      if (prefix == 0 && suffix == string.length() - 1 &&
+          arguments[0].isTextual())
+        return arguments[0];
+
+      // copy out middle section and we're done
+      return new TextNode(string.substring(prefix, suffix + 1));
+    }
+
+    private static boolean isSpace(String string, int ix) {
+      char ch = string.charAt(ix);
+      return ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n';
     }
   }
 
@@ -1102,5 +1146,12 @@ public class BuiltinFunctions {
       cache.put(regexp, p);
     }
     return p;
+  }
+
+  private static int copy(String input, char[] buf, int bufix,
+                          int from, int to) {
+    for (int ix = from; ix < to; ix++)
+      buf[bufix++] = input.charAt(ix);
+    return bufix;
   }
 }

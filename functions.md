@@ -456,6 +456,22 @@ replace("abc def ghi", "[a-z]", "x")  => "xxx xxx xxx"
 replace("abc def ghi", "[a-z]+", "x") => "x x x"
 ```
 
+### _trim(string) -> string_
+
+Removes leading and trailing whitespace in the input string. If the
+input is `null`, so is the output. Other non-string input values are
+converted to string.
+
+Examples:
+
+```
+trim("  abc  ")    => "abc"
+trim("abc")        => "abc"
+trim("abc \t\r\n") => "abc"
+trim(false)        => "false"
+trim(null)         => null
+```
+
 <!-- BOOLEAN ================================================================-->
 
 ## Boolean functions
