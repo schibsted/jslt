@@ -420,6 +420,7 @@ Examples:
 from-json("[1,2]")       => [1, 2]
 from-json("[1,2", "BAD") => "BAD"
 from-json("[1,2")        => error
+from-json(null)          => null
 ```
 
 ### _to-json(value) -> string_
@@ -428,6 +429,13 @@ The opposite of `from-json`, in that it takes any JSON value and
 returns it serialized as a string.
 
 Examples:
+
+```
+to-json([1,2])       => "[1, 2]"
+to-json(1)           => "1"
+to-json("foo")       => "\"foo\""
+to-json(null)        => "null"
+```
 
 ```
 to-json([1, 2])          => "[1, 2]"
