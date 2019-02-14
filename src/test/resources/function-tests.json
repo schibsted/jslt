@@ -951,6 +951,11 @@
       "query": "replace(., \".\", \"xx\")",
       "input" : "\"some text\"",
       "output": "\"xxxxxxxxxxxxxxxxxx\""
+   },
+   {
+      "query": "replace(\"\", \".\", \"xx\")",
+      "input" : "\"some text\"",
+      "output": "\"\""
    }
 ]
 }
