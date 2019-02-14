@@ -901,6 +901,56 @@
       "query": "mod(-10,-3)",
       "input" : "{}",
       "output": "2"
+   },
+   {
+      "query": "replace(., \"-\", \" \")",
+      "input" : "\"hey-ho-ho\"",
+      "output": "\"hey ho ho\""
+   },
+   {
+      "query": "replace(., \"1\", \"2\")",
+      "input" : "212",
+      "output": "\"222\""
+   },
+   {
+      "query": "replace(., \"1\", \"2\")",
+      "input" : "232",
+      "output": "\"232\""
+   },
+   {
+      "query": "replace(.foo, \"1\", \"2\")",
+      "input" : "212",
+      "output": "null"
+   },
+   {
+      "query": "replace(., \"-+\", \" \")",
+      "input" : "\"hey-ho-ho\"",
+      "output": "\"hey ho ho\""
+   },
+   {
+      "query": "replace(., \"^\\\\s+\", \"\")",
+      "input" : "\"    initial spaces\"",
+      "output": "\"initial spaces\""
+   },
+   {
+      "query": "replace(., \"[a-z]\", \"x\")",
+      "input" : "\"some text\"",
+      "output": "\"xxxx xxxx\""
+   },
+   {
+      "query": "replace(., \"[a-z]+\", \"x\")",
+      "input" : "\"some text\"",
+      "output": "\"x x\""
+   },
+   {
+      "query": "replace(., \"[a-z]+\", \"xx\")",
+      "input" : "\"some text\"",
+      "output": "\"xx xx\""
+   },
+   {
+      "query": "replace(., \".\", \"xx\")",
+      "input" : "\"some text\"",
+      "output": "\"xxxxxxxxxxxxxxxxxx\""
    }
 ]
 }

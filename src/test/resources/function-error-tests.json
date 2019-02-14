@@ -166,6 +166,11 @@
     "error": "mod(): dividend cannot be a non-number: true",
     "query": "mod(true, 3)",
     "input": "{}"
-  }
+  },
+   {
+      "query": "replace(., \" ?\", \"x\")",
+      "input" : "\"some text\"",
+      "error": "empty string"
+   }
 ]
 }

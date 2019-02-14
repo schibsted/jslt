@@ -437,10 +437,23 @@ to-json("foo")       => "\"foo\""
 to-json(null)        => "null"
 ```
 
+### _replace(value, regexp, out) -> string_
+
+Replaces every substring that in `value` that matches `regexp` with
+`out`.  If `value` is not a string, it's converted to a string, except
+if it is `null`. `regexp` and `out` must be strings.
+
+It is an error for `regexp` ever to match an empty string.
+
+Examples:
+
 ```
-to-json([1, 2])          => "[1, 2]"
-from-json("[1,2", "BAD") => "BAD"
-from-json("[1,2")        => error
+replace("abc def ghi", " ", "-")      => "abc-def-ghi"
+replace("abc def ghi", "\\S+", "-")   => "abc-def-ghi"
+replace(null, "\\S+", "-")            => null
+replace("   whoah", "^\\S+", "")      => "whoah"
+replace("abc def ghi", "[a-z]", "x")  => "xxx xxx xxx"
+replace("abc def ghi", "[a-z]+", "x") => "x x x"
 ```
 
 <!-- BOOLEAN ================================================================-->

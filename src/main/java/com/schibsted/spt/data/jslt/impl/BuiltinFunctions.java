@@ -89,6 +89,7 @@ public class BuiltinFunctions {
     functions.put("ends-with", new BuiltinFunctions.EndsWith());
     functions.put("from-json", new BuiltinFunctions.FromJson());
     functions.put("to-json", new BuiltinFunctions.ToJson());
+    functions.put("replace", new BuiltinFunctions.Replace());
 
     // BOOLEAN
     functions.put("not", new BuiltinFunctions.Not());
@@ -288,8 +289,6 @@ public class BuiltinFunctions {
   // ===== TEST
 
   public static class Test extends AbstractFunction {
-    static Map<String, Pattern> cache = new BoundedCache(1000);
-
     public Test() {
       super("test", 2, 2);
     }
@@ -304,11 +303,7 @@ public class BuiltinFunctions {
       if (regexp == null)
         throw new JsltException("test() can't test null regexp");
 
-      Pattern p = cache.get(regexp);
-      if (p == null) {
-        p = Pattern.compile(regexp);
-        cache.put(regexp, p);
-      }
+      Pattern p = getRegexp(regexp);
       java.util.regex.Matcher m = p.matcher(string);
       return NodeUtils.toJson(m.find(0));
     }
@@ -772,6 +767,62 @@ public class BuiltinFunctions {
     }
   }
 
+  // ===== REPLACE
+
+  public static class Replace extends AbstractFunction {
+
+    public Replace() {
+      super("replace", 3, 3);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      String string = NodeUtils.toString(arguments[0], true);
+      if (string == null)
+        return NullNode.instance;
+
+      String regexp = NodeUtils.toString(arguments[1], false);
+      String sep = NodeUtils.toString(arguments[2], false);
+
+      Pattern p = getRegexp(regexp);
+      Matcher m = p.matcher(string);
+      char[] buf = new char[string.length() * Math.max(sep.length(), 1)];
+      int pos = 0; // next untouched character in input
+      int bufix = 0; // next unwritten character in buf
+
+      while (m.find(pos)) {
+        // we found another match, and now matcher state has been updated
+        if (m.start() == m.end())
+          throw new JsltException("Regexp " + regexp + " in replace() matched empty string in '" + arguments[0] + "'");
+
+        // if there was text between pos and start of match, copy to output
+        if (pos < m.start())
+          bufix = copy(string, buf, bufix, pos, m.start());
+
+        // copy sep to output (corresponds with the match)
+        bufix = copy(sep, buf, bufix, 0, sep.length());
+
+        // step over match
+        pos = m.end();
+      }
+
+      if (pos == 0 && arguments[0].isTextual())
+        // there were matches, so the string hasn't changed
+        return arguments[0];
+      else if (pos < string.length())
+        // there was text remaining after the end of the last match. must copy
+        bufix = copy(string, buf, bufix, pos, string.length());
+
+      return new TextNode(new String(buf, 0, bufix));
+    }
+
+    private static int copy(String input, char[] buf, int bufix,
+                            int from, int to) {
+      for (int ix = from; ix < to; ix++)
+        buf[bufix++] = input.charAt(ix);
+      return bufix;
+    }
+  }
+
   // ===== JOIN
 
   public static class Join extends AbstractFunction {
@@ -1037,5 +1088,19 @@ public class BuiltinFunctions {
         throw new JsltException("format-time: Couldn't parse format '" + formatstr + "': " + e.getMessage());
       }
     }
+  }
+
+  // ===== HELPER METHODS
+
+  // shared regexp cache
+  static Map<String, Pattern> cache = new BoundedCache(1000);
+
+  private static Pattern getRegexp(String regexp) {
+    Pattern p = cache.get(regexp);
+    if (p == null) {
+      p = Pattern.compile(regexp);
+      cache.put(regexp, p);
+    }
+    return p;
   }
 }
