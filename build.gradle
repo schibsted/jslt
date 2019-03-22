@@ -19,7 +19,7 @@ apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'maven-publish'
 apply plugin: 'maven'
 apply plugin: 'signing'
-apply plugin: 'jacoco'
+// apply plugin: 'jacoco' (fails in JDK 11 on Travis)
 
 repositories {
   mavenLocal()
