@@ -10,5 +10,9 @@ jdk:
 - openjdk8
 # - openjdk9 doesn't build, not clear why
 # - openjdk10 doesn't build, not clear why
+- oraclejdk9
+- oraclejdk11
+- openjdk10
+- openjdk11
 install: ./gradlew check
 script: ./gradlew check
