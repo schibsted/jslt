@@ -639,6 +639,11 @@
    },
    {
       "input" : "{}",
+      "output" : "\"fcde2b2edba56bf408601fb721fe9b5c338d10ee429ea04fae5511b68fbf8fb9\"",
+      "query" : "sha256-hex(\"bar\")"
+   },
+   {
+      "input" : "{}",
       "output" : "true",
       "query" : "sha256-hex(\"42\") == sha256-hex(42)"
    },

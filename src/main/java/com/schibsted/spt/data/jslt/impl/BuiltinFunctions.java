@@ -32,8 +32,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import javax.xml.bind.DatatypeConverter;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.TextNode;
@@ -469,7 +467,7 @@ public class BuiltinFunctions {
       String message = NodeUtils.toString(arguments[0], false);
 
       byte[] bytes = this.messageDigest.digest(message.getBytes(UTF_8));
-      String string = DatatypeConverter.printHexBinary(bytes).toLowerCase();
+      String string = Utils.printHexBinary(bytes);
 
       return new TextNode(string);
     }
