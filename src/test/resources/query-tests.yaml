@@ -65,3 +65,14 @@ tests:
      let foo = "something"
      $foo[4 : ]
    output: '"thing"'
+
+  -
+   input: {}
+   query: >
+      let lookup = {
+        "dk" : "Denmark",
+        "se" : "Sweden"
+      }
+      let reverse = {for ($lookup) .value : .key}
+      get-key($reverse, "Denmark")
+   output: '"dk"'

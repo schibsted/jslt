@@ -108,6 +108,18 @@ public class ObjectComprehension extends AbstractNode {
     return children;
   }
 
+  public ExpressionNode optimize() {
+    for (int ix = 0; ix < lets.length; ix++)
+      lets[ix].optimize();
+
+    loop = loop.optimize();
+    key = key.optimize();
+    value = value.optimize();
+    if (ifExpr != null)
+      ifExpr = ifExpr.optimize();
+    return this;
+  }
+
   public void dump(int level) {
   }
 }
