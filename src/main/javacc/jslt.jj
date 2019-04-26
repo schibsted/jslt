@@ -238,7 +238,7 @@ void Pair() :
 {}
 {
   <STRING> <COLON> Expr()
-  (<COMMA> (Pair() | Matcher()))?
+  (<COMMA> ((Pair() | Matcher()))?)?
 }
 
 void ObjectComprehension() :

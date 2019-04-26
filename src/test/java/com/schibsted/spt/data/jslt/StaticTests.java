@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.Collections;
 import java.io.IOException;
 import java.io.StringReader;
+
 import org.junit.Test;
 import org.junit.Ignore;
 import static org.junit.Assert.assertTrue;
@@ -271,5 +272,25 @@ public class StaticTests extends TestBase {
 
     JsonNode result = expr.apply(input);
     assertEquals(desired, result);
+  }
+
+  @Test
+  public void testTrailingCommas() {
+    Expression expr = Parser.compileString("{\"a\":1, \"b\":2,}");
+    JsonNode actual = expr.apply(null);
+
+    Iterator<String> it = actual.fieldNames();
+    assertEquals("a", it.next());
+    assertEquals("b", it.next());
+  }
+
+  @Test(expected = JsltException.class)
+  public void testCommasRequiredBetweenPairs() {
+    Expression expr = Parser.compileString("{\"a\":1 \"b\":2}");
+    JsonNode actual = expr.apply(null);
+
+    Iterator<String> it = actual.fieldNames();
+    assertEquals("a", it.next());
+    assertEquals("b", it.next());
   }
 }
