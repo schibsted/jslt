@@ -15,6 +15,9 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
+import java.util.List;
+import java.util.Arrays;
+import java.util.ArrayList;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -47,19 +50,16 @@ public class ForExpression extends AbstractNode {
     else if (!array.isArray())
       throw new JsltException("For loop can't iterate over " + array, location);
 
-    // may be the same, if no lets
-    Scope newscope = scope;
-
     ArrayNode result = NodeUtils.mapper.createArrayNode();
     for (int ix = 0; ix < array.size(); ix++) {
       JsonNode value = array.get(ix);
 
       // must evaluate lets over again for each value because of context
       if (lets.length > 0)
-        newscope = NodeUtils.evalLets(scope, value, lets);
+        NodeUtils.evalLets(scope, value, lets);
 
-      if (ifExpr == null || NodeUtils.isTrue(ifExpr.apply(newscope, value)))
-        result.add(loopExpr.apply(newscope, value));
+      if (ifExpr == null || NodeUtils.isTrue(ifExpr.apply(scope, value)))
+        result.add(loopExpr.apply(scope, value));
     }
     return result;
   }
@@ -80,6 +80,28 @@ public class ForExpression extends AbstractNode {
     if (ifExpr != null)
       ifExpr = ifExpr.optimize();
     return this;
+  }
+
+  public void prepare(PreparationContext ctx) {
+    ctx.scope.enterScope();
+
+    for (int ix = 0; ix < lets.length; ix++)
+      lets[ix].register(ctx.scope);
+
+    for (ExpressionNode child : getChildren())
+      child.prepare(ctx);
+
+    ctx.scope.leaveScope();
+  }
+
+  public List<ExpressionNode> getChildren() {
+    List<ExpressionNode> children = new ArrayList();
+    children.addAll(Arrays.asList(lets));
+    children.add(valueExpr);
+    children.add(loopExpr);
+    if (ifExpr != null)
+      children.add(ifExpr);
+    return children;
   }
 
   public void dump(int level) {

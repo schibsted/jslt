@@ -63,4 +63,8 @@ public class JstlFile implements Module, Function {
     // make the argument be the input to the template
     return body.apply(arguments[0]);
   }
+
+  public void evaluateLetsOnly(Scope scope, JsonNode input) {
+    body.evaluateLetsOnly(scope, input);
+  }
 }

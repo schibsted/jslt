@@ -15,6 +15,8 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
+import java.util.List;
+import java.util.Collections;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 
@@ -48,6 +50,13 @@ public class DotExpression extends AbstractNode {
     return value;
   }
 
+  public List<ExpressionNode> getChildren() {
+    if (parent == null)
+      return Collections.EMPTY_LIST;
+    else
+      return Collections.singletonList(parent);
+  }
+
   public void dump(int level) {
     System.out.println(NodeUtils.indent(level) + this);
   }
@@ -67,5 +76,11 @@ public class DotExpression extends AbstractNode {
     // so check for that
     if (parent != null)
       ((DotExpression) parent).checkOk(matcher);
+  }
+
+  public ExpressionNode optimize() {
+    if (parent != null)
+      parent = parent.optimize();
+    return this;
   }
 }

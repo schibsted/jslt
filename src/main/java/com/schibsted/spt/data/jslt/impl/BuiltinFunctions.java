@@ -32,8 +32,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import javax.xml.bind.DatatypeConverter;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.TextNode;
@@ -76,6 +74,7 @@ public class BuiltinFunctions {
     functions.put("ceiling", new BuiltinFunctions.Ceiling());
     functions.put("random", new BuiltinFunctions.Random());
     functions.put("sum", new BuiltinFunctions.Sum());
+    functions.put("mod", new BuiltinFunctions.Modulo());
     functions.put("hash-int", new BuiltinFunctions.HashInt());
 
     // STRING
@@ -92,6 +91,8 @@ public class BuiltinFunctions {
     functions.put("ends-with", new BuiltinFunctions.EndsWith());
     functions.put("from-json", new BuiltinFunctions.FromJson());
     functions.put("to-json", new BuiltinFunctions.ToJson());
+    functions.put("replace", new BuiltinFunctions.Replace());
+    functions.put("trim", new BuiltinFunctions.Trim());
 
     // BOOLEAN
     functions.put("not", new BuiltinFunctions.Not());
@@ -118,13 +119,6 @@ public class BuiltinFunctions {
   public static Map<String, Macro> macros = new HashMap();
   static {
     macros.put("fallback", new BuiltinFunctions.Fallback());
-  }
-
-  private static abstract class AbstractFunction extends AbstractCallable implements Function {
-
-    public AbstractFunction(String name, int min, int max) {
-      super(name, min, max);
-    }
   }
 
   private static abstract class AbstractMacro extends AbstractCallable implements Macro {
@@ -253,6 +247,48 @@ public class BuiltinFunctions {
     }
   }
 
+  // ===== MODULO
+
+  public static class Modulo extends AbstractFunction {
+
+    public Modulo() {
+      super("modulo", 2, 2);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      JsonNode dividend = arguments[0];
+      if (dividend.isNull())
+        return NullNode.instance;
+      else if (!dividend.isNumber())
+        throw new JsltException("mod(): dividend cannot be a non-number: " + dividend);
+
+      JsonNode divisor = arguments[1];
+      if (divisor.isNull())
+        return NullNode.instance;
+      else if (!divisor.isNumber())
+        throw new JsltException("mod(): divisor cannot be a non-number: " + divisor);
+
+      if (!dividend.isIntegralNumber() || !divisor.isIntegralNumber()) {
+        throw new JsltException("mod(): operands must be integral types");
+      } else {
+        long D = dividend.longValue();
+        long d = divisor.longValue();
+        if (d == 0)
+          throw new JsltException("mod(): cannot divide by zero");
+
+        long r = D % d;
+        if (r < 0) {
+          if (d > 0)
+            r += d;
+          else
+            r -= d;
+        }
+
+        return new LongNode(r);
+      }
+    }
+  }
+
   // ===== HASH-INT
 
   public static class HashInt extends AbstractFunction {
@@ -280,8 +316,6 @@ public class BuiltinFunctions {
   // ===== TEST
 
   public static class Test extends AbstractFunction {
-    static Map<String, Pattern> cache = new BoundedCache(1000);
-
     public Test() {
       super("test", 2, 2);
     }
@@ -296,11 +330,7 @@ public class BuiltinFunctions {
       if (regexp == null)
         throw new JsltException("test() can't test null regexp");
 
-      Pattern p = cache.get(regexp);
-      if (p == null) {
-        p = Pattern.compile(regexp);
-        cache.put(regexp, p);
-      }
+      Pattern p = getRegexp(regexp);
       java.util.regex.Matcher m = p.matcher(string);
       return NodeUtils.toJson(m.find(0));
     }
@@ -465,7 +495,7 @@ public class BuiltinFunctions {
       String message = NodeUtils.toString(arguments[0], false);
 
       byte[] bytes = this.messageDigest.digest(message.getBytes(UTF_8));
-      String string = DatatypeConverter.printHexBinary(bytes).toLowerCase();
+      String string = Utils.printHexBinary(bytes);
 
       return new TextNode(string);
     }
@@ -764,6 +794,72 @@ public class BuiltinFunctions {
     }
   }
 
+  // ===== REPLACE
+
+  public static class Replace extends AbstractFunction {
+
+    public Replace() {
+      super("replace", 3, 3);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      String string = NodeUtils.toString(arguments[0], true);
+      if (string == null)
+        return NullNode.instance;
+
+      String regexp = NodeUtils.toString(arguments[1], false);
+      String sep = NodeUtils.toString(arguments[2], false);
+
+      Pattern p = getRegexp(regexp);
+      Matcher m = p.matcher(string);
+      char[] buf = new char[string.length() * Math.max(sep.length(), 1)];
+      int pos = 0; // next untouched character in input
+      int bufix = 0; // next unwritten character in buf
+
+      while (m.find(pos)) {
+        // we found another match, and now matcher state has been updated
+        if (m.start() == m.end())
+          throw new JsltException("Regexp " + regexp + " in replace() matched empty string in '" + arguments[0] + "'");
+
+        // if there was text between pos and start of match, copy to output
+        if (pos < m.start())
+          bufix = copy(string, buf, bufix, pos, m.start());
+
+        // copy sep to output (corresponds with the match)
+        bufix = copy(sep, buf, bufix, 0, sep.length());
+
+        // step over match
+        pos = m.end();
+      }
+
+      if (pos == 0 && arguments[0].isTextual())
+        // there were matches, so the string hasn't changed
+        return arguments[0];
+      else if (pos < string.length())
+        // there was text remaining after the end of the last match. must copy
+        bufix = copy(string, buf, bufix, pos, string.length());
+
+      return new TextNode(new String(buf, 0, bufix));
+    }
+  }
+
+  // ===== TRIM
+
+  public static class Trim extends AbstractFunction {
+
+    public Trim() {
+      super("trim", 1, 1);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      String string = NodeUtils.toString(arguments[0], true);
+      if (string == null)
+        return NullNode.instance;
+
+      return new TextNode(string.trim());
+    }
+  }
+
   // ===== JOIN
 
   public static class Join extends AbstractFunction {
@@ -1029,5 +1125,26 @@ public class BuiltinFunctions {
         throw new JsltException("format-time: Couldn't parse format '" + formatstr + "': " + e.getMessage());
       }
     }
+  }
+
+  // ===== HELPER METHODS
+
+  // shared regexp cache
+  static Map<String, Pattern> cache = new BoundedCache(1000);
+
+  private static Pattern getRegexp(String regexp) {
+    Pattern p = cache.get(regexp);
+    if (p == null) {
+      p = Pattern.compile(regexp);
+      cache.put(regexp, p);
+    }
+    return p;
+  }
+
+  private static int copy(String input, char[] buf, int bufix,
+                          int from, int to) {
+    for (int ix = from; ix < to; ix++)
+      buf[bufix++] = input.charAt(ix);
+    return bufix;
   }
 }

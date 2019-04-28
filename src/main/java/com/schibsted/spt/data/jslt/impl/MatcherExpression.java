@@ -16,6 +16,7 @@
 package com.schibsted.spt.data.jslt.impl;
 
 import java.util.List;
+import java.util.Collections;
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**
@@ -44,6 +45,15 @@ public class MatcherExpression extends AbstractNode {
     // FIXME: uhhh, the rules here?
   }
 
+  public List<ExpressionNode> getChildren() {
+    return Collections.singletonList(expr);
+  }
+
   public void dump(int level) {
+  }
+
+  public ExpressionNode optimize() {
+    expr = expr.optimize();
+    return this;
   }
 }

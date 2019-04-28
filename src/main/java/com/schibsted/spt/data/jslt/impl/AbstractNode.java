@@ -15,6 +15,9 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
+import java.util.List;
+import java.util.Collections;
+
 public abstract class AbstractNode implements ExpressionNode {
   protected Location location;
 
@@ -33,7 +36,16 @@ public abstract class AbstractNode implements ExpressionNode {
   public void computeMatchContexts(DotExpression parent) {
   }
 
+  public void prepare(PreparationContext ctx) {
+    for (ExpressionNode child : getChildren())
+      child.prepare(ctx);
+  }
+
   public ExpressionNode optimize() {
     return this;
+  }
+
+  public List<ExpressionNode> getChildren() {
+    return Collections.EMPTY_LIST;
   }
 }

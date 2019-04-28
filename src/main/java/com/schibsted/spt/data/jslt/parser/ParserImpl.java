@@ -16,8 +16,10 @@
 package com.schibsted.spt.data.jslt.parser;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.List;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -43,13 +45,16 @@ import com.schibsted.spt.data.jslt.Function;
 import com.schibsted.spt.data.jslt.Expression;
 import com.schibsted.spt.data.jslt.JsltException;
 import com.schibsted.spt.data.jslt.impl.*;
+import com.schibsted.spt.data.jslt.filters.JsonFilter;
 
 public class ParserImpl {
 
   public static Expression compileExpression(ParseContext ctx, JsltParser parser) {
     try {
       parser.Start();
-      return compile(ctx, (SimpleNode) parser.jjtree.rootNode());
+      ExpressionImpl expr = compile(ctx, (SimpleNode) parser.jjtree.rootNode());
+      expr.setGlobalModules(ctx.getFiles());
+      return expr;
 
     } catch (ParseException e) {
       throw new JsltException("Parse error: " + e.getMessage(),
@@ -63,7 +68,7 @@ public class ParserImpl {
                                              ParseContext parent,
                                              String jslt) {
     try (Reader reader = parent.getResolver().resolve(jslt)) {
-      ParseContext ctx = new ParseContext(functions, jslt, parent.getResolver(), parent.getNamedModules());
+      ParseContext ctx = new ParseContext(functions, jslt, parent.getResolver(), parent.getNamedModules(), parent.getFiles(), parent.getPreparationContext(), parent.getObjectFilter());
       ctx.setParent(parent);
       return compileModule(ctx, new JsltParser(reader));
     } catch (IOException e) {
@@ -98,6 +103,7 @@ public class ParserImpl {
 
     ExpressionImpl impl =
       new ExpressionImpl(lets, ctx.getDeclaredFunctions(), top);
+    impl.prepare(ctx.getPreparationContext());
     impl.optimize();
     return impl;
   }
@@ -542,6 +548,7 @@ public class ParserImpl {
         JstlFile file = doImport(ctx, source, node, prefix);
         ctx.registerModule(prefix, file);
         ctx.addDeclaredFunction(prefix, file);
+        ctx.registerJsltFile(file);
       }
     }
   }
@@ -624,8 +631,22 @@ public class ParserImpl {
     List<PairExpression> pairs = collectPairs(ctx, last);
     PairExpression[] children = new PairExpression[pairs.size()];
     children = pairs.toArray(children);
+    checkForDuplicates(children);
     return new ObjectExpression(lets, children, matcher,
-                                makeLocation(ctx, node));
+                                makeLocation(ctx, node),
+                                ctx.getObjectFilter());
+  }
+
+  private static void checkForDuplicates(PairExpression[] pairs) {
+    Set<String> seen = new HashSet(pairs.length);
+    for (int ix = 0; ix < pairs.length; ix++) {
+      if (seen.contains(pairs[ix].getKey()))
+        throw new JsltException("Invalid object declaration, duplicate key " +
+                                "'" + pairs[ix].getKey() + "'",
+                                pairs[ix].getLocation());
+
+      seen.add(pairs[ix].getKey());
+    }
   }
 
   private static MatcherExpression collectMatcher(ParseContext ctx,
@@ -703,7 +724,8 @@ public class ParserImpl {
       ifExpr = node2expr(ctx, getLastChild(node));
 
     return new ObjectComprehension(loopExpr, lets, keyExpr, valueExpr, ifExpr,
-                                   makeLocation(ctx, node));
+                                   makeLocation(ctx, node),
+                                   ctx.getObjectFilter());
   }
 
   private static SimpleNode getChild(SimpleNode node, int ix) {

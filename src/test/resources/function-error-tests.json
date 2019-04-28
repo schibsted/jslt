@@ -141,6 +141,36 @@
     "error": "array",
     "query": "all(23232)",
     "input": "{}"
-  }
+  },
+  {
+    "error": "mod(): operands must be integral types",
+    "query": "mod(10.1, 2)",
+    "input": "{}"
+  },
+  {
+    "error": "mod(): operands must be integral types",
+    "query": "mod(10, 2.1)",
+    "input": "{}"
+  },
+  {
+    "error": "mod(): cannot divide by zero",
+    "query": "mod(10, 0)",
+    "input": "{}"
+  },
+  {
+    "error": "mod(): divisor cannot be a non-number: true",
+    "query": "mod(10, true)",
+    "input": "{}"
+  },
+  {
+    "error": "mod(): dividend cannot be a non-number: true",
+    "query": "mod(true, 3)",
+    "input": "{}"
+  },
+   {
+      "query": "replace(., \" ?\", \"x\")",
+      "input" : "\"some text\"",
+      "error": "empty string"
+   }
 ]
 }

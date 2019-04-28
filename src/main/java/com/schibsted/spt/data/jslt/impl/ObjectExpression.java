@@ -19,6 +19,9 @@ import java.util.Set;
 import java.util.Map;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Arrays;
+import java.util.ArrayList;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.NullNode;
@@ -26,6 +29,7 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.schibsted.spt.data.jslt.JsltException;
+import com.schibsted.spt.data.jslt.filters.JsonFilter;
 
 public class ObjectExpression extends AbstractNode {
   private LetExpression[] lets;
@@ -33,15 +37,18 @@ public class ObjectExpression extends AbstractNode {
   private DotExpression contextQuery; // find object to match
   private MatcherExpression matcher;
   private Set<String> keys; // the keys defined in this template
+  private JsonFilter filter;
 
   public ObjectExpression(LetExpression[] lets,
                           PairExpression[] children,
                           MatcherExpression matcher,
-                          Location location) {
+                          Location location,
+                          JsonFilter filter) {
     super(location);
     this.lets = lets;
     this.children = children;
     this.matcher = matcher;
+    this.filter = filter;
 
     this.keys = new HashSet();
     for (int ix = 0; ix < children.length; ix++)
@@ -52,12 +59,12 @@ public class ObjectExpression extends AbstractNode {
   }
 
   public JsonNode apply(Scope scope, JsonNode input) {
-    scope = NodeUtils.evalLets(scope, input, lets);
+    NodeUtils.evalLets(scope, input, lets);
 
     ObjectNode object = NodeUtils.mapper.createObjectNode();
     for (int ix = 0; ix < children.length; ix++) {
       JsonNode value = children[ix].apply(scope, input);
-      if (NodeUtils.isValue(value))
+      if (filter.filter(value))
         object.put(children[ix].getKey(), value);
     }
 
@@ -101,6 +108,9 @@ public class ObjectExpression extends AbstractNode {
     for (int ix = 0; ix < lets.length; ix++)
       lets[ix].optimize();
 
+    if (matcher != null)
+      matcher.optimize();
+
     boolean allLiterals = matcher == null; // not static otherwise
     for (int ix = 0; ix < children.length; ix++) {
       children[ix] = (PairExpression) children[ix].optimize();
@@ -112,8 +122,30 @@ public class ObjectExpression extends AbstractNode {
     // we're a static object expression. we can just make the object and
     // turn that into a literal, instead of creating it over and over
     // apply parameters: literals won't use scope or input, so...
-    JsonNode object = apply(null, NullNode.instance);
+    JsonNode object = apply(new OptimizerScope(), NullNode.instance);
     return new LiteralExpression(object, location);
+  }
+
+  public void prepare(PreparationContext ctx) {
+    ctx.scope.enterScope();
+
+    for (int ix = 0; ix < lets.length; ix++) {
+      lets[ix].register(ctx.scope);
+    }
+
+    for (ExpressionNode child : getChildren())
+      child.prepare(ctx);
+
+    ctx.scope.leaveScope();
+  }
+
+  public List<ExpressionNode> getChildren() {
+    List<ExpressionNode> children = new ArrayList();
+    children.addAll(Arrays.asList(lets));
+    children.addAll(Arrays.asList(this.children));
+    if (matcher != null)
+      children.add(matcher);
+    return children;
   }
 
   public void dump(int level) {

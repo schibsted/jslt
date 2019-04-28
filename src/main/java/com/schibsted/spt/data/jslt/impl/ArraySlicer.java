@@ -15,6 +15,8 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
+import java.util.List;
+import java.util.ArrayList;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.TextNode;
@@ -26,9 +28,9 @@ import com.schibsted.spt.data.jslt.JsltException;
  * Indexing and slicing of arrays and also strings.
  */
 public class ArraySlicer extends AbstractNode {
-  private ExpressionNode left;
+  private ExpressionNode left; // can be null
   private boolean colon;
-  private ExpressionNode right;
+  private ExpressionNode right; // can be null
   private ExpressionNode parent;
 
   public ArraySlicer(ExpressionNode left, boolean colon, ExpressionNode right,
@@ -92,6 +94,26 @@ public class ArraySlicer extends AbstractNode {
     if (ix < 0)
       ix = size + ix;
     return ix;
+  }
+
+  public List<ExpressionNode> getChildren() {
+    List<ExpressionNode> children = new ArrayList();
+    children.add(parent);
+    if (left != null)
+      children.add(left);
+    if (right != null)
+      children.add(right);
+    return children;
+  }
+
+  public ExpressionNode optimize() {
+    if (left != null)
+      this.left = left.optimize();
+    if (right != null)
+      this.right = right.optimize();
+
+    this.parent = parent.optimize();
+    return this;
   }
 
   public void dump(int level) {

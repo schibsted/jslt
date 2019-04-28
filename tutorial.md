@@ -314,7 +314,21 @@ and get
 ```
 
 You can also combine boolean values with `and` and `or`. `not` is a
-function.
+function. So you can write a boolean expression as:
+
+```
+.foo.bar > 2 and not(contains(.baz, ["george", "harry"]))
+```
+
+### String processing
+
+Strings can be concatenated with `+`, and any object can be turned
+into a string with `string( ... )`. Strings can also be sliced the
+same way as arrays: `.name[ : 5]` will give the first five characters
+of the string. The `size( .name )` function gives you the length of
+the string.
+
+For more ways to process strings, see the string functions.
 
 ## Object matching
 

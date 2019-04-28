@@ -203,6 +203,42 @@ sum([])         => 0
 sum(null)       => null
 ```
 
+### _mod(a,d) -> integer_
+
+Returns `a` modulo `d`. This function is the same as the familiar `%`
+operator in most programming languages, except that it behaves
+differently for negative numbers. The result is always in the range
+`0..abs(d)`.
+
+Mathematically, the function is defined as:
+
+```
+a = d * floor(a / d) + mod(a, d)
+```
+
+Note, however, that the division operator in question here is
+Euclidean division. An explanation is given in [Division and Modulus
+for Computer Scientists, Daan Leijen,
+2001](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/divmodnote-letter.pdf). For
+more background, see [the original pull
+request](https://github.com/schibsted/jslt/pull/43).
+
+Examples:
+
+```
+mod(10, 2)    => 0
+mod(10, 3)    => 1
+mod(10, 4)    => 2
+mod(-10, 3)   => 2
+mod(-10, -3)  => 2
+mod(10, -3)   => 1
+mod(null, 2)  => null
+mod(10, null) => null
+mod(10.5, 2)  => error
+mod(10, 2.1)  => error
+mod(10, "2")  => error
+```
+
 ### _hashint(object) -> int_
 
 Returns a hash value of the given object. It differs from `sha256-hex` in that
@@ -398,6 +434,8 @@ Examples:
 from-json("[1,2]")       => [1, 2]
 from-json("[1,2", "BAD") => "BAD"
 from-json("[1,2")        => error
+from-json(null)          => null
+from-json(null)          => null
 ```
 
 ### _to-json(value) -> string_
@@ -408,9 +446,45 @@ returns it serialized as a string.
 Examples:
 
 ```
-to-json([1, 2])          => "[1, 2]"
-from-json("[1,2", "BAD") => "BAD"
-from-json("[1,2")        => error
+to-json([1,2])       => "[1, 2]"
+to-json(1)           => "1"
+to-json("foo")       => "\"foo\""
+to-json(null)        => "null"
+```
+
+### _replace(value, regexp, out) -> string_
+
+Replaces every substring that in `value` that matches `regexp` with
+`out`.  If `value` is not a string, it's converted to a string, except
+if it is `null`. `regexp` and `out` must be strings.
+
+It is an error for `regexp` ever to match an empty string.
+
+Examples:
+
+```
+replace("abc def ghi", " ", "-")      => "abc-def-ghi"
+replace("abc def ghi", "\\S+", "-")   => "abc-def-ghi"
+replace(null, "\\S+", "-")            => null
+replace("   whoah", "^\\S+", "")      => "whoah"
+replace("abc def ghi", "[a-z]", "x")  => "xxx xxx xxx"
+replace("abc def ghi", "[a-z]+", "x") => "x x x"
+```
+
+### _trim(string) -> string_
+
+Removes leading and trailing whitespace in the input string. If the
+input is `null`, so is the output. Other non-string input values are
+converted to string.
+
+Examples:
+
+```
+trim("  abc  ")    => "abc"
+trim("abc")        => "abc"
+trim("abc \t\r\n") => "abc"
+trim(false)        => "false"
+trim(null)         => null
 ```
 
 <!-- BOOLEAN ================================================================-->

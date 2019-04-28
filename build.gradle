@@ -19,7 +19,7 @@ apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'maven-publish'
 apply plugin: 'maven'
 apply plugin: 'signing'
-apply plugin: 'jacoco'
+// apply plugin: 'jacoco' (fails in JDK 11 on Travis)
 
 repositories {
   mavenLocal()
@@ -28,10 +28,10 @@ repositories {
 }
 
 dependencies {
-  compile 'com.fasterxml.jackson.core:jackson-databind:2.9.7'
+  compile 'com.fasterxml.jackson.core:jackson-databind:2.9.8'
 
   testCompile 'junit:junit:4.12'
-  testCompile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.7'
+  testCompile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.8'
 }
 
 ext {
@@ -40,7 +40,7 @@ ext {
 }
 
 group 'com.schibsted.spt.data'
-version "0.1.5"
+version "0.1.7"
 project.description "A JSON query and transformation language"
 
 check {

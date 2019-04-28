@@ -55,6 +55,9 @@ Here is an example transform:
 | `// <anything up to end of line>` | Comment |
 | `{ <key> : <expr> }`               | [Object constructor](tutorial.md#json-construction) |
 | `{ <key> : <expr>, * : . }`        | Specify one key, [copy rest of input](tutorial.md#object-matching) |
+| `5 * 7 + 23.2`        | Arithmetic operations |
+| `7 < 5`        | Comparators |
+| `7 < 5 and .foo == "yes"` | Boolean operators |
 
 ## Using the library
 
@@ -64,7 +67,7 @@ To include JSLT in your project, depend on:
 <dependency>
   <groupId>com.schibsted.spt.data</groupId>
   <artifactId>jslt</artifactId>
-  <version>0.1.5</version>
+  <version>0.1.7</version>
 </dependency>
 ```
 
@@ -123,8 +126,8 @@ more queries.
 ## More information
 
 Developing a language for JSON processing: [video of
-talk](https://vimeo.com/289470470), (slides
-only)[https://www.slideshare.net/larsga/jslt-json-querying-and-transformation].
+talk](https://vimeo.com/289470470), [slides
+only](https://www.slideshare.net/larsga/jslt-json-querying-and-transformation).
 
 Anthony Sparks is working on a
 [VM-based implementation in Java](https://github.com/tonysparks/jslt2)
@@ -140,7 +143,7 @@ Unless required by applicable law or agreed to in writing, software distributed 
 ## What is missing
 
 Things to be done:
-  * Move the tests out into JSON files.
+  * Move the tests out into YAML files.
   * Write a proper spec with EBNF and everything.
   * Fix the syntax ambiguity problem with `let` and `def`.
   * Implement toString() throughout the object tree, so that it's
@@ -154,8 +157,6 @@ Things to be done:
        would be valuable.
      * Inlining of functions.
      * Eliminate unused variables.
-  * Avoid building more scope objects than necessary and avoid
-    creating deep scope trees that require a lot of lookup.
   * Use property-based testing and fuzz testing to harden the parser.
 
 See also [the list of ideas](ideas/).

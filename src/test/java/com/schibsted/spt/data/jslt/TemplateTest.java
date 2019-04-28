@@ -326,6 +326,53 @@ public class TemplateTest extends TestBase {
           "{}");
   }
 
+  @Test
+  public void testDuplicateKeyIsInvalid() {
+    error("{" +
+          " \"foo\" : 1, " +
+          " \"foo\" : 2 " +
+          "}",
+          "duplicate");
+  }
+
+  public void testHandleTrickyTransformV2() {
+    check("{\"provider\" : {\"@id\" : 22}}",
+          "{" +
+          "  \"provider\": {" +
+          "    let urn = .provider.\"@id\""+
+          "    \"urn\" : $urn " +
+          "  }," +
+          "  * : ." +
+          "}",
+          "{\"provider\" : {\"urn\" : 22}}");
+  }
+
+  @Test
+  public void testObjectLetUsingVariable() {
+    check("{\"foo\" : 22}",
+          "{" +
+          "  let v = .foo " +
+          "  let vv = $v + 10 " +
+          "  \"bar\" : $vv + 10, " +
+          "  * : ." +
+          "}",
+          "{\"foo\" : 22, \"bar\" : 42}");
+  }
+
+  @Test
+  public void testObjectLetAfterFunction() {
+    check("{\"foo\" : 22}",
+          "def fun(v) " +
+          "  $v / 2 " +
+          "{" +
+          "  let v = .foo " +
+          "  let vv = $v + 10 " +
+          "  \"bar\" : fun($vv + 10), " +
+          "  * : ." +
+          "}",
+          "{\"foo\" : 22, \"bar\" : 21}");
+  }
+
   // "matching-8.jstl" should "fail" in {
   //   fail("matching-8.jstl", "empty.json")
   // }
@@ -342,7 +389,4 @@ public class TemplateTest extends TestBase {
   //   verify("matching-nested.jstl", "matching-nested.json", "matching-nested-out.json")
   // }
 
-  // "matching-bad-1.jstl" should "throw error on parse" in {
-  //   parseError("matching-bad-1.jstl")
-  // }
 }

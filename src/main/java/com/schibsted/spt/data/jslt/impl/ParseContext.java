@@ -16,6 +16,7 @@
 package com.schibsted.spt.data.jslt.impl;
 
 import java.util.Map;
+import java.util.List;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,6 +26,8 @@ import com.schibsted.spt.data.jslt.Callable;
 import com.schibsted.spt.data.jslt.Function;
 import com.schibsted.spt.data.jslt.JsltException;
 import com.schibsted.spt.data.jslt.ResourceResolver;
+import com.schibsted.spt.data.jslt.filters.JsonFilter;
+import com.schibsted.spt.data.jslt.filters.DefaultJsonFilter;
 
 /**
  * Class to encapsulate context information like available functions,
@@ -39,41 +42,68 @@ public class ParseContext {
    */
   private String source;
   /**
-   * Imported modules listed under their prefixes.
+   * Imported modules listed under their prefixes. This is scoped per
+   * source file, since each has a different name-module mapping.
    */
   private Map<String, Module> modules;
-  private Collection<FunctionExpression> funcalls; // delayed function resolution
+  /**
+   * Tracks all loaded JSLT files. Shared between all contexts.
+   */
+  private List<JstlFile> files;
+  /**
+   * Function expressions, used for delayed name-to-function resolution.
+   */
+  private Collection<FunctionExpression> funcalls;
   private ParseContext parent;
   private ResourceResolver resolver;
   /**
    * Named modules listed under their identifiers.
    */
   private Map<String, Module> namedModules;
+  /**
+   * Variable declaration and usage tracking.
+   */
+  private PreparationContext preparationContext;
+  /**
+   * Filter used to determine what object key/value pairs to keep.
+   */
+  private JsonFilter objectFilter;
 
   public ParseContext(Collection<Function> extensions, String source,
                       ResourceResolver resolver,
-                      Map<String, Module> namedModules) {
+                      Map<String, Module> namedModules,
+                      List<JstlFile> files,
+                      PreparationContext preparationContext,
+                      JsonFilter objectFilter) {
     this.extensions = extensions;
     this.functions = new HashMap();
     for (Function func : extensions)
       functions.put(func.getName(), func);
 
     this.source = source;
+    this.files = files;
     this.funcalls = new ArrayList();
     this.modules = new HashMap();
     this.resolver = resolver;
     this.namedModules = namedModules;
+    this.preparationContext = preparationContext;
+    this.objectFilter = objectFilter;
 
     namedModules.put(ExperimentalModule.URI, new ExperimentalModule());
   }
 
   public ParseContext(String source) {
     this(Collections.EMPTY_SET, source, new ClasspathResourceResolver(),
-         new HashMap());
+         new HashMap(), new ArrayList(), new PreparationContext(),
+         new DefaultJsonFilter());
   }
 
   public void setParent(ParseContext parent) {
     this.parent = parent;
+  }
+
+  public PreparationContext getPreparationContext() {
+    return preparationContext;
   }
 
   public Function getFunction(String name) {
@@ -153,5 +183,17 @@ public class ParseContext {
 
   public ResourceResolver getResolver() {
     return resolver;
+  }
+
+  public List<JstlFile> getFiles() {
+    return files;
+  }
+
+  public void registerJsltFile(JstlFile file) {
+    files.add(file);
+  }
+
+  public JsonFilter getObjectFilter() {
+    return objectFilter;
   }
 }

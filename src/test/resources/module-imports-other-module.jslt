@@ -1,0 +1,5 @@
+
+import "module-with-global-var-dot.jslt" as m
+
+def foo()
+  m:foo()

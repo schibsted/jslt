@@ -84,11 +84,142 @@ tests:
      a(25)
    output: 25
 
-#  -
-#   input: {}
-#   query: >
-#            let other = 5
-#            def test(obj)
-#              $obj $ + $other
-#            test(10)
-#   output: 15
+  -
+   input: {}
+   query: >
+     let other = 5
+     def test(obj)
+       $obj + $other
+     test(10)
+   output: 15
+
+  -
+   input: {}
+   query: >
+     let other = 5
+     def test(obj)
+       let other = 0
+       $obj + $other
+     test(10)
+   output: 10
+
+  -
+   input: {}
+   query: >
+     let other = 5
+     def test(a)
+       let other = 0
+       [for ($a)
+         let other = -5
+         . + $other
+       ]
+     test([10])
+   output: "[5]"
+
+  -
+   input: {}
+   query: >
+     import "module-with-global-var.jslt" as m
+     let global = "variable is"
+     m:variable($global)
+   output: "\"variable is global\""
+
+  # in this one we don't define the global variable in the query
+  -
+   input: {}
+   query: >
+     import "module-with-global-var.jslt" as m
+     m:variable("variable is")
+   output: "\"variable is global\""
+
+  -
+   input: {}
+   query: >
+     import "module-as-function-with-global.jslt" as m
+     m("variable is")
+   output: "\"variable is global\""
+
+  -
+   input: {}
+   query: >
+     import "module-with-global-var.jslt" as m
+     import "module-also-with-global-var.jslt" as m2
+     let global = "variable is"
+     m:variable($global) + " " + m2:andfunc($global) + " " + $global
+   output: "\"variable is global and variable is variable is\""
+
+  -
+   input: {}
+   query: >
+     import "module-with-several-global-vars.jslt" as m
+     m:fun(2)
+   output: 16
+
+  -
+   input: {}
+   query: >
+     import "module-whose-global-vars-call-functions.jslt" as m
+     m:bar(2)
+   output: 6
+
+  -
+   input: {}
+   query: >
+     import "module-with-global-var-from-builtin-function.jslt" as m
+     m:foo(2)
+   output: 6
+
+  -
+   input: "{\"foo\" : 22}"
+   query: >
+     import "module-with-global-var-dot.jslt" as m
+     m:foo()
+   output: 22
+
+  -
+   input: "{\"foo\" : 22}"
+   query: >
+     import "module-imports-other-module.jslt" as m
+     m:foo()
+   output: 22
+
+  # we're testing what happens when there is an external variable
+  # (a parameter) that's not actually referred to
+  -
+   input: {}
+   query: >
+     import "module-as-function-with-global.jslt" as m
+     m("variable is")
+   output: "\"variable is global\""
+   variables:
+     thevar: itsvalue # not actually referred to
+
+  -
+   input: {}
+   query: >
+     let other = 5
+     def test(obj)
+       let other = 0
+       let other = "oops"
+       $obj + $other
+     test(10)
+   error: other
+
+  -
+   input: {}
+   query: >
+     let other = 5
+     let other = 2
+     $other + 5
+   error: other
+
+  -
+   input: {}
+   query: >
+     def fib(n)
+       if ($n == 1 or $n == 2)
+         1
+       else
+         fib($n - 2) + fib($n - 1) + $n
+       fib(5)
+   output: 20

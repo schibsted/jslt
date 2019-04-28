@@ -1,0 +1,6 @@
+
+let global = "global"
+
+// Test that we can use global variables in modules
+def variable(text)
+  $text + " " + $global

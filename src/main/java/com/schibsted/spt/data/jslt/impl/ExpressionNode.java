@@ -15,6 +15,7 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
+import java.util.List;
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**
@@ -34,6 +35,11 @@ public interface ExpressionNode {
   // fills in the contextQuery in ObjectExpression matchers
   public void computeMatchContexts(DotExpression parent);
 
+  public void prepare(PreparationContext ctx);
+
   // return self, or optimized version
   public ExpressionNode optimize();
+
+  // get all direct child nodes, to reduce boilerplate in tree traversal
+  public List<ExpressionNode> getChildren();
 }

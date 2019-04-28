@@ -25,6 +25,7 @@ import com.schibsted.spt.data.jslt.JsltException;
 
 public class FunctionExpression extends AbstractInvocationExpression {
   private Function function; // null before resolution
+  private FunctionDeclaration declared; // non-null if a declared function
   private String name;
 
   public FunctionExpression(String name, ExpressionNode[] arguments,
@@ -40,6 +41,8 @@ public class FunctionExpression extends AbstractInvocationExpression {
   public void resolve(Function function) {
     super.resolve(function);
     this.function = function;
+    if (function instanceof FunctionDeclaration)
+      this.declared = (FunctionDeclaration) function;
   }
 
   public JsonNode apply(Scope scope, JsonNode input) {
@@ -47,6 +50,30 @@ public class FunctionExpression extends AbstractInvocationExpression {
     for (int ix = 0; ix < params.length; ix++)
       params[ix] = arguments[ix].apply(scope, input);
 
-    return function.call(input, params);
+    if (declared != null)
+      return declared.call(scope, input, params);
+    else
+      return function.call(input, params);
+  }
+
+  private static final int OPTIMIZE_ARRAY_CONTAINS_MIN = 10;
+  public ExpressionNode optimize() {
+    super.optimize();
+
+    // if the second argument to contains() is an array with a large
+    // number of elements, don't do a linear search. instead, use an
+    // optimized version of the function that uses a HashSet
+    if (function == BuiltinFunctions.functions.get("contains") &&
+        arguments.length == 2 &&
+        (arguments[1] instanceof LiteralExpression)) {
+
+      JsonNode v = arguments[1].apply(null, null);
+      if (v.isArray() && v.size() > OPTIMIZE_ARRAY_CONTAINS_MIN) {
+        // we use resolve to make sure all references are updated
+        resolve(new OptimizedStaticContainsFunction(v));
+      }
+    }
+
+    return this;
   }
 }

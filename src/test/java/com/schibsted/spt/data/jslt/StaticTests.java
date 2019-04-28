@@ -14,6 +14,7 @@ import static org.junit.Assert.assertEquals;
 import java.math.BigInteger;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.FloatNode;
@@ -21,11 +22,13 @@ import com.fasterxml.jackson.databind.node.BigIntegerNode;
 
 import com.schibsted.spt.data.jslt.Module;
 import com.schibsted.spt.data.jslt.impl.ModuleImpl;
+import com.schibsted.spt.data.jslt.filters.*;
 
 /**
  * Tests that cannot be expressed in JSON.
  */
 public class StaticTests extends TestBase {
+  private static ObjectMapper mapper = new ObjectMapper();
 
   @Test
   public void testExceptionWithNoLocation() {
@@ -185,4 +188,88 @@ public class StaticTests extends TestBase {
     assertEquals(new IntNode(42), result);
   }
 
+  @Test
+  public void testJsltObjectFilter() throws IOException {
+    // filter to accept everything that isn't null
+    String filter = " . != null ";
+
+    StringReader jslt = new StringReader(
+      "{ \"foo\" : null, \"bar\" : \"\" }"
+    );
+    Expression expr = new Parser(jslt)
+      .withObjectFilter(filter)
+      .compile();
+
+    JsonNode desired = mapper.readTree(
+      "{ \"bar\" : \"\" }"
+    );
+
+    JsonNode result = expr.apply(null);
+    assertEquals(desired, result);
+  }
+
+  @Test
+  public void testJsltObjectFilter2() throws IOException {
+    // filter to accept everything that isn't the empty string
+    String filter = " . != \"\" ";
+
+    StringReader jslt = new StringReader(
+      "{ \"foo\" : null, \"bar\" : \"\" }"
+    );
+    Expression expr = new Parser(jslt)
+      .withObjectFilter(filter)
+      .compile();
+
+    JsonNode desired = mapper.readTree(
+      "{ \"foo\" : null }"
+    );
+
+    JsonNode result = expr.apply(null);
+    assertEquals(desired, result);
+  }
+
+  @Test
+  public void testJsltObjectFilter3() throws IOException {
+    // filter to accept everything that isn't the empty string
+    String filter = " . != \"\" ";
+
+    StringReader jslt = new StringReader(
+      "{for (.) .key : .value }"
+    );
+    Expression expr = new Parser(jslt)
+      .withObjectFilter(filter)
+      .compile();
+
+    JsonNode input = mapper.readTree(
+      "{ \"foo\" : null, \"bar\" : \"\" }"
+    );
+
+    JsonNode desired = mapper.readTree(
+      "{ \"foo\" : null }"
+    );
+
+    JsonNode result = expr.apply(input);
+    assertEquals(desired, result);
+  }
+
+  @Test
+  public void testTrueObjectFilter() throws IOException {
+    StringReader jslt = new StringReader(
+      "{for (.) .key : .value }"
+    );
+    Expression expr = new Parser(jslt)
+      .withObjectFilter(new TrueJsonFilter())
+      .compile();
+
+    JsonNode input = mapper.readTree(
+      "{ \"foo\" : null, \"bar\" : \"\" }"
+    );
+
+    JsonNode desired = mapper.readTree(
+      "{ \"foo\" : null, \"bar\" : \"\" }"
+    );
+
+    JsonNode result = expr.apply(input);
+    assertEquals(desired, result);
+  }
 }

@@ -15,6 +15,8 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
+import java.util.List;
+import java.util.Collections;
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**
@@ -50,6 +52,10 @@ public class PairExpression extends AbstractNode {
   public ExpressionNode optimize() {
     expr = expr.optimize();
     return this;
+  }
+
+  public List<ExpressionNode> getChildren() {
+    return Collections.singletonList(expr);
   }
 
   public void dump(int level) {

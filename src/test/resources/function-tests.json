@@ -548,7 +548,7 @@
       "query" : "ends-with(\"heypådey\", \"dey\")"
    },
    {
-      "query" : "fallback(22, true + false)",
+      "query" : "fallback(22, true + not(false))",
       "input" : "{}",
       "output" : "22"
    },
@@ -636,6 +636,11 @@
       "input" : "{}",
       "output" : "\"2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae\"",
       "query" : "sha256-hex(\"foo\")"
+   },
+   {
+      "input" : "{}",
+      "output" : "\"fcde2b2edba56bf408601fb721fe9b5c338d10ee429ea04fae5511b68fbf8fb9\"",
+      "query" : "sha256-hex(\"bar\")"
    },
    {
       "input" : "{}",
@@ -861,6 +866,146 @@
       "query" : "any(null)",
       "input" : "{}",
       "output" : "null"
+   },
+   {
+      "query": "mod(10,3)",
+      "input" : "{}",
+      "output": "1"
+   },
+   {
+      "query": "mod(10,4)",
+      "input" : "{}",
+      "output": "2"
+   },
+   {
+      "query": "mod(10,5)",
+      "input" : "{}",
+      "output": "0"
+   },
+   {
+      "query": "mod(null,5)",
+      "input" : "{}",
+      "output": "null"
+   },
+   {
+      "query": "mod(10,null)",
+      "input" : "{}",
+      "output": "null"
+   },
+   {
+      "query": "mod(-10,3)",
+      "input" : "{}",
+      "output": "2"
+   },
+   {
+      "query": "mod(10,-3)",
+      "input" : "{}",
+      "output": "1"
+   },
+   {
+      "query": "mod(-10,-3)",
+      "input" : "{}",
+      "output": "2"
+   },
+   {
+      "query": "replace(., \"-\", \" \")",
+      "input" : "\"hey-ho-ho\"",
+      "output": "\"hey ho ho\""
+   },
+   {
+      "query": "replace(., \"1\", \"2\")",
+      "input" : "212",
+      "output": "\"222\""
+   },
+   {
+      "query": "replace(., \"1\", \"2\")",
+      "input" : "232",
+      "output": "\"232\""
+   },
+   {
+      "query": "replace(.foo, \"1\", \"2\")",
+      "input" : "212",
+      "output": "null"
+   },
+   {
+      "query": "replace(., \"-+\", \" \")",
+      "input" : "\"hey-ho-ho\"",
+      "output": "\"hey ho ho\""
+   },
+   {
+      "query": "replace(., \"^\\\\s+\", \"\")",
+      "input" : "\"    initial spaces\"",
+      "output": "\"initial spaces\""
+   },
+   {
+      "query": "replace(., \"[a-z]\", \"x\")",
+      "input" : "\"some text\"",
+      "output": "\"xxxx xxxx\""
+   },
+   {
+      "query": "replace(., \"[a-z]+\", \"x\")",
+      "input" : "\"some text\"",
+      "output": "\"x x\""
+   },
+   {
+      "query": "replace(., \"[a-z]+\", \"xx\")",
+      "input" : "\"some text\"",
+      "output": "\"xx xx\""
+   },
+   {
+      "query": "replace(., \".\", \"xx\")",
+      "input" : "\"some text\"",
+      "output": "\"xxxxxxxxxxxxxxxxxx\""
+   },
+   {
+      "query": "replace(\"\", \".\", \"xx\")",
+      "input" : "\"some text\"",
+      "output": "\"\""
+   },
+   {
+      "query": "trim(.)",
+      "input" : "\"some text\"",
+      "output": "\"some text\""
+   },
+   {
+      "query": "trim(.)",
+      "input" : "null",
+      "output": "null"
+   },
+   {
+      "query": "trim(.)",
+      "input" : "\"\"",
+      "output": "\"\""
+   },
+   {
+      "query": "trim(.)",
+      "input" : "\" abc\"",
+      "output": "\"abc\""
+   },
+   {
+      "query": "trim(.)",
+      "input" : "\"abc   \"",
+      "output": "\"abc\""
+   },
+   {
+      "query": "trim(.)",
+      "input" : "\" \\t\\n\\r abc   \"",
+      "output": "\"abc\""
+   },
+   {
+      "query": "trim(.)",
+      "input" : "222",
+      "output": "\"222\""
+   },
+   {
+      "query": "trim(.)",
+      "input" : "\"      \"",
+      "output": "\"\""
+   },
+   {
+      "query": "trim(.)",
+      "input" : "\"a\"",
+      "output": "\"a\""
    },
    {
       "query" : "hash-int(.)",

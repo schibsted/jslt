@@ -1,0 +1,6 @@
+
+// Test that we can use global variables in modules
+def andfunc(text)
+  $global + $text
+
+let global = "and "
