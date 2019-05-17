@@ -209,7 +209,7 @@ void Array() :
     (<FOR> <LPAREN> Expr() <RPAREN> (Let())* Expr()
      (<IF> <LPAREN> Expr() <RPAREN>)?
     |
-     (Expr() (<COMMA> Expr())*)?)
+     (Expr() (<COMMA> (Expr())?)*)?)
   <RBRACKET>
 }
 

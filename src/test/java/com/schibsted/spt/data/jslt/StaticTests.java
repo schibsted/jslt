@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.io.IOException;
 import java.io.StringReader;
 
+import com.fasterxml.jackson.databind.node.*;
 import org.junit.Test;
 import org.junit.Ignore;
 import static org.junit.Assert.assertTrue;
@@ -16,10 +17,6 @@ import java.math.BigInteger;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.IntNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.fasterxml.jackson.databind.node.FloatNode;
-import com.fasterxml.jackson.databind.node.BigIntegerNode;
 
 import com.schibsted.spt.data.jslt.Module;
 import com.schibsted.spt.data.jslt.impl.ModuleImpl;
@@ -275,7 +272,7 @@ public class StaticTests extends TestBase {
   }
 
   @Test
-  public void testTrailingCommas() {
+  public void testTrailingCommasInObject() {
     Expression expr = Parser.compileString("{\"a\":1, \"b\":2,}");
     JsonNode actual = expr.apply(null);
 
@@ -284,13 +281,15 @@ public class StaticTests extends TestBase {
     assertEquals("b", it.next());
   }
 
-  @Test(expected = JsltException.class)
-  public void testCommasRequiredBetweenPairs() {
-    Expression expr = Parser.compileString("{\"a\":1 \"b\":2}");
-    JsonNode actual = expr.apply(null);
+  @Test
+  public void testTrailingCommasInArray() {
+    Expression expr = Parser.compileString("[1,2,]");
+    ArrayNode actual = (ArrayNode) expr.apply(null);
 
-    Iterator<String> it = actual.fieldNames();
-    assertEquals("a", it.next());
-    assertEquals("b", it.next());
+    assertEquals(2, actual.size());
+
+    assertEquals(1, actual.get(0).asInt());
+    assertEquals(2, actual.get(1).asInt());
   }
+
 }
