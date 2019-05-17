@@ -1009,6 +1009,16 @@
    },
    {
       "query" : "hash-int(.)",
+      "input" : "\"\"",
+      "output" : "1088"
+   },
+   {
+      "query" : "hash-int(.)",
+      "input" : "\"test\"",
+      "output" : "1083642606"
+   },
+   {
+      "query" : "hash-int(.)",
       "input" : "{}",
       "output" : "119320"
    },
@@ -1032,6 +1042,7 @@
       "input" : "[]",
       "output" : "88536"
    },
+
    {
       "query" : "hash-int(.)",
       "input" : "\"a\"",
