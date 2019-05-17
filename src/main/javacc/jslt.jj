@@ -202,6 +202,13 @@ void ArraySlicing() :
 
 void Colon() : {} { <COLON> } // need this to make parse tree manageable
 
+void ArrayElem() #void  :
+{}
+{
+  Expr()
+  (<COMMA> (ArrayElem())?)?
+}
+
 void Array() :
 {}
 {
@@ -209,7 +216,8 @@ void Array() :
     (<FOR> <LPAREN> Expr() <RPAREN> (Let())* Expr()
      (<IF> <LPAREN> Expr() <RPAREN>)?
     |
-     (Expr() (<COMMA> (Expr())?)*)?)
+     (ArrayElem())?
+ )
   <RBRACKET>
 }
 
