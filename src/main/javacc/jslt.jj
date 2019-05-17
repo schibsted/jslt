@@ -213,11 +213,10 @@ void Array() :
 {}
 {
   <LBRACKET>
-    (<FOR> <LPAREN> Expr() <RPAREN> (Let())* Expr()
-     (<IF> <LPAREN> Expr() <RPAREN>)?
-    |
-     (ArrayElem())?
- )
+    (
+     <FOR> <LPAREN> Expr() <RPAREN> (Let())* Expr()
+     (<IF> <LPAREN> Expr() <RPAREN>)? | (ArrayElem())?
+    )
   <RBRACKET>
 }
 
