@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.io.IOException;
 import java.io.StringReader;
 
-import com.fasterxml.jackson.databind.node.*;
 import org.junit.Test;
 import org.junit.Ignore;
 import static org.junit.Assert.assertTrue;
@@ -17,6 +16,11 @@ import java.math.BigInteger;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.IntNode;
+import com.fasterxml.jackson.databind.node.TextNode;
+import com.fasterxml.jackson.databind.node.FloatNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.BigIntegerNode;
 
 import com.schibsted.spt.data.jslt.Module;
 import com.schibsted.spt.data.jslt.impl.ModuleImpl;
