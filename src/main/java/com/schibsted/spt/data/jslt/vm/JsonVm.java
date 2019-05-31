@@ -3,7 +3,9 @@ package com.schibsted.spt.data.jslt.vm;
 
 /**
  * Created every time we need to execute a query. Lives only for the
- * lifetime of that query.
+ * lifetime of that query. Unfortunately, creating this is expensive,
+ * so we should find some way to avoid having to create new ones all
+ * the time.
  */
 public class JsonVm {
   // passed to constructor
@@ -53,6 +55,7 @@ public class JsonVm {
     this.stack = new int[128];
     this.stack_ptr = -1; // nothing on stack
 
+    // hardcoded bytecode for a specific transform
     this.bytecode = new int[]{
       START_BUF, 0,
       START_OBJ, 0,

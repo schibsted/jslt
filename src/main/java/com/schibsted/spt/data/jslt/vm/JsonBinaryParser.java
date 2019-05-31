@@ -12,6 +12,7 @@ import com.fasterxml.jackson.core.JsonParser.NumberType;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.JsonToken.*;
 
+// this class doesn't make a lot of sense, and will disappear
 public class JsonBinaryParser {
   private static final JsonFactory jsonFactory = new JsonFactory();
 
@@ -51,8 +52,9 @@ public class JsonBinaryParser {
     return parse(jsonFactory.createParser(json), mgr);
   }
 
+  // populate a JsonBuffer from an event stream from JsonParser. the
+  // interface it pushes to should be separated out as an own interface
   public static JsonBuffer parse(JsonParser parser, ResourceManager mgr) throws IOException {
-
     JsonBuffer buf = new JsonBuffer();
 
     JsonToken token = parser.nextToken();

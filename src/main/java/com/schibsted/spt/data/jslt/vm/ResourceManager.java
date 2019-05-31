@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
+// this should be an interface, so different kinds of managers can be used
 public class ResourceManager {
   private Map<String, Integer> reverseLexicon;
   private String[] lexicon;

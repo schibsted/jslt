@@ -9,6 +9,7 @@ import java.io.IOException;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 public class JsonBuffer {
+  // tags for recognizing object types in int values
   public static final int JS_INTEGER = 0x80000000; // 1xxxxxxxx
   public static final int JS_DECIMAL = 0x40000000; // 01xxxxxxx
   public static final int JS_STRING  = 0x20000000; // 001xxxxxx
@@ -18,6 +19,7 @@ public class JsonBuffer {
   public static final int JS_BOOLEAN = 0x01000000; // 00000001x
   public static final int JS_NULL    = 0x00700000; // 000000001
 
+  // mask for removing the type tag
   public static final int RM_INTEGER = 0x7FFFFFFF;
   public static final int RM_STRING  = 0x1FFFFFFF;
   public static final int RM_OBJECT  = 0x0FFFFFFF;
@@ -25,9 +27,16 @@ public class JsonBuffer {
   public static final int RM_BIGINT  = 0x03FFFFFF;
   public static final int RM_BOOLEAN = 0x00FFFFFF;
 
+  // where the data is stored
   private int[] data;
-  private int end;
+  private int end; // next free cell
 
+  // if we can get rid of these, the performance impact would be
+  // noticeable. one way to do it might be to just have a pointer to
+  // the last opened object. when a new object is opened, put the
+  // pointer into that object, and update the pointer. whenever an
+  // object is closed, the pointer can be retrieved. in this way we
+  // can emulate a stack without actually having to maintain one.
   private int[] stack;
   private int stack_ix;
 
