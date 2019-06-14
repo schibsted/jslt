@@ -25,9 +25,14 @@ import com.schibsted.spt.data.jslt.impl.ExpressionImpl;
 public class JSLT {
 
   public static void main(String[] args) throws Exception {
+    if (args.length != 2) {
+      System.out.println("Usage: java com.schibsted.spt.data.jslt.cli.JSLT <jslt file> <json input file>");
+      System.exit(1);
+    }
+
     Expression expr = Parser.compile(new File(args[0]));
-    if (expr instanceof ExpressionImpl)
-      ((ExpressionImpl) expr).dump();
+    // if (expr instanceof ExpressionImpl)
+    //   ((ExpressionImpl) expr).dump();
 
     ObjectMapper mapper = new ObjectMapper();
 
