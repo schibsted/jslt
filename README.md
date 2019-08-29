@@ -132,6 +132,9 @@ only](https://www.slideshare.net/larsga/jslt-json-querying-and-transformation).
 Anthony Sparks is working on a
 [VM-based implementation in Java](https://github.com/tonysparks/jslt2)
 
+[A paper](https://arxiv.org/abs/1908.10754) describing (among other
+things) some of the ways Schibsted uses JSLT.
+
 ## LICENSE
 
 Copyright (c) 2018 Schibsted Marketplaces Products & Technology AS
