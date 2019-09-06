@@ -79,6 +79,24 @@ public class StaticTests extends TestBase {
   }
 
   @Test
+  public void testJavaExtensionFunctionNull() {
+    check("{}", "test()", "null", Collections.EMPTY_MAP,
+          Collections.singleton(new TestNullFunction()));
+  }
+
+  @Test
+  public void testJavaExtensionFunctionNullInExpression() {
+    check("{}", "test() or 42", "true", Collections.EMPTY_MAP,
+          Collections.singleton(new TestNullFunction()));
+  }
+
+  @Test
+  public void testJavaExtensionFunctionNullInExpression2() {
+    check("{}", "lowercase(test())", "null", Collections.EMPTY_MAP,
+          Collections.singleton(new TestNullFunction()));
+  }
+
+  @Test
   public void testNowFunction() {
     JsonNode now1 = execute("{}", "now()");
     double now2 = System.currentTimeMillis();
