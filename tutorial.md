@@ -72,7 +72,8 @@ which would then produce:
 
 Note that if the expression evaluates to `null`, `{}`, or `[]` then
 the entire key is omitted from the constructed object. This is to
-avoid producing objects with lots of no-value keys.
+avoid producing objects with lots of no-value keys. If you don't like
+this you can change it [using the API](docs/api.md#object-key-filter).
 
 ## Functions
 
