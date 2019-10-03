@@ -135,6 +135,8 @@ Anthony Sparks is working on a
 [A paper](https://arxiv.org/abs/1908.10754) describing (among other
 things) some of the ways Schibsted uses JSLT.
 
+[Visual Studio syntax highlighter](https://marketplace.visualstudio.com/items?itemName=jarno-rajala.jslt-lang) for JSLT.
+
 ## LICENSE
 
 Copyright (c) 2018 Schibsted Marketplaces Products & Technology AS
