@@ -45,6 +45,14 @@ public class PlusOperator extends NumericOperator {
       // if both are objects: object union
       return unionObjects(v1, v2);
 
+    // {} + null => {}
+    else if (v1.isObject() && v2.isNull())
+      return v1;
+
+    // null + {} => {}
+    else if (v1.isNull() && v2.isObject())
+      return v2;
+
     else
       // do numeric operation
       return super.perform(v1, v2);
