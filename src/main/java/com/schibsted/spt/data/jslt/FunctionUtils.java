@@ -34,13 +34,16 @@ public class FunctionUtils {
     Class klass = Class.forName(className);
     Method[] methods = klass.getMethods();
     Method method = null;
-    for (int ix = 0; ix < methods.length; ix++)
+    for (int ix = 0; ix < methods.length; ix++) {
       if (methods[ix].getName().equals(methodName)) {
         if (method == null)
           method = methods[ix];
         else
           throw new JsltException("More than one method named '" + methodName + "'");
       }
+    }
+    if (method == null)
+      throw new JsltException("No such method: '" + methodName + "'");
 
     return new FunctionWrapper(functionName, method);
   }
