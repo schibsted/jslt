@@ -1006,6 +1006,46 @@
       "query": "trim(.)",
       "input" : "\"a\"",
       "output": "\"a\""
+   },
+   {
+      "query": "min(1, 2)",
+      "input" : "null",
+      "output": "1"
+   },
+   {
+      "query": "min(2, 1)",
+      "input" : "null",
+      "output": "1"
+   },
+   {
+      "query": "min(\"a\", \"b\")",
+      "input" : "null",
+      "output": "\"a\""
+   },
+   {
+      "query": "min(null, 0)",
+      "input" : "null",
+      "output": "null"
+   },
+   {
+      "query": "max(1, 2)",
+      "input" : "null",
+      "output": "2"
+   },
+   {
+      "query": "max(2, 1)",
+      "input" : "null",
+      "output": "2"
+   },
+   {
+      "query": "max(\"a\", \"b\")",
+      "input" : "null",
+      "output": "\"b\""
+   },
+   {
+      "query": "max(null, 0)",
+      "input" : "null",
+      "output": "null"
    }
 ]
 }

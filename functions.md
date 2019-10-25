@@ -58,7 +58,7 @@ if (not(is-array(.things)))
   error("'things' is not an array")
 ```
 
-### _fallback(arg1, arg2, ...)_
+### _fallback(arg1, arg2, ...) -> value_
 
 Returns the first argument that evaluates to `true`.
 
@@ -67,6 +67,32 @@ Examples:
 ```
 fallback(.not_existing_key, .another_not_existing, 1)  => 1
 fallback(null, [], {}, "", false, 0, "value") => "value"
+```
+
+### _min(arg1, arg2) -> value_
+
+Returns the argument that compares as the smallest. If one argument is
+`null` the result is `null`.
+
+Examples:
+
+```
+min(10, 1)    -> 1
+min("a", "b") -> "a"
+min(10, null) -> null
+```
+
+### _max(arg1, arg2) -> value_
+
+Returns the argument that compares as the largest. If one argument is
+`null` the result is `null`.
+
+Examples:
+
+```
+max(10, 1)    -> 10
+max("a", "b") -> "b"
+max(10, null) -> null
 ```
 
 <!-- NUMERIC ===============================================================-->
