@@ -308,7 +308,7 @@ public class BuiltinFunctions {
         String jsonString = writer.writeValueAsString(node);
         return new IntNode(jsonString.hashCode());
       } catch (JsonProcessingException e) {
-        return NullNode.instance;
+        throw new JsltException("hash-int: can't process json" + e);
       }
     }
   }
