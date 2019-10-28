@@ -464,7 +464,6 @@ from-json("[1,2]")       => [1, 2]
 from-json("[1,2", "BAD") => "BAD"
 from-json("[1,2")        => error
 from-json(null)          => null
-from-json(null)          => null
 ```
 
 ### _to-json(value) -> string_
