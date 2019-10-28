@@ -63,6 +63,8 @@ public class BuiltinFunctions {
     functions.put("contains", new BuiltinFunctions.Contains());
     functions.put("size", new BuiltinFunctions.Size());
     functions.put("error", new BuiltinFunctions.Error());
+    functions.put("min", new BuiltinFunctions.Min());
+    functions.put("max", new BuiltinFunctions.Max());
 
     // NUMERIC
     functions.put("is-number", new BuiltinFunctions.IsNumber());
@@ -1124,6 +1126,39 @@ public class BuiltinFunctions {
         // thrown if format is bad
         throw new JsltException("format-time: Couldn't parse format '" + formatstr + "': " + e.getMessage());
       }
+    }
+  }
+
+  // ===== MIN
+
+  public static class Min extends AbstractFunction {
+    public Min() {
+      super("min", 2, 2);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      // this works because null is the smallest of all values
+      if (ComparisonOperator.compare(arguments[0], arguments[1], null) < 0)
+        return arguments[0];
+      else
+        return arguments[1];
+    }
+  }
+
+  // ===== MAX
+
+  public static class Max extends AbstractFunction {
+    public Max() {
+      super("max", 2, 2);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      if (arguments[0].isNull() || arguments[1].isNull())
+        return NullNode.instance;
+      else if (ComparisonOperator.compare(arguments[0], arguments[1], null) > 0)
+        return arguments[0];
+      else
+        return arguments[1];
     }
   }
 

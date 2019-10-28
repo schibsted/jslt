@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.Collections;
 import java.io.IOException;
 import java.io.StringReader;
+
 import org.junit.Test;
 import org.junit.Ignore;
 import static org.junit.Assert.assertTrue;
@@ -18,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.FloatNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.BigIntegerNode;
 
 import com.schibsted.spt.data.jslt.Module;
@@ -74,6 +76,24 @@ public class StaticTests extends TestBase {
   public void testJavaExtensionFunction() {
     check("{}", "test()", "42", Collections.EMPTY_MAP,
           Collections.singleton(new TestFunction()));
+  }
+
+  @Test
+  public void testJavaExtensionFunctionNull() {
+    check("{}", "test()", "null", Collections.EMPTY_MAP,
+          Collections.singleton(new TestNullFunction()));
+  }
+
+  @Test
+  public void testJavaExtensionFunctionNullInExpression() {
+    check("{}", "test() or 42", "true", Collections.EMPTY_MAP,
+          Collections.singleton(new TestNullFunction()));
+  }
+
+  @Test
+  public void testJavaExtensionFunctionNullInExpression2() {
+    check("{}", "lowercase(test())", "null", Collections.EMPTY_MAP,
+          Collections.singleton(new TestNullFunction()));
   }
 
   @Test
@@ -272,4 +292,26 @@ public class StaticTests extends TestBase {
     JsonNode result = expr.apply(input);
     assertEquals(desired, result);
   }
+
+  @Test
+  public void testTrailingCommasInObject() {
+    Expression expr = Parser.compileString("{\"a\":1, \"b\":2,}");
+    JsonNode actual = expr.apply(null);
+
+    Iterator<String> it = actual.fieldNames();
+    assertEquals("a", it.next());
+    assertEquals("b", it.next());
+  }
+
+  @Test
+  public void testTrailingCommasInArray() {
+    Expression expr = Parser.compileString("[1,2,]");
+    ArrayNode actual = (ArrayNode) expr.apply(null);
+
+    assertEquals(2, actual.size());
+
+    assertEquals(1, actual.get(0).asInt());
+    assertEquals(2, actual.get(1).asInt());
+  }
+
 }

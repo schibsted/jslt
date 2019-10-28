@@ -28,6 +28,10 @@ public abstract class ComparisonOperator extends AbstractOperator {
   public abstract JsonNode perform(JsonNode v1, JsonNode v2);
 
   public double compare(JsonNode v1, JsonNode v2) {
+    return compare(v1, v2, location);
+  }
+
+  public static double compare(JsonNode v1, JsonNode v2, Location location) {
     if (v1.isNumber() && v2.isNumber()) {
       double n1 = NodeUtils.number(v1, location).doubleValue();
       double n2 = NodeUtils.number(v2, location).doubleValue();

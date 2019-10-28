@@ -76,3 +76,33 @@ tests:
       let reverse = {for ($lookup) .value : .key}
       get-key($reverse, "Denmark")
    output: '"dk"'
+
+  -
+    input: "{}"
+    query: . + null
+    output: "{}"
+
+  -
+    input: "{}"
+    query: null + .
+    output: "{}"
+
+  -
+    input: "{\"foo\" : 2}"
+    query: null + .
+    output: "{\"foo\" : 2}"
+
+  -
+    input: "[]"
+    query: . + null
+    output: "[]"
+
+  -
+    input: "[]"
+    query: null + .
+    output: "[]"
+
+  -
+    input: "[2,3]"
+    query: null + .
+    output: "[2,3]"

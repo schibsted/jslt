@@ -67,7 +67,7 @@ To include JSLT in your project, depend on:
 <dependency>
   <groupId>com.schibsted.spt.data</groupId>
   <artifactId>jslt</artifactId>
-  <version>0.1.7</version>
+  <version>0.1.8</version>
 </dependency>
 ```
 
@@ -131,6 +131,11 @@ only](https://www.slideshare.net/larsga/jslt-json-querying-and-transformation).
 
 Anthony Sparks is working on a
 [VM-based implementation in Java](https://github.com/tonysparks/jslt2)
+
+[A paper](https://arxiv.org/abs/1908.10754) describing (among other
+things) some of the ways Schibsted uses JSLT.
+
+[Visual Studio syntax highlighter](https://marketplace.visualstudio.com/items?itemName=jarno-rajala.jslt-lang) for JSLT.
 
 ## LICENSE
 

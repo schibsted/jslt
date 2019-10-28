@@ -52,8 +52,17 @@ public class FunctionExpression extends AbstractInvocationExpression {
 
     if (declared != null)
       return declared.call(scope, input, params);
-    else
-      return function.call(input, params);
+    else {
+      JsonNode value = function.call(input, params);
+
+      // if the user-implemented function returns Java null, silently
+      // turn it into a JSON null. (the alternative is to throw an
+      // exception.)
+      if (value == null)
+        value = NullNode.instance;
+
+      return value;
+    }
   }
 
   private static final int OPTIMIZE_ARRAY_CONTAINS_MIN = 10;

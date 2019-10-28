@@ -29,6 +29,17 @@ public class FunctionWrapperTest extends TestBase {
   }
 
   @Test
+  public void testWrapStaticMethodNotFound() throws Exception {
+    try {
+      FunctionUtils.wrapStaticMethod("url-decode",
+                                     "java.net.URLDecoder", "decooode");
+      fail("accepted non-existent method");
+    } catch (JsltException e) {
+      // this is what we expected
+    }
+  }
+
+  @Test
   public void testWrapStaticMethodLong() throws Exception {
     Collection<Function> functions = Collections.singleton(
       FunctionUtils.wrapStaticMethod("time-millis",

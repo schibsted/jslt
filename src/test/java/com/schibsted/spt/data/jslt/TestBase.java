@@ -83,7 +83,7 @@ public class TestBase {
 
       Expression expr = Parser.compileString(query);
       JsonNode actual = expr.apply(context);
-      fail("JSTL did not detect error");
+      fail("JSLT did not detect error");
     } catch (JsltException e) {
       assertTrue("incorrect error message: '" + e.getMessage() + "'",
                  e.getMessage().indexOf(result) != -1);
