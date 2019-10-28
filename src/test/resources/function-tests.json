@@ -1082,7 +1082,26 @@
       "input" : "[]",
       "output" : "88536"
    },
-
+   {
+      "query" : "hash-int(.)",
+      "input" : "[1,2]",
+      "output" : "-538236977"
+   },
+   {
+      "query" : "hash-int([1,2]) == hash-int([2,1])",
+      "input" : "",
+      "output" : "false"
+   },
+   {
+      "query" : "hash-int(.)",
+      "input" : "{\"a\":1,\"b\":2}",
+      "output" : "-116416732"
+   },
+   {
+      "query" : "hash-int({\"a\":1,\"b\":2}) == hash-int({\"b\":2,\"a\":1})",
+      "input" : "",
+      "output" : "false"
+   },
    {
       "query" : "hash-int(.)",
       "input" : "\"a\"",
