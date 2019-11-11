@@ -15,15 +15,8 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.Date;
-import java.util.Arrays;
-import java.util.TreeSet;
-import java.util.HashSet;
-import java.util.HashMap;
-import java.util.TimeZone;
-import java.util.SimpleTimeZone;
+import java.io.IOException;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.text.ParseException;

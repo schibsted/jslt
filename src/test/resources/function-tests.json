@@ -1090,7 +1090,7 @@
    {
       "query" : "hash-int(.)",
       "input" : "[2,1]",
-      "output" : "8928"
+      "output" : "9858"
    },
    {
       "query" : "hash-int([1,2]) == hash-int([2,1])",
