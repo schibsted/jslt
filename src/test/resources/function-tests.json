@@ -1050,42 +1050,47 @@
    {
       "query" : "hash-int(.)",
       "input" : "\"\"",
-      "output" : "1088"
+      "output" : "310"
    },
    {
       "query" : "hash-int(.)",
       "input" : "\"test\"",
-      "output" : "1083642606"
+      "output" : "3556808"
    },
    {
       "query" : "hash-int(.)",
       "input" : "{}",
-      "output" : "119320"
+      "output" : "8"
    },
    {
       "query" : "hash-int(.)",
       "input" : "{    }",
-      "output" : "119320"
+      "output" : "8"
    },
    {
       "query" : "hash-int(null)",
       "input" : "{}",
-      "output" : "null"
+      "output" : "6"
    },
    {
       "query" : "hash-int(.)",
       "input" : "1",
-      "output" : "49"
+      "output" : "248"
    },
    {
       "query" : "hash-int(.)",
       "input" : "[]",
-      "output" : "88536"
+      "output" : "1"
    },
    {
       "query" : "hash-int(.)",
       "input" : "[1,2]",
-      "output" : "-538236977"
+      "output" : "8928"
+   },
+   {
+      "query" : "hash-int(.)",
+      "input" : "[2,1]",
+      "output" : "8928"
    },
    {
       "query" : "hash-int([1,2]) == hash-int([2,1])",
@@ -1095,17 +1100,17 @@
    {
       "query" : "hash-int(.)",
       "input" : "{\"a\":1,\"b\":2}",
-      "output" : "-116416732"
+      "output" : "10519540"
    },
    {
       "query" : "hash-int({\"a\":1,\"b\":2}) == hash-int({\"b\":2,\"a\":1})",
       "input" : "",
-      "output" : "false"
+      "output" : "true"
    },
    {
       "query" : "hash-int(.)",
       "input" : "\"a\"",
-      "output" : "35715"
+      "output" : "407"
    }
 ]
 }

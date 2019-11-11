@@ -291,29 +291,85 @@ public class BuiltinFunctions {
     }
   }
 
-  // ===== HASH-INT
+    // ===== HASH-INT
 
-  public static class HashInt extends AbstractFunction {
+    public static class HashInt extends AbstractFunction {
 
-    private static ObjectMapper mapper = new ObjectMapper();
-    private static ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
+        private static ObjectMapper mapper = new ObjectMapper();
+        private static ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
 
-    public HashInt() {
-      super("hash-int", 1, 1);
+        public HashInt() {
+            super("hash-int", 1, 1);
+        }
+
+        public JsonNode call(JsonNode input, JsonNode[] arguments) {
+            JsonNode node = arguments[0];
+            return new IntNode(hash(node));
+        }
+
+
+        private int hash(JsonNode node) {
+            try {
+                int result = 0;
+                switch (node.getNodeType()) {
+                    case ARRAY:
+                        result = 31 * result + 1;
+                        for (final JsonNode objNode : node) {
+                            result = 31 * result + hash(objNode);
+                        }
+                        return result;
+                    case BINARY:
+                        result = 31 * result + 2;
+
+                        final byte[] binaryValue = node.binaryValue();
+                        result = 31 * result + 3;
+                        return result;
+                    case BOOLEAN:
+                        result = 31 * result + 4;
+                        result = 31 * result + (node.asBoolean() ? 1 : 0);
+                        return result;
+                    case MISSING:
+                        result = 31 * result + 5;
+                        return result;
+                    case NULL:
+                        result = 31 * result + 6;
+                        return result;
+                    case NUMBER:
+                        result = 31 * result + 7;
+                        result = 31 * result + node.decimalValue().hashCode();
+                        return result;
+                    case OBJECT:
+                        result = 31 * result + 8;
+
+                        ObjectNode objectNode = ((ObjectNode) node);
+                        List<String> fieldNames = new ArrayList<String>();
+                        objectNode.fieldNames().forEachRemaining(fieldNames::add);
+                        Collections.sort(fieldNames);
+                        for (final String f : fieldNames) {
+                            result = 31 * result + f.hashCode();
+                            result = 31 * result + hash(objectNode.get(f));
+                        }
+                        return result;
+                    case POJO:
+                        result = 31 * result + 9;
+
+                        String pojoString = writer.writeValueAsString(node);
+                        result = 31 * result + pojoString.hashCode();
+                        return result;
+                    case STRING:
+                        result = 31 * result + 10;
+                        result = 31 * result + node.asText().hashCode();
+                        return result;
+                    default:
+                        result = 31 * result + 11;
+                        result = 31 * result + writer.writeValueAsString(node).hashCode();
+                        return result;
+                }
+            } catch (IOException e) {
+                throw new JsltException("hash-int: can't process json" + e);
+            }
+        }
     }
-
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      JsonNode node = arguments[0];
-      if (node.isNull())
-        return NullNode.instance;
-      try {
-        String jsonString = writer.writeValueAsString(node);
-        return new IntNode(jsonString.hashCode());
-      } catch (JsonProcessingException e) {
-        throw new JsltException("hash-int: can't process json" + e);
-      }
-    }
-  }
 
   // ===== TEST
 

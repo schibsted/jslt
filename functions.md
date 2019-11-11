@@ -274,12 +274,18 @@ input will produce the same output in different environments (JVM versions, etc.
 Examples:
 
 ```
-hash-int("test") => 1083642606
-hash-int("") => 1088
-hash-int({}) => 119320
-hash-int([]) => 88536
-hash-int(1) => 49
-hash-int(null) => null
+hash-int("test") => 3556808
+hash-int("") => 310
+hash-int({}) => 8
+hash-int([]) => 1
+hash-int([1,2]) => 8928
+hash-int([2,1]) => 9858
+hash-int([1,2]) != hash-int([2,1]) => true
+hash-int(1) => 248
+hash-int(null) => 6
+hash-int({"a":1,"b",2}) => 10519540
+hash-int({"b":2,"a",1}) => 10519540
+hash-int({"a":1,"b",2}) == hash-int({"b":2,"a",1}) => true
 ```
 
 <!-- STRING =================================================================-->
