@@ -1,0 +1,5 @@
+import "src/test/resources/import-from-fs/sub1.jslt" as sub1
+
+{
+  "messages": sub1:message()
+}

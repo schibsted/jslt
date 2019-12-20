@@ -147,13 +147,29 @@ public class Parser {
   }
 
   /**
-   * Create a Parser reading JSLT source from the given Reader.
+   * Create a Parser reading JSLT source from the given Reader, that uses a specific {@link ResourceResolver} for
+   * import statements. The available implementations are {@link ClasspathResourceResolver} and {@link FileSystemResourceResolver}.
+   */
+  public Parser(final Reader reader, final ResourceResolver resourceResolver) {
+    this("<unknown>", reader, Collections.EMPTY_SET,
+            resourceResolver, new HashMap(),
+            new DefaultJsonFilter());
+  }
+
+  /**
+   * Create a Parser reading JSLT source from the given Reader. Uses a {@link ClasspathResourceResolver} for
+   * import statements.
    */
   public Parser(Reader reader) {
     this("<unknown>", reader, Collections.EMPTY_SET,
          new ClasspathResourceResolver(), new HashMap(),
          new DefaultJsonFilter());
   }
+
+  /**
+   * Create a parser with a given resource resolver for import statements.
+   * The available implementations are {@link ClasspathResourceResolver} and {@link FileSystemResourceResolver}.
+   */
 
   /**
    * Create a new Parser with the given source name. The name is a string

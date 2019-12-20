@@ -15,6 +15,7 @@
 
 package com.schibsted.spt.data.jslt;
 
+import java.io.IOException;
 import java.io.Reader;
 
 /**
