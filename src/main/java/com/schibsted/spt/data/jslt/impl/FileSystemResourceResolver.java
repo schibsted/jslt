@@ -29,7 +29,7 @@ public class FileSystemResourceResolver implements ResourceResolver {
     private final Path rootPath;
 
     public FileSystemResourceResolver(final Path rootPath) {
-        this.rootPath = rootPath;
+        this.rootPath = rootPath.toAbsolutePath();
     }
 
     public FileSystemResourceResolver() {
