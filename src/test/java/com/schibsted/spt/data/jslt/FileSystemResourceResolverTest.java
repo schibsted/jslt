@@ -53,7 +53,7 @@ public final class FileSystemResourceResolverTest {
                     .compile();
             fail("Expected " + JsltException.class.getSimpleName());
         } catch (final JsltException e) {
-            assertEquals("Couldn't load '../sub1.jslt' from file system: java.nio.file.NoSuchFileException: /home/nicolas/dev/git/ngsoftwaredev/sub1.jslt", e.getMessage());
+            assertEquals("Couldn't load resource '../sub1.jslt': java.nio.file.NoSuchFileException: /home/nicolas/dev/git/ngsoftwaredev/sub1.jslt", e.getMessage());
             assertEquals(NoSuchFileException.class, e.getCause().getClass());
         }
     }

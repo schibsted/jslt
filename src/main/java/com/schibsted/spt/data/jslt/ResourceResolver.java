@@ -15,19 +15,27 @@
 
 package com.schibsted.spt.data.jslt;
 
-import java.io.IOException;
 import java.io.Reader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Given a string identifying a JSLT module file, return a Reader that
- * produces the module. This interface can be used to look up module
+ * produces the module. This abstract class can be used to look up module
  * files other places than just on the classpath.
  */
-public interface ResourceResolver {
+public abstract class ResourceResolver {
 
   /**
-   * Return a Reader for the given module.
+   * Return a Reader for the given module, using the default encoding ({@link StandardCharsets#UTF_8})
    */
-  public Reader resolve(String jslt);
+  public Reader resolve(String jslt) {
+    return resolve(jslt, StandardCharsets.UTF_8);
+  }
+
+  /**
+   * Return a Reader for the given module, using a specific encoding.
+   */
+  public abstract Reader resolve(String jslt, Charset encoding);
 
 }
