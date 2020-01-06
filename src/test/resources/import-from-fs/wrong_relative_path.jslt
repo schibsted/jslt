@@ -1,0 +1,5 @@
+import "../sub1.jslt" as sub1
+
+{
+  "message1": sub1:message()
+}

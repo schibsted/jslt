@@ -13,3 +13,9 @@ hs_err_pid*
 
 .gradle
 build/
+out/
+target/
+
+# IntelliJ Idea project files
+.idea
+*.iml

@@ -1,0 +1,4 @@
+def message()
+  {
+    "message1": "Hey ho! hey ho..."
+  }
