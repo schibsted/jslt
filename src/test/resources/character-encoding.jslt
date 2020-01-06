@@ -1,0 +1,6 @@
+
+// Character encoding in this file is ISO 8859-1. Deliberately, so
+// that we can test configuring encodings
+
+def message()
+  "Hei på deg"
