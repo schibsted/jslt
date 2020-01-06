@@ -15,29 +15,18 @@
 
 package com.schibsted.spt.data.jslt;
 
-import java.util.Map;
-import java.util.List;
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.io.File;
-import java.io.Reader;
-import java.io.FileReader;
-import java.io.StringReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.FileNotFoundException;
-import com.fasterxml.jackson.databind.node.IntNode;
-import com.fasterxml.jackson.databind.node.DoubleNode;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.BooleanNode;
-import com.schibsted.spt.data.jslt.parser.*;
-import com.schibsted.spt.data.jslt.impl.*;
-import com.schibsted.spt.data.jslt.filters.*;
+import com.schibsted.spt.data.jslt.filters.DefaultJsonFilter;
+import com.schibsted.spt.data.jslt.filters.JsltJsonFilter;
+import com.schibsted.spt.data.jslt.filters.JsonFilter;
+import com.schibsted.spt.data.jslt.impl.ClasspathResourceResolver;
+import com.schibsted.spt.data.jslt.impl.FileSystemResourceResolver;
+import com.schibsted.spt.data.jslt.impl.ParseContext;
+import com.schibsted.spt.data.jslt.impl.PreparationContext;
+import com.schibsted.spt.data.jslt.parser.JsltParser;
+import com.schibsted.spt.data.jslt.parser.ParserImpl;
+
+import java.io.*;
+import java.util.*;
 
 /**
  * Parses JSLT expressions to Expression objects for evaluating them.
@@ -165,11 +154,6 @@ public class Parser {
          new ClasspathResourceResolver(), new HashMap(),
          new DefaultJsonFilter());
   }
-
-  /**
-   * Create a parser with a given resource resolver for import statements.
-   * The available implementations are {@link ClasspathResourceResolver} and {@link FileSystemResourceResolver}.
-   */
 
   /**
    * Create a new Parser with the given source name. The name is a string
