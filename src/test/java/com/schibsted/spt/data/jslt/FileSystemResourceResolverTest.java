@@ -3,7 +3,9 @@ package com.schibsted.spt.data.jslt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.NullNode;
 import com.schibsted.spt.data.jslt.impl.FileSystemResourceResolver;
 import org.junit.Test;
 
@@ -61,6 +63,22 @@ public final class FileSystemResourceResolverTest {
         } catch (final JsltException e) {
             assertEquals(NoSuchFileException.class, e.getCause().getClass());
         }
+    }
+
+    @Test
+    public void testResolveImportsFromFilesystemWithEncoding() throws IOException  {
+        FileSystemResourceResolver resolver = new FileSystemResourceResolver(
+          FileSystems.getDefault().getPath("./src/test/resources"), StandardCharsets.ISO_8859_1
+        );
+        Path jslt = FileSystems.getDefault().getPath("./src/test/resources/character-encoding-master.jslt");
+        Expression e = new Parser(
+          new InputStreamReader(new FileInputStream(jslt.toFile()))
+        )
+          .withResourceResolver(resolver)
+          .compile();
+
+        JsonNode result = e.apply(NullNode.instance);
+        assertEquals("Hei på deg", result.asText());
     }
 
     private String readResource(final String path) throws IOException {

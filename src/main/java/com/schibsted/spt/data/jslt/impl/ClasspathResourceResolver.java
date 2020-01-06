@@ -19,17 +19,28 @@ import java.io.Reader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import com.schibsted.spt.data.jslt.JsltException;
 import com.schibsted.spt.data.jslt.ResourceResolver;
 
 public class ClasspathResourceResolver implements ResourceResolver {
+  private Charset charset;
+
+  public ClasspathResourceResolver() {
+    this(StandardCharsets.UTF_8);
+  }
+
+  public ClasspathResourceResolver(Charset charset) {
+    this.charset = charset;
+  }
 
   public Reader resolve(String jslt) {
     InputStream is = getClass().getClassLoader().getResourceAsStream(jslt);
     if (is == null)
       throw new JsltException("Cannot load resource '" + jslt + "': not found");
-    return new InputStreamReader(is);
+    return new InputStreamReader(is, charset);
   }
 
 }

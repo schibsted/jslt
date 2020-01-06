@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.Collections;
 import java.io.IOException;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 
 import org.junit.Test;
 import org.junit.Ignore;
@@ -17,6 +18,7 @@ import java.math.BigInteger;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.IntNode;
+import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.FloatNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -24,6 +26,7 @@ import com.fasterxml.jackson.databind.node.BigIntegerNode;
 
 import com.schibsted.spt.data.jslt.Module;
 import com.schibsted.spt.data.jslt.impl.ModuleImpl;
+import com.schibsted.spt.data.jslt.impl.ClasspathResourceResolver;
 import com.schibsted.spt.data.jslt.filters.*;
 
 /**
@@ -314,4 +317,14 @@ public class StaticTests extends TestBase {
     assertEquals(2, actual.get(1).asInt());
   }
 
+  @Test
+  public void testClasspathResolverCharEncoding() {
+    ClasspathResourceResolver r = new ClasspathResourceResolver(StandardCharsets.ISO_8859_1);
+    Expression expr = new Parser(r.resolve("character-encoding-master.jslt"))
+      .withResourceResolver(r)
+      .compile();
+
+    JsonNode result = expr.apply(NullNode.instance);
+    assertEquals("Hei på deg", result.asText());
+  }
 }
