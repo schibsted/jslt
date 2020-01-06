@@ -1,19 +1,22 @@
+
 package com.schibsted.spt.data.jslt.impl;
 
-import com.schibsted.spt.data.jslt.StreamResourceResolver;
-
+import java.io.Reader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
-public final class FileSystemResourceResolver extends StreamResourceResolver {
+import com.schibsted.spt.data.jslt.JsltException;
+import com.schibsted.spt.data.jslt.ResourceResolver;
 
-    private final Path rootPath;
+public final class FileSystemResourceResolver implements ResourceResolver {
+    private Path rootPath;
 
-    public FileSystemResourceResolver(final Path rootPath) {
+    public FileSystemResourceResolver(Path rootPath) {
         this.rootPath = rootPath.toAbsolutePath();
     }
 
@@ -22,13 +25,18 @@ public final class FileSystemResourceResolver extends StreamResourceResolver {
     }
 
     @Override
-    protected InputStream getResourceAsStream(String jslt) throws IOException {
+    public Reader resolve(String jslt) {
+      try {
         Path jsltPath = FileSystems.getDefault().getPath(jslt).normalize();
         if (!jsltPath.isAbsolute()) {
             jsltPath = rootPath.resolve(jsltPath).normalize();
         }
 
-        return Files.newInputStream(jsltPath, StandardOpenOption.READ);
+        InputStream is = Files.newInputStream(jsltPath, StandardOpenOption.READ);
+        return new InputStreamReader(is);
+      } catch (IOException e) {
+        throw new JsltException("Could not resolve file '" + jslt + "': " + e, e);
+      }
     }
 
 }

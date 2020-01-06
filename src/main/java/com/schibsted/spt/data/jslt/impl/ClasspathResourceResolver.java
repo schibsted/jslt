@@ -15,15 +15,21 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import com.schibsted.spt.data.jslt.StreamResourceResolver;
-
+import java.io.Reader;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
-public final class ClasspathResourceResolver extends StreamResourceResolver {
+import com.schibsted.spt.data.jslt.JsltException;
+import com.schibsted.spt.data.jslt.ResourceResolver;
 
-  @Override
-  protected InputStream getResourceAsStream(String jslt) {
-    return getClass().getClassLoader().getResourceAsStream(jslt);
+public class ClasspathResourceResolver implements ResourceResolver {
+
+  public Reader resolve(String jslt) {
+    InputStream is = getClass().getClassLoader().getResourceAsStream(jslt);
+    if (is == null)
+      throw new JsltException("Cannot load resource '" + jslt + "': not found");
+    return new InputStreamReader(is);
   }
 
 }
