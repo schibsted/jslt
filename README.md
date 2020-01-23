@@ -137,6 +137,8 @@ things) some of the ways Schibsted uses JSLT.
 
 [Visual Studio syntax highlighter](https://marketplace.visualstudio.com/items?itemName=jarno-rajala.jslt-lang) for JSLT.
 
+[Apache Camel JSLT component](https://camel.apache.org/components/latest/jslt-component.html).
+
 ## LICENSE
 
 Copyright (c) 2018 Schibsted Marketplaces Products & Technology AS
