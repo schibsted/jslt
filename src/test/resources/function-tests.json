@@ -1103,6 +1103,11 @@
       "output" : "true"
    },
    {
+      "query" : "hash-int({\"a\":null}) == hash-int({})",
+      "input" : null,
+      "output" : "true"
+   },
+   {
       "query" : "hash-int(.)",
       "input" : "\"a\"",
       "output" : "35715"
