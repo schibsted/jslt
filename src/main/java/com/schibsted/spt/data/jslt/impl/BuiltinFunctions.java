@@ -15,38 +15,40 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.Date;
-import java.util.Arrays;
-import java.util.TreeSet;
-import java.util.HashSet;
-import java.util.HashMap;
-import java.util.TimeZone;
-import java.util.SimpleTimeZone;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.fasterxml.jackson.databind.node.BooleanNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.LongNode;
-import com.fasterxml.jackson.databind.node.IntNode;
-import com.fasterxml.jackson.databind.node.DoubleNode;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.core.JsonProcessingException;
-
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.BooleanNode;
+import com.fasterxml.jackson.databind.node.DoubleNode;
+import com.fasterxml.jackson.databind.node.IntNode;
+import com.fasterxml.jackson.databind.node.LongNode;
+import com.fasterxml.jackson.databind.node.NullNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.schibsted.spt.data.jslt.Function;
 import com.schibsted.spt.data.jslt.JsltException;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.SimpleTimeZone;
+import java.util.TimeZone;
+import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * For now contains all the various function implementations. Should
@@ -295,8 +297,11 @@ public class BuiltinFunctions {
 
   public static class HashInt extends AbstractFunction {
 
-    private static ObjectMapper mapper = new ObjectMapper();
-    private static ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
+    private static ObjectMapper mapper = new ObjectMapper()
+            .configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
+            .configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
+            ;
+    private static ObjectWriter writer = mapper.writer();
 
     public HashInt() {
       super("hash-int", 1, 1);
@@ -307,7 +312,9 @@ public class BuiltinFunctions {
       if (node.isNull())
         return NullNode.instance;
       try {
-        String jsonString = writer.writeValueAsString(node);
+        // https://stackoverflow.com/a/18993481/90580
+        final Object obj = mapper.treeToValue(node, Object.class);
+        String jsonString = writer.writeValueAsString(obj);
         return new IntNode(jsonString.hashCode());
       } catch (JsonProcessingException e) {
         throw new JsltException("hash-int: can't process json" + e);

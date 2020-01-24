@@ -1060,16 +1060,16 @@
    {
       "query" : "hash-int(.)",
       "input" : "{}",
-      "output" : "119320"
+      "output" : "3938"
    },
    {
       "query" : "hash-int(.)",
       "input" : "{    }",
-      "output" : "119320"
+      "output" : "3938"
    },
    {
-      "query" : "hash-int(null)",
-      "input" : "{}",
+      "query" : "hash-int(.)",
+      "input": null,
       "output" : "null"
    },
    {
@@ -1080,12 +1080,12 @@
    {
       "query" : "hash-int(.)",
       "input" : "[]",
-      "output" : "88536"
+      "output" : "2914"
    },
    {
       "query" : "hash-int(.)",
       "input" : "[1,2]",
-      "output" : "-538236977"
+      "output" : "85544097"
    },
    {
       "query" : "hash-int([1,2]) == hash-int([2,1])",
@@ -1095,12 +1095,12 @@
    {
       "query" : "hash-int(.)",
       "input" : "{\"a\":1,\"b\":2}",
-      "output" : "-116416732"
+      "output" : "1268505936"
    },
    {
       "query" : "hash-int({\"a\":1,\"b\":2}) == hash-int({\"b\":2,\"a\":1})",
-      "input" : "",
-      "output" : "false"
+      "input" : null,
+      "output" : "true"
    },
    {
       "query" : "hash-int(.)",
