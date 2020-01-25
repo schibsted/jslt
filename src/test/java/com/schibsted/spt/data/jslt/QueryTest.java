@@ -54,7 +54,7 @@ public class QueryTest extends TestBase {
 
       JsonNode expected = mapper.readTree(output);
 
-      assertEquals("" + expected + " != " + actual + " in query " + query + ", actual class " + actual.getClass() + ", expected class " + expected.getClass(), expected, actual);
+      assertEquals("" + expected + " != " + actual + " in query " + query + ", input: " + input + ", actual class " + actual.getClass() + ", expected class " + expected.getClass(), expected, actual);
     } catch (Exception e) {
       throw new RuntimeException("Failure on query " + query + ": " + e, e);
     }

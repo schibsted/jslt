@@ -265,6 +265,29 @@ mod(10, 2.1)  => error
 mod(10, "2")  => error
 ```
 
+### _hash-int(object) -> int_
+
+Returns a hash value of the given object. It differs from `sha256-hex` in that
+it gives a numeric integral hash value instead of a string. There is no guarantee that the same
+input will produce the same output in different environments (JVM versions, etc.)
+
+Examples:
+
+```
+hash-int("test") => 3556808
+hash-int("") => 310
+hash-int({}) => 8
+hash-int([]) => 1
+hash-int([1,2]) => 8928
+hash-int([2,1]) => 9858
+hash-int([1,2]) != hash-int([2,1]) => true
+hash-int(1) => 248
+hash-int(null) => 6
+hash-int({"a":1,"b",2}) => 10519540
+hash-int({"b":2,"a",1}) => 10519540
+hash-int({"a":1,"b",2}) == hash-int({"b":2,"a",1}) => true
+```
+
 <!-- STRING =================================================================-->
 
 ## String functions
