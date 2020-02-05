@@ -191,19 +191,46 @@ public class ParserImpl {
     if (node.id != JsltParserTreeConstants.JJTMULTIPLICATIVEEXPR)
       throw new JsltException("INTERNAL ERROR: Wrong type of node: " + node);
 
-    ExpressionNode root = node2baseExpr(ctx, getChild(node, 0));
+    ExpressionNode root = node2pipeExpr(ctx, getChild(node, 0));
 
     int ix = 0;
     while (node.jjtGetNumChildren() > ix * 2 + 1) {
-      ExpressionNode next = node2baseExpr(ctx, getChild(node, 2 + ix * 2));
+      final SimpleNode child1 = getChild(node, 2 + ix * 2);
+      ExpressionNode next = node2pipeExpr(ctx, child1);
 
       // get the operator
       Location loc = makeLocation(ctx, node);
-      Token comp = getChild(node, 1 + ix * 2).jjtGetFirstToken();
+      final SimpleNode child2 = getChild(node, 1 + ix * 2);
+      Token comp = child2.jjtGetFirstToken();
       if (comp.kind == JsltParserConstants.STAR)
         root = new MultiplyOperator(root, next, loc);
       else if (comp.kind == JsltParserConstants.SLASH)
         root = new DivideOperator(root, next, loc);
+      else
+        throw new JsltException("INTERNAL ERROR: What kind of operator is this?");
+      ix += 1;
+    }
+
+    return root;
+  }
+
+  private static ExpressionNode node2pipeExpr(ParseContext ctx, SimpleNode node) {
+    if (node.id != JsltParserTreeConstants.JJTPIPEEXPR)
+      throw new JsltException("INTERNAL ERROR: Wrong type of node: " + node);
+
+    ExpressionNode root = node2baseExpr(ctx, getChild(node, 0));
+
+    int ix = 0;
+    while (node.jjtGetNumChildren() > ix * 2 + 1) {
+      final SimpleNode child1 = getChild(node, 2 + ix * 2);
+      ExpressionNode next = node2baseExpr(ctx, child1);
+
+      // get the operator
+      Location loc = makeLocation(ctx, node);
+      final SimpleNode child2 = getChild(node, 1 + ix * 2);
+      Token comp = child2.jjtGetFirstToken();
+      if (comp.kind == JsltParserConstants.PIPE)
+        root = new PipeOperator(root, next, loc);
       else
         throw new JsltException("INTERNAL ERROR: What kind of operator is this?");
       ix += 1;

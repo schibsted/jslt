@@ -106,3 +106,16 @@ tests:
     input: "[2,3]"
     query: null + .
     output: "[2,3]"
+
+  -
+    input: |
+      {
+        "a": {
+          "b": 1,
+          "c": 2,
+          "d": 3
+        }
+      }
+    query: .a | [.b, .c, .d]
+    output: |
+      [1, 2, 3]
