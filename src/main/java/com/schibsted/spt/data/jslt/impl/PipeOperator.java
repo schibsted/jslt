@@ -28,6 +28,7 @@ public class PipeOperator extends AbstractOperator {
 
   @Override
   public JsonNode apply(Scope scope, JsonNode input) {
+    right.computeMatchContexts(new DotExpression(new Location(null, 0,0)));
     return right.apply(scope, left.apply(scope,input));
   }
 

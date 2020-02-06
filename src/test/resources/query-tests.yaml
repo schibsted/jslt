@@ -119,3 +119,68 @@ tests:
     query: .a | [.b, .c, .d]
     output: |
       [1, 2, 3]
+  -
+    input: |
+      { "bar": "a", "baz": {"bar": "b"}}
+    query: |
+      {
+        "foo" : .bar,
+        * : .
+      } | .baz
+    output: |
+      {"bar": "b"}
+  -
+    input: |
+      { "bar": "a", "baz": {"bar": "b"}}
+    query: |
+      .baz | {
+        "foo" : .bar,
+        * : .
+      }
+    output: |
+      {"foo": "b", "bar": "b"}
+
+  -
+    input: |
+      { "foo": {"a": "b"}}
+    query: |
+      .foo | {"x": "y", * : .}
+    output: |
+      {
+        "x": "y",
+        "a": "b"
+      }
+
+  - input:
+    query: |
+      { "a": "b" } | {
+                        "type" : "Anonymized-View",
+                        * : .
+                     }
+    output: |
+      {
+        "type": "Anonymized-View",
+         "a": "b"
+      }
+
+  -
+    input:
+    query: |
+      {
+        "bar": "baz",
+        "foo" :
+          { "a": "b" } | {
+                            "type" : "Anonymized-View",
+                            * : .
+                         }
+      }
+
+    output: |
+      {
+        "bar": "baz",
+        "foo" :
+          {
+            "type" : "Anonymized-View",
+             "a": "b"
+          }
+      }
