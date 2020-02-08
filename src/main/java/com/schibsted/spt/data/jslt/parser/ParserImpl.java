@@ -136,11 +136,11 @@ public class ParserImpl {
     if (node.id != JsltParserTreeConstants.JJTCOMPARATIVEEXPR)
       throw new JsltException("INTERNAL ERROR: Wrong type of node: " + node);
 
-    ExpressionNode first = node2addexpr(ctx, getChild(node, 0));
+    ExpressionNode first = node2pipeExpr(ctx, getChild(node, 0));
     if (node.jjtGetNumChildren() == 1) // it's just the base
       return first;
 
-    ExpressionNode second = node2addexpr(ctx, getChild(node, 2));
+    ExpressionNode second = node2pipeExpr(ctx, getChild(node, 2));
 
     // get the comparator
     Location loc = makeLocation(ctx, node);
@@ -191,12 +191,12 @@ public class ParserImpl {
     if (node.id != JsltParserTreeConstants.JJTMULTIPLICATIVEEXPR)
       throw new JsltException("INTERNAL ERROR: Wrong type of node: " + node);
 
-    ExpressionNode root = node2pipeExpr(ctx, getChild(node, 0));
+    ExpressionNode root = node2baseExpr(ctx, getChild(node, 0));
 
     int ix = 0;
     while (node.jjtGetNumChildren() > ix * 2 + 1) {
       final SimpleNode child1 = getChild(node, 2 + ix * 2);
-      ExpressionNode next = node2pipeExpr(ctx, child1);
+      ExpressionNode next = node2baseExpr(ctx, child1);
 
       // get the operator
       Location loc = makeLocation(ctx, node);
@@ -218,12 +218,12 @@ public class ParserImpl {
     if (node.id != JsltParserTreeConstants.JJTPIPEEXPR)
       throw new JsltException("INTERNAL ERROR: Wrong type of node: " + node);
 
-    ExpressionNode root = node2baseExpr(ctx, getChild(node, 0));
+    ExpressionNode root = node2addexpr(ctx, getChild(node, 0));
 
     int ix = 0;
     while (node.jjtGetNumChildren() > ix * 2 + 1) {
       final SimpleNode child1 = getChild(node, 2 + ix * 2);
-      ExpressionNode next = node2baseExpr(ctx, child1);
+      ExpressionNode next = node2addexpr(ctx, child1);
 
       // get the operator
       Location loc = makeLocation(ctx, node);

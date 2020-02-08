@@ -117,7 +117,7 @@ void AndExpr() :
 void ComparativeExpr() :
 {}
 {
-  AdditiveExpr() (Comparator() AdditiveExpr())?
+  PipeExpr() (Comparator() PipeExpr())?
 }
 
 // not necessary, but makes the tree easier to traverse
@@ -125,6 +125,18 @@ void Comparator() :
 {}
 {
   <EQUALS> | <UNEQUALS> | <BIGOREQ> | <BIGGER> | <SMALLER> | <SMALLOREQ>
+}
+
+void PipeExpr() :
+{}
+{
+    AdditiveExpr() (PipeOperator() AdditiveExpr())*
+}
+
+void PipeOperator() :
+{}
+{
+  <PIPE>
 }
 
 void AdditiveExpr() :
@@ -143,7 +155,7 @@ void AdditiveOperator() :
 void MultiplicativeExpr() :
 {}
 {
-  PipeExpr() (MultiplicativeOperator() PipeExpr())*
+  BaseExpr() (MultiplicativeOperator() BaseExpr())*
 }
 
 // not necessary, but makes the tree easier to traverse
@@ -151,18 +163,6 @@ void MultiplicativeOperator() :
 {}
 {
   <STAR> | <SLASH>
-}
-
-void PipeExpr() :
-{}
-{
-    BaseExpr() (PipeOperator() BaseExpr())*
-}
-
-void PipeOperator() :
-{}
-{
-  <PIPE>
 }
 
 void BaseExpr() :

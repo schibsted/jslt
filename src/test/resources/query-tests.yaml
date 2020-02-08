@@ -184,3 +184,28 @@ tests:
              "a": "b"
           }
       }
+
+  - input:
+    query: |
+      1 == 3 | (. - 2)
+    output: true
+
+  - input:
+    query: |
+      true or false | { "a" : .}
+    output: |
+      true
+
+  - input:
+    query: |
+      1 + 3 | (. * 5)
+    output: |
+      20
+
+
+
+  - input:
+    query: |
+      1 | [.,.] | {"a": ., "b": .}
+    output: |
+      { "a": [1,1],"b": [1,1]}
