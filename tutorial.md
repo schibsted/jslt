@@ -321,6 +321,21 @@ function. So you can write a boolean expression as:
 .foo.bar > 2 and not(contains(.baz, ["george", "harry"]))
 ```
 
+### Pipe operator `|`
+
+The pipe operator allows to change the meaning of the `.` (see [dot-accessors](#dot-accessors) ).
+The expression at left side of the `|` becomes the context node in the expression at the right hand side.
+
+So if the input is `{"a": {"b":1,"c":2,"d":3}}` the query `.a| [.b, .c, .d]` evaluates to `[1,2,3]`.
+The pipe operator allows to shorten the queries.
+An equivalent query to `.a | [.b, .c, .d]` would be `[.a.b, .a.c, .a.d]`
+which is significantly shorter when the object keys are not just single letters like in these examples.
+
+You can also chain several pipe operators 
+` 1 | [.,.] | {"a": ., "b": .}`
+which would evaluate to 
+`{ "a": [1,1],"b": [1,1]}`
+
 ### String processing
 
 Strings can be concatenated with `+`, and any object can be turned

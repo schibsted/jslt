@@ -202,10 +202,14 @@ tests:
     output: |
       20
 
-
-
   - input:
     query: |
       1 | [.,.] | {"a": ., "b": .}
     output: |
       { "a": [1,1],"b": [1,1]}
+
+  - input: 1
+    query: |
+      if (. < 10) true else false | {"a": .}
+    output: |
+      {"a": true}
