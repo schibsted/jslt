@@ -210,6 +210,95 @@ tests:
 
   - input: 1
     query: |
-      if (. < 10) true else false | {"a": .}
+      (if (. < 10) true else false) | {"a": .}
     output: |
       {"a": true}
+    description: |
+      Parentheses are needed arount the if expression otherwise the pipe will
+      be interpreted as part of the else clause expression. That is:
+          if (. < 10) true else false | {"a": .}
+      is interpreted as
+          if (. < 10) (true) else (false | {"a": .})
+
+  - input: 1
+    query: |
+      if (. < 10) true else false | {"a": .}
+    output: |
+      true
+    description: |
+      The pipe operator is part of the else clause. In other words,
+      this is equivalent to
+        if (. < 10) true else (false | {"a": .})
+
+  - input: 1
+    query: |
+      if (. < 10) true | {"a": .} else false
+    output: |
+      {"a": true}
+    description: |
+      The pipe operator is part of the then-clause. In other words,
+      this is equivalent to
+        if (. < 10) (true | | {"a": .}) else false
+
+  - input: |
+      {
+        "a": {
+          "b": 1,
+          "c": 2,
+          "d": 3
+        }
+      }
+    query: |
+      if (.a | .b+.c == 3) "pass" else "fail"
+    output: |
+      "pass"
+    description: |
+      Check that pipe operator can be used in the if condition
+
+  - input: |
+      [1,2,3]
+    query: |
+      [for (.) .*10] | {"a": .}
+    output: |
+      {"a": [10,20,30]}
+    description: |
+      Just check that an for expression can be at the left hand side
+      of pipe operator
+
+  - input: |
+      {"a": [1,2,3]}
+    query: |
+      .a | [for (.) .*10]
+    output: |
+      [10,20,30]
+    description: |
+      Just check that an for expression can be at the right hand side
+      of pipe operator
+
+  - input: |
+      {
+        "a": {
+          "b": 1,
+          "c": 2,
+          "d": 3
+        }
+      }
+    query: |
+      [for (.a | [.b, .c, .d]) . * 10]
+    output: |
+      [10,20,30]
+    description: |
+      Just check that we can use pipe operator as the first
+      expression in the for-expression
+
+  - input: |
+      [{"a":1},{"a":2},{"a": 3}]
+    query: |
+      [for (.) .a | . * 10]
+    output: |
+      [10,20,30]
+    description: |
+      Just check that we can use pipe operator as the second
+      expression in the for-expression
+
+
