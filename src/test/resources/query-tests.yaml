@@ -288,7 +288,7 @@ tests:
     output: |
       [10,20,30]
     description: |
-      Just check that we can use pipe operator as the first
+      Just check that we can use pipe operator in the first
       expression in the for-expression
 
   - input: |
@@ -298,7 +298,31 @@ tests:
     output: |
       [10,20,30]
     description: |
-      Just check that we can use pipe operator as the second
+      Just check that we can use pipe operator in the second
       expression in the for-expression
 
+  - input: |
+      {
+        "a": {
+          "b": 1,
+          "c": 2,
+          "d": 3
+        }
+      }
+    query: |
+      {for (.a | [.b, .c, .d]) string(.) : . * 10}
+    output: |
+      {"1":10, "2": 20, "3": 30}
+    description: |
+      Just check that we can use pipe operator in the first
+      expression in the object-expression
 
+  - input: |
+      [{"a":1},{"a":2},{"a": 3}]
+    query: |
+      {for (.)  .a | string(.) : .a | . * 10}
+    output: |
+      {"1":10, "2": 20, "3": 30}
+    description: |
+      Just check that we can use pipe operator in the second
+      expression in the object-for-expressions
