@@ -28,12 +28,22 @@ public class PipeOperator extends AbstractOperator {
 
   @Override
   public JsonNode apply(Scope scope, JsonNode input) {
-    right.computeMatchContexts(new DotExpression(new Location(null, 0,0)));
     return right.apply(scope, left.apply(scope,input));
   }
 
   @Override
+  public void computeMatchContexts(DotExpression parent) {
+    left.computeMatchContexts(parent);
+    right.computeMatchContexts(new DotExpression(new Location(null, 0,0)));
+  }
+
+  @Override
   public JsonNode perform(JsonNode v1, JsonNode v2) {
-    throw new RuntimeException("this should NOT be reachable");
+    throw new JsltException("this should NOT be reachable");
+  }
+
+  @Override
+  public ExpressionNode optimize() {
+    return super.optimize();
   }
 }
