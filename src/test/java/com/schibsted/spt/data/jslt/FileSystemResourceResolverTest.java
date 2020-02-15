@@ -60,7 +60,7 @@ public class FileSystemResourceResolverTest {
     Expression e = parse("./src/test/resources/character-encoding-master.jslt", resolver);
 
     JsonNode result = e.apply(NullNode.instance);
-    assertEquals("Hei på deg", result.asText());
+    assertEquals("Hei p\u00e5 deg", result.asText());
   }
 
   private Expression parse(String resource, ResourceResolver resolver) throws IOException {
