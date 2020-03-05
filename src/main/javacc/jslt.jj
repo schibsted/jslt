@@ -5,6 +5,7 @@ options {
   BUILD_TOKEN_MANAGER = true;
   SANITY_CHECK = true;
   TRACK_TOKENS = true;
+  UNICODE_INPUT = true;
 }
 
 PARSER_BEGIN(JsltParser)

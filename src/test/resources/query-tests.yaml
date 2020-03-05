@@ -106,3 +106,10 @@ tests:
     input: "[2,3]"
     query: null + .
     output: "[2,3]"
+
+  - input: |
+      {"foo" : 25}
+    query: |
+      if (true) "Отключен" else "Подключен"
+    output: |
+      "Отключен"
