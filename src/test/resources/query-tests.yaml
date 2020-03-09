@@ -113,3 +113,10 @@ tests:
       if (true) "Отключен" else "Подключен"
     output: |
       "Отключен"
+
+  - input: |
+      {"foo" : 25}
+    query: |
+      if (true) "string ends with a slash\\" else "let it be"
+    output: |
+      "string ends with a slash\\"
