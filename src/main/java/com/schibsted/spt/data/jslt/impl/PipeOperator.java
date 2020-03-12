@@ -16,24 +16,29 @@
 package com.schibsted.spt.data.jslt.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 import com.schibsted.spt.data.jslt.JsltException;
 
 public class PipeOperator extends AbstractOperator {
 
-  public PipeOperator(ExpressionNode left, ExpressionNode right,
-                      Location location) {
-    super(left, right, "|", location);
-  }
+    public PipeOperator(ExpressionNode left, ExpressionNode right,
+                        Location location) {
+        super(left, right, "|", location);
+    }
 
-  @Override
-  public JsonNode apply(Scope scope, JsonNode input) {
-    right.computeMatchContexts(new DotExpression(new Location(null, 0,0)));
-    return right.apply(scope, left.apply(scope,input));
-  }
+    @Override
+    public JsonNode apply(Scope scope, JsonNode input) {
+        return right.apply(scope, left.apply(scope, input));
+    }
 
-  @Override
-  public JsonNode perform(JsonNode v1, JsonNode v2) {
-    throw new RuntimeException("this should NOT be reachable");
-  }
+    @Override
+    public void computeMatchContexts(DotExpression parent) {
+        left.computeMatchContexts(parent);
+        right.computeMatchContexts(new DotExpression(new Location(null, 0, 0)));
+    }
+
+    @Override
+    public JsonNode perform(JsonNode v1, JsonNode v2) {
+        throw new JsltException("this should NOT be reachable");
+    }
+
 }
