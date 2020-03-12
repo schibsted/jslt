@@ -202,10 +202,22 @@ tests:
     output: |
       20
 
-
-
   - input:
     query: |
       1 | [.,.] | {"a": ., "b": .}
     output: |
       { "a": [1,1],"b": [1,1]}
+
+  - input: |
+      {"foo" : 25}
+    query: |
+      if (true) "Отключен" else "Подключен"
+    output: |
+      "Отключен"
+
+  - input: |
+      {"foo" : 25}
+    query: |
+      if (true) "string ends with a slash\\" else "let it be"
+    output: |
+      "string ends with a slash\\"

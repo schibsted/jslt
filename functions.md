@@ -141,23 +141,27 @@ is-decimal("1.0")  => false
 
 ### _number(object, fallback?) -> integer|float_
 
-Converts the argument into a number, if possible. Decimals and floats
-will be returned untouched. Strings are parsed into numbers. `null`
-returns `null`. All other types cause an error, unless `fallback` is
-specified.
+Converts the argument into a number, if possible. Decimals and
+integers will be returned untouched. Strings are parsed into numbers.
+`null` returns `null`. All other types cause an error, unless
+`fallback` is specified.
 
 If `fallback` is specified then if `object` is of the wrong type, or
 if it is a string that cannot be parsed, then the `fallback` value is
 returned.
 
+The number format supported is the same as in JSON literals, except
+that leading zeroes are allowed.
+
 Examples:
 
 ```
-number(23)   => 23
-number("23") => 23
-number(23.0) => 23
-number(null) => null
-number("ab") => error
+number(23)    => 23
+number("23")  => 23
+number("023") => 23
+number(23.0)  => 23
+number(null)  => null
+number("ab")  => error
 ```
 
 ### _round(float) -> integer_
