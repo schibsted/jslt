@@ -486,6 +486,20 @@ import "utilities.jslt" as utils
 }
 ```
 
+There is also another way to use `import` statements. If the file has
+a final expression that is not a function or variable declaration, the
+entire file can be imported and used as a function. If the template
+immediately above this paragraph were stored in `"object.jslt"` we
+could do:
+
+```
+import "object.jslt" as obj
+{
+  // some transforms specific to this template
+} +
+obj(.) // shared transforms
+```
+
 The `import` statement must appear before any variable or function
 declarations. You can have any number of them, and a module can import
 other modules. Cyclic imports are not allowed.
