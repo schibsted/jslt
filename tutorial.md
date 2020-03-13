@@ -473,11 +473,11 @@ JSLT allows you to import JSLT modules from files. These are exactly
 like ordinary JSLT templates, except that the final expression after
 the variable and function declarations is not required.
 
-If the two functions above were saved in a file named `utilities.jstl`
+If the two functions above were saved in a file named `utilities.jslt`
 then we could use them in another transform as follows:
 
 ```
-import "utilities.jstl" as utils
+import "utilities.jslt" as utils
 
 {
   "type" : "object",
