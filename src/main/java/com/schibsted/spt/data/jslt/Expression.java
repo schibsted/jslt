@@ -29,7 +29,7 @@ public interface Expression {
 
   // it's different from the internal interface because we want to
   // have convenience methods without having to have those on every
-  // kind of expression node internally
+  // kind of expression node internally (and vice versa)
 
   /**
    * Evaluate the expression on the given JSON input.
