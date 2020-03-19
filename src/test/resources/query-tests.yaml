@@ -125,3 +125,17 @@ tests:
         "query": "utm_source=aaaa&utm_campaign=bbbb&utm_medium=cccc&utm_content=dddd&utm_term=eeee",
         "scheme": "https"
       }
+
+  - input: |
+      {"foo" : 25}
+    query: |
+      if (true) "Отключен" else "Подключен"
+    output: |
+      "Отключен"
+
+  - input: |
+      {"foo" : 25}
+    query: |
+      if (true) "string ends with a slash\\" else "let it be"
+    output: |
+      "string ends with a slash\\"

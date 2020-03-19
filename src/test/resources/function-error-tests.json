@@ -53,18 +53,43 @@
     "input": "{}"
   },
   {
+    "error": "not a number",
+    "query": "number(\"\")",
+    "input": "{}"
+  },
+  {
+    "error": "not a number",
+    "query": "number(\"123.\")",
+    "input": "{}"
+  },
+  {
+    "error": ".345",
+    "query": "number(\".345\")",
+    "input": "{}"
+  },
+  {
+    "error": "1.1e",
+    "query": "number(\"1.1e\")",
+    "input": "{}"
+  },
+  {
+    "error": "1.1e+",
+    "query": "number(\"1.1e+\")",
+    "input": "{}"
+  },
+  {
     "input": "\"-NaN\"",
-    "query": "number(.)",
+    "query": "number(\"-NaN\")",
     "error": "number"
   },
   {
     "input": "\"0x0a\"",
-    "query": "number(.)",
+    "query": "number(\"0x0a\")",
     "error": "number"
   },
   {
     "input": "\"Infinity\"",
-    "query": "number(.)",
+    "query": "number(\"Infinity\")",
     "error": "number"
   },
   {

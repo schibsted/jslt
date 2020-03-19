@@ -473,17 +473,31 @@ JSLT allows you to import JSLT modules from files. These are exactly
 like ordinary JSLT templates, except that the final expression after
 the variable and function declarations is not required.
 
-If the two functions above were saved in a file named `utilities.jstl`
+If the two functions above were saved in a file named `utilities.jslt`
 then we could use them in another transform as follows:
 
 ```
-import "utilities.jstl" as utils
+import "utilities.jslt" as utils
 
 {
   "type" : "object",
   "size" : size(.),
   "keys" : utils:count(.)
 }
+```
+
+There is also another way to use `import` statements. If the file has
+a final expression that is not a function or variable declaration, the
+entire file can be imported and used as a function. If the template
+immediately above this paragraph were stored in `"object.jslt"` we
+could do:
+
+```
+import "object.jslt" as obj
+{
+  // some transforms specific to this template
+} +
+obj(.) // shared transforms
 ```
 
 The `import` statement must appear before any variable or function
