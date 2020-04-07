@@ -110,20 +110,15 @@ Output:
 ]
 ```
 
-It's a bit fiddly, since JSLT considers `""` a value (which perhaps it
-shouldn't).
-
 ```
-def is-value(v)
-  $v and $v != ""
 
 [for (.) {
-  "x" : if (is-value(.a) and is-value(.b)) (
+  "x" : if (.a and .b) (
     if (.a == .b)
       .a
     else
       "Error!" // or you can fail with the error function
-  ) else if (is-value(.a))
+  ) else if (.a)
     .a
   else
     .b
