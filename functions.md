@@ -60,13 +60,14 @@ if (not(is-array(.things)))
 
 ### _fallback(arg1, arg2, ...) -> value_
 
-Returns the first argument that evaluates to `true`.
+Returns the first argument that has a value. That is, the first
+argument that is not `null`, `[]`, or `{}`.
 
 Examples:
 
 ```
 fallback(.not_existing_key, .another_not_existing, 1)  => 1
-fallback(null, [], {}, "", false, 0, "value") => "value"
+fallback(null, [], {}, "value")                        => "value"
 ```
 
 ### _min(arg1, arg2) -> value_
