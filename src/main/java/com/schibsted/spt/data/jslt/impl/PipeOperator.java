@@ -1,5 +1,5 @@
 
-// Copyright 2018 Schibsted Marketplaces Products & Technology As
+// Copyright 2020 Schibsted Marketplaces Products & Technology As
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.

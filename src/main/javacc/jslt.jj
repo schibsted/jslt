@@ -106,7 +106,13 @@ void Module() :
 void Expr() :
 {}
 {
-  AndExpr() (<OR> Expr())?
+    OrExpr() (PipeOperator() OrExpr())*
+}
+
+void OrExpr() :
+{}
+{
+  AndExpr() (<OR> OrExpr())?
 }
 
 void AndExpr() :
@@ -118,7 +124,7 @@ void AndExpr() :
 void ComparativeExpr() :
 {}
 {
-  PipeExpr() (Comparator() PipeExpr())?
+  AdditiveExpr() (Comparator() AdditiveExpr())?
 }
 
 // not necessary, but makes the tree easier to traverse
@@ -128,11 +134,7 @@ void Comparator() :
   <EQUALS> | <UNEQUALS> | <BIGOREQ> | <BIGGER> | <SMALLER> | <SMALLOREQ>
 }
 
-void PipeExpr() :
-{}
-{
-    AdditiveExpr() (PipeOperator() AdditiveExpr())*
-}
+
 
 void PipeOperator() :
 {}
