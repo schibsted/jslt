@@ -139,3 +139,41 @@ tests:
       if (true) "string ends with a slash\\" else "let it be"
     output: |
       "string ends with a slash\\"
+
+# parse-url tests
+
+  - input:
+    query: parse-url("https://www.aftonbladet.se/nyheter/a/opyK1R/snosmocka-pa-ingang--kan-bli-20-centimeter?utm_source=aaaa&utm_campaign=bbbb&utm_medium=cccc&utm_content=dddd&utm_term=eeee")
+    output: |
+      {
+           "host": "www.aftonbladet.se",
+           "parameters": {
+             "utm_campaign": ["bbbb"],
+             "utm_content": ["dddd"],
+             "utm_medium": ["cccc"],
+             "utm_source": ["aaaa"],
+             "utm_term": ["eeee"]
+           },
+           "path": "/nyheter/a/opyK1R/snosmocka-pa-ingang--kan-bli-20-centimeter",
+           "query": "utm_source=aaaa&utm_campaign=bbbb&utm_medium=cccc&utm_content=dddd&utm_term=eeee",
+           "scheme": "https"
+         }
+    description: |
+      missing port in url means missing `port` key in output
+
+  - input:
+    query: parse-url("http://example.org/#foo")
+    output: |
+      {
+              "host": "example.org",
+              "path": "/",
+              "fragment": "#foo",
+              "scheme": "http"
+      }
+  - input:
+    query: parse-url("http://example.com")
+    output: |
+      {
+           "host": "www.aftonbladet.se",
+           "scheme": "https"
+      }
