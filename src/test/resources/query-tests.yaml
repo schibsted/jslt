@@ -108,25 +108,6 @@ tests:
     output: "[2,3]"
 
   - input: |
-      "https://www.aftonbladet.se/nyheter/a/opyK1R/snosmocka-pa-ingang--kan-bli-20-centimeter?utm_source=aaaa&utm_campaign=bbbb&utm_medium=cccc&utm_content=dddd&utm_term=eeee"
-    query: parse-url(.)
-    output: |
-      {
-        "host": "www.aftonbladet.se",
-        "parameters": {
-          "utm_campaign": ["bbbb"],
-          "utm_content": ["dddd"],
-          "utm_medium": ["cccc"],
-          "utm_source": ["aaaa"],
-          "utm_term": ["eeee"]
-        },
-        "path": "/nyheter/a/opyK1R/snosmocka-pa-ingang--kan-bli-20-centimeter",
-        "port": -1,
-        "query": "utm_source=aaaa&utm_campaign=bbbb&utm_medium=cccc&utm_content=dddd&utm_term=eeee",
-        "scheme": "https"
-      }
-
-  - input: |
       {"foo" : 25}
     query: |
       if (true) "Отключен" else "Подключен"
@@ -167,13 +148,13 @@ tests:
       {
               "host": "example.org",
               "path": "/",
-              "fragment": "#foo",
+              "fragment": "foo",
               "scheme": "http"
       }
   - input:
     query: parse-url("http://example.com")
     output: |
       {
-           "host": "www.aftonbladet.se",
-           "scheme": "https"
+           "host": "example.com",
+           "scheme": "http"
       }

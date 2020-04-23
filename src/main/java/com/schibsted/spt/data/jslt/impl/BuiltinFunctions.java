@@ -1190,22 +1190,30 @@ public class BuiltinFunctions {
       try {
         URL aURL = new URL(arguments[0].asText());
         final ObjectNode objectNode = NodeUtils.mapper.createObjectNode();
-        objectNode.put("host", aURL.getHost());
-        objectNode.put("port", aURL.getPort());
-        objectNode.put("path", aURL.getPath());
-        objectNode.put("query", aURL.getQuery());
-        objectNode.put("scheme", aURL.getProtocol());
-        final ObjectNode queryParamsNode = NodeUtils.mapper.createObjectNode();
-        objectNode.set("parameters", queryParamsNode);
-        final String[] pairs = aURL.getQuery().split("&");
-        for (String pair : pairs) {
-          final int idx = pair.indexOf("=");
-          final String key = idx > 0 ? URLDecoder.decode(pair.substring(0, idx), "UTF-8") : pair;
-          if (!queryParamsNode.has(key)) queryParamsNode.set(key, NodeUtils.mapper.createArrayNode());
-          final String value = idx > 0 && pair.length() > idx + 1 ? URLDecoder.decode(pair.substring(idx + 1), "UTF-8") : null;
-          final ArrayNode valuesNode = (ArrayNode)queryParamsNode.get(key);
-          valuesNode.add(value);
+        if (aURL.getHost() != null && !aURL.getHost().isEmpty())
+          objectNode.put("host", aURL.getHost());
+        if (aURL.getPort() != -1)
+          objectNode.put("port", aURL.getPort());
+        if (!aURL.getPath().isEmpty())
+          objectNode.put("path", aURL.getPath());
+        if (aURL.getProtocol() != null && !aURL.getProtocol().isEmpty())
+          objectNode.put("scheme", aURL.getProtocol());
+        if (aURL.getQuery() != null && !aURL.getQuery().isEmpty()) {
+          objectNode.put("query", aURL.getQuery());
+          final ObjectNode queryParamsNode = NodeUtils.mapper.createObjectNode();
+          objectNode.set("parameters", queryParamsNode);
+          final String[] pairs = aURL.getQuery().split("&");
+          for (String pair : pairs) {
+            final int idx = pair.indexOf("=");
+            final String key = idx > 0 ? URLDecoder.decode(pair.substring(0, idx), "UTF-8") : pair;
+            if (!queryParamsNode.has(key)) queryParamsNode.set(key, NodeUtils.mapper.createArrayNode());
+            final String value = idx > 0 && pair.length() > idx + 1 ? URLDecoder.decode(pair.substring(idx + 1), "UTF-8") : null;
+            final ArrayNode valuesNode = (ArrayNode) queryParamsNode.get(key);
+            valuesNode.add(value);
+          }
         }
+        if(aURL.getRef() != null)
+          objectNode.put("fragment", aURL.getRef());
         return objectNode;
       } catch (Exception e) {
         throw new JsltException("The url " + urlString + " is not a valid URL", e);
