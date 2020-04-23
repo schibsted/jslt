@@ -772,3 +772,23 @@ format-time(1529677391, "yyyy-MM-dd'T'HH:mm:ss") => "2018-06-22T14:23:11"
 format-time(0, "yyyy-MM-dd")                     => "1970-01-01"
 format-time(null, "yyyy-MM-dd")                  => null
 ```
+<!-- Misc ===================================================================-->
+
+## Miscellaneous functions
+
+### _parse-url(url) -> object_
+
+Parses `url` and returns an object with keys [`scheme`, `userinfo`, `host`, `port` `path`, `query`, `parameters`, `fragment` ]
+
+```
+parse-url("http://example.com").scheme => "http"
+parse-url("http://example.com").host => "example.com"
+parse-url("http://example.com").path => null
+parse-url("http://example.com/").path = "/"
+parse-url("https://www.example.com/?aa=1&aa=2&bb=&cc").query =>  "aa=1&aa=2&bb=&cc"
+parse-url("https://www.example.com/?aa=1&aa=2&bb=&cc").parameters.aa =>  ["1", "2"]
+parse-url("https://www.example.com/?aa=1&aa=2&bb=&cc").parameters.bb =>  [null]
+parse-url("https://www.example.com/?aa=1&aa=2&bb=&cc").parameters.cc =>  [null]
+parse-url("ftp://username:password@host.com/").userinfo => "username:password"
+parse-url("https://example.com:8443").port => 8443
+```

@@ -160,6 +160,18 @@ tests:
       }
     description:
       - No path
+      -
+  - input:
+    query: parse-url("http://example.com/")
+    output: |
+      {
+           "host": "example.com",
+           "scheme": "http",
+           "path": "/"
+      }
+    description:
+      - If URL has an ending slash then it has a path
+
 
   - input:
     query: parse-url("https://www.example.com/?aa=1&aa=2&bb=&cc")
@@ -191,3 +203,12 @@ tests:
       }
     description: |
       - userinfo
+
+  - input:
+    query: parse-url("https://example.com:8443")
+    output: |
+      {
+        "host": "example.com",
+        "port": 8443,
+        "scheme": "https"
+      }
