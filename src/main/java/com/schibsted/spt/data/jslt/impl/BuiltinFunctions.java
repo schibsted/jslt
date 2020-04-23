@@ -1214,6 +1214,8 @@ public class BuiltinFunctions {
         }
         if(aURL.getRef() != null)
           objectNode.put("fragment", aURL.getRef());
+        if(aURL.getUserInfo() != null && !aURL.getUserInfo().isEmpty())
+          objectNode.put("userinfo", aURL.getUserInfo());
         return objectNode;
       } catch (Exception e) {
         throw new JsltException("The url " + urlString + " is not a valid URL", e);

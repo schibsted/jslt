@@ -158,3 +158,36 @@ tests:
            "host": "example.com",
            "scheme": "http"
       }
+    description:
+      - No path
+
+  - input:
+    query: parse-url("https://www.example.com/?aa=1&aa=2&bb=&cc")
+    output: |
+      {
+           "host": "www.example.com",
+           "parameters": {
+             "aa": ["1","2"],
+             "bb": [null],
+             "cc": [null]
+           },
+          "path": "/",
+          "query": "aa=1&aa=2&bb=&cc",
+          "scheme": "https"
+         }
+    description: |
+      - multivalued parameter
+      - null parameter
+      - parameter no equal sign
+
+  - input:
+    query: parse-url("ftp://username:password@host.com/")
+    output: |
+      {
+          "host": "host.com",
+          "path": "/",
+          "scheme": "ftp",
+          "userinfo": "username:password"
+      }
+    description: |
+      - userinfo
