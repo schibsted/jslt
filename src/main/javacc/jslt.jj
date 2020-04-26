@@ -64,6 +64,7 @@ TOKEN :
   < MINUS: "-" > |
   < STAR: "*" > |
   < SLASH: "/" > |
+  < PIPE: "|" > |
   < FOR: "for" > |
   < DEF: "def" > |
   < IMPORT: "import" > |
@@ -105,7 +106,13 @@ void Module() :
 void Expr() :
 {}
 {
-  AndExpr() (<OR> Expr())?
+    OrExpr() (PipeOperator() OrExpr())*
+}
+
+void OrExpr() :
+{}
+{
+  AndExpr() (<OR> OrExpr())?
 }
 
 void AndExpr() :
@@ -125,6 +132,14 @@ void Comparator() :
 {}
 {
   <EQUALS> | <UNEQUALS> | <BIGOREQ> | <BIGGER> | <SMALLER> | <SMALLOREQ>
+}
+
+
+
+void PipeOperator() :
+{}
+{
+  <PIPE>
 }
 
 void AdditiveExpr() :
