@@ -15,6 +15,7 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -1207,8 +1208,8 @@ public class BuiltinFunctions {
           valuesNode.add(value);
         }
         return objectNode;
-      } catch (Exception e) {
-        throw new JsltException("The url " + urlString + " is not a valid URL", e);
+      } catch (MalformedURLException | UnsupportedEncodingException e) {
+        throw new JsltException("Can't parse " + urlString, e);
       }
     }
   }
