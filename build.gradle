@@ -27,11 +27,14 @@ repositories {
   mavenCentral()
 }
 
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
+
 dependencies {
-  compile 'com.fasterxml.jackson.core:jackson-databind:2.10.0'
+  compile 'com.fasterxml.jackson.core:jackson-databind:2.10.3'
 
   testCompile 'junit:junit:4.12'
-  testCompile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.10.0'
+  testCompile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.10.3'
 }
 
 ext {
@@ -40,7 +43,7 @@ ext {
 }
 
 group 'com.schibsted.spt.data'
-version "0.1.8"
+version "0.1.9"
 project.description "A JSON query and transformation language"
 
 check {

@@ -141,23 +141,27 @@ is-decimal("1.0")  => false
 
 ### _number(object, fallback?) -> integer|float_
 
-Converts the argument into a number, if possible. Decimals and floats
-will be returned untouched. Strings are parsed into numbers. `null`
-returns `null`. All other types cause an error, unless `fallback` is
-specified.
+Converts the argument into a number, if possible. Decimals and
+integers will be returned untouched. Strings are parsed into numbers.
+`null` returns `null`. All other types cause an error, unless
+`fallback` is specified.
 
 If `fallback` is specified then if `object` is of the wrong type, or
 if it is a string that cannot be parsed, then the `fallback` value is
 returned.
 
+The number format supported is the same as in JSON literals, except
+that leading zeroes are allowed.
+
 Examples:
 
 ```
-number(23)   => 23
-number("23") => 23
-number(23.0) => 23
-number(null) => null
-number("ab") => error
+number(23)    => 23
+number("23")  => 23
+number("023") => 23
+number(23.0)  => 23
+number(null)  => null
+number("ab")  => error
 ```
 
 ### _round(float) -> integer_
@@ -767,4 +771,24 @@ Examples:
 format-time(1529677391, "yyyy-MM-dd'T'HH:mm:ss") => "2018-06-22T14:23:11"
 format-time(0, "yyyy-MM-dd")                     => "1970-01-01"
 format-time(null, "yyyy-MM-dd")                  => null
+```
+<!-- Misc ===================================================================-->
+
+## Miscellaneous functions
+
+### _parse-url(url) -> object_
+
+Parses `url` and returns an object with keys [`scheme`, `userinfo`, `host`, `port` `path`, `query`, `parameters`, `fragment` ]
+
+```
+parse-url("http://example.com").scheme => "http"
+parse-url("http://example.com").host => "example.com"
+parse-url("http://example.com").path => null
+parse-url("http://example.com/").path = "/"
+parse-url("https://www.example.com/?aa=1&aa=2&bb=&cc").query =>  "aa=1&aa=2&bb=&cc"
+parse-url("https://www.example.com/?aa=1&aa=2&bb=&cc").parameters.aa =>  ["1", "2"]
+parse-url("https://www.example.com/?aa=1&aa=2&bb=&cc").parameters.bb =>  [null]
+parse-url("https://www.example.com/?aa=1&aa=2&bb=&cc").parameters.cc =>  [null]
+parse-url("ftp://username:password@host.com/").userinfo => "username:password"
+parse-url("https://example.com:8443").port => 8443
 ```

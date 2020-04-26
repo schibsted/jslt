@@ -213,16 +213,6 @@
       "query" : "contains(\"Taip\", [\"foo\", \"Taip\", \"halp\"])"
    },
    {
-      "query" : "number(null)",
-      "input" : "{}",
-      "output" : "null"
-   },
-   {
-      "output" : "[{\"number\":1},{\"number\":2},{\"number\":3},{\"number\":4}]",
-      "input" : "[]",
-      "query" : "[for (split(\"1,2,3,4\", \",\")) {   \"number\" : number(.) }]"
-   },
-   {
       "query" : "lowercase(22)",
       "output" : "\"22\"",
       "input" : "{}"
@@ -251,21 +241,6 @@
       "query" : "floor(null)",
       "output" : "null",
       "input" : "{}"
-   },
-   {
-      "query" : "number(\"hurble\", [1,2,3])",
-      "input" : "{}",
-      "output" : "[1,2,3]"
-   },
-   {
-      "query" : "number({\"hurble\":[1,2,3]}, null)",
-      "input" : "{}",
-      "output" : "null"
-   },
-   {
-      "query" : "number(null, 243)",
-      "input" : "{}",
-      "output" : "243"
    },
    {
       "query" : " get-key(., \"bar\", 0) ",
@@ -578,11 +553,6 @@
       "input" : " \"22\" "
    },
    {
-      "output" : "42",
-      "input" : "{}",
-      "query" : "number(\"42\")"
-   },
-   {
       "query" : " from-json(.) ",
       "input" : " null ",
       "output" : " null "
@@ -658,9 +628,159 @@
       "query" : "boolean(\"\")"
    },
    {
+      "query" : "number(null)",
+      "input" : "{}",
+      "output" : "null"
+   },
+   {
+      "output" : "[{\"number\":1},{\"number\":2},{\"number\":3},{\"number\":4}]",
+      "input" : "[]",
+      "query" : "[for (split(\"1,2,3,4\", \",\")) {   \"number\" : number(.) }]"
+   },
+   {
+      "query" : "number(\"hurble\", [1,2,3])",
+      "input" : "{}",
+      "output" : "[1,2,3]"
+   },
+   {
+      "query" : "number({\"hurble\":[1,2,3]}, null)",
+      "input" : "{}",
+      "output" : "null"
+   },
+   {
+      "query" : "number(null, 243)",
+      "input" : "{}",
+      "output" : "243"
+   },
+   {
+      "query" : "number(\"42\")",
+      "input" : "{}",
+      "output" : "42"
+   },
+   {
       "query" : "number(42.0)",
       "input" : "{}",
       "output" : "42.0"
+   },
+   {
+      "query" : "number(42)",
+      "input" : "{}",
+      "output" : "42"
+   },
+   {
+      "query" : "number(\"42.1\")",
+      "input" : "{}",
+      "output" : "42.1"
+   },
+   {
+      "query" : "number(\"42.12\")",
+      "input" : "{}",
+      "output" : "42.12"
+   },
+   {
+      "query" : "number(\"42.9999\")",
+      "input" : "{}",
+      "output" : "42.9999"
+   },
+   {
+      "query" : "number(\"42.0001\")",
+      "input" : "{}",
+      "output" : "42.0001"
+   },
+   {
+      "query" : "number(\"01\")",
+      "input" : "{}",
+      "output" : "1"
+   },
+   {
+      "query" : "number(\"01.0\")",
+      "input" : "{}",
+      "output" : "1.0"
+   },
+   {
+      "query" : "number(\"-10\")",
+      "input" : "{}",
+      "output" : "-10"
+   },
+   {
+      "query" : "number(\"-10.0\")",
+      "input" : "{}",
+      "output" : "-10.0"
+   },
+   {
+      "query" : "number(\"1e+1\")",
+      "input" : "{}",
+      "output" : "1e+1"
+   },
+   {
+      "query" : "number(\"1E+1\")",
+      "input" : "{}",
+      "output" : "1E+1"
+   },
+   {
+      "query" : "number(\"1e-1\")",
+      "input" : "{}",
+      "output" : "1e-1"
+   },
+   {
+      "query" : "number(\"1E-1\")",
+      "input" : "{}",
+      "output" : "1E-1"
+   },
+   {
+      "query" : "number(\"1e1\")",
+      "input" : "{}",
+      "output" : "1e1"
+   },
+   {
+      "query" : "number(\"1E1\")",
+      "input" : "{}",
+      "output" : "1E1"
+   },
+   {
+      "query" : "number(\"1.111E2\")",
+      "input" : "{}",
+      "output" : "111.1"
+   },
+   {
+      "query" : "number(\"0.1e-2\")",
+      "input" : "{}",
+      "output" : "0.001"
+   },
+   {
+      "query" : "number(\"0\")",
+      "input" : "{}",
+      "output" : "0"
+   },
+   {
+      "query" : "number(\"\", 147)",
+      "input" : "{}",
+      "output" : "147"
+   },
+   {
+      "query" : "number(\"1.484006399998E9\")",
+      "input" : "{}",
+      "output" : "1.484006399998E9"
+   },
+   {
+      "query" : "number(\"1534663342000\")",
+      "input" : "{}",
+      "output" : "1534663342000"
+   },
+   {
+      "query" : "number(\"-1534663342000\")",
+      "input" : "{}",
+      "output" : "-1534663342000"
+   },
+   {
+      "query" : "number(\"42.0\")",
+      "input" : "{}",
+      "output" : "42.0"
+   },
+   {
+      "query" : "number(\"124274772478237237823782728372873000000012347427427378238238283\")",
+      "input" : "{}",
+      "output" : "124274772478237237823782728372873000000012347427427378238238283"
    },
    {
       "input" : "{}",
@@ -701,11 +821,6 @@
       "output" : "null",
       "input" : "{}",
       "query" : "size( .nonexistent )"
-   },
-   {
-      "output" : "42",
-      "input" : "{}",
-      "query" : "number(42)"
    },
    {
       "query" : "uppercase(null)",
@@ -776,11 +891,6 @@
       "query" : "is-array(.)",
       "output" : "false",
       "input" : "{}"
-   },
-   {
-      "query" : "number(\"42.0\")",
-      "input" : "{}",
-      "output" : "42.0"
    },
    {
       "query" : "flatten([])",
