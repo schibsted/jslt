@@ -327,4 +327,18 @@ public class StaticTests extends TestBase {
     JsonNode result = expr.apply(NullNode.instance);
     assertEquals("Hei på deg", result.asText());
   }
+
+  @Test
+  public void testPipeOperatorAndObjectMatcher()  throws IOException {
+    Expression expr = Parser.compileString("{\"bar\": \"baz\",\"foo\":{ \"a\": \"b\" } | {\"type\" : \"Anonymized-View\",* : .}}");
+
+
+    JsonNode desired = mapper.readTree(
+            "{\"bar\":\"baz\",\"foo\":{\"type\":\"Anonymized-View\",\"a\":\"b\"}}"
+    );
+
+    JsonNode result = expr.apply(null);
+    assertEquals(desired, result);
+  }
+
 }

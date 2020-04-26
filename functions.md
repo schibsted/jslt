@@ -60,13 +60,14 @@ if (not(is-array(.things)))
 
 ### _fallback(arg1, arg2, ...) -> value_
 
-Returns the first argument that evaluates to `true`.
+Returns the first argument that has a value. That is, the first
+argument that is not `null`, `[]`, or `{}`.
 
 Examples:
 
 ```
 fallback(.not_existing_key, .another_not_existing, 1)  => 1
-fallback(null, [], {}, "", false, 0, "value") => "value"
+fallback(null, [], {}, "value")                        => "value"
 ```
 
 ### _min(arg1, arg2) -> value_
@@ -159,7 +160,7 @@ Examples:
 number(23)    => 23
 number("23")  => 23
 number("023") => 23
-number(23.0)  => 23
+number(23.0)  => 23.0
 number(null)  => null
 number("ab")  => error
 ```
@@ -287,9 +288,9 @@ hash-int([2,1]) => 9858
 hash-int([1,2]) != hash-int([2,1]) => true
 hash-int(1) => 248
 hash-int(null) => 6
-hash-int({"a":1,"b",2}) => 10519540
-hash-int({"b":2,"a",1}) => 10519540
-hash-int({"a":1,"b",2}) == hash-int({"b":2,"a",1}) => true
+hash-int({"a":1,"b":2}) => 10519540
+hash-int({"b":2,"a":1}) => 10519540
+hash-int({"a":1,"b":2}) == hash-int({"b":2,"a":1}) => true
 ```
 
 <!-- STRING =================================================================-->
@@ -334,7 +335,7 @@ Some examples:
 test("123", "\d+")       => Error (\d not a known escape code)
 test("123", "\\d+")      => true
 test("abc123", "\\d+")   => true (matching part is enough)
-test("^abc123$", "\\d+") => false
+test("abc123", "^\\d+$") => false
 ```
 
 ### _capture(input, regexp) -> object_
@@ -375,7 +376,7 @@ Examples:
 
 ```
 split("1,2,3,4,5", ",") => ["1", "2", "3", "4", "5"]
-split("1,2,3,4,5", ";") => "1,2,3,4,5"
+split("1,2,3,4,5", ";") => ["1,2,3,4,5"]
 split(null, ";")        => null
 split(",2", ",")        => ["", "2"]
 split("2,", ",")        => ["2"]
@@ -391,7 +392,7 @@ Examples:
 
 ```
 join(["a", "b", "c"], " ") => "a b c"
-join(["a", " ")            => "a"
+join(["a"], " ")            => "a"
 join(null, "-")            => null
 join([1], "-")             => "1"
 ```
@@ -502,9 +503,9 @@ Examples:
 
 ```
 replace("abc def ghi", " ", "-")      => "abc-def-ghi"
-replace("abc def ghi", "\\S+", "-")   => "abc-def-ghi"
-replace(null, "\\S+", "-")            => null
-replace("   whoah", "^\\S+", "")      => "whoah"
+replace("abc def ghi", "\\s+", "-")   => "abc-def-ghi"
+replace(null, "\\s+", "-")            => null
+replace("   whoah", "^\\s+", "")      => "whoah"
 replace("abc def ghi", "[a-z]", "x")  => "xxx xxx xxx"
 replace("abc def ghi", "[a-z]+", "x") => "x x x"
 ```
