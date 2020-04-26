@@ -352,3 +352,95 @@ tests:
       if (true) "string ends with a slash\\" else "let it be"
     output: |
       "string ends with a slash\\"
+
+# parse-url tests
+
+  - input:
+    query: parse-url("https://www.aftonbladet.se/nyheter/a/opyK1R/snosmocka-pa-ingang--kan-bli-20-centimeter?utm_source=aaaa&utm_campaign=bbbb&utm_medium=cccc&utm_content=dddd&utm_term=eeee")
+    output: |
+      {
+           "host": "www.aftonbladet.se",
+           "parameters": {
+             "utm_campaign": ["bbbb"],
+             "utm_content": ["dddd"],
+             "utm_medium": ["cccc"],
+             "utm_source": ["aaaa"],
+             "utm_term": ["eeee"]
+           },
+           "path": "/nyheter/a/opyK1R/snosmocka-pa-ingang--kan-bli-20-centimeter",
+           "query": "utm_source=aaaa&utm_campaign=bbbb&utm_medium=cccc&utm_content=dddd&utm_term=eeee",
+           "scheme": "https"
+         }
+    description: |
+      missing port in url means missing `port` key in output
+
+  - input:
+    query: parse-url("http://example.org/#foo")
+    output: |
+      {
+              "host": "example.org",
+              "path": "/",
+              "fragment": "foo",
+              "scheme": "http"
+      }
+  - input:
+    query: parse-url("http://example.com")
+    output: |
+      {
+           "host": "example.com",
+           "scheme": "http"
+      }
+    description:
+      - No path
+      -
+  - input:
+    query: parse-url("http://example.com/")
+    output: |
+      {
+           "host": "example.com",
+           "scheme": "http",
+           "path": "/"
+      }
+    description:
+      - If URL has an ending slash then it has a path
+
+
+  - input:
+    query: parse-url("https://www.example.com/?aa=1&aa=2&bb=&cc")
+    output: |
+      {
+           "host": "www.example.com",
+           "parameters": {
+             "aa": ["1","2"],
+             "bb": [null],
+             "cc": [null]
+           },
+          "path": "/",
+          "query": "aa=1&aa=2&bb=&cc",
+          "scheme": "https"
+         }
+    description: |
+      - multivalued parameter
+      - null parameter
+      - parameter no equal sign
+
+  - input:
+    query: parse-url("ftp://username:password@host.com/")
+    output: |
+      {
+          "host": "host.com",
+          "path": "/",
+          "scheme": "ftp",
+          "userinfo": "username:password"
+      }
+    description: |
+      - userinfo
+
+  - input:
+    query: parse-url("https://example.com:8443")
+    output: |
+      {
+        "host": "example.com",
+        "port": 8443,
+        "scheme": "https"
+      }

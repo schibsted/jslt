@@ -15,6 +15,10 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -49,6 +53,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.schibsted.spt.data.jslt.Function;
 import com.schibsted.spt.data.jslt.JsltException;
+
 
 /**
  * For now contains all the various function implementations. Should
@@ -118,6 +123,9 @@ public class BuiltinFunctions {
     functions.put("now", new BuiltinFunctions.Now());
     functions.put("parse-time", new BuiltinFunctions.ParseTime());
     functions.put("format-time", new BuiltinFunctions.FormatTime());
+
+    // MISC
+    functions.put("parse-url", new BuiltinFunctions.ParseUrl());
   }
 
   public static Map<String, Macro> macros = new HashMap();
@@ -1166,6 +1174,53 @@ public class BuiltinFunctions {
         return arguments[0];
       else
         return arguments[1];
+    }
+  }
+
+  // ===== PARSE-URL
+
+  public static class ParseUrl extends AbstractFunction {
+    public ParseUrl() { super("parse-url", 1,1);}
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      if (arguments[0].isNull())
+        return NullNode.instance;
+
+      String urlString = arguments[0].asText();
+
+      try {
+        URL aURL = new URL(arguments[0].asText());
+        final ObjectNode objectNode = NodeUtils.mapper.createObjectNode();
+        if (aURL.getHost() != null && !aURL.getHost().isEmpty())
+          objectNode.put("host", aURL.getHost());
+        if (aURL.getPort() != -1)
+          objectNode.put("port", aURL.getPort());
+        if (!aURL.getPath().isEmpty())
+          objectNode.put("path", aURL.getPath());
+        if (aURL.getProtocol() != null && !aURL.getProtocol().isEmpty())
+          objectNode.put("scheme", aURL.getProtocol());
+        if (aURL.getQuery() != null && !aURL.getQuery().isEmpty()) {
+          objectNode.put("query", aURL.getQuery());
+          final ObjectNode queryParamsNode = NodeUtils.mapper.createObjectNode();
+          objectNode.set("parameters", queryParamsNode);
+          final String[] pairs = aURL.getQuery().split("&");
+          for (String pair : pairs) {
+            final int idx = pair.indexOf("=");
+            final String key = idx > 0 ? URLDecoder.decode(pair.substring(0, idx), "UTF-8") : pair;
+            if (!queryParamsNode.has(key)) queryParamsNode.set(key, NodeUtils.mapper.createArrayNode());
+            final String value = idx > 0 && pair.length() > idx + 1 ? URLDecoder.decode(pair.substring(idx + 1), "UTF-8") : null;
+            final ArrayNode valuesNode = (ArrayNode) queryParamsNode.get(key);
+            valuesNode.add(value);
+          }
+        }
+        if(aURL.getRef() != null)
+          objectNode.put("fragment", aURL.getRef());
+        if(aURL.getUserInfo() != null && !aURL.getUserInfo().isEmpty())
+          objectNode.put("userinfo", aURL.getUserInfo());
+        return objectNode;
+      } catch (MalformedURLException | UnsupportedEncodingException e) {
+        throw new JsltException("Can't parse " + urlString, e);
+      }
     }
   }
 
