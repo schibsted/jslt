@@ -36,6 +36,10 @@ Here is an example transform:
 
 [**More examples**](examples/README.md).
 
+[**Javadoc**](http://javadoc.io/doc/com.schibsted.spt.data/jslt).
+
+[**API introduction**](docs/api.md).
+
 [![Build Status](https://travis-ci.org/schibsted/jslt.svg?branch=master)](https://travis-ci.org/schibsted/jslt)
 
 ## Quick reference

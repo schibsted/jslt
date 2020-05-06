@@ -39,3 +39,31 @@ If you don't want to set the filter using JSLT, you can implement the
 object instead of a JSLT string. (Internally, the parser will
 translate your JSLT string to a `JsonFilter` object using the JSLT
 expression.)
+
+## Passing values to JSLT
+
+If you have one or more values in your code that you want to pass in
+to the JSLT expression, you can do that through the API. Let's say
+your code has a setting for the maximum string length of some field,
+and you need your JSLT transform to obey that maximum.
+
+To solve that you can do as follows:
+
+```
+Expression jslt = Parser.compileString(str);
+JsonNode output = jslt.apply(
+  Collections.singletonMap("maxLength", (JsonNode) new IntNode(cfg.getMaxLength())),
+  input
+);
+```
+
+Then, in your JSLT transform you can use `maxLength` as though it were
+a normal variable, although the value comes from outside the JSLT:
+
+```
+{
+  ...
+  "title" : .document.name[ : $maxLength],
+  ...
+}
+```
