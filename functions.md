@@ -544,7 +544,7 @@ boolean(" ")   => true
 boolean(0)     => false
 boolean(1)     => true
 boolean(true)  => true
-boolean(false) => true
+boolean(false) => false
 boolean([])    => false
 boolean([1])   => true
 ```
@@ -563,7 +563,7 @@ not(" ")   => false
 not(0)     => true
 not(1)     => false
 not(true)  => false
-not(false) => false
+not(false) => true
 not([])    => true
 not([1])   => false
 ```
