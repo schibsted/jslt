@@ -1,15 +1,4 @@
 
-buildscript {
-  repositories {
-    mavenLocal()
-    jcenter()
-    mavenCentral()
-  }
-  dependencies {
-    classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.5.4"
-  }
-}
-
 plugins {
   id 'com.github.johnrengelman.shadow' version '1.2.4'
 }
@@ -26,9 +15,6 @@ repositories {
   jcenter()
   mavenCentral()
 }
-
-compileJava.options.encoding = "UTF-8"
-compileTestJava.options.encoding = "UTF-8"
 
 dependencies {
   compile 'com.fasterxml.jackson.core:jackson-databind:2.10.3'

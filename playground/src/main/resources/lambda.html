@@ -16,7 +16,7 @@
     font-size: 14pt
   }
 
-  #jstl, #input {
+  #jslt, #input {
     font-family: "Lucida Console", Monaco, "Courier New", monospace;
     font-size: 14pt
   }
@@ -34,23 +34,22 @@ function send() {
   out.firstChild.nodeValue = '...wait...';
 
   var input = document.getElementById('input').value
-  var jstl = document.getElementById('jstl').value
-  var data = JSON.stringify(JSON.stringify({"json" : input,
-                            "jstl" : jstl }))
-
+  var jslt = document.getElementById('jslt').value
+  var data = {"json" : input, "jslt" : jslt }
 
   var http = new XMLHttpRequest();
-  var url = "https://5b7ywaitzk.execute-api.eu-west-1.amazonaws.com/prod/JSTL2Demo";
+  var url = "jslt";
+  //var url = "http://localhost:9999/jslt";
   http.open("POST", url, true);
   http.setRequestHeader("Content-type", "application/json");
 
   http.onreadystatechange = function() {
     if (http.readyState == 4 && http.status == 200) {
       var out = document.getElementById('result');
-      out.firstChild.nodeValue = JSON.parse(http.responseText);
+      out.firstChild.nodeValue = http.responseText;
     }
   }
-  http.send(data);
+  http.send(JSON.stringify(data));
 }
 </script>
 
@@ -75,7 +74,7 @@ Please <a href="https://github.com/schibsted/jslt/issues"
 
 <h2>JSLT</h2>
 
-<textarea id="jstl" name="jstl" cols=80 rows=20>
+<textarea id="jslt" name="jslt" cols=80 rows=20>
 let idparts = split(.id, "-")
 let xxx = [for ($idparts) "x" * size(.)]
 

@@ -28,7 +28,7 @@ Here is an example transform:
 }
 ```
 
-[**Demo playground**](http://spt-data-dev-public-web.s3-website-eu-west-1.amazonaws.com/jstl2.html).
+[**Demo playground**](http://www.garshol.priv.no/jslt).
 
 [**Language tutorial**](tutorial.md).
 
