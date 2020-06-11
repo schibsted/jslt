@@ -143,6 +143,8 @@ things) some of the ways Schibsted uses JSLT.
 
 [Apache Camel JSLT component](https://camel.apache.org/components/latest/jslt-component.html).
 
+[Pincette even sourcing framework uses JSLT](https://github.com/json-event-sourcing/pincette-jes).
+
 ## LICENSE
 
 Copyright (c) 2018 Schibsted Marketplaces Products & Technology AS
