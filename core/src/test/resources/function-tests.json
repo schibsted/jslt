@@ -1240,8 +1240,7 @@
    {
       "query" : "zip([], [])",
       "input" : "null",
-      "output" : "
-[]"
+      "output" : "[]"
    }
 ]
 }
