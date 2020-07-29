@@ -55,7 +55,7 @@ public class QueryErrorTest extends TestBase {
     }
   }
 
-  @Parameters
+  @Parameters(name = "query: {1}")
   public static Collection<Object[]> data() {
     List<Object[]> strings = new ArrayList();
     strings.addAll(loadTests("query-error-tests.json"));
