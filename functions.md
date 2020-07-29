@@ -724,6 +724,24 @@ any([])                         => false
 any("")                         => error
 ```
 
+### _zip(array1, array2) -> array_
+
+Folds the two arrays into a new array consisting of two-element
+arrays, where the first two-element array contains the first element
+of `array1`and the first element of `array2`, the second has the two
+second elements, and so on. It is an error if the two arrays are of
+different lengths.
+
+Examples:
+
+```
+zip(["a", "b", "c"], [1, 2, 3]) => [["a", 1], ["b", 2], ["c", 3]]
+zip(["a", "b", "c"], null)      => null
+zip(null, [1, 2, 3])            => null
+zip([], [])                     => []
+zip([1], [])                    => error
+```
+
 <!-- TIME ===================================================================-->
 
 ## Time functions
@@ -773,6 +791,7 @@ format-time(1529677391, "yyyy-MM-dd'T'HH:mm:ss") => "2018-06-22T14:23:11"
 format-time(0, "yyyy-MM-dd")                     => "1970-01-01"
 format-time(null, "yyyy-MM-dd")                  => null
 ```
+
 <!-- Misc ===================================================================-->
 
 ## Miscellaneous functions

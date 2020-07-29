@@ -118,6 +118,7 @@ public class BuiltinFunctions {
     functions.put("flatten", new BuiltinFunctions.Flatten());
     functions.put("all", new BuiltinFunctions.All());
     functions.put("any", new BuiltinFunctions.Any());
+    functions.put("zip", new BuiltinFunctions.Zip());
 
     // TIME
     functions.put("now", new BuiltinFunctions.Now());
@@ -732,6 +733,36 @@ public class BuiltinFunctions {
           return BooleanNode.TRUE;
       }
       return BooleanNode.FALSE;
+    }
+
+  }
+
+  // ===== ZIP
+
+  public static class Zip extends AbstractFunction {
+
+    public Zip() {
+      super("zip", 2, 2);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      JsonNode array1 = arguments[0];
+      JsonNode array2 = arguments[1];
+      if (array1.isNull() || array2.isNull())
+        return NullNode.instance;
+      else if (!array1.isArray() || !array2.isArray())
+        throw new JsltException("zip() requires arrays");
+      else if (array1.size() != array2.size())
+        throw new JsltException("zip() arrays were of unequal size");
+
+      ArrayNode array = NodeUtils.mapper.createArrayNode();
+      for (int ix = 0; ix < array1.size(); ix++) {
+        ArrayNode pair = NodeUtils.mapper.createArrayNode();
+        pair.add(array1.get(ix));
+        pair.add(array2.get(ix));
+        array.add(pair);
+      }
+      return array;
     }
 
   }

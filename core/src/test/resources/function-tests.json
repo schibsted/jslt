@@ -1221,6 +1221,27 @@
       "query" : "hash-int(.)",
       "input" : "\"a\"",
       "output" : "35715"
+   },
+   {
+      "query" : "zip([\"a\", \"b\", \"c\"], [1, 2, 3])",
+      "input" : "null",
+      "output" : "[[\"a\", 1], [\"b\", 2], [\"c\", 3]]"
+   },
+   {
+      "query" : "zip([\"a\", \"b\", \"c\"], null)",
+      "input" : "null",
+      "output" : "null"
+   },
+   {
+      "query" : "zip(null, [1, 2, 3])",
+      "input" : "null",
+      "output" : "null"
+   },
+   {
+      "query" : "zip([], [])",
+      "input" : "null",
+      "output" : "
+[]"
    }
 ]
 }
