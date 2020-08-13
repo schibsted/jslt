@@ -1260,7 +1260,7 @@ public class BuiltinFunctions {
   // shared regexp cache
   static Map<String, Pattern> cache = new BoundedCache(1000);
 
-  private static Pattern getRegexp(String regexp) {
+  private synchronized static Pattern getRegexp(String regexp) {
     Pattern p = cache.get(regexp);
     if (p == null) {
       p = Pattern.compile(regexp);
