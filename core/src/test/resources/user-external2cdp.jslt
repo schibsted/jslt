@@ -1,0 +1,14 @@
+let prefix = .container[ : 3]
+
+{
+    "tags":  [ "cx", "cx-ext", "cx-prefix:" + $prefix ],
+    "class": "Profile",
+    "keys": {
+        "cx-ext-" + $prefix : .key
+    },
+    "props": {
+        "cx-ext-" + $prefix : {for (zip(.stringGroups, .stringItems))
+           .[0] : .[1]
+        }
+    }
+}

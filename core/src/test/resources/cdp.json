@@ -1,0 +1,25 @@
+{
+    "tags":  [ "cx", "cx-ext", "cx-prefix:foo" ],
+    "class": "Profile",
+    "keys": {
+        "cx-ext-foo": "totally-spurious-key"
+    },
+    "props": {
+      "cx-ext-foo": {
+        "foo-ecsegm-gender" : "male",
+        "foo-ecsegm-age" : "18-24",
+        "foo-ecsegm-education" : "primarysecondaryschool",
+        "foo-ecsegm-income" : "45k-70k",
+        "foo-ecsegm-employment" :"other",
+        "foo-ecsegm-genderchildren" : "boys",
+        "foo-ecsegm-householdsize" : "2-4",
+        "foo-ecsegm-car-access" : "own car",
+        "foo-ecsegm-decision-maker" : "no",
+        "foo-ecsegm-smoking" : "non-smoking",
+        "foo-ecsegm-accommodation" : "owned house",
+        "foo-ecsegm-sato" : "sijaintiin keskittyvat untuvikot",
+        "foo-ecsegm-lejos" : "price sensitive snackers",
+        "foo-ecsegm-hk" : "speedy health seekers"
+      }
+    }
+}
