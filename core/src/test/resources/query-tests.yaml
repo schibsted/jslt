@@ -60,6 +60,15 @@ tests:
    output: "{\"foo\" : 1}"
 
   -
+   input: "{\"foo\" : 1}"
+   query: >
+     {
+       "bar" : { * : . },
+       string(.foo) : "hey"
+     }
+   output: "{\"1\" : \"hey\"}"
+
+  -
    input: {}
    query: >
      let foo = "something"
@@ -352,6 +361,13 @@ tests:
       if (true) "string ends with a slash\\" else "let it be"
     output: |
       "string ends with a slash\\"
+
+  - input: |
+      {}
+    query: |
+      {"foo" + "_bar" : 25}
+    output: |
+      {"foo_bar" : 25}
 
 # parse-url tests
 

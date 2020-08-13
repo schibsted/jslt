@@ -5,7 +5,10 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Collection;
 import java.util.Collections;
+import java.io.Reader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import org.junit.Test;
 import static org.junit.Assert.fail;
 import static org.junit.Assert.assertTrue;
@@ -58,6 +61,26 @@ public class TestBase {
       assertEquals("actual class " + actual.getClass() + ", expected class " + expected.getClass(), expected, actual);
     } catch (IOException e) {
       throw new RuntimeException(e);
+    }
+  }
+
+  String load(String resource) {
+    try (InputStream stream = TestUtils.class.getClassLoader().getResourceAsStream(resource)) {
+      if (stream == null)
+        throw new JsltException("Cannot load resource '" + resource + "': not found");
+
+      char[] tmp = new char[128];
+      Reader reader = new InputStreamReader(stream, "UTF-8");
+      StringBuilder buf = new StringBuilder();
+      while (true) {
+        int chars = reader.read(tmp, 0, tmp.length);
+        if (chars == -1)
+          break;
+        buf.append(tmp, 0, chars);
+      }
+      return buf.toString();
+    } catch (IOException e) {
+      throw new JsltException("Couldn't read resource " + resource, e);
     }
   }
 

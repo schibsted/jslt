@@ -16,50 +16,73 @@
 package com.schibsted.spt.data.jslt.impl;
 
 import java.util.List;
+import java.util.Arrays;
 import java.util.Collections;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.schibsted.spt.data.jslt.JsltException;
 
 /**
  * Represents a ("key" : expr) pair inside a JSON object.
  */
 public class PairExpression extends AbstractNode {
-  private String key;
-  private ExpressionNode expr;
+  private ExpressionNode key;
+  private ExpressionNode value;
 
-  public PairExpression(String key, ExpressionNode expr, Location location) {
+  public PairExpression(ExpressionNode key, ExpressionNode value, Location location) {
     super(location);
     this.key = key;
-    this.expr = expr;
+    this.value = value;
   }
 
-  public String getKey() {
-    return key;
+  public String applyKey(Scope scope, JsonNode input) {
+    JsonNode v = key.apply(scope, input);
+    if (!v.isTextual()) {
+      throw new JsltException("Object key must be string", location);
+    }
+    return v.asText();
+  }
+
+  public String getStaticKey() {
+    if (!isKeyLiteral())
+      throw new JsltException("INTERNAL ERROR: Attempted to get non-static key");
+    return key.apply(null, null).asText();
   }
 
   public JsonNode apply(Scope scope, JsonNode input) {
-    return expr.apply(scope, input);
+    return value.apply(scope, input);
   }
 
   public void computeMatchContexts(DotExpression parent) {
-    expr.computeMatchContexts(new DotExpression(key, parent, location));
+    // a pair that has a dynamic key cannot use matching in the value
+    DotExpression expr;
+    if (isKeyLiteral())
+      expr = new DotExpression(getStaticKey(), parent, location);
+    else
+      expr = new FailDotExpression(location, "dynamic object");
+
+    value.computeMatchContexts(expr);
   }
 
-  // is the expr a literal?
   public boolean isLiteral() {
-    return expr instanceof LiteralExpression;
+    return value instanceof LiteralExpression && key instanceof LiteralExpression;
+  }
+
+  public boolean isKeyLiteral() {
+    return key instanceof LiteralExpression;
   }
 
   public ExpressionNode optimize() {
-    expr = expr.optimize();
+    key = key.optimize();
+    value = value.optimize();
     return this;
   }
 
   public List<ExpressionNode> getChildren() {
-    return Collections.singletonList(expr);
+    return Arrays.asList(key, value);
   }
 
   public void dump(int level) {
     System.out.println(NodeUtils.indent(level) + '"' + key + '"' + " :");
-    expr.dump(level + 1);
+    value.dump(level + 1);
   }
 }

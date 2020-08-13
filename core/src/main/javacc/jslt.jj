@@ -261,7 +261,7 @@ void MatcherMinus() :
 void Pair() :
 {}
 {
-  <STRING> <COLON> Expr()
+  Expr() <COLON> Expr()
   (<COMMA> ((Pair() | Matcher()))?)?
 }
 

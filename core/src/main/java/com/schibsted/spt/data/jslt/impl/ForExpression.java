@@ -65,9 +65,9 @@ public class ForExpression extends AbstractNode {
   }
 
   public void computeMatchContexts(DotExpression parent) {
-    // if you do matching inside a for the matching is on the current
-    // object being traversed in the list. so we forget the parent
-    // and start over
+    // if you do matching inside a 'for' the matching is on the
+    // current object being traversed in the list. so we forget the
+    // parent and start over
     loopExpr.computeMatchContexts(new DotExpression(location));
   }
 

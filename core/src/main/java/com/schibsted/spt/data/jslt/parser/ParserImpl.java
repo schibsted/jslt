@@ -52,6 +52,7 @@ public class ParserImpl {
   public static Expression compileExpression(ParseContext ctx, JsltParser parser) {
     try {
       parser.Start();
+      //((SimpleNode) parser.jjtree.rootNode()).dump("");
       ExpressionImpl expr = compile(ctx, (SimpleNode) parser.jjtree.rootNode());
       expr.setGlobalModules(ctx.getFiles());
       return expr;
@@ -659,22 +660,10 @@ public class ParserImpl {
     List<PairExpression> pairs = collectPairs(ctx, last);
     PairExpression[] children = new PairExpression[pairs.size()];
     children = pairs.toArray(children);
-    checkForDuplicates(children);
+
     return new ObjectExpression(lets, children, matcher,
                                 makeLocation(ctx, node),
                                 ctx.getObjectFilter());
-  }
-
-  private static void checkForDuplicates(PairExpression[] pairs) {
-    Set<String> seen = new HashSet(pairs.length);
-    for (int ix = 0; ix < pairs.length; ix++) {
-      if (seen.contains(pairs[ix].getKey()))
-        throw new JsltException("Invalid object declaration, duplicate key " +
-                                "'" + pairs[ix].getKey() + "'",
-                                pairs[ix].getLocation());
-
-      seen.add(pairs[ix].getKey());
-    }
   }
 
   private static MatcherExpression collectMatcher(ParseContext ctx,
@@ -684,7 +673,7 @@ public class ParserImpl {
 
     SimpleNode last = getLastChild(node);
     if (node.id == JsltParserTreeConstants.JJTPAIR) {
-      if (node.jjtGetNumChildren() == 1)
+      if (node.jjtGetNumChildren() == 2)
         return null; // last in chain was a pair
 
       return collectMatcher(ctx, last);
@@ -724,8 +713,8 @@ public class ParserImpl {
                                                    SimpleNode pair,
                                                    List<PairExpression> pairs) {
     if (pair != null && pair.id == JsltParserTreeConstants.JJTPAIR) {
-      String key = makeString(ctx, pair.jjtGetFirstToken());
-      ExpressionNode val = node2expr(ctx, (SimpleNode) pair.jjtGetChild(0));
+      ExpressionNode key = node2expr(ctx, (SimpleNode) pair.jjtGetChild(0));
+      ExpressionNode val = node2expr(ctx, (SimpleNode) pair.jjtGetChild(1));
 
       pairs.add(new PairExpression(key, val, makeLocation(ctx, pair)));
       if (pair.jjtGetNumChildren() > 1)

@@ -36,8 +36,9 @@ public class ObjectExpression extends AbstractNode {
   private PairExpression[] children;
   private DotExpression contextQuery; // find object to match
   private MatcherExpression matcher;
-  private Set<String> keys; // the keys defined in this template
+  private Set<String> keys; // the static keys defined in this template
   private JsonFilter filter;
+  private boolean containsDynamicKeys;
 
   public ObjectExpression(LetExpression[] lets,
                           PairExpression[] children,
@@ -51,11 +52,33 @@ public class ObjectExpression extends AbstractNode {
     this.filter = filter;
 
     this.keys = new HashSet();
-    for (int ix = 0; ix < children.length; ix++)
-      keys.add(children[ix].getKey());
+    for (int ix = 0; ix < children.length; ix++) {
+      if (children[ix].isKeyLiteral())
+        keys.add(children[ix].getStaticKey());
+      else {
+        containsDynamicKeys = true;
+        if (matcher != null)
+          throw new JsltException("Object matcher not allowed in objects which have dynamic keys");
+      }
+    }
     if (matcher != null)
       for (String minus : matcher.getMinuses())
         keys.add(minus);
+
+    if (!containsDynamicKeys)
+      checkForDuplicates();
+  }
+
+  private void checkForDuplicates() {
+    Set<String> seen = new HashSet(children.length);
+    for (int ix = 0; ix < children.length; ix++) {
+      if (seen.contains(children[ix].getStaticKey()))
+        throw new JsltException("Invalid object declaration, duplicate key " +
+                                "'" + children[ix].getStaticKey() + "'",
+                                children[ix].getLocation());
+
+      seen.add(children[ix].getStaticKey());
+    }
   }
 
   public JsonNode apply(Scope scope, JsonNode input) {
@@ -64,8 +87,14 @@ public class ObjectExpression extends AbstractNode {
     ObjectNode object = NodeUtils.mapper.createObjectNode();
     for (int ix = 0; ix < children.length; ix++) {
       JsonNode value = children[ix].apply(scope, input);
-      if (filter.filter(value))
-        object.put(children[ix].getKey(), value);
+      if (filter.filter(value)) {
+        String key = children[ix].applyKey(scope, input);
+
+        if (containsDynamicKeys && object.has(key))
+          throw new JsltException("Duplicate key '" + key + "' in object", children[ix].getLocation());
+
+        object.put(key, value);
+      }
     }
 
     if (matcher != null)
@@ -100,6 +129,7 @@ public class ObjectExpression extends AbstractNode {
 
     for (int ix = 0; ix < lets.length; ix++)
       lets[ix].computeMatchContexts(parent);
+
     for (int ix = 0; ix < children.length; ix++)
       children[ix].computeMatchContexts(parent);
   }

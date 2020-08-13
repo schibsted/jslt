@@ -373,20 +373,11 @@ public class TemplateTest extends TestBase {
           "{\"foo\" : 22, \"bar\" : 21}");
   }
 
-  // "matching-8.jstl" should "fail" in {
-  //   fail("matching-8.jstl", "empty.json")
-  // }
-
-  // "matching-10.jstl" should "remove 'type' and 'id'" in {
-  //   verify("matching-10.jstl", "simple.json", "matching-10.json")
-  // }
-
-  // "matching-remove.jstl" should "remove 'type'" in {
-  //   verify("matching-remove.jstl", "simple.json", "matching-remove.json")
-  // }
-
-  // "matching-nested.jstl" should "remove 'baz'" in {
-  //   verify("matching-nested.jstl", "matching-nested.json", "matching-nested-out.json")
-  // }
+  @Test
+  public void testDynamicKeys() {
+    check(load("user-external.json"),
+          load("user-external2cdp.jslt"),
+          load("cdp.json"));
+  }
 
 }
