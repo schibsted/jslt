@@ -120,6 +120,7 @@ public class BuiltinFunctions {
     functions.put("any", new BuiltinFunctions.Any());
     functions.put("zip", new BuiltinFunctions.Zip());
     functions.put("zip-with-index", new BuiltinFunctions.ZipWithIndex());
+    functions.put("index-of", new BuiltinFunctions.IndexOf());
 
     // TIME
     functions.put("now", new BuiltinFunctions.Now());
@@ -768,7 +769,6 @@ public class BuiltinFunctions {
 
   }
 
-
   // ===== ZIP-WITH-INDEX
 
   public static class ZipWithIndex extends AbstractFunction {
@@ -792,6 +792,31 @@ public class BuiltinFunctions {
         arrayOut.add(pair);
       }
       return arrayOut;
+    }
+
+  }
+
+  // ===== INDEX-OF
+
+  public static class IndexOf extends AbstractFunction {
+
+    public IndexOf() {
+      super("index-of", 2, 2);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      JsonNode array = arguments[0];
+      if (array.isNull())
+        return NullNode.instance;
+      else if (!array.isArray())
+        throw new JsltException("index-of() first argument must be an array");
+
+      JsonNode value = arguments[1];
+      for (int ix = 0; ix < array.size(); ix++) {
+        if (EqualsComparison.equals(array.get(ix), value))
+          return new IntNode(ix);
+      }
+      return new IntNode(-1);
     }
 
   }

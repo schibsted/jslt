@@ -758,6 +758,20 @@ zip-with-index(null)            => null
 zip-with-index("abc")           => error
 ```
 
+### _index-of(array, value) -> integer_
+
+Returns the index of `value` within `array`, or `-1` if it cannot be
+found. It's an error if `array` is not an array (or `null`).
+
+```
+index-of([], 1)                 => -1
+index-of([0, 1, 2], 1)          => 1
+index-of([0, 1, 2, null], null) => 3
+index-of([0, 1, 2], null)       => -1
+index-of(null, 1)               => null
+index-of(1, 1)                  => error
+```
+
 <!-- TIME ===================================================================-->
 
 ## Time functions

@@ -1256,6 +1256,31 @@
       "query" : "zip-with-index([\"a\",\"b\",\"c\"])",
       "input" : "null",
       "output" : "[{\"index\":0,\"value\":\"a\"},{\"index\":1,\"value\":\"b\"},{\"index\":2,\"value\":\"c\"}]"
+   },
+   {
+      "query" : "index-of([\"a\",\"b\",\"c\"], \"b\")",
+      "input" : "null",
+      "output" : "1"
+   },
+   {
+      "query" : "index-of([\"a\",\"b\",\"c\"], \"d\")",
+      "input" : "null",
+      "output" : "-1"
+   },
+   {
+      "query" : "index-of([], \"d\")",
+      "input" : "null",
+      "output" : "-1"
+   },
+   {
+      "query" : "index-of([], null)",
+      "input" : "null",
+      "output" : "-1"
+   },
+   {
+      "query" : "index-of(null, \"b\")",
+      "input" : "null",
+      "output" : "null"
    }
 ]
 }

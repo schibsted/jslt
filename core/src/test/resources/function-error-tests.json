@@ -200,12 +200,17 @@
    {
       "query" : "zip([1], [])",
       "input" : "null",
-      "output" : "unequal length"
+      "error" : "unequal size"
    },
    {
       "query" : "zip-with-index(33)",
       "input" : "null",
-      "output" : "must be an array"
+      "error" : "must be an array"
+   },
+   {
+      "query" : "index-of(\"abc\", \"b\")",
+      "input" : "null",
+      "error" : "must be an array"
    }
 ]
 }

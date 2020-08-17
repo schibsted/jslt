@@ -28,7 +28,7 @@ public class EqualsComparison extends AbstractOperator {
     return NodeUtils.toJson(equals(v1, v2));
   }
 
-  static boolean equals(JsonNode v1, JsonNode v2) {
+  public static boolean equals(JsonNode v1, JsonNode v2) {
     boolean result;
     if (v1.isNumber() && v2.isNumber()) {
       // unfortunately, comparison of numeric nodes in Jackson is
