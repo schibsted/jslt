@@ -48,7 +48,7 @@ sourceSets {
             srcDirs 'build/javacc'
         }
     }
- }
+}
 
 task jjtree (type: Exec) {
   commandLine 'java', '-cp', 'javacc.jar', 'jjtree', '-OUTPUT_DIRECTORY=build/javacc/com/schibsted/spt/data/jslt/parser', 'src/main/javacc/jslt.jj'

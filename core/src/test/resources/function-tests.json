@@ -1241,6 +1241,21 @@
       "query" : "zip([], [])",
       "input" : "null",
       "output" : "[]"
+   },
+   {
+      "query" : "zip-with-index([])",
+      "input" : "null",
+      "output" : "[]"
+   },
+   {
+      "query" : "zip-with-index(null)",
+      "input" : "null",
+      "output" : "null"
+   },
+   {
+      "query" : "zip-with-index([\"a\",\"b\",\"c\"])",
+      "input" : "null",
+      "output" : "[{\"index\":0,\"value\":\"a\"},{\"index\":1,\"value\":\"b\"},{\"index\":2,\"value\":\"c\"}]"
    }
 ]
 }

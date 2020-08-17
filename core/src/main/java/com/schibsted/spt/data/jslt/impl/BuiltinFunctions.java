@@ -119,6 +119,7 @@ public class BuiltinFunctions {
     functions.put("all", new BuiltinFunctions.All());
     functions.put("any", new BuiltinFunctions.Any());
     functions.put("zip", new BuiltinFunctions.Zip());
+    functions.put("zip-with-index", new BuiltinFunctions.ZipWithIndex());
 
     // TIME
     functions.put("now", new BuiltinFunctions.Now());
@@ -763,6 +764,34 @@ public class BuiltinFunctions {
         array.add(pair);
       }
       return array;
+    }
+
+  }
+
+
+  // ===== ZIP-WITH-INDEX
+
+  public static class ZipWithIndex extends AbstractFunction {
+
+    public ZipWithIndex() {
+      super("zip-with-index", 1, 1);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      JsonNode arrayIn = arguments[0];
+      if (arrayIn.isNull())
+        return NullNode.instance;
+      else if (!arrayIn.isArray())
+        throw new JsltException("zip-with-index() argument must be an array");
+
+      ArrayNode arrayOut = NodeUtils.mapper.createArrayNode();
+      for (int ix = 0; ix < arrayIn.size(); ix++) {
+        ObjectNode pair = NodeUtils.mapper.createObjectNode();
+        pair.put("index", new IntNode(ix));
+        pair.put("value", arrayIn.get(ix));
+        arrayOut.add(pair);
+      }
+      return arrayOut;
     }
 
   }

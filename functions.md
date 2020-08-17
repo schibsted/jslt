@@ -742,6 +742,22 @@ zip([], [])                     => []
 zip([1], [])                    => error
 ```
 
+### _zip-with-index(array) ->  array_
+
+Turns an array into a new array where each element in the input array
+is mapped to an object of the form `{"value" : <array element>,
+"index" : <index of element>"}`. The indexes start at zero. It is an
+error not to pass an array (or `null`).
+
+```
+zip-with-index(["a", "b", "c"]) => [{"value" : "a", "index" : 0},
+                                    {"value" : "b", "index" : 1},
+                                    {"value" : "c", "index" : 2}]
+zip-with-index([])              => []
+zip-with-index(null)            => null
+zip-with-index("abc")           => error
+```
+
 <!-- TIME ===================================================================-->
 
 ## Time functions
