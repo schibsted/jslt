@@ -489,7 +489,7 @@ tests:
     query: parse-url("this-is-an-invalid-url", false)
     output: |
       {
-        "error": "MalformedURLException",
+        "error": "java.net.MalformedURLException",
         "message": "no protocol: this-is-an-invalid-url",
         "input": "this-is-an-invalid-url"
       }

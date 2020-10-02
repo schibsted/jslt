@@ -1305,13 +1305,13 @@ public class BuiltinFunctions {
         if(aURL.getUserInfo() != null && !aURL.getUserInfo().isEmpty())
           objectNode.put("userinfo", aURL.getUserInfo());
         return objectNode;
-      } catch (Throwable e) {
+      } catch (Exception e) {
         if (throwOnFailure) {
           throw new JsltException("Can't parse " + urlString, e);
         } else {
           final ObjectNode errorNode = NodeUtils.mapper.createObjectNode();
-          Class errorClass = e.getClass();
-          errorNode.put("error", errorClass.getSimpleName());
+          final Class errorClass = e.getClass();
+          errorNode.put("error", errorClass.getName());
           errorNode.put("message", e.getMessage());
           errorNode.put("input", urlString);
           return errorNode;
