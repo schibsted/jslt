@@ -372,6 +372,11 @@ tests:
 # parse-url tests
 
   - input:
+    query: parse-url(null)
+    output: |
+      null
+
+  - input:
     query: parse-url("https://www.aftonbladet.se/nyheter/a/opyK1R/snosmocka-pa-ingang--kan-bli-20-centimeter?utm_source=aaaa&utm_campaign=bbbb&utm_medium=cccc&utm_content=dddd&utm_term=eeee")
     output: |
       {
@@ -399,6 +404,7 @@ tests:
               "fragment": "foo",
               "scheme": "http"
       }
+
   - input:
     query: parse-url("http://example.com")
     output: |
@@ -409,6 +415,7 @@ tests:
     description:
       - No path
       -
+
   - input:
     query: parse-url("http://example.com/")
     output: |
@@ -419,7 +426,6 @@ tests:
       }
     description:
       - If URL has an ending slash then it has a path
-
 
   - input:
     query: parse-url("https://www.example.com/?aa=1&aa=2&bb=&cc")

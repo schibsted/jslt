@@ -1268,11 +1268,21 @@ public class BuiltinFunctions {
     public ParseUrl() { super("parse-url", 1, 2); }
 
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      if (arguments.length < 1 || arguments[0].isNull())
+      if (arguments[0].isNull())
         return NullNode.instance;
 
       String urlString = arguments[0].asText();
-      boolean throwOnFailure = arguments.length < 2 || arguments[1].asBoolean();
+
+      // Second argument (throwOnFailure) is optional and defaults to true
+      boolean throwOnFailure = true;
+      if (!(arguments.length < 2)) {
+        JsonNode arg1 = arguments[1];
+        if (arg1.isBoolean()) {
+          throwOnFailure = arg1.asBoolean();
+        } else {
+          throw new JsltException("throwOnFailure argument must be a boolean value");
+        }
+      }
 
       try {
 
