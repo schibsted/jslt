@@ -136,6 +136,8 @@ Developing a language for JSON processing: [video of
 talk](https://vimeo.com/289470470), [slides
 only](https://www.slideshare.net/larsga/jslt-json-querying-and-transformation).
 
+[Running the playground yourself](playground/README.md)
+
 Anthony Sparks is working on a
 [VM-based implementation in Java](https://github.com/tonysparks/jslt2)
 
