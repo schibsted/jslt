@@ -182,6 +182,10 @@ public class NodeUtils {
       long decimalPart = Long.parseLong(number.substring(endInteger + 1, endDecimal));
       int digits = endDecimal - endInteger - 1;
 
+      // if intPart is negative we can't add a positive decimalPart to it
+      if (intPart < 0)
+        decimalPart = decimalPart * -1;
+
       value = (decimalPart / Math.pow(10, digits)) + intPart;
       pos = endDecimal;
 
