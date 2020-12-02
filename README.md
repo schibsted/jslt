@@ -71,12 +71,9 @@ To include JSLT in your project, depend on:
 <dependency>
   <groupId>com.schibsted.spt.data</groupId>
   <artifactId>jslt</artifactId>
-  <version>0.1.10</version>
+  <version>0.1.11</version>
 </dependency>
 ```
-
-(There is also `0.1.11-beta-1`, which has [some
-extensions](releases/tag/0.1.11-beta-1).
 
 At runtime JSLT depends on Jackson, and nothing else.
 
