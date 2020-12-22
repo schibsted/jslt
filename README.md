@@ -127,6 +127,16 @@ The language has been used in production at Schibsted since January
 2018, performing about 9 billion transforms per day, and many times
 more queries.
 
+## Building JSLT
+
+To build JSLT, run `./gradlew build` or `./gradlew shadowJar`.
+
+To run the tests: `./gradlew check`.
+
+There is a `pom.xml` file, but Maven is not used for building JSLT,
+and the file is not intended to work. It's only there to make Github
+dependency tracking work.
+
 ## More information
 
 Developing a language for JSON processing: [video of
