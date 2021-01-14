@@ -169,7 +169,7 @@ public class NodeUtils {
 
     // since there's stuff after the initial integer it must be either
     // the decimal part or the exponent
-    int intPart = Integer.parseInt(number.substring(0, endInteger));
+    long intPart = Long.parseLong(number.substring(0, endInteger));
     pos = endInteger;
     double value = intPart;
 
