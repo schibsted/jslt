@@ -331,9 +331,9 @@ The pipe operator allows to shorten the queries.
 An equivalent query to `.a | [.b, .c, .d]` would be `[.a.b, .a.c, .a.d]`
 which is significantly shorter when the object keys are not just single letters like in these examples.
 
-You can also chain several pipe operators 
+You can also chain several pipe operators
 ` 1 | [.,.] | {"a": ., "b": .}`
-which would evaluate to 
+which would evaluate to
 `{ "a": [1,1],"b": [1,1]}`
 
 ### String processing
@@ -422,6 +422,26 @@ you write:
 
 Then this `*` will match the object inside the `"foo"` key in the
 input object.
+
+## Dynamic keys
+
+Sometimes one needs to compute the values of keys in objects
+dynamically, like this:
+
+```
+{
+  .type : {
+    "foo" : .bar.foo,
+    "baz" : "xxx"
+  }
+}
+```
+
+This works as written, but there are some corner cases to be aware of.
+The dynamic key expression must return a string, and the object is not
+allowed to contain duplicate keys. Object matching is not allowed
+inside the value of a dynamic key, or in an object that has dynamic
+keys.
 
 ## Variables
 

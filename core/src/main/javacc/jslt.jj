@@ -1,0 +1,321 @@
+
+options {
+  STATIC = false;
+  BUILD_PARSER = true;
+  BUILD_TOKEN_MANAGER = true;
+  SANITY_CHECK = true;
+  TRACK_TOKENS = true;
+  UNICODE_INPUT = true;
+}
+
+PARSER_BEGIN(JsltParser)
+
+package com.schibsted.spt.data.jslt.parser;
+
+public class JsltParser {
+
+}
+
+PARSER_END(JsltParser)
+
+/* WHITE SPACE */
+SPECIAL_TOKEN :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+| "\f"
+}
+
+TOKEN :
+{
+  < NULL: "null" > |
+  < INTEGER: ("-")? ("0" | ["1"-"9"] (["0"-"9"])*) > |
+  < DECIMAL: ("-")? ("0" | ["1"-"9"] (["0"-"9"])*) (
+    "." (["0"-"9"])+ |
+    ("." (["0"-"9"])+)? ("e"|"E") ("+"|"-")? (["0"-"9"])+
+  )> |
+  < STRING: "\"" ((~["\"", "\\"]) | ("\\" ~[]))* "\"" > |
+  < LBRACKET: "[" > |
+  < RBRACKET: "]" > |
+  < COMMA: "," > |
+  < COLON: ":" > |
+  < LCURLY: "{" > |
+  < RCURLY: "}" > |
+  < TRUE: "true" > |
+  < FALSE: "false" > |
+  < OR: "or" > |
+  < AND: "and" > |
+  < DOT: "." > |
+  < IF: "if" > |
+  < ELSE: "else" > |
+  < LPAREN: "(" > |
+  < RPAREN: ")" > |
+  < LET: "let" > |
+  < ASSIGN: "=" > |
+  < EQUALS: "==" > |
+  < UNEQUALS: "!=" > |
+  < BIGOREQ: ">=" > |
+  < BIGGER: ">" > |
+  < SMALLER: "<" > |
+  < SMALLOREQ: "<=" > |
+  < PLUS: "+" > |
+  < MINUS: "-" > |
+  < STAR: "*" > |
+  < SLASH: "/" > |
+  < PIPE: "|" > |
+  < FOR: "for" > |
+  < DEF: "def" > |
+  < IMPORT: "import" > |
+  < AS: "as" > |
+  < IDENT: (["A"-"Z"] | ["a"-"z"] | ["0"-"9"] | "_" | "-")+ > |
+  < PIDENT:
+    (["A"-"Z"] | ["a"-"z"] | ["0"-"9"] | "_" | "-")+
+    ":"
+    (["A"-"Z"] | ["a"-"z"] | ["0"-"9"] | "_" | "-")+
+  > |
+  < VARIABLE: "$" (["A"-"Z"] | ["a"-"z"] | ["0"-"9"] | "_" | "-")+ >
+}
+
+// http://www.engr.mun.ca/~theo/JavaCC-FAQ/javacc-faq-moz.htm#tth_sEc3.15
+SPECIAL_TOKEN :
+{
+  < SINGLE_LINE_COMMENT: "//"(~["\n","\r"])* ("\n"|"\r"|"\r\n")? >
+}
+
+
+/** Root production. */
+void Start() :
+{}
+{
+  (Import())*
+  (Let() | FunctionDecl())*
+  Expr() <EOF>
+}
+
+/** Root production for module files */
+void Module() :
+{}
+{
+  (Import())*
+  (Let() | FunctionDecl())*
+  (Expr())? <EOF>
+}
+
+void Expr() :
+{}
+{
+    OrExpr() (PipeOperator() OrExpr())*
+}
+
+void OrExpr() :
+{}
+{
+  AndExpr() (<OR> OrExpr())?
+}
+
+void AndExpr() :
+{}
+{
+  ComparativeExpr() (<AND> AndExpr())?
+}
+
+void ComparativeExpr() :
+{}
+{
+  AdditiveExpr() (Comparator() AdditiveExpr())?
+}
+
+// not necessary, but makes the tree easier to traverse
+void Comparator() :
+{}
+{
+  <EQUALS> | <UNEQUALS> | <BIGOREQ> | <BIGGER> | <SMALLER> | <SMALLOREQ>
+}
+
+
+
+void PipeOperator() :
+{}
+{
+  <PIPE>
+}
+
+void AdditiveExpr() :
+{}
+{
+  MultiplicativeExpr() (AdditiveOperator() MultiplicativeExpr())*
+}
+
+// not necessary, but makes the tree easier to traverse
+void AdditiveOperator() :
+{}
+{
+  <PLUS> | <MINUS>
+}
+
+void MultiplicativeExpr() :
+{}
+{
+  BaseExpr() (MultiplicativeOperator() BaseExpr())*
+}
+
+// not necessary, but makes the tree easier to traverse
+void MultiplicativeOperator() :
+{}
+{
+  <STAR> | <SLASH>
+}
+
+void BaseExpr() :
+{}
+{
+  (LOOKAHEAD(2)
+   <NULL> | <INTEGER> | <DECIMAL> | <STRING> | <TRUE> | <FALSE> |
+   Chainable() | Parenthesis() | IfStatement() |
+   Array() |
+   (LOOKAHEAD(2)  Object() | ObjectComprehension())
+  )
+}
+
+void Chainable() :
+{}
+{
+  (FunctionCall() | <VARIABLE> | <DOT> (<IDENT> | <STRING>)?)
+  (ChainLink())?
+}
+
+void ChainLink() :
+{}
+{
+  (DotKey() | ArraySlicing())
+  (ChainLink())?
+}
+
+void Parenthesis() :
+{}
+{
+  <LPAREN> Expr() <RPAREN>
+}
+
+void DotKey() :
+{}
+{
+  <DOT> (<IDENT> | <STRING>)
+}
+
+void ArraySlicing() :
+{}
+{
+  <LBRACKET>
+  (
+    Expr() (Colon() (Expr())?)? |
+    Colon() Expr()
+  )
+  <RBRACKET>
+}
+
+void Colon() : {} { <COLON> } // need this to make parse tree manageable
+
+void ArrayElem() #void  :
+{}
+{
+  Expr()
+  (<COMMA> (ArrayElem())?)?
+}
+
+void Array() :
+{}
+{
+  <LBRACKET>
+    (
+     <FOR> <LPAREN> Expr() <RPAREN> (Let())* Expr()
+       (<IF> <LPAREN> Expr() <RPAREN>)?
+    | (ArrayElem())?
+    )
+  <RBRACKET>
+}
+
+void Object() :
+{}
+{
+  <LCURLY>
+    (Let())*
+    (Pair() | Matcher())?
+  <RCURLY>
+}
+
+void Matcher() :
+{}
+{
+  <STAR> (MatcherMinus())? <COLON> Expr()
+}
+
+void MatcherMinus() :
+{}
+{
+  <MINUS> (<IDENT> | <STRING>) (<COMMA> (<IDENT> | <STRING>))*
+}
+
+void Pair() :
+{}
+{
+  Expr() <COLON> Expr()
+  (<COMMA> ((Pair() | Matcher()))?)?
+}
+
+void ObjectComprehension() :
+{}
+{
+  <LCURLY>
+    <FOR> <LPAREN> Expr() <RPAREN>
+      (Let())*
+      Expr() <COLON> Expr()
+      (<IF> <LPAREN> Expr() <RPAREN>)?
+  <RCURLY>
+}
+
+void IfStatement() :
+{}
+{
+  <IF> <LPAREN> Expr() <RPAREN>
+    (Let())*
+    Expr()
+    (ElseBranch())?
+}
+
+// not necessary, but makes it easier to walk the parse tree
+void ElseBranch() :
+{}
+{
+  <ELSE>
+    (Let())*
+    Expr()
+}
+
+void FunctionCall() :
+{}
+{
+  (<IDENT> | <PIDENT>) <LPAREN> (Expr() (<COMMA> Expr())*)? <RPAREN>
+}
+
+void Let() :
+{}
+{
+  <LET> <IDENT> <ASSIGN> Expr()
+}
+
+void FunctionDecl() :
+{}
+{
+  <DEF> <IDENT> <LPAREN> (<IDENT> (<COMMA> <IDENT>)*)? <RPAREN>
+    (Let())*
+    Expr()
+}
+
+void Import() :
+{}
+{
+  <IMPORT> <STRING> <AS> <IDENT>
+}

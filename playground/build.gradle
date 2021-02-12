@@ -1,0 +1,21 @@
+
+plugins {
+  id 'com.github.johnrengelman.shadow' version '1.2.4'
+}
+
+apply plugin: 'java'
+
+repositories {
+  mavenLocal()
+  jcenter()
+  mavenCentral()
+}
+
+dependencies {
+  compile project(':core')
+  compile 'org.eclipse.jetty:jetty-server:9.4.29.v20200521'
+}
+
+group 'com.schibsted.spt.data'
+version '0.0.1'
+project.description 'JSLT demo playground implementation'

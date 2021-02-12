@@ -1,0 +1,117 @@
+{
+    "description" : "JSLT queries that should fail with run-time error, and a substring that should be in the error message.",
+    "tests" :
+[
+   {
+      "query" : "[for (32323) number(.)]",
+      "input" : "{}",
+      "error" : "loop"
+   },
+   {
+      "query" : ".[1 2]",
+      "input" : "{}",
+      "error" : "Parse error"
+   },
+   {
+      "input" : "{}",
+      "query" : "$blurgle",
+      "error" : "blurgle"
+   },
+   {
+      "query" : "\"foo\" / 22",
+      "input" : "{}",
+      "error" : "number"
+   },
+   {
+      "input" : "{}",
+      "query" : "validate(\"foo\"; \"bar\"; \"baz\")",
+      "error" : "Parse error"
+   },
+   {
+      "input" : "\"12345\"",
+      "query" : ".[7]",
+      "error" : "index"
+   },
+   {
+      "input" : "{}",
+      "query" : "232 + {\"foo\":34}",
+      "error" : "convert"
+   },
+   {
+      "error" : "Parse error",
+      "input" : "{}",
+      "query" : ".[]"
+   },
+   {
+      "query" : "foo bar",
+      "input" : "{}",
+      "error" : "Parse error"
+   },
+   {
+      "error" : "number",
+      "query" : "\"foo\" - 22",
+      "input" : "{}"
+   },
+   {
+      "error" : "convert",
+      "input" : "{}",
+      "query" : "232 + false"
+   },
+   {
+      "query" : "blurgle(\"22\")",
+      "input" : "{}",
+      "error" : "blurgle"
+   },
+   {
+      "query" : "232 - false",
+      "input" : "{}",
+      "error" : "number"
+   },
+   {
+      "error" : "string",
+      "query" : "{for ({\"foo\":22}) .value : .key}",
+      "input" : "{}"
+   },
+   {
+      "input" : "{}",
+      "query" : "232 + [4,5]",
+      "error" : "convert"
+   },
+   {
+      "input" : "{}",
+      "query" : "def func1(o) { * : . } func1(.)",
+      "error" : "matcher"
+   },
+   {
+      "input" : "{}",
+      "query" : "{.foo : 2}",
+      "error" : "string"
+   },
+   {
+      "input" : "{\"foo\" : \"dup\"}",
+      "query" : "{.foo : 2, \"dup\" : 7}",
+      "error" : "Duplicate"
+   },
+   {
+      "input" : "{\"foo\" : \"dup\"}",
+      "query" : "{\"dup\" : 7, .foo : 2}",
+      "error" : "Duplicate"
+   },
+   {
+      "input" : "{\"foo\" : \"dup\"}",
+      "query" : "{.foo : 2, * : .}",
+      "error" : "matcher"
+   },
+   {
+      "input" : "{\"foo\" : 3}",
+      "query" : "{.foo : 2}",
+      "error" : "string"
+   },
+   {
+      "input" : "{\"foo\" : \"bar\"}",
+      "query" : "{.foo : { * : .}}",
+      "error" : "dynamic object"
+   }]
+
+
+}

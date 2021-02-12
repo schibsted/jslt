@@ -544,7 +544,7 @@ boolean(" ")   => true
 boolean(0)     => false
 boolean(1)     => true
 boolean(true)  => true
-boolean(false) => true
+boolean(false) => false
 boolean([])    => false
 boolean([1])   => true
 ```
@@ -563,7 +563,7 @@ not(" ")   => false
 not(0)     => true
 not(1)     => false
 not(true)  => false
-not(false) => false
+not(false) => true
 not([])    => true
 not([1])   => false
 ```
@@ -724,6 +724,54 @@ any([])                         => false
 any("")                         => error
 ```
 
+### _zip(array1, array2) -> array_
+
+Folds the two arrays into a new array consisting of two-element
+arrays, where the first two-element array contains the first element
+of `array1`and the first element of `array2`, the second has the two
+second elements, and so on. It is an error if the two arrays are of
+different lengths.
+
+Examples:
+
+```
+zip(["a", "b", "c"], [1, 2, 3]) => [["a", 1], ["b", 2], ["c", 3]]
+zip(["a", "b", "c"], null)      => null
+zip(null, [1, 2, 3])            => null
+zip([], [])                     => []
+zip([1], [])                    => error
+```
+
+### _zip-with-index(array) ->  array_
+
+Turns an array into a new array where each element in the input array
+is mapped to an object of the form `{"value" : <array element>,
+"index" : <index of element>"}`. The indexes start at zero. It is an
+error not to pass an array (or `null`).
+
+```
+zip-with-index(["a", "b", "c"]) => [{"value" : "a", "index" : 0},
+                                    {"value" : "b", "index" : 1},
+                                    {"value" : "c", "index" : 2}]
+zip-with-index([])              => []
+zip-with-index(null)            => null
+zip-with-index("abc")           => error
+```
+
+### _index-of(array, value) -> integer_
+
+Returns the index of `value` within `array`, or `-1` if it cannot be
+found. It's an error if `array` is not an array (or `null`).
+
+```
+index-of([], 1)                 => -1
+index-of([0, 1, 2], 1)          => 1
+index-of([0, 1, 2, null], null) => 3
+index-of([0, 1, 2], null)       => -1
+index-of(null, 1)               => null
+index-of(1, 1)                  => error
+```
+
 <!-- TIME ===================================================================-->
 
 ## Time functions
@@ -773,6 +821,7 @@ format-time(1529677391, "yyyy-MM-dd'T'HH:mm:ss") => "2018-06-22T14:23:11"
 format-time(0, "yyyy-MM-dd")                     => "1970-01-01"
 format-time(null, "yyyy-MM-dd")                  => null
 ```
+
 <!-- Misc ===================================================================-->
 
 ## Miscellaneous functions

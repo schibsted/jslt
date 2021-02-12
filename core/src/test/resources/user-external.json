@@ -1,0 +1,55 @@
+{
+   "collection" : "user-external",
+   "container" : "foo.user-prefix-external",
+   "version" : 1595415080,
+   "key" : "totally-spurious-key",
+
+   "stringGroups" : [
+      "foo-ecsegm-gender",
+      "foo-ecsegm-age",
+      "foo-ecsegm-education",
+      "foo-ecsegm-income",
+      "foo-ecsegm-employment",
+      "foo-ecsegm-genderchildren",
+      "foo-ecsegm-householdsize",
+      "foo-ecsegm-car-access",
+      "foo-ecsegm-decision-maker",
+      "foo-ecsegm-smoking",
+      "foo-ecsegm-accommodation",
+      "foo-ecsegm-sato",
+      "foo-ecsegm-lejos",
+      "foo-ecsegm-hk"
+   ],
+   "stringItems" : [
+      "male",
+      "18-24",
+      "primarysecondaryschool",
+      "45k-70k",
+      "other",
+      "boys",
+      "2-4",
+      "own car",
+      "no",
+      "non-smoking",
+      "owned house",
+      "sijaintiin keskittyvat untuvikot",
+      "price sensitive snackers",
+      "speedy health seekers"
+   ],
+   "stringWeights" : [
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255
+   ]
+}

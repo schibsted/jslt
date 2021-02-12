@@ -28,7 +28,7 @@ Here is an example transform:
 }
 ```
 
-[**Demo playground**](http://spt-data-dev-public-web.s3-website-eu-west-1.amazonaws.com/jstl2.html).
+[**Demo playground**](http://www.garshol.priv.no/jslt-demo).
 
 [**Language tutorial**](tutorial.md).
 
@@ -71,7 +71,7 @@ To include JSLT in your project, depend on:
 <dependency>
   <groupId>com.schibsted.spt.data</groupId>
   <artifactId>jslt</artifactId>
-  <version>0.1.9</version>
+  <version>0.1.11</version>
 </dependency>
 ```
 
@@ -127,11 +127,23 @@ The language has been used in production at Schibsted since January
 2018, performing about 9 billion transforms per day, and many times
 more queries.
 
+## Building JSLT
+
+To build JSLT, run `./gradlew jar` or `./gradlew shadowJar`.
+
+To run the tests: `./gradlew check`.
+
+There is a `pom.xml` file, but Maven is not used for building JSLT,
+and the file is not intended to work. It's only there to make Github
+dependency tracking work.
+
 ## More information
 
 Developing a language for JSON processing: [video of
 talk](https://vimeo.com/289470470), [slides
 only](https://www.slideshare.net/larsga/jslt-json-querying-and-transformation).
+
+[Running the playground yourself](playground/README.md)
 
 Anthony Sparks is working on a
 [VM-based implementation in Java](https://github.com/tonysparks/jslt2)
@@ -142,6 +154,8 @@ things) some of the ways Schibsted uses JSLT.
 [Visual Studio syntax highlighter](https://marketplace.visualstudio.com/items?itemName=jarno-rajala.jslt-lang) for JSLT.
 
 [Apache Camel JSLT component](https://camel.apache.org/components/latest/jslt-component.html).
+
+[Pincette event sourcing framework uses JSLT](https://github.com/json-event-sourcing/pincette-jes).
 
 ## LICENSE
 

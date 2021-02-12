@@ -1,0 +1,462 @@
+
+# Basic tests.
+
+tests:
+  -
+   input: {}
+   query: >
+     let v = 1
+     [for ([1,2,3,4])
+       let v = 2
+       . + $v]
+   output: "[3,4,5,6]"
+
+  -
+   input: {}
+   query: >
+     let v = 1
+     if ($v != .)
+       let v = 5
+       $v
+     else
+       $v
+   output: 5
+
+  -
+   input: "{\"a\" : 2}"
+   query: >
+     let v = 1
+     {for (.) let v = 2 .key : .value + $v}
+   output: "{\"a\" : 4}"
+
+  -
+   input: 3
+   query: >
+     let v = 1
+     {
+       let v = 2
+       "a" : $v,
+       "b" : $v + 2,
+       "c" : $v + .
+     }
+   output: "{\"a\" : 2, \"b\" : 4, \"c\" : 5}"
+
+  -
+   input: "{\"foo\" : 1}"
+   query: >
+     let v = 1
+     {
+       * : . + $v
+     }
+   output: "{\"foo\" : 2}"
+
+  -
+   input: "{\"foo\" : 1}"
+   query: >
+     let v = 1
+     {
+       * : .
+     }
+   output: "{\"foo\" : 1}"
+
+  -
+   input: "{\"foo\" : 1}"
+   query: >
+     {
+       "bar" : { * : . },
+       string(.foo) : "hey"
+     }
+   output: "{\"1\" : \"hey\"}"
+
+  -
+   input: {}
+   query: >
+     let foo = "something"
+     $foo[4 : ]
+   output: '"thing"'
+
+  -
+   input: {}
+   query: >
+      let lookup = {
+        "dk" : "Denmark",
+        "se" : "Sweden"
+      }
+      let reverse = {for ($lookup) .value : .key}
+      get-key($reverse, "Denmark")
+   output: '"dk"'
+
+  -
+    input: "{}"
+    query: . + null
+    output: "{}"
+
+  -
+    input: "{}"
+    query: null + .
+    output: "{}"
+
+  -
+    input: "{\"foo\" : 2}"
+    query: null + .
+    output: "{\"foo\" : 2}"
+
+  -
+    input: "[]"
+    query: . + null
+    output: "[]"
+
+  -
+    input: "[]"
+    query: null + .
+    output: "[]"
+
+  -
+    input: "[2,3]"
+    query: null + .
+    output: "[2,3]"
+
+  -
+    input: |
+      {
+        "a": {
+          "b": 1,
+          "c": 2,
+          "d": 3
+        }
+      }
+    query: .a | [.b, .c, .d]
+    output: |
+      [1, 2, 3]
+  -
+    input: |
+      { "bar": "a", "baz": {"bar": "b"}}
+    query: |
+      {
+        "foo" : .bar,
+        * : .
+      } | .baz
+    output: |
+      {"bar": "b"}
+  -
+    input: |
+      { "bar": "a", "baz": {"bar": "b"}}
+    query: |
+      .baz | {
+        "foo" : .bar,
+        * : .
+      }
+    output: |
+      {"foo": "b", "bar": "b"}
+
+  -
+    input: |
+      { "foo": {"a": "b"}}
+    query: |
+      .foo | {"x": "y", * : .}
+    output: |
+      {
+        "x": "y",
+        "a": "b"
+      }
+
+  - input:
+    query: |
+      { "a": "b" } | {
+                        "type" : "Anonymized-View",
+                        * : .
+                     }
+    output: |
+      {
+        "type": "Anonymized-View",
+         "a": "b"
+      }
+
+  -
+    input:
+    query: |
+      {
+        "bar": "baz",
+        "foo" :
+          { "a": "b" } | {
+                            "type" : "Anonymized-View",
+                            * : .
+                         }
+      }
+
+    output: |
+      {
+        "bar": "baz",
+        "foo" :
+          {
+            "type" : "Anonymized-View",
+             "a": "b"
+          }
+      }
+
+  - input:
+    query: |
+      1 == 3 | {"a" : .}
+    output: |
+      {"a": false}
+    description: |
+      pipe operator has lower precedence that equality operator so it should be interpreted
+      as `(1 == 3) | {"a" : .}` and NOT as `1 == (3 | {"a" : .})` which would evaluate to `false`
+
+  - input:
+    query: |
+      false or false | { "a" : .}
+    output: |
+      {"a": false}
+    description: |
+      pipe operator has lower precedence than `and` and `or` logical operators so
+      it should be interpreted as `(false or false) | {"a": .}`  which evaluates to `{"a": false}`
+      and NOT as `false or (false | {"a": .}` which would evaluate to `true`
+
+
+  - input:
+    query: |
+      1 + 3 | . * 5
+    output: |
+      20
+    description: |
+      pipe operator has lower precedence than arithmetic operator so it should be interpreted as
+      `(1 + 3) | (. * 5)` and NOT as `1 + ((3 | .) *5)`
+
+  - input:
+    query: |
+      1 | [.,.] | {"a": ., "b": .}
+    output: |
+      { "a": [1,1],"b": [1,1]}
+
+  - input: 1
+    query: |
+      (if (. < 10) true else false) | {"a": .}
+    output: |
+      {"a": true}
+    description: |
+      Parentheses are needed arount the if expression otherwise the pipe will
+      be interpreted as part of the else clause expression. That is:
+          if (. < 10) true else false | {"a": .}
+      is interpreted as
+          if (. < 10) (true) else (false | {"a": .})
+
+  - input: 1
+    query: |
+      if (. < 10) true else false | {"a": .}
+    output: |
+      true
+    description: |
+      The pipe operator is part of the else clause. In other words,
+      this is equivalent to
+        if (. < 10) true else (false | {"a": .})
+
+  - input: 1
+    query: |
+      if (. < 10) true | {"a": .} else false
+    output: |
+      {"a": true}
+    description: |
+      The pipe operator is part of the then-clause. In other words,
+      this is equivalent to
+        if (. < 10) (true | | {"a": .}) else false
+
+  - input: |
+      {
+        "a": {
+          "b": 1,
+          "c": 2,
+          "d": 3
+        }
+      }
+    query: |
+      if (.a | .b+.c == 3) "pass" else "fail"
+    output: |
+      "pass"
+    description: |
+      Check that pipe operator can be used in the if condition
+
+  - input: |
+      [1,2,3]
+    query: |
+      [for (.) .*10] | {"a": .}
+    output: |
+      {"a": [10,20,30]}
+    description: |
+      Just check that an for expression can be at the left hand side
+      of pipe operator
+
+  - input: |
+      {"a": [1,2,3]}
+    query: |
+      .a | [for (.) .*10]
+    output: |
+      [10,20,30]
+    description: |
+      Just check that an for expression can be at the right hand side
+      of pipe operator
+
+  - input: |
+      {
+        "a": {
+          "b": 1,
+          "c": 2,
+          "d": 3
+        }
+      }
+    query: |
+      [for (.a | [.b, .c, .d]) . * 10]
+    output: |
+      [10,20,30]
+    description: |
+      Just check that we can use pipe operator in the first
+      expression in the for-expression
+
+  - input: |
+      [{"a":1},{"a":2},{"a": 3}]
+    query: |
+      [for (.) .a | . * 10]
+    output: |
+      [10,20,30]
+    description: |
+      Just check that we can use pipe operator in the second
+      expression in the for-expression
+
+  - input: |
+      {
+        "a": {
+          "b": 1,
+          "c": 2,
+          "d": 3
+        }
+      }
+    query: |
+      {for (.a | [.b, .c, .d]) string(.) : . * 10}
+    output: |
+      {"1":10, "2": 20, "3": 30}
+    description: |
+      Just check that we can use pipe operator in the first
+      expression in the object-expression
+
+  - input: |
+      [{"a":1},{"a":2},{"a": 3}]
+    query: |
+      {for (.)  .a | string(.) : .a | . * 10}
+    output: |
+      {"1":10, "2": 20, "3": 30}
+    description: |
+      Just check that we can use pipe operator in the second
+      expression in the object-for-expressions
+
+  - input: |
+      {"foo" : 25}
+    query: |
+      if (true) "Отключен" else "Подключен"
+    output: |
+      "Отключен"
+
+  - input: |
+      {"foo" : 25}
+    query: |
+      if (true) "string ends with a slash\\" else "let it be"
+    output: |
+      "string ends with a slash\\"
+
+  - input: |
+      {}
+    query: |
+      {"foo" + "_bar" : 25}
+    output: |
+      {"foo_bar" : 25}
+
+# parse-url tests
+
+  - input:
+    query: parse-url("https://www.aftonbladet.se/nyheter/a/opyK1R/snosmocka-pa-ingang--kan-bli-20-centimeter?utm_source=aaaa&utm_campaign=bbbb&utm_medium=cccc&utm_content=dddd&utm_term=eeee")
+    output: |
+      {
+           "host": "www.aftonbladet.se",
+           "parameters": {
+             "utm_campaign": ["bbbb"],
+             "utm_content": ["dddd"],
+             "utm_medium": ["cccc"],
+             "utm_source": ["aaaa"],
+             "utm_term": ["eeee"]
+           },
+           "path": "/nyheter/a/opyK1R/snosmocka-pa-ingang--kan-bli-20-centimeter",
+           "query": "utm_source=aaaa&utm_campaign=bbbb&utm_medium=cccc&utm_content=dddd&utm_term=eeee",
+           "scheme": "https"
+         }
+    description: |
+      missing port in url means missing `port` key in output
+
+  - input:
+    query: parse-url("http://example.org/#foo")
+    output: |
+      {
+              "host": "example.org",
+              "path": "/",
+              "fragment": "foo",
+              "scheme": "http"
+      }
+  - input:
+    query: parse-url("http://example.com")
+    output: |
+      {
+           "host": "example.com",
+           "scheme": "http"
+      }
+    description:
+      - No path
+      -
+  - input:
+    query: parse-url("http://example.com/")
+    output: |
+      {
+           "host": "example.com",
+           "scheme": "http",
+           "path": "/"
+      }
+    description:
+      - If URL has an ending slash then it has a path
+
+
+  - input:
+    query: parse-url("https://www.example.com/?aa=1&aa=2&bb=&cc")
+    output: |
+      {
+           "host": "www.example.com",
+           "parameters": {
+             "aa": ["1","2"],
+             "bb": [null],
+             "cc": [null]
+           },
+          "path": "/",
+          "query": "aa=1&aa=2&bb=&cc",
+          "scheme": "https"
+         }
+    description: |
+      - multivalued parameter
+      - null parameter
+      - parameter no equal sign
+
+  - input:
+    query: parse-url("ftp://username:password@host.com/")
+    output: |
+      {
+          "host": "host.com",
+          "path": "/",
+          "scheme": "ftp",
+          "userinfo": "username:password"
+      }
+    description: |
+      - userinfo
+
+  - input:
+    query: parse-url("https://example.com:8443")
+    output: |
+      {
+        "host": "example.com",
+        "port": 8443,
+        "scheme": "https"
+      }

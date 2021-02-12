@@ -1,0 +1,219 @@
+
+plugins {
+  id 'com.github.johnrengelman.shadow' version '1.2.4'
+}
+
+apply plugin: 'java'
+apply plugin: 'com.jfrog.artifactory'
+apply plugin: 'maven-publish'
+apply plugin: 'maven'
+apply plugin: 'signing'
+// apply plugin: 'jacoco' (fails in JDK 11 on Travis)
+
+repositories {
+  mavenLocal()
+  jcenter()
+  mavenCentral()
+}
+
+dependencies {
+  compile 'com.fasterxml.jackson.core:jackson-databind:2.12.0'
+
+  testCompile 'junit:junit:4.13.1'
+  testCompile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.12.0'
+}
+
+ext {
+  timestamp = new Date().format('yyyyMMddHHmm')
+  gitrev = "git log -1 HEAD --pretty=tformat:%h".execute().text.trim()
+}
+
+group 'com.schibsted.spt.data'
+version "0.1.11"
+project.description "A JSON query and transformation language"
+
+check {
+  doLast {
+    println 'Test report in build/reports/tests/test/index.html'
+  }
+}
+
+// ===========================================================================
+// javacc integration
+
+sourceSets {
+    main {
+        java {
+            srcDirs 'src/main/java'
+            srcDirs 'build/javacc'
+        }
+    }
+}
+
+task jjtree (type: Exec) {
+  commandLine 'java', '-cp', 'javacc.jar', 'jjtree', '-OUTPUT_DIRECTORY=build/javacc/com/schibsted/spt/data/jslt/parser', 'src/main/javacc/jslt.jj'
+}
+
+
+task javacc (type: Exec) {
+  commandLine 'java', '-cp', 'javacc.jar', 'javacc', '-OUTPUT_DIRECTORY=build/javacc/com/schibsted/spt/data/jslt/parser', 'build/javacc/com/schibsted/spt/data/jslt/parser/jslt.jj.jj'
+}
+compileJava.dependsOn 'javacc'
+javacc.dependsOn 'jjtree'
+
+// ===========================================================================
+// Sonatype Maven central publishing
+
+task sourceJar(type: Jar) {
+    classifier "sources"
+    from sourceSets.main.allJava
+}
+
+// declaring this separately to avoid including javacc-generated sources
+// because javadoc fail on those
+sourceSets {
+    javadoc {
+        java {
+            srcDirs 'src/main/java'
+        }
+    }
+ }
+javadoc {
+  source = sourceSets.javadoc.allJava
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier "javadoc"
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives jar
+    archives sourceJar
+    archives javadocJar
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            customizePom(pom)
+            groupId group
+            artifactId 'jslt'
+            version version
+
+            from components.java
+
+            artifact(sourceJar) {
+                classifier = 'sources'
+            }
+            artifact(javadocJar) {
+                classifier = 'javadoc'
+            }
+
+            // create the sign pom artifact
+            pom.withXml {
+                def pomFile = file("${project.buildDir}/generated-pom.xml")
+                writeTo(pomFile)
+                def pomAscFile = signing.sign(pomFile).signatureFiles[0]
+                artifact(pomAscFile) {
+                    classifier = null
+                    extension = 'pom.asc'
+                }
+            }
+            // create the signed artifacts
+            project.tasks.signArchives.signatureFiles.each {
+                artifact(it) {
+                    def matcher = it.file =~ /-(sources|javadoc)\.jar\.asc$/
+                    if (matcher.find()) {
+                        classifier = matcher.group(1)
+                    } else {
+                        classifier = null
+                    }
+                    extension = 'jar.asc'
+                }
+            }
+
+        }
+    }
+    repositories {
+        maven {
+            url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+            credentials {
+                // these are stored in a secret gradle.properties that is not
+                // in the repo, so we need a fallback
+                username ((project.hasProperty('sonatypeUsername')) ? sonatypeUsername : "no username")
+                password ((project.hasProperty('sonatypePassword')) ? sonatypePassword : "no password")
+            }
+        }
+    }
+}
+
+def customizePom(pom) {
+    pom.withXml {
+        def root = asNode()
+
+        // eliminate test-scoped dependencies (no need in maven central POMs)
+        root.dependencies.removeAll { dep ->
+            dep.scope == "test"
+        }
+
+        // add all items necessary for maven central publication
+        root.children().last() + {
+            resolveStrategy = Closure.DELEGATE_FIRST
+
+            description project.description
+            name 'JSLT'
+            url 'https://github.com/schibsted/jslt'
+            organization {
+                name 'Schibsted ASA'
+                url 'https://github.com/schibsted/'
+            }
+            issueManagement {
+                system 'GitHub'
+                url 'https://github.com/schibsted/jslt/issues'
+            }
+            licenses {
+                license {
+                    name 'Apache License 2.0'
+                    url 'https://github.com/schibsted/jslt/blob/master/LICENSE'
+                    distribution 'repo'
+                }
+            }
+            scm {
+                url 'https://github.com/schibsted/jslt'
+                connection 'scm:git:git://github.com/schibsted/jslt.git'
+                developerConnection 'scm:git:ssh://git@github.com:schibsted/jslt.git'
+            }
+            developers {
+                developer {
+                    name 'Schibsted'
+                }
+            }
+        }
+    }
+}
+
+model {
+    tasks.generatePomFileForMavenJavaPublication {
+        destination = file("$buildDir/generated-pom.xml")
+    }
+}
+
+signing {
+    sign configurations.archives
+}
+
+model {
+    tasks.publishMavenJavaPublicationToMavenLocal {
+        dependsOn project.tasks.signArchives
+    }
+    tasks.publishMavenJavaPublicationToMavenRepository {
+        dependsOn project.tasks.signArchives
+    }
+}
+
+test {
+  testLogging {
+    showStandardStreams = true
+  }
+}

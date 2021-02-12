@@ -1,0 +1,216 @@
+{
+    "description" : "Same as query-error-tests.json, but this time testing the various functions.",
+    "tests" :
+[
+  {
+    "error": "Oh no",
+    "query": "error(\"Oh no\")",
+    "input": "{}"
+  },
+  {
+    "error": "Unknown timezone",
+    "query": "format-time(125641293.0, \"yyyy-MM-dd HH:mm:ss\", \"fjsjdjsjs\")",
+    "input": "{}"
+  },
+  {
+    "error": "Unparseable",
+    "query": "parse-time(\"1973-12-25 05:22:33\", \"yyyy-MM-dd HH:mm:ssz\")",
+    "input": "{}"
+  },
+  {
+    "error": "argument",
+    "query": "number()",
+    "input": "{}"
+  },
+  {
+    "error": "parse",
+    "query": " from-json(\"[1,2,\") ",
+    "input": "{}"
+  },
+  {
+    "error": "null",
+    "query": "capture(\"blurgh\", null)",
+    "input": "{}"
+  },
+  {
+    "error": "false",
+    "query": "contains(123, false)",
+    "input": "{}"
+  },
+  {
+    "error": "number",
+    "query": "round([1,2,3,4])",
+    "input": "{}"
+  },
+  {
+    "error": "true",
+    "query": "size(true)",
+    "input": "{}"
+  },
+  {
+    "error": "[1,2,3,4]",
+    "query": "number([1,2,3,4])",
+    "input": "{}"
+  },
+  {
+    "error": "not a number",
+    "query": "number(\"\")",
+    "input": "{}"
+  },
+  {
+    "error": "not a number",
+    "query": "number(\"123.\")",
+    "input": "{}"
+  },
+  {
+    "error": ".345",
+    "query": "number(\".345\")",
+    "input": "{}"
+  },
+  {
+    "error": "1.1e",
+    "query": "number(\"1.1e\")",
+    "input": "{}"
+  },
+  {
+    "error": "1.1e+",
+    "query": "number(\"1.1e+\")",
+    "input": "{}"
+  },
+  {
+    "input": "\"-NaN\"",
+    "query": "number(\"-NaN\")",
+    "error": "number"
+  },
+  {
+    "input": "\"0x0a\"",
+    "query": "number(\"0x0a\")",
+    "error": "number"
+  },
+  {
+    "input": "\"Infinity\"",
+    "query": "number(\"Infinity\")",
+    "error": "number"
+  },
+  {
+    "error": "true",
+    "query": "array(true)",
+    "input": "{}"
+  },
+  {
+    "error": "Couldn't parse format",
+    "query": "parse-time(\"1973-12-25 05:22:33\", \"yyyy-MM-dd gnugugg HH:mm:ssz\")",
+    "input": "{}"
+  },
+  {
+    "error": "george",
+    "query": "number(\"george\")",
+    "input": "{}"
+  },
+  {
+    "error": "Couldn't parse format",
+    "query": "format-time(125641293.0, \"yyyy-MM-dd dfkdfjkdf HH:mm:ss\")",
+    "input": "{}"
+  },
+  {
+    "error": "null",
+    "query": "test(23123, null)",
+    "input": "{}"
+  },
+  {
+    "error": "Couldn't parse format",
+    "query": "parse-time(\"1973-12-25 05:22:33\", \"yyyy-MM-dd gnugugg HH:mm:ssz\", null)",
+    "input": "{}"
+  },
+  {
+    "error": "null",
+    "query": "split(\"1,2,3\", null)",
+    "input": "{}"
+  },
+  {
+    "error": "number",
+    "query": "floor([1,2,3,4])",
+    "input": "{}"
+  },
+  {
+    "error": "{}",
+    "query": "number({})",
+    "input": "{}"
+  },
+  {
+    "error": "24",
+    "query": " get-key(24, \"key\") ",
+    "input": "{}"
+  },
+  {
+    "error": "number",
+    "query": "ceiling([1,2,3,4])",
+    "input": "{}"
+  },
+  {
+    "error": "number",
+    "query": "sum([1,2,\"3\"])",
+    "input": "{}"
+  },
+  {
+    "error": "array",
+    "query": "sum(23232)",
+    "input": "{}"
+  },
+  {
+    "error": "array",
+    "query": "any(23232)",
+    "input": "{}"
+  },
+  {
+    "error": "array",
+    "query": "all(23232)",
+    "input": "{}"
+  },
+  {
+    "error": "mod(): operands must be integral types",
+    "query": "mod(10.1, 2)",
+    "input": "{}"
+  },
+  {
+    "error": "mod(): operands must be integral types",
+    "query": "mod(10, 2.1)",
+    "input": "{}"
+  },
+  {
+    "error": "mod(): cannot divide by zero",
+    "query": "mod(10, 0)",
+    "input": "{}"
+  },
+  {
+    "error": "mod(): divisor cannot be a non-number: true",
+    "query": "mod(10, true)",
+    "input": "{}"
+  },
+  {
+    "error": "mod(): dividend cannot be a non-number: true",
+    "query": "mod(true, 3)",
+    "input": "{}"
+  },
+   {
+      "query": "replace(., \" ?\", \"x\")",
+      "input" : "\"some text\"",
+      "error": "empty string"
+   },
+   {
+      "query" : "zip([1], [])",
+      "input" : "null",
+      "error" : "unequal size"
+   },
+   {
+      "query" : "zip-with-index(33)",
+      "input" : "null",
+      "error" : "must be an array"
+   },
+   {
+      "query" : "index-of(\"abc\", \"b\")",
+      "input" : "null",
+      "error" : "must be an array"
+   }
+]
+}

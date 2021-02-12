@@ -1,0 +1,1311 @@
+{
+    "description" : "Same as query-tests.json, but this time testing the various functions.",
+    "tests" :
+[
+   {
+      "input" : "{}",
+      "output" : "true",
+      "query" : "not(false)"
+   },
+   {
+      "query" : "contains(null, {})",
+      "output" : "false",
+      "input" : "{}"
+   },
+   {
+      "query" : "contains(\"Taip\", {\"Taip\" : 44})",
+      "input" : "{}",
+      "output" : "true"
+   },
+   {
+      "input" : "{}",
+      "output" : "false",
+      "query" : "starts-with(null, \"hey\")"
+   },
+   {
+      "input" : "{}",
+      "output" : "true",
+      "query" : "starts-with(\"heypådey\", \"hey\")"
+   },
+   {
+      "input" : "{}",
+      "output" : "\"false\"",
+      "query" : "string(false)"
+   },
+   {
+      "input" : "{}",
+      "output" : "\"heyho\"",
+      "query" : "fallback(.foo, .bar, \"heyho\")"
+   },
+   {
+      "output" : "\"1\"",
+      "input" : "{}",
+      "query" : "join([1], \",\")"
+   },
+   {
+      "output" : "\"1, 2\"",
+      "input" : "{}",
+      "query" : "join([1,2], \", \")"
+   },
+   {
+      "query" : " get-key(., \"bar\") ",
+      "input" : " { \"foo\" : 24 } ",
+      "output" : " null "
+   },
+   {
+      "output" : "42",
+      "input" : "{}",
+      "query" : "floor(42.0)"
+   },
+   {
+      "query" : " to-json(.) ",
+      "input" : " {\"foo\":{\"bar\":22}} ",
+      "output" : " \"{\\\"foo\\\":{\\\"bar\\\":22}}\" "
+   },
+   {
+      "output" : " null ",
+      "input" : " { \"foo\" : 24 } ",
+      "query" : " get-key(., null) "
+   },
+   {
+      "output" : "42",
+      "input" : "{}",
+      "query" : "round(42.0)"
+   },
+   {
+      "query" : "round(parse-time(., \"yyyy-MM-dd HH:mm:ssz\"))",
+      "output" : "125641293",
+      "input" : "\"1973-12-25 05:21:33CET\""
+   },
+   {
+      "input" : "{}",
+      "output" : "false",
+      "query" : "boolean([])"
+   },
+   {
+      "query" : "from-json(.)",
+      "output" : "null",
+      "input" : " \"\" "
+   },
+   {
+      "output" : "true",
+      "input" : "{}",
+      "query" : "boolean([\"furdle\"])"
+   },
+   {
+      "query" : "boolean(false)",
+      "input" : "{}",
+      "output" : "false"
+   },
+   {
+      "input" : "{}",
+      "output" : "true",
+      "query" : "boolean(23)"
+   },
+   {
+      "query" : "array([1,2,3])",
+      "input" : "{}",
+      "output" : "[1,2,3]"
+   },
+   {
+      "query" : "boolean({\"furdle\" : 22})",
+      "output" : "true",
+      "input" : "{}"
+   },
+   {
+      "query" : " from-json(.) ",
+      "output" : " {\"foo\":{\"bar\":22}} ",
+      "input" : " \"{\\\"foo\\\" : {\\\"bar\\\" : 22}}\" "
+   },
+   {
+      "input" : "{}",
+      "output" : "false",
+      "query" : "boolean(null)"
+   },
+   {
+      "input" : "{}",
+      "output" : "true",
+      "query" : "boolean(true)"
+   },
+   {
+      "query" : "boolean(0)",
+      "output" : "false",
+      "input" : "{}"
+   },
+   {
+      "query" : "boolean(\"furdle\")",
+      "input" : "{}",
+      "output" : "true"
+   },
+   {
+      "input" : "{}",
+      "output" : "42",
+      "query" : "ceiling(42)"
+   },
+   {
+      "output" : "125641293.0",
+      "input" : "\"1973-12-25 04:21:33Z\"",
+      "query" : "parse-time(., \"yyyy-MM-dd HH:mm:ssX\")"
+   },
+   {
+      "input" : "{}",
+      "output" : "false",
+      "query" : "is-boolean(null)"
+   },
+   {
+      "input" : "{}",
+      "output" : "true",
+      "query" : "is-boolean(true)"
+   },
+   {
+      "input" : "{}",
+      "output" : "false",
+      "query" : "is-boolean(0)"
+   },
+   {
+      "output" : "[\"abc\"]",
+      "input" : "{}",
+      "query" : "split(\"abc\", \",\")"
+   },
+   {
+      "input" : "1514764800",
+      "output" : "\"2018-01-01 00:00:00.000\"",
+      "query" : "format-time(., \"yyyy-MM-dd HH:mm:ss.SSS\")"
+   },
+   {
+      "output" : "1.5147648E9",
+      "input" : "\"2018-01-01 00:00:00.000\"",
+      "query" : "parse-time(., \"yyyy-MM-dd HH:mm:ss.SSS\")"
+   },
+   {
+      "input" : "125641293.0",
+      "output" : "\"1973-12-25 05:21:33CET\"",
+      "query" : "format-time(., \"yyyy-MM-dd HH:mm:ssz\", \"CET\")"
+   },
+   {
+      "query" : "format-time(., \"yyyy-MM-dd HH:mm:ssz\")",
+      "output" : "\"1973-12-25 04:21:33UTC\"",
+      "input" : "125641293.0"
+   },
+   {
+      "query" : "format-time(parse-time(\"2017-01-10\", \"yyyy-MM-dd\"), \"yyyy-MM-dd\")",
+      "output" : "\"2017-01-10\"",
+      "input" : "{}"
+   },
+   {
+      "query" : "round(parse-time(., \"yyyy-MM-dd\"))",
+      "input" : "\"1973-12-25\"",
+      "output" : "125625600"
+   },
+   {
+      "query" : "floor(42.5)",
+      "output" : "42",
+      "input" : "{}"
+   },
+   {
+      "query" : "contains(null, [\"Taip\"])",
+      "output" : "false",
+      "input" : "{}"
+   },
+   {
+      "input" : "{}",
+      "output" : "true",
+      "query" : "contains(\"Taip\", [\"foo\", \"Taip\", \"halp\"])"
+   },
+   {
+      "query" : "lowercase(22)",
+      "output" : "\"22\"",
+      "input" : "{}"
+   },
+   {
+      "query" : "split(\"\", \",\")",
+      "input" : "{}",
+      "output" : "[\"\"]"
+   },
+   {
+      "query" : "split(\"1,2,3\", \",\")",
+      "input" : "{}",
+      "output" : "[\"1\",\"2\",\"3\"]"
+   },
+   {
+      "query" : "is-string(.)",
+      "input" : "{}",
+      "output" : "false"
+   },
+   {
+      "input" : "{}",
+      "output" : "42",
+      "query" : "floor(42.4)"
+   },
+   {
+      "query" : "floor(null)",
+      "output" : "null",
+      "input" : "{}"
+   },
+   {
+      "query" : " get-key(., \"bar\", 0) ",
+      "output" : " 0 ",
+      "input" : " { \"foo\" : 24 } "
+   },
+   {
+      "output" : "{\"foo\":\"123456\"}",
+      "input" : "{}",
+      "query" : "capture(123456, \"(?<foo>\\\\d+)\")"
+   },
+   {
+      "input" : "{}",
+      "output" : "\"foo\"",
+      "query" : "lowercase(\"FOO\")"
+   },
+   {
+      "output" : "true",
+      "input" : "{}",
+      "query" : "is-array([1,2,3])"
+   },
+   {
+      "input" : "{}",
+      "output" : "{}",
+      "query" : "capture(\"abc\", \"(?<foo>\\\\d+)\")"
+   },
+   {
+      "output" : "\"null\"",
+      "input" : "{}",
+      "query" : "string(null)"
+   },
+   {
+      "output" : "false",
+      "input" : "{}",
+      "query" : "is-object([1,2,3])"
+   },
+   {
+      "query" : " to-json(.) ",
+      "input" : " 22 ",
+      "output" : " \"22\" "
+   },
+   {
+      "query" : "fallback(null, true)",
+      "output" : "true",
+      "input" : "{}"
+   },
+   {
+      "query" : "fallback(true, null)",
+      "output" : "true",
+      "input" : "{}"
+   },
+   {
+      "query" : "join(null, \",\")",
+      "input" : "{}",
+      "output" : "null"
+   },
+   {
+      "output" : "false",
+      "input" : "{}",
+      "query" : "is-boolean(22)"
+   },
+   {
+      "output" : "true",
+      "input" : "{}",
+      "query" : "boolean(0.2)"
+   },
+   {
+      "query" : "is-number(232.0)",
+      "output" : "true",
+      "input" : "{}"
+   },
+   {
+      "query" : "is-number(\"a\")",
+      "output" : "false",
+      "input" : "{}"
+   },
+   {
+      "query" : "is-integer(null)",
+      "output" : "false",
+      "input" : "{}"
+   },
+   {
+      "query" : "is-integer(1)",
+      "output" : "true",
+      "input" : "{}"
+   },
+   {
+      "query" : "is-integer(1.0)",
+      "output" : "false",
+      "input" : "{}"
+   },
+   {
+      "query" : "is-integer(\"1\")",
+      "output" : "false",
+      "input" : "{}"
+   },
+   {
+      "query" : "is-decimal(null)",
+      "output" : "false",
+      "input" : "{}"
+   },
+   {
+      "query" : "is-decimal(1)",
+      "output" : "false",
+      "input" : "{}"
+   },
+   {
+      "query" : "is-decimal(1.0)",
+      "output" : "true",
+      "input" : "{}"
+   },
+   {
+      "query" : "is-decimal(\"1.0\")",
+      "output" : "false",
+      "input" : "{}"
+   },
+   {
+      "input" : "\"1973-12-25 04:21:33\"",
+      "output" : "125641293",
+      "query" : "round(parse-time(., \"yyyy-MM-dd HH:mm:ss\"))"
+   },
+   {
+      "query" : "capture(null, \"(?<foo>\\\\d+)\")",
+      "input" : "{}",
+      "output" : "null"
+   },
+   {
+      "query" : "ceiling(42.4)",
+      "output" : "43",
+      "input" : "{}"
+   },
+   {
+      "query" : "ceiling(null)",
+      "input" : "{}",
+      "output" : "null"
+   },
+   {
+      "input" : "{}",
+      "output" : "false",
+      "query" : "contains(\"Taip\", \"StringWithType\")"
+   },
+   {
+      "query" : "ceiling(42.5)",
+      "output" : "43",
+      "input" : "{}"
+   },
+   {
+      "query" : "not(123)",
+      "input" : "{}",
+      "output" : "false"
+   },
+   {
+      "query" : "contains(\"Taip\", null)",
+      "output" : "false",
+      "input" : "{}"
+   },
+   {
+      "query" : "contains(null, \"StringnullWithType\")",
+      "input" : "{}",
+      "output" : "false"
+   },
+   {
+      "input" : "{}",
+      "output" : "true",
+      "query" : "contains(\"Taip\", \"StringWithTaip\")"
+   },
+   {
+      "input" : "{}",
+      "output" : "false",
+      "query" : "contains(42, {\"Taip\" : 44})"
+   },
+   {
+      "output" : " false ",
+      "input" : " \"[1,2,\" ",
+      "query" : " from-json(., false) "
+   },
+   {
+      "query" : "test(\"abc\", \"abc\")",
+      "input" : "{}",
+      "output" : "true"
+   },
+   {
+      "query" : "contains(\"Taip\", {\"Type\" : 44})",
+      "input" : "{}",
+      "output" : "false"
+   },
+   {
+      "query" : "array(.missing)",
+      "input" : "{}",
+      "output" : "null"
+   },
+   {
+      "query" : "string(\"foo\")",
+      "input" : "{}",
+      "output" : "\"foo\""
+   },
+   {
+      "query" : "round(parse-time(., \"yyyy-MM-dd HH:mm:ss.S\") * 100)",
+      "input" : "\"1973-12-25 04:21:33.123\"",
+      "output" : "12564129312"
+   },
+   {
+      "query" : " get-key(null, \"key\") ",
+      "input" : " { \"foo\" : 24 } ",
+      "output" : " null "
+   },
+   {
+      "input" : "{}",
+      "output" : "true",
+      "query" : "is-number(232)"
+   },
+   {
+      "input" : "{}",
+      "output" : "false",
+      "query" : "test(\"cba\", \"abc\")"
+   },
+   {
+      "query" : "capture(\"abc123456def\", \"(?<foo>\\\\d+)\")",
+      "input" : "{}",
+      "output" : "{\"foo\":\"123456\"}"
+   },
+   {
+      "input" : "{}",
+      "output" : "false",
+      "query" : "contains(\"Type\", [])"
+   },
+   {
+      "output" : "false",
+      "input" : "{}",
+      "query" : "contains(\"Type\", [\"Taip\"])"
+   },
+   {
+      "query" : "parse-time(., \"yyyy-MM-dd HH:mm:ssX\")",
+      "output" : "null",
+      "input" : "null"
+   },
+   {
+      "input" : "{}",
+      "output" : "true",
+      "query" : "is-object(.)"
+   },
+   {
+      "output" : "42",
+      "input" : "{}",
+      "query" : "round(42)"
+   },
+   {
+      "input" : "{}",
+      "output" : "null",
+      "query" : "lowercase(null)"
+   },
+   {
+      "query" : "join([], \",\")",
+      "input" : "{}",
+      "output" : "\"\""
+   },
+   {
+      "query" : "join([1,2,3], \", \")",
+      "input" : "{}",
+      "output" : "\"1, 2, 3\""
+   },
+   {
+      "input" : "{}",
+      "output" : "\"123.2\"",
+      "query" : "string(123.2)"
+   },
+   {
+      "query" : "ceiling(42.0)",
+      "output" : "42",
+      "input" : "{}"
+   },
+   {
+      "output" : "false",
+      "input" : "{}",
+      "query" : "ends-with(null, \"hey\")"
+   },
+   {
+      "output" : "true",
+      "input" : "{}",
+      "query" : "ends-with(\"heypådey\", \"dey\")"
+   },
+   {
+      "query" : "fallback(22, true + not(false))",
+      "input" : "{}",
+      "output" : "22"
+   },
+   {
+      "output" : "\"1973-12-25 04:21:33\"",
+      "input" : "125641293.0",
+      "query" : "format-time(., \"yyyy-MM-dd HH:mm:ss\")"
+   },
+   {
+      "query" : "round(42.4)",
+      "input" : "{}",
+      "output" : "42"
+   },
+   {
+      "query" : "round(null)",
+      "input" : "{}",
+      "output" : "null"
+   },
+   {
+      "output" : "false",
+      "input" : "{}",
+      "query" : "boolean(0.0)"
+   },
+   {
+      "query" : " from-json(.) ",
+      "output" : " 22 ",
+      "input" : " \"22\" "
+   },
+   {
+      "query" : " from-json(.) ",
+      "input" : " null ",
+      "output" : " null "
+   },
+   {
+      "query" : "round(42.5)",
+      "input" : "{}",
+      "output" : "43"
+   },
+   {
+      "query" : "test(23123, \"\\\\d+\")",
+      "input" : "{}",
+      "output" : "true"
+   },
+   {
+      "input" : "{}",
+      "output" : "null",
+      "query" : "split(null, \",\")"
+   },
+   {
+      "input" : "{}",
+      "output" : "\"22\"",
+      "query" : "uppercase(22)"
+   },
+   {
+      "query" : "size([1,2,3])",
+      "input" : "{}",
+      "output" : "3"
+   },
+   {
+      "input" : "{}",
+      "output" : "false",
+      "query" : "boolean({})"
+   },
+   {
+      "query" : "is-number(.)",
+      "input" : "{}",
+      "output" : "false"
+   },
+   {
+      "input" : "{}",
+      "output" : "true",
+      "query" : "is-boolean(false)"
+   },
+   {
+      "input" : "{}",
+      "output" : "\"FOO\"",
+      "query" : "uppercase(\"foo\")"
+   },
+   {
+      "input" : "{}",
+      "output" : "\"2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae\"",
+      "query" : "sha256-hex(\"foo\")"
+   },
+   {
+      "input" : "{}",
+      "output" : "\"fcde2b2edba56bf408601fb721fe9b5c338d10ee429ea04fae5511b68fbf8fb9\"",
+      "query" : "sha256-hex(\"bar\")"
+   },
+   {
+      "input" : "{}",
+      "output" : "true",
+      "query" : "sha256-hex(\"42\") == sha256-hex(42)"
+   },
+   {
+      "input" : "{}",
+      "output" : "null",
+      "query" : "sha256-hex(null)"
+   },
+   {
+      "output" : "false",
+      "input" : "{}",
+      "query" : "boolean(\"\")"
+   },
+   {
+      "query" : "number(null)",
+      "input" : "{}",
+      "output" : "null"
+   },
+   {
+      "output" : "[{\"number\":1},{\"number\":2},{\"number\":3},{\"number\":4}]",
+      "input" : "[]",
+      "query" : "[for (split(\"1,2,3,4\", \",\")) {   \"number\" : number(.) }]"
+   },
+   {
+      "query" : "number(\"hurble\", [1,2,3])",
+      "input" : "{}",
+      "output" : "[1,2,3]"
+   },
+   {
+      "query" : "number({\"hurble\":[1,2,3]}, null)",
+      "input" : "{}",
+      "output" : "null"
+   },
+   {
+      "query" : "number(null, 243)",
+      "input" : "{}",
+      "output" : "243"
+   },
+   {
+      "query" : "number(\"42\")",
+      "input" : "{}",
+      "output" : "42"
+   },
+   {
+      "query" : "number(42.0)",
+      "input" : "{}",
+      "output" : "42.0"
+   },
+   {
+      "query" : "number(42)",
+      "input" : "{}",
+      "output" : "42"
+   },
+   {
+      "query" : "number(\"42.1\")",
+      "input" : "{}",
+      "output" : "42.1"
+   },
+   {
+      "query" : "number(\"42.12\")",
+      "input" : "{}",
+      "output" : "42.12"
+   },
+   {
+      "query" : "number(\"42.9999\")",
+      "input" : "{}",
+      "output" : "42.9999"
+   },
+   {
+      "query" : "number(\"42.0001\")",
+      "input" : "{}",
+      "output" : "42.0001"
+   },
+   {
+      "query" : "number(\"01\")",
+      "input" : "{}",
+      "output" : "1"
+   },
+   {
+      "query" : "number(\"01.0\")",
+      "input" : "{}",
+      "output" : "1.0"
+   },
+   {
+      "query" : "number(\"-10\")",
+      "input" : "{}",
+      "output" : "-10"
+   },
+   {
+      "query" : "number(\"-10.0\")",
+      "input" : "{}",
+      "output" : "-10.0"
+   },
+   {
+      "query" : "number(\"1e+1\")",
+      "input" : "{}",
+      "output" : "1e+1"
+   },
+   {
+      "query" : "number(\"1E+1\")",
+      "input" : "{}",
+      "output" : "1E+1"
+   },
+   {
+      "query" : "number(\"1e-1\")",
+      "input" : "{}",
+      "output" : "1e-1"
+   },
+   {
+      "query" : "number(\"1E-1\")",
+      "input" : "{}",
+      "output" : "1E-1"
+   },
+   {
+      "query" : "number(\"1e1\")",
+      "input" : "{}",
+      "output" : "1e1"
+   },
+   {
+      "query" : "number(\"1E1\")",
+      "input" : "{}",
+      "output" : "1E1"
+   },
+   {
+      "query" : "number(\"1.111E2\")",
+      "input" : "{}",
+      "output" : "111.1"
+   },
+   {
+      "query" : "number(\"0.1e-2\")",
+      "input" : "{}",
+      "output" : "0.001"
+   },
+   {
+      "query" : "number(\"0\")",
+      "input" : "{}",
+      "output" : "0"
+   },
+   {
+      "query" : "number(\"\", 147)",
+      "input" : "{}",
+      "output" : "147"
+   },
+   {
+      "query" : "number(\"1.484006399998E9\")",
+      "input" : "{}",
+      "output" : "1.484006399998E9"
+   },
+   {
+      "query" : "number(\"1534663342000\")",
+      "input" : "{}",
+      "output" : "1534663342000"
+   },
+   {
+      "query" : "number(\"-1534663342000\")",
+      "input" : "{}",
+      "output" : "-1534663342000"
+   },
+   {
+      "query" : "number(\"42.0\")",
+      "input" : "{}",
+      "output" : "42.0"
+   },
+   {
+      "query" : "number(\"124274772478237237823782728372873000000012347427427378238238283\")",
+      "input" : "{}",
+      "output" : "124274772478237237823782728372873000000012347427427378238238283"
+   },
+   {
+      "query" : "number(\"11234138.23975\")",
+      "input" : "{}",
+      "output" : "11234138.23975"
+   },
+   {
+      "query" : "number(\"-72915539138.234933\")",
+      "input" : "{}",
+      "output" : "-72915539138.234933"
+   },
+   {
+      "query" : "number(\"17236399.795802329\")",
+      "input" : "{}",
+      "output" : "17236399.795802329"
+   },
+   {
+      "query" : "number(\"-1.4\")",
+      "input" : "{}",
+      "output" : "-1.4"
+   },
+   {
+      "query" : "number(\"-2.513\")",
+      "input" : "{}",
+      "output" : "-2.513"
+   },
+   {
+      "input" : "{}",
+      "output" : "2",
+      "query" : "size({\"foo\" : 2, \"bar\" : 24})"
+   },
+   {
+      "output" : "true",
+      "input" : "{}",
+      "query" : "test(\"abcdef\", \"abc\")"
+   },
+   {
+      "input" : " { \"foo\" : 24 } ",
+      "output" : " 24 ",
+      "query" : " get-key(., \"foo\") "
+   },
+   {
+      "input" : "{}",
+      "output" : "11",
+      "query" : "size(\"Lars Marius\")"
+   },
+   {
+      "query" : "starts-with(\"heipådeg\", \"hey\")",
+      "input" : "{}",
+      "output" : "false"
+   },
+   {
+      "output" : "[{\"key\" : \"foo\", \"value\" : 2}]",
+      "input" : "{\"foo\" : 2}",
+      "query" : "array(.)"
+   },
+   {
+      "query" : " get-key(null, \"key\", 0) ",
+      "output" : " null ",
+      "input" : " { \"foo\" : 24 } "
+   },
+   {
+      "output" : "null",
+      "input" : "{}",
+      "query" : "size( .nonexistent )"
+   },
+   {
+      "query" : "uppercase(null)",
+      "input" : "{}",
+      "output" : "null"
+   },
+   {
+      "input" : " null ",
+      "output" : " \"null\" ",
+      "query" : " to-json(.) "
+   },
+   {
+      "query" : "is-string(\"[1,2,3]\")",
+      "output" : "true",
+      "input" : "{}"
+   },
+   {
+      "query" : "not(null)",
+      "input" : "{}",
+      "output" : "true"
+   },
+   {
+      "output" : "false",
+      "input" : "{}",
+      "query" : "not(true)"
+   },
+   {
+      "query" : "capture(\"abc\", \"(?<foo>[a-z]+)\")",
+      "output" : "{\"foo\":\"abc\"}",
+      "input" : "{}"
+   },
+   {
+      "input" : "{}",
+      "output" : "null",
+      "query" : "parse-time(\"1973-12-25 05:22:33\", \"yyyy-MM-dd HH:mm:ssz\", null)"
+   },
+   {
+      "query" : "ends-with(\"heipådeg\", \"dey\")",
+      "input" : "{}",
+      "output" : "false"
+   },
+   {
+      "output" : " null ",
+      "input" : " \"null\" ",
+      "query" : " from-json(.) "
+   },
+   {
+      "input" : "{}",
+      "output" : "42",
+      "query" : "floor(42)"
+   },
+   {
+      "query" : "format-time(null, \"yyyy-MM-dd HH:mm:ssz\")",
+      "output" : "null",
+      "input" : "{}"
+   },
+   {
+      "query" : " to-json([1, 2]) ",
+      "input" : " 22 ",
+      "output" : " \"[1,2]\" "
+   },
+   {
+      "query" : "test(\"abcdef\", \"^abc$\")",
+      "input" : "{}",
+      "output" : "false"
+   },
+   {
+      "query" : "is-array(.)",
+      "output" : "false",
+      "input" : "{}"
+   },
+   {
+      "query" : "flatten([])",
+      "input" : "{}",
+      "output" : "[]"
+   },
+   {
+      "query" : "flatten([1,2,3])",
+      "input" : "{}",
+      "output" : "[1,2,3]"
+   },
+   {
+      "query" : "flatten([1,[2],3])",
+      "input" : "{}",
+      "output" : "[1,2,3]"
+   },
+   {
+      "query" : "flatten([1,[],[2, [3, 4, [5]],6],7])",
+      "input" : "{}",
+      "output" : "[1,2,3,4,5,6,7]"
+   },
+   {
+      "query" : "flatten(null)",
+      "input" : "{}",
+      "output" : "null"
+   },
+   {
+      "query" : "sum([1,2,3,4,5])",
+      "input" : "{}",
+      "output" : "15"
+   },
+   {
+      "query" : "sum(null)",
+      "input" : "{}",
+      "output" : "null"
+   },
+   {
+      "query" : "sum([])",
+      "input" : "{}",
+      "output" : "0"
+   },
+   {
+      "query" : "sum([17])",
+      "input" : "{}",
+      "output" : "17"
+   },
+   {
+      "query" : "all([])",
+      "input" : "{}",
+      "output" : "true"
+   },
+   {
+      "query" : "all([true, true])",
+      "input" : "{}",
+      "output" : "true"
+   },
+   {
+      "query" : "all([true, false])",
+      "input" : "{}",
+      "output" : "false"
+   },
+   {
+      "query" : "all(null)",
+      "input" : "{}",
+      "output" : "null"
+   },
+   {
+      "query" : "any([])",
+      "input" : "{}",
+      "output" : "false"
+   },
+   {
+      "query" : "any([false, false])",
+      "input" : "{}",
+      "output" : "false"
+   },
+   {
+      "query" : "any([false, true])",
+      "input" : "{}",
+      "output" : "true"
+   },
+   {
+      "query" : "any(null)",
+      "input" : "{}",
+      "output" : "null"
+   },
+   {
+      "query": "mod(10,3)",
+      "input" : "{}",
+      "output": "1"
+   },
+   {
+      "query": "mod(10,4)",
+      "input" : "{}",
+      "output": "2"
+   },
+   {
+      "query": "mod(10,5)",
+      "input" : "{}",
+      "output": "0"
+   },
+   {
+      "query": "mod(null,5)",
+      "input" : "{}",
+      "output": "null"
+   },
+   {
+      "query": "mod(10,null)",
+      "input" : "{}",
+      "output": "null"
+   },
+   {
+      "query": "mod(-10,3)",
+      "input" : "{}",
+      "output": "2"
+   },
+   {
+      "query": "mod(10,-3)",
+      "input" : "{}",
+      "output": "1"
+   },
+   {
+      "query": "mod(-10,-3)",
+      "input" : "{}",
+      "output": "2"
+   },
+   {
+      "query": "replace(., \"-\", \" \")",
+      "input" : "\"hey-ho-ho\"",
+      "output": "\"hey ho ho\""
+   },
+   {
+      "query": "replace(., \"1\", \"2\")",
+      "input" : "212",
+      "output": "\"222\""
+   },
+   {
+      "query": "replace(., \"1\", \"2\")",
+      "input" : "232",
+      "output": "\"232\""
+   },
+   {
+      "query": "replace(.foo, \"1\", \"2\")",
+      "input" : "212",
+      "output": "null"
+   },
+   {
+      "query": "replace(., \"-+\", \" \")",
+      "input" : "\"hey-ho-ho\"",
+      "output": "\"hey ho ho\""
+   },
+   {
+      "query": "replace(., \"^\\\\s+\", \"\")",
+      "input" : "\"    initial spaces\"",
+      "output": "\"initial spaces\""
+   },
+   {
+      "query": "replace(., \"[a-z]\", \"x\")",
+      "input" : "\"some text\"",
+      "output": "\"xxxx xxxx\""
+   },
+   {
+      "query": "replace(., \"[a-z]+\", \"x\")",
+      "input" : "\"some text\"",
+      "output": "\"x x\""
+   },
+   {
+      "query": "replace(., \"[a-z]+\", \"xx\")",
+      "input" : "\"some text\"",
+      "output": "\"xx xx\""
+   },
+   {
+      "query": "replace(., \".\", \"xx\")",
+      "input" : "\"some text\"",
+      "output": "\"xxxxxxxxxxxxxxxxxx\""
+   },
+   {
+      "query": "replace(\"\", \".\", \"xx\")",
+      "input" : "\"some text\"",
+      "output": "\"\""
+   },
+   {
+      "query": "trim(.)",
+      "input" : "\"some text\"",
+      "output": "\"some text\""
+   },
+   {
+      "query": "trim(.)",
+      "input" : "null",
+      "output": "null"
+   },
+   {
+      "query": "trim(.)",
+      "input" : "\"\"",
+      "output": "\"\""
+   },
+   {
+      "query": "trim(.)",
+      "input" : "\" abc\"",
+      "output": "\"abc\""
+   },
+   {
+      "query": "trim(.)",
+      "input" : "\"abc   \"",
+      "output": "\"abc\""
+   },
+   {
+      "query": "trim(.)",
+      "input" : "\" \\t\\n\\r abc   \"",
+      "output": "\"abc\""
+   },
+   {
+      "query": "trim(.)",
+      "input" : "222",
+      "output": "\"222\""
+   },
+   {
+      "query": "trim(.)",
+      "input" : "\"      \"",
+      "output": "\"\""
+   },
+   {
+      "query": "trim(.)",
+      "input" : "\"a\"",
+      "output": "\"a\""
+   },
+   {
+      "query": "min(1, 2)",
+      "input" : "null",
+      "output": "1"
+   },
+   {
+      "query": "min(2, 1)",
+      "input" : "null",
+      "output": "1"
+   },
+   {
+      "query": "min(\"a\", \"b\")",
+      "input" : "null",
+      "output": "\"a\""
+   },
+   {
+      "query": "min(null, 0)",
+      "input" : "null",
+      "output": "null"
+   },
+   {
+      "query": "max(1, 2)",
+      "input" : "null",
+      "output": "2"
+   },
+   {
+      "query": "max(2, 1)",
+      "input" : "null",
+      "output": "2"
+   },
+   {
+      "query": "max(\"a\", \"b\")",
+      "input" : "null",
+      "output": "\"b\""
+   },
+   {
+      "query": "max(null, 0)",
+      "input" : "null",
+      "output": "null"
+   },
+   {
+      "query" : "hash-int(.)",
+      "input" : "\"\"",
+      "output" : "1088"
+   },
+   {
+      "query" : "hash-int(.)",
+      "input" : "\"test\"",
+      "output" : "1083642606"
+   },
+   {
+      "query" : "hash-int(.)",
+      "input" : "{}",
+      "output" : "3938"
+   },
+   {
+      "query" : "hash-int(.)",
+      "input" : "{    }",
+      "output" : "3938"
+   },
+   {
+      "query" : "hash-int(.)",
+      "input": null,
+      "output" : "null"
+   },
+   {
+      "query" : "hash-int(.)",
+      "input" : "1",
+      "output" : "49"
+   },
+   {
+      "query" : "hash-int(.)",
+      "input" : "[]",
+      "output" : "2914"
+   },
+   {
+      "query" : "hash-int(.)",
+      "input" : "[1,2]",
+      "output" : "85544097"
+   },
+   {
+      "query" : "hash-int([1,2]) == hash-int([2,1])",
+      "input" : "",
+      "output" : "false"
+   },
+   {
+      "query" : "hash-int(.)",
+      "input" : "{\"a\":1,\"b\":2}",
+      "output" : "1268505936"
+   },
+   {
+      "query" : "hash-int({\"a\":1,\"b\":2}) == hash-int({\"b\":2,\"a\":1})",
+      "input" : null,
+      "output" : "true"
+   },
+   {
+      "query" : "hash-int({\"a\":null}) == hash-int({})",
+      "input" : null,
+      "output" : "true"
+   },
+   {
+      "query" : "hash-int(.)",
+      "input" : "\"a\"",
+      "output" : "35715"
+   },
+   {
+      "query" : "zip([\"a\", \"b\", \"c\"], [1, 2, 3])",
+      "input" : "null",
+      "output" : "[[\"a\", 1], [\"b\", 2], [\"c\", 3]]"
+   },
+   {
+      "query" : "zip([\"a\", \"b\", \"c\"], null)",
+      "input" : "null",
+      "output" : "null"
+   },
+   {
+      "query" : "zip(null, [1, 2, 3])",
+      "input" : "null",
+      "output" : "null"
+   },
+   {
+      "query" : "zip([], [])",
+      "input" : "null",
+      "output" : "[]"
+   },
+   {
+      "query" : "zip-with-index([])",
+      "input" : "null",
+      "output" : "[]"
+   },
+   {
+      "query" : "zip-with-index(null)",
+      "input" : "null",
+      "output" : "null"
+   },
+   {
+      "query" : "zip-with-index([\"a\",\"b\",\"c\"])",
+      "input" : "null",
+      "output" : "[{\"index\":0,\"value\":\"a\"},{\"index\":1,\"value\":\"b\"},{\"index\":2,\"value\":\"c\"}]"
+   },
+   {
+      "query" : "index-of([\"a\",\"b\",\"c\"], \"b\")",
+      "input" : "null",
+      "output" : "1"
+   },
+   {
+      "query" : "index-of([\"a\",\"b\",\"c\"], \"d\")",
+      "input" : "null",
+      "output" : "-1"
+   },
+   {
+      "query" : "index-of([], \"d\")",
+      "input" : "null",
+      "output" : "-1"
+   },
+   {
+      "query" : "index-of([], null)",
+      "input" : "null",
+      "output" : "-1"
+   },
+   {
+      "query" : "index-of(null, \"b\")",
+      "input" : "null",
+      "output" : "null"
+   }
+]
+}

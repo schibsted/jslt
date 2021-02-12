@@ -1,0 +1,99 @@
+<style>
+  .button {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+  }
+
+  pre {
+    background-color: #E3E3E3;
+    font-family: "Lucida Console", Monaco, "Courier New", monospace;
+    font-size: 14pt
+  }
+
+  #jslt, #input {
+    font-family: "Lucida Console", Monaco, "Courier New", monospace;
+    font-size: 14pt
+  }
+
+  body {
+    font-family: "Arial", "Helvetica", sans-serif;
+    margin-left: 36pt;
+    margin-right: 36pt;
+    margin-top: 48pt;
+  }
+</style>
+<script>
+function send() {
+  var out = document.getElementById('result');
+  out.firstChild.nodeValue = '...wait...';
+
+  var input = document.getElementById('input').value
+  var jslt = document.getElementById('jslt').value
+  var data = {"json" : input, "jslt" : jslt }
+
+  var http = new XMLHttpRequest();
+  var url = "jslt-demo";
+  //var url = "http://localhost:9999/jslt";
+  http.open("POST", url, true);
+  http.setRequestHeader("Content-type", "application/json");
+
+  http.onreadystatechange = function() {
+    if (http.readyState == 4 && http.status == 200) {
+      var out = document.getElementById('result');
+      out.firstChild.nodeValue = http.responseText;
+    }
+  }
+  http.send(JSON.stringify(data));
+}
+</script>
+
+<title>JSLT demo playground</title>
+<h1>JSLT demo playground</h1>
+
+<p>Here you can play with
+<a href="https://github.com/schibsted/jslt">JSLT</a>
+transforms.
+Please <a href="https://github.com/schibsted/jslt/issues"
+>report any issues</a>.</p>
+
+<h2>Result</h2>
+
+<pre id="result">
+
+  Transform result will appear here
+
+</pre>
+
+<p><input type=submit value="Run!" class=button onclick="send()">
+
+<h2>JSLT</h2>
+
+<textarea id="jslt" name="jslt" cols=80 rows=20>
+let idparts = split(.id, "-")
+let xxx = [for ($idparts) "x" * size(.)]
+
+{
+  "id" : join($xxx, "-"),
+  "type" : "Anonymized-View",
+  * : .
+}
+</textarea>
+
+<h2>Input</h2>
+
+<textarea id="input" name="input" cols=80 rows=20>
+{
+  "schema" : "http://schemas.schibsted.io/thing/pulse-simple.json#1.json",
+  "id" : "w23q7ca1-8729-24923-922b-1c0517ddffjf1",
+  "published" : "2017-05-04T09:13:29+02:00",
+  "type" : "View",
+  "environmentId" : "urn:schibsted.com:environment:uuid",
+  "url" : "http://www.aftenposten.no/"
+}
+</textarea>
