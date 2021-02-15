@@ -129,7 +129,10 @@ more queries.
 
 ## Building JSLT
 
-To build JSLT, run `./gradlew jar` or `./gradlew shadowJar`.
+To build JSLT as a jar file, run `./gradlew jar`.
+
+To build a fat jar with all dependencies included, run `./gradlew
+shadowJar`.
 
 To run the tests: `./gradlew check`.
 
