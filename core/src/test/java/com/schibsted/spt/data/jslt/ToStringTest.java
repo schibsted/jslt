@@ -105,6 +105,11 @@ public class ToStringTest extends TestBase {
     verify("$foo", "$foo");
   }
 
+  @Test
+  public void testParenthesis() {
+    verify(".get1 == 1 and (.get1 == 1 or .get1 == 2)", "(.get1 == 1 and (.get1 == 1 or .get1 == 2))");
+  }
+
   // ----- UTILITIES
 
   private void verify(String input, String output) {
