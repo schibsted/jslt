@@ -75,6 +75,10 @@ public abstract class AbstractOperator extends AbstractNode {
   public abstract JsonNode perform(JsonNode v1, JsonNode v2);
 
   public String toString() {
-    return left.toString() + " " + operator + " " + right;
+    String first = (left instanceof AbstractOperator) ? "(" + left + ")" : left.toString();
+    String second = (right instanceof AbstractOperator) ? "(" + right + ")" : right.toString();
+    return first + " " + operator + " " + second;
+  }
+
   }
 }
