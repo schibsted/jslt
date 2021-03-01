@@ -16,6 +16,7 @@
 package com.schibsted.spt.data.jslt.cli;
 
 import java.io.File;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.schibsted.spt.data.jslt.Parser;
@@ -36,7 +37,13 @@ public class JSLT {
 
     ObjectMapper mapper = new ObjectMapper();
 
-    JsonNode input = mapper.readTree(new File(args[1]));
+    JsonNode input = null;
+    try {
+      input = mapper.readTree(new File(args[1]));
+    } catch (JsonParseException e) {
+      System.out.println("Couldn't parse JSON file '" + args[1] + "': " + e.getMessage());
+      System.exit(1);
+    }
 
     JsonNode output = expr.apply(input);
 
