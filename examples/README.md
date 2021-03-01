@@ -127,6 +127,22 @@ Output:
 
 Taken from [JOLT](https://github.com/bazaarvoice/jolt/issues/626).
 
+## Another one
+
+https://stackoverflow.com/questions/39585360/rename-fields-in-nested-arrays-using-jolt-transformation?rq=1
+
+{
+  "state" : [for (.state) . | {
+    "locatedIn" : .location,
+    "cities" : [for (.cities) {
+      "cityname" : .name,
+      "citypopulation" : .pop
+    }],
+    * : .
+  }],
+  * : .
+}
+
 ## N-queens
 
 If you want something more hardcore, look at [solving the N-queens
