@@ -80,5 +80,15 @@ public abstract class AbstractOperator extends AbstractNode {
     return first + " " + operator + " " + second;
   }
 
+  public ExpressionNode getLeft() {
+    return left;
+  }
+
+  public ExpressionNode getRight() {
+    return right;
+  }
+
+  public String getOperator() {
+    return operator;
   }
 }
