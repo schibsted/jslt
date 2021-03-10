@@ -100,6 +100,11 @@ clean shadowJar`. Then you can run with:
 java -cp build/libs/*.jar com.schibsted.spt.data.jslt.cli.JSLT transform.jslt input.json
 ```
 
+In case you would like to batch-transform multiple objects, you will need to place them in a text file where each line represents single JSON object and run the following: 
+
+```
+java -cp build/libs/*.jar com.schibsted.spt.data.jslt.cli.JSLT transform.jslt multiple_json_input.txt
+```
 The result is written to standard out.
 
 ## Extension functions
