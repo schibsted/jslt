@@ -18,7 +18,7 @@ package com.schibsted.spt.data.jslt.impl;
 import java.util.List;
 import java.util.Arrays;
 import java.util.Collections;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.schibsted.spt.data.json.JsonValue;
 import com.schibsted.spt.data.jslt.JsltException;
 
 /**
@@ -34,21 +34,21 @@ public class PairExpression extends AbstractNode {
     this.value = value;
   }
 
-  public String applyKey(Scope scope, JsonNode input) {
-    JsonNode v = key.apply(scope, input);
-    if (!v.isTextual()) {
+  public String applyKey(Scope scope, JsonValue input) {
+    JsonValue v = key.apply(scope, input);
+    if (!v.isString()) {
       throw new JsltException("Object key must be string", location);
     }
-    return v.asText();
+    return v.asString();
   }
 
   public String getStaticKey() {
     if (!isKeyLiteral())
       throw new JsltException("INTERNAL ERROR: Attempted to get non-static key");
-    return key.apply(null, null).asText();
+    return key.apply(null, null).asString();
   }
 
-  public JsonNode apply(Scope scope, JsonNode input) {
+  public JsonValue apply(Scope scope, JsonValue input) {
     return value.apply(scope, input);
   }
 

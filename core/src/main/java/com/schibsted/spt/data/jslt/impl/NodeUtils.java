@@ -20,71 +20,60 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Iterator;
 import java.util.Collections;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.IntNode;
-import com.fasterxml.jackson.databind.node.LongNode;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.BooleanNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.DoubleNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.BigIntegerNode;
+import com.schibsted.spt.data.json.*;
 import com.schibsted.spt.data.jslt.JsltException;
 
 public class NodeUtils {
-  public static final ObjectMapper mapper = new ObjectMapper();
 
-  public static void evalLets(Scope scope, JsonNode input, LetExpression[] lets) {
+  public static void evalLets(Scope scope, JsonValue input, LetExpression[] lets) {
     if (lets == null)
       return;
 
     for (int ix = 0; ix < lets.length; ix++) {
       String var = lets[ix].getVariable();
-      JsonNode val = lets[ix].apply(scope, input);
+      JsonValue val = lets[ix].apply(scope, input);
       scope.setValue(lets[ix].getSlot(), val);
     }
   }
 
-  public static boolean isTrue(JsonNode value) {
-    return value != BooleanNode.FALSE &&
+  public static boolean isTrue(JsonValue value) {
+    return !(value.isBoolean() && !value.asBoolean()) &&
       !(value.isObject() && value.size() == 0) &&
-      !(value.isTextual() && value.asText().length() == 0) &&
+      !(value.isString() && value.size() == 0) &&
       !(value.isArray() && value.size() == 0) &&
-      !(value.isNumber() && value.doubleValue() == 0.0) &&
+      !(value.isNumber() && value.asDouble() == 0.0) &&
       !value.isNull();
   }
 
-  public static boolean isValue(JsonNode value) {
+  public static boolean isValue(JsonValue value) {
     return !value.isNull() &&
       !(value.isObject() && value.size() == 0) &&
       !(value.isArray() && value.size() == 0);
   }
 
-  public static JsonNode toJson(boolean value) {
+  public static JsonValue toJson(boolean value) {
     if (value)
-      return BooleanNode.TRUE;
+      return BooleanJValue.TRUE;
     else
-      return BooleanNode.FALSE;
+      return BooleanJValue.FALSE;
   }
 
-  public static JsonNode toJson(double value) {
-    return new DoubleNode(value);
-  }
+  // public static JsonValue toJson(double value) {
+  //   return new DoubleNode(value);
+  // }
 
-  public static JsonNode toJson(String[] array) {
-    ArrayNode node = NodeUtils.mapper.createArrayNode();
-    for (int ix = 0; ix < array.length; ix++)
-      node.add(array[ix]);
-    return node;
-  }
+  // public static JsonValue toJson(String[] array) {
+  //   ArrayNode node = NodeUtils.mapper.createArrayNode();
+  //   for (int ix = 0; ix < array.length; ix++)
+  //     node.add(array[ix]);
+  //   return node;
+  // }
 
   // nullok => return Java null for Json null
-  public static String toString(JsonNode value, boolean nullok) {
+  public static String toString(JsonValue value, boolean nullok) {
     // check what type this is
-    if (value.isTextual())
-      return value.asText();
+    if (value.isString())
+      return value.asString();
     else if (value.isNull() && nullok)
       return null;
 
@@ -92,28 +81,28 @@ public class NodeUtils {
     return value.toString();
   }
 
-  public static ArrayNode toArray(JsonNode value, boolean nullok) {
+  public static JsonValue toArray(JsonValue value, boolean nullok) {
     // check what type this is
     if (value.isArray())
-      return (ArrayNode) value;
+      return value;
     else if (value.isNull() && nullok)
       return null;
 
     throw new JsltException("Cannot convert " + value + " to array");
   }
 
-  public static JsonNode number(JsonNode value, Location loc) {
+  public static JsonValue number(JsonValue value, Location loc) {
     return number(value, false, loc);
   }
 
-  public static JsonNode number(JsonNode value, boolean strict, Location loc) {
+  public static JsonValue number(JsonValue value, boolean strict, Location loc) {
     // this works, because Java null can never be a function parameter
     // in JSLT, unlike JSON null
     return number(value, strict, loc, null);
   }
 
-  public static JsonNode number(JsonNode value, boolean strict, Location loc,
-                                JsonNode fallback) {
+  public static JsonValue number(JsonValue value, boolean strict, Location loc,
+                                JsonValue fallback) {
     // check what type this is
     if (value.isNumber())
       return value;
@@ -122,18 +111,18 @@ public class NodeUtils {
         return value;
       else
         return fallback;
-    } else if (!value.isTextual()) {
+    } else if (!value.isString()) {
       if (strict)
         throw new JsltException("Can't convert " + value + " to number", loc);
       else if (fallback == null)
-        return NullNode.instance;
+        return value.makeNull();
       else
         return fallback;
     }
 
     // let's look at this number
-    String number = value.asText();
-    JsonNode numberNode = parseNumber(number);
+    String number = value.asString();
+    JsonValue numberNode = parseNumber(number);
     if (numberNode == null || !numberNode.isNumber()) {
       if (fallback == null)
         throw new JsltException("number(" + number + ") failed: not a number",
@@ -146,7 +135,7 @@ public class NodeUtils {
   }
 
   // returns null in case of failure (caller then handles fallback)
-  private static JsonNode parseNumber(String number) {
+  private static JsonValue parseNumber(String number) {
     if (number.length() == 0)
       return null;
 
@@ -159,12 +148,10 @@ public class NodeUtils {
     if (endInteger == pos)
       return null;
     if (endInteger == number.length()) {
-      if (number.length() < 10)
-        return new IntNode(Integer.parseInt(number));
-      else if (number.length() < 19)
-        return new LongNode(Long.parseLong(number));
+      if (number.length() < 19)
+        return new LongJValue(Long.parseLong(number));
       else
-        return new BigIntegerNode(new BigInteger(number));
+        return new BigIntegerJValue(new BigInteger(number));
     }
 
     // since there's stuff after the initial integer it must be either
@@ -191,7 +178,7 @@ public class NodeUtils {
 
       // if there's nothing more, then this is it
       if (pos == number.length())
-        return new DoubleNode(value);
+        return new DoubleJValue(value);
     }
 
     // there is more: next character MUST be 'e' or 'E'
@@ -217,7 +204,7 @@ public class NodeUtils {
       return null;
 
     int exponent = Integer.parseInt(number.substring(pos)) * sign;
-    return new DoubleNode(value * Math.pow(10, exponent));
+    return new DoubleJValue(value * Math.pow(10, exponent));
   }
 
   private static int scanDigits(String number, int pos) {
@@ -230,17 +217,18 @@ public class NodeUtils {
     return ch >= '0' && ch <= '9';
   }
 
-  public static ArrayNode convertObjectToArray(JsonNode object) {
-    ArrayNode array = mapper.createArrayNode();
-    Iterator<Map.Entry<String, JsonNode>> it = object.fields();
+  public static JsonValue convertObjectToArray(JsonValue object) {
+    int ix = 0;
+    JsonValue[] buffer = new JsonValue[object.size()];
+    Iterator<String> it = object.getKeys();
     while (it.hasNext()) {
-      Map.Entry<String, JsonNode> item = it.next();
-      ObjectNode element = NodeUtils.mapper.createObjectNode();
-      element.set("key", new TextNode(item.getKey()));
-      element.set("value", item.getValue());
-      array.add(element);
+      String key = it.next();
+      buffer[ix++] = object.makeObjectBuilder()
+        .set("key", object.makeValue(key))
+        .set("value", object.get(key))
+        .build();
     }
-    return array;
+    return object.makeArray(buffer);
   }
 
   public static String indent(int level) {

@@ -17,22 +17,20 @@ import static org.junit.Assert.fail;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.schibsted.spt.data.json.*;
 
 /**
  * Test cases verifying queries against an input.
  */
 @RunWith(Parameterized.class)
 public class QueryTest extends TestBase {
-  private static ObjectMapper mapper = new ObjectMapper();
   private String input;
   private String query;
   private String output;
-  private Map<String, JsonNode> variables;
+  private Map<String, JsonValue> variables;
 
   public QueryTest(String input, String query, String output,
-                   Map<String, JsonNode> variables) {
+                   Map<String, JsonValue> variables) {
     this.input = input;
     this.query = query;
     this.output = output;
@@ -42,17 +40,14 @@ public class QueryTest extends TestBase {
   @Test
   public void check() {
     try {
-      JsonNode context = mapper.readTree(input);
+      JsonValue context = JsonIO.parseString(input);
 
       Expression expr = Parser.compileString(query);
-      JsonNode actual = expr.apply(variables, context);
+      JsonValue actual = expr.apply(variables, context);
       if (actual == null)
         throw new JsltException("Returned Java null");
 
-      // reparse to handle IntNode(2) != LongNode(2)
-      actual = mapper.readTree(mapper.writeValueAsString(actual));
-
-      JsonNode expected = mapper.readTree(output);
+      JsonValue expected = JsonIO.parseString(output);
 
       assertEquals("" + expected + " != " + actual + " in query " + query + ", input: " + input + ", actual class " + actual.getClass() + ", expected class " + expected.getClass(), expected, actual);
     } catch (Exception e) {
@@ -72,31 +67,31 @@ public class QueryTest extends TestBase {
   }
 
   private static Collection<Object[]> loadTests(String resource) {
-    JsonNode json = TestUtils.loadFile(resource);
-    JsonNode tests = json.get("tests");
+    JsonValue json = TestUtils.loadFile(resource);
+    JsonValue tests = json.get("tests");
 
     List<Object[]> strings = new ArrayList();
     for (int ix = 0; ix < tests.size(); ix++) {
-      JsonNode test = tests.get(ix);
+      JsonValue test = tests.get(ix);
       if (!test.has("output"))
         // not a query test, so skip it
         // this works because we load the same file in QueryErrorTest
         continue;
 
       strings.add(new Object[] {
-          test.get("input").asText(),
-          test.get("query").asText(),
-          test.get("output").asText(),
+          test.get("input").asString(),
+          test.get("query").asString(),
+          test.get("output").asString(),
           toMap(test.get("variables"))
         });
     }
     return strings;
   }
 
-  private static Map<String, JsonNode> toMap(JsonNode json) {
-    Map<String, JsonNode> variables = new HashMap();
+  private static Map<String, JsonValue> toMap(JsonValue json) {
+    Map<String, JsonValue> variables = new HashMap();
     if (json != null) {
-      Iterator<String> it = json.fieldNames();
+      Iterator<String> it = json.getKeys();
       while (it.hasNext()) {
         String field = it.next();
         variables.put(field, json.get(field));

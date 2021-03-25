@@ -15,7 +15,7 @@
 
 package com.schibsted.spt.data.jslt;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.schibsted.spt.data.json.JsonValue;
 
 /**
  * Interface for function implementations.
@@ -44,6 +44,6 @@ public interface Function extends Callable {
   /**
    * Perform the function on the given JSON input with the given arguments.
    */
-  public JsonNode call(JsonNode input, JsonNode[] arguments);
+  public JsonValue call(JsonValue input, JsonValue[] arguments);
 
 }

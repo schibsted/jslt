@@ -15,7 +15,7 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.schibsted.spt.data.json.JsonValue;
 import com.schibsted.spt.data.jslt.JsltException;
 import com.schibsted.spt.data.jslt.Module;
 import com.schibsted.spt.data.jslt.Callable;
@@ -55,7 +55,7 @@ public class JstlFile implements Module, Function {
     return 1;
   }
 
-  public JsonNode call(JsonNode input, JsonNode[] arguments) {
+  public JsonValue call(JsonValue input, JsonValue[] arguments) {
     if (!body.hasBody())
       throw new JsltException("Module '" + prefix + "' has no body, so cannot "+
                               "be called as a function");
@@ -64,7 +64,7 @@ public class JstlFile implements Module, Function {
     return body.apply(arguments[0]);
   }
 
-  public void evaluateLetsOnly(Scope scope, JsonNode input) {
+  public void evaluateLetsOnly(Scope scope, JsonValue input) {
     body.evaluateLetsOnly(scope, input);
   }
 }

@@ -19,8 +19,7 @@ import static org.junit.Assert.fail;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.schibsted.spt.data.json.*;
 
 /**
  * JSON parsing test cases that are supposed to cause syntax error.
@@ -45,12 +44,12 @@ public class JsonParseErrorTest {
 
   @Parameters
   public static Collection<Object[]> data() {
-    JsonNode json = TestUtils.loadFile("json-parse-error-tests.json");
-    JsonNode tests = json.get("tests");
+    JsonValue json = TestUtils.loadFile("json-parse-error-tests.json");
+    JsonValue tests = json.get("tests");
 
     List<Object[]> strings = new ArrayList();
     for (int ix = 0; ix < tests.size(); ix++)
-      strings.add(new Object[] { tests.get(ix).asText() });
+      strings.add(new Object[] { tests.get(ix).asString() });
     return strings;
   }
 }

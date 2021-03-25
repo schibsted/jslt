@@ -17,9 +17,7 @@ import static org.junit.Assert.fail;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.NullNode;
+import com.schibsted.spt.data.json.*;
 
 /**
  * Checks that JSLT queries produce certain runtime errors.
@@ -27,7 +25,6 @@ import com.fasterxml.jackson.databind.node.NullNode;
 @RunWith(Parameterized.class)
 public class QueryErrorTest extends TestBase {
 
-  private static ObjectMapper mapper = new ObjectMapper();
   private String input;
   private String query;
   private String error;
@@ -41,10 +38,10 @@ public class QueryErrorTest extends TestBase {
   @Test
   public void check() {
     try {
-      JsonNode context = mapper.readTree(input);
+      JsonValue context = JsonIO.parseString(input);
 
       Expression expr = Parser.compileString(query);
-      JsonNode actual = expr.apply(context);
+      JsonValue actual = expr.apply(context);
       fail("JSLT did not detect error in " + query);
     } catch (JsltException e) {
       assertTrue("incorrect error message: '" + e.getMessage() + "', " +
@@ -65,21 +62,21 @@ public class QueryErrorTest extends TestBase {
   }
 
   private static Collection<Object[]> loadTests(String resource) {
-    JsonNode json = TestUtils.loadFile(resource);
-    JsonNode tests = json.get("tests");
+    JsonValue json = TestUtils.loadFile(resource);
+    JsonValue tests = json.get("tests");
 
     List<Object[]> strings = new ArrayList();
     for (int ix = 0; ix < tests.size(); ix++) {
-      JsonNode test = tests.get(ix);
+      JsonValue test = tests.get(ix);
       if (!test.has("error"))
         // not an error test, so skip it
         // this works because we load the same file in QueryTest
         continue;
 
       strings.add(new Object[] {
-          test.get("input").asText(),
-          test.get("query").asText(),
-          test.get("error").asText()
+          test.get("input").asString(),
+          test.get("query").asString(),
+          test.get("error").asString()
         });
     }
     return strings;

@@ -18,9 +18,7 @@ package com.schibsted.spt.data.jslt.impl;
 import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.schibsted.spt.data.json.*;
 import com.schibsted.spt.data.jslt.JsltException;
 
 public class ForExpression extends AbstractNode {
@@ -41,27 +39,28 @@ public class ForExpression extends AbstractNode {
     this.ifExpr = ifExpr;
   }
 
-  public JsonNode apply(Scope scope, JsonNode input) {
-    JsonNode array = valueExpr.apply(scope, input);
+  public JsonValue apply(Scope scope, JsonValue input) {
+    JsonValue array = valueExpr.apply(scope, input);
     if (array.isNull())
-      return NullNode.instance;
+      return array;
     else if (array.isObject())
       array = NodeUtils.convertObjectToArray(array);
     else if (!array.isArray())
       throw new JsltException("For loop can't iterate over " + array, location);
 
-    ArrayNode result = NodeUtils.mapper.createArrayNode();
+    int pos = 0;
+    JsonValue[] buffer = new JsonValue[array.size()];
     for (int ix = 0; ix < array.size(); ix++) {
-      JsonNode value = array.get(ix);
+      JsonValue value = array.get(ix);
 
       // must evaluate lets over again for each value because of context
       if (lets.length > 0)
         NodeUtils.evalLets(scope, value, lets);
 
       if (ifExpr == null || NodeUtils.isTrue(ifExpr.apply(scope, value)))
-        result.add(loopExpr.apply(scope, value));
+        buffer[pos++] = loopExpr.apply(scope, value);
     }
-    return result;
+    return input.makeArray(buffer, pos);
   }
 
   public void computeMatchContexts(DotExpression parent) {

@@ -17,8 +17,7 @@ package com.schibsted.spt.data.jslt.impl;
 
 import java.util.List;
 import java.util.Arrays;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.schibsted.spt.data.json.*;
 
 public class ArrayExpression extends AbstractNode {
   private ExpressionNode[] children;
@@ -28,11 +27,11 @@ public class ArrayExpression extends AbstractNode {
     this.children = children;
   }
 
-  public JsonNode apply(Scope scope, JsonNode input) {
-    ArrayNode array = NodeUtils.mapper.createArrayNode();
+  public JsonValue apply(Scope scope, JsonValue input) {
+    JsonValue[] buffer = new JsonValue[children.length];
     for (int ix = 0; ix < children.length; ix++)
-      array.add(children[ix].apply(scope, input));
-    return array;
+      buffer[ix] = children[ix].apply(scope, input);
+    return input.makeArray(buffer);
   }
 
   public void computeMatchContexts(DotExpression parent) {
@@ -56,7 +55,7 @@ public class ArrayExpression extends AbstractNode {
 
     // we're a static array expression. we can just make the array and
     // turn that into a literal, instead of creating it over and over
-    JsonNode array = apply(null, null); // literals won't use scope or input
+    JsonValue array = apply(null, NullJValue.instance);
     return new LiteralExpression(array, location);
   }
 

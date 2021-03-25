@@ -17,7 +17,7 @@ package com.schibsted.spt.data.jslt.impl;
 
 import java.util.Map;
 import java.util.HashMap;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.schibsted.spt.data.json.JsonValue;
 import com.schibsted.spt.data.jslt.Function;
 import com.schibsted.spt.data.jslt.JsltException;
 
@@ -58,11 +58,11 @@ public class FunctionDeclaration extends AbstractNode
   // (or at least may need) access to the global scope. in order to be
   // able to treat FunctionDeclaration like other Functions we resort
   // to this solution for now.
-  public JsonNode call(JsonNode input, JsonNode[] arguments) {
+  public JsonValue call(JsonValue input, JsonValue[] arguments) {
     throw new JsltException("INTERNAL ERROR!");
   }
 
-  public JsonNode call(Scope scope, JsonNode input, JsonNode[] arguments) {
+  public JsonValue call(Scope scope, JsonValue input, JsonValue[] arguments) {
     scope.enterFunction(stackFrameSize);
 
     // bind the arguments into the function scope
@@ -73,7 +73,7 @@ public class FunctionDeclaration extends AbstractNode
     NodeUtils.evalLets(scope, input, lets);
 
     // evaluate body
-    JsonNode value = body.apply(scope, input);
+    JsonValue value = body.apply(scope, input);
     scope.leaveFunction();
     return value;
   }
@@ -88,7 +88,7 @@ public class FunctionDeclaration extends AbstractNode
 
   // the ExpressionNode API requires this method, but it doesn't
   // actually make any sense for a Function
-  public JsonNode apply(Scope scope, JsonNode context) {
+  public JsonValue apply(Scope scope, JsonValue context) {
     throw new JsltException("INTERNAL ERROR");
   }
 

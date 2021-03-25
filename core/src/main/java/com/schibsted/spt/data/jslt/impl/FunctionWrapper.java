@@ -20,14 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.HashMap;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.IntNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.fasterxml.jackson.databind.node.LongNode;
-import com.fasterxml.jackson.databind.node.FloatNode;
-import com.fasterxml.jackson.databind.node.DoubleNode;
-import com.fasterxml.jackson.databind.node.BooleanNode;
+import com.schibsted.spt.data.json.*;
 import com.schibsted.spt.data.jslt.Function;
 import com.schibsted.spt.data.jslt.JsltException;
 
@@ -60,7 +53,7 @@ public class FunctionWrapper implements Function {
     return method.getParameterCount();
   }
 
-  public JsonNode call(JsonNode input, JsonNode[] arguments) {
+  public JsonValue call(JsonValue input, JsonValue[] arguments) {
     Object[] args = new Object[arguments.length];
     for (int ix = 0; ix < arguments.length; ix++)
       args[ix] = converters[ix].convert(arguments[ix]);
@@ -78,7 +71,7 @@ public class FunctionWrapper implements Function {
   // ===== TO JAVA
 
   interface ToJavaConverter {
-    public Object convert(JsonNode node);
+    public Object convert(JsonValue node);
   }
 
   private static Map<Class, ToJavaConverter> toJava = new HashMap();
@@ -99,18 +92,18 @@ public class FunctionWrapper implements Function {
   }
 
   static class StringJavaConverter implements ToJavaConverter {
-    public Object convert(JsonNode node) {
+    public Object convert(JsonValue node) {
       if (node.isNull())
         return null;
-      else if (node.isTextual())
-        return node.asText();
+      else if (node.isString())
+        return node.asString();
       else
         throw new JsltException("Could not convert " + node + " to string");
     }
   }
 
   static class LongJavaConverter implements ToJavaConverter {
-    public Object convert(JsonNode node) {
+    public Object convert(JsonValue node) {
       if (!node.isNumber())
         throw new JsltException("Cannot convert " + node + " to long");
       else
@@ -119,7 +112,7 @@ public class FunctionWrapper implements Function {
   }
 
   static class IntJavaConverter implements ToJavaConverter {
-    public Object convert(JsonNode node) {
+    public Object convert(JsonValue node) {
       if (!node.isNumber())
         throw new JsltException("Cannot convert " + node + " to int");
       else
@@ -128,7 +121,7 @@ public class FunctionWrapper implements Function {
   }
 
   static class BooleanJavaConverter implements ToJavaConverter {
-    public Object convert(JsonNode node) {
+    public Object convert(JsonValue node) {
       if (!node.isBoolean())
         throw new JsltException("Cannot convert " + node + " to boolean");
       else
@@ -137,7 +130,7 @@ public class FunctionWrapper implements Function {
   }
 
   static class DoubleJavaConverter implements ToJavaConverter {
-    public Object convert(JsonNode node) {
+    public Object convert(JsonValue node) {
       if (!node.isNumber())
         throw new JsltException("Cannot convert " + node + " to double");
       else
@@ -148,7 +141,7 @@ public class FunctionWrapper implements Function {
   // ===== TO JSON
 
   interface ToJsonConverter {
-    public JsonNode convert(Object node);
+    public JsonValue convert(Object node);
   }
 
   private static Map<Class, ToJsonConverter> toJson = new HashMap();
@@ -169,58 +162,58 @@ public class FunctionWrapper implements Function {
   }
 
   static class StringJsonConverter implements ToJsonConverter {
-    public JsonNode convert(Object node) {
+    public JsonValue convert(Object node) {
       if (node == null)
-        return NullNode.instance;
+        return NullJValue.instance;
       else
-        return new TextNode((String) node);
+        return new StringJValue((String) node);
     }
   }
 
   static class LongJsonConverter implements ToJsonConverter {
-    public JsonNode convert(Object node) {
+    public JsonValue convert(Object node) {
       if (node == null)
-        return NullNode.instance;
+        return NullJValue.instance;
       else
-        return new LongNode((Long) node);
+        return new LongJValue((long) node);
     }
   }
 
   static class IntJsonConverter implements ToJsonConverter {
-    public JsonNode convert(Object node) {
+    public JsonValue convert(Object node) {
       if (node == null)
-        return NullNode.instance;
+        return NullJValue.instance;
       else
-        return new IntNode((Integer) node);
+        return new LongJValue((int) node);
     }
   }
 
   static class BooleanJsonConverter implements ToJsonConverter {
-    public JsonNode convert(Object node) {
+    public JsonValue convert(Object node) {
       if (node == null)
-        return NullNode.instance;
+        return NullJValue.instance;
       else if ((Boolean) node)
-        return BooleanNode.TRUE;
+        return BooleanJValue.TRUE;
       else
-        return BooleanNode.FALSE;
+        return BooleanJValue.FALSE;
     }
   }
 
   static class DoubleJsonConverter implements ToJsonConverter {
-    public JsonNode convert(Object node) {
+    public JsonValue convert(Object node) {
       if (node == null)
-        return NullNode.instance;
+        return NullJValue.instance;
       else
-        return new DoubleNode((Double) node);
+        return new DoubleJValue((double) node);
     }
   }
 
   static class FloatJsonConverter implements ToJsonConverter {
-    public JsonNode convert(Object node) {
+    public JsonValue convert(Object node) {
       if (node == null)
-        return NullNode.instance;
+        return NullJValue.instance;
       else
-        return new FloatNode((Float) node);
+        return new DoubleJValue((double) node);
     }
   }
 }

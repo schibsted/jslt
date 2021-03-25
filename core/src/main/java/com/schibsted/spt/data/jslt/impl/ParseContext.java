@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import com.schibsted.spt.data.json.NullJValue;
+import com.schibsted.spt.data.json.JsonBuilder;
 import com.schibsted.spt.data.jslt.Module;
 import com.schibsted.spt.data.jslt.Callable;
 import com.schibsted.spt.data.jslt.Function;
@@ -68,6 +70,7 @@ public class ParseContext {
    * Filter used to determine what object key/value pairs to keep.
    */
   private JsonFilter objectFilter;
+  private JsonBuilder jsonBuilder;
 
   public ParseContext(Collection<Function> extensions, String source,
                       ResourceResolver resolver,
@@ -88,6 +91,7 @@ public class ParseContext {
     this.namedModules = namedModules;
     this.preparationContext = preparationContext;
     this.objectFilter = objectFilter;
+    this.jsonBuilder = NullJValue.instance;
 
     namedModules.put(ExperimentalModule.URI, new ExperimentalModule());
   }
@@ -123,6 +127,10 @@ public class ParseContext {
 
   public Collection<Function> getExtensions() {
     return extensions;
+  }
+
+  public JsonBuilder getJsonBuilder() {
+    return jsonBuilder;
   }
 
   public void addDeclaredFunction(String name, Function function) {

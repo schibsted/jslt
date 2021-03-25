@@ -15,7 +15,7 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.schibsted.spt.data.json.JsonValue;
 import com.schibsted.spt.data.jslt.JsltException;
 
 public class SmallerComparison extends ComparisonOperator {
@@ -25,7 +25,7 @@ public class SmallerComparison extends ComparisonOperator {
     super(left, right, ">", location);
   }
 
-  public JsonNode perform(JsonNode v1, JsonNode v2) {
+  public JsonValue perform(JsonValue v1, JsonValue v2) {
     return NodeUtils.toJson(compare(v1, v2) < 0);
   }
 

@@ -15,7 +15,7 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.schibsted.spt.data.json.JsonValue;
 import com.schibsted.spt.data.jslt.JsltException;
 
 public class PipeOperator extends AbstractOperator {
@@ -26,7 +26,7 @@ public class PipeOperator extends AbstractOperator {
     }
 
     @Override
-    public JsonNode apply(Scope scope, JsonNode input) {
+    public JsonValue apply(Scope scope, JsonValue input) {
         return right.apply(scope, left.apply(scope, input));
     }
 
@@ -37,7 +37,7 @@ public class PipeOperator extends AbstractOperator {
     }
 
     @Override
-    public JsonNode perform(JsonNode v1, JsonNode v2) {
+    public JsonValue perform(JsonValue v1, JsonValue v2) {
         throw new JsltException("this should NOT be reachable");
     }
 

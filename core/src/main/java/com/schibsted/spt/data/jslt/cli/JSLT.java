@@ -17,10 +17,10 @@ package com.schibsted.spt.data.jslt.cli;
 
 import java.io.File;
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.schibsted.spt.data.json.*;
 import com.schibsted.spt.data.jslt.Parser;
 import com.schibsted.spt.data.jslt.Expression;
+import com.schibsted.spt.data.jslt.JsltException;
 import com.schibsted.spt.data.jslt.impl.ExpressionImpl;
 
 public class JSLT {
@@ -35,23 +35,20 @@ public class JSLT {
     // if (expr instanceof ExpressionImpl)
     //   ((ExpressionImpl) expr).dump();
 
-    ObjectMapper mapper = new ObjectMapper();
-
-    JsonNode input = null;
+    JsonValue input = null;
     try {
-      input = mapper.readTree(new File(args[1]));
-    } catch (JsonParseException e) {
+      input = JsonIO.parse(new File(args[1]));
+    } catch (JsltException e) {
       System.out.println("Couldn't parse JSON file '" + args[1] + "': " + e.getMessage());
       System.exit(1);
     }
 
-    JsonNode output = expr.apply(input);
+    JsonValue output = expr.apply(input);
 
     if (output == null)
       System.out.println("WARN: returned Java null!");
 
-    System.out.println(mapper.writerWithDefaultPrettyPrinter()
-                       .writeValueAsString(output));
+    System.out.println(JsonIO.prettyPrint(output));
   }
 
 }

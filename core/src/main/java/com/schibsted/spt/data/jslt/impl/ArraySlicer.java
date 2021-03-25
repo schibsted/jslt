@@ -17,11 +17,7 @@ package com.schibsted.spt.data.jslt.impl;
 
 import java.util.List;
 import java.util.ArrayList;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.IntNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.schibsted.spt.data.json.*;
 import com.schibsted.spt.data.jslt.JsltException;
 
 /**
@@ -42,27 +38,27 @@ public class ArraySlicer extends AbstractNode {
     this.parent = parent;
   }
 
-  public JsonNode apply(Scope scope, JsonNode input) {
-    JsonNode sequence = parent.apply(scope, input);
-    if (!sequence.isArray() && !sequence.isTextual())
-      return NullNode.instance;
+  public JsonValue apply(Scope scope, JsonValue input) {
+    JsonValue sequence = parent.apply(scope, input);
+    if (!sequence.isSequence())
+      return sequence.makeNull();
 
     int size = sequence.size();
-    if (sequence.isTextual())
-      size = sequence.asText().length();
+    if (sequence.isString())
+      size = sequence.asString().length();
 
     int leftix = resolveIndex(scope, left, input, size, 0);
     if (!colon) {
       if (sequence.isArray()) {
-        JsonNode val = sequence.get(leftix);
+        JsonValue val = sequence.get(leftix);
         if (val == null)
-          val = NullNode.instance;
+          val = input.makeNull();
         return val;
       } else {
-        String string = sequence.asText();
+        String string = sequence.asString();
         if (leftix >= string.length())
           throw new JsltException("String index out of range: " + leftix, location);
-        return new TextNode("" + string.charAt(leftix));
+        return input.makeValue("" + string.charAt(leftix));
       }
     }
 
@@ -71,26 +67,26 @@ public class ArraySlicer extends AbstractNode {
       rightix = size;
 
     if (sequence.isArray()) {
-      ArrayNode result = NodeUtils.mapper.createArrayNode();
+      JsonValue[] buffer = new JsonValue[rightix - leftix];
       for (int ix = leftix; ix < rightix; ix++)
-        result.add(sequence.get(ix));
-      return result;
+        buffer[ix - leftix] = sequence.get(ix);
+      return input.makeArray(buffer); // add class for subseq?
     } else {
-      String string = sequence.asText();
-      return new TextNode(string.substring(leftix, rightix));
+      String string = sequence.asString();
+      return input.makeValue(string.substring(leftix, rightix));
     }
   }
 
   private int resolveIndex(Scope scope, ExpressionNode expr,
-                           JsonNode input, int size, int ifnull) {
+                           JsonValue input, int size, int ifnull) {
     if (expr == null)
       return ifnull;
 
-    JsonNode node = expr.apply(scope, input);
+    JsonValue node = expr.apply(scope, input);
     if (!node.isNumber())
       throw new JsltException("Can't index array/string with " + node, location);
 
-    int ix = node.intValue();
+    int ix = node.asInt();
     if (ix < 0)
       ix = size + ix;
     return ix;

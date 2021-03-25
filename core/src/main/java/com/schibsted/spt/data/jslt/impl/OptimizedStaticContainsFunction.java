@@ -17,8 +17,7 @@ package com.schibsted.spt.data.jslt.impl;
 
 import java.util.Set;
 import java.util.HashSet;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.BooleanNode;
+import com.schibsted.spt.data.json.*;
 
 /**
  * An optimized version of contains(a, b) which is used when b is an
@@ -26,9 +25,9 @@ import com.fasterxml.jackson.databind.node.BooleanNode;
  * search becomes a performance drag.
  */
 public class OptimizedStaticContainsFunction extends AbstractFunction {
-  private Set<JsonNode> values;
+  private Set<JsonValue> values;
 
-  public OptimizedStaticContainsFunction(JsonNode array) {
+  public OptimizedStaticContainsFunction(JsonValue array) {
     super("optimized-static-contains", 2, 2);
 
     this.values = new HashSet();
@@ -36,10 +35,10 @@ public class OptimizedStaticContainsFunction extends AbstractFunction {
       values.add(array.get(ix));
   }
 
-  public JsonNode call(JsonNode input, JsonNode[] arguments) {
+  public JsonValue call(JsonValue input, JsonValue[] arguments) {
     if (values.contains(arguments[0]))
-      return BooleanNode.TRUE;
+      return input.makeTrue();
     else
-      return BooleanNode.FALSE;
+      return input.makeFalse();
   }
 }

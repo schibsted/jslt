@@ -15,13 +15,8 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.LongNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.DoubleNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.schibsted.spt.data.json.JsonValue;
+import com.schibsted.spt.data.json.JsonObjectBuilder;
 import com.schibsted.spt.data.jslt.JsltException;
 
 public class PlusOperator extends NumericOperator {
@@ -31,10 +26,10 @@ public class PlusOperator extends NumericOperator {
     super(left, right, "+", location);
   }
 
-  public JsonNode perform(JsonNode v1, JsonNode v2) {
-    if (v1.isTextual() || v2.isTextual()) {
+  public JsonValue perform(JsonValue v1, JsonValue v2) {
+    if (v1.isString() || v2.isString()) {
       // if one operand is string: do string concatenation
-      return new TextNode(NodeUtils.toString(v1, false) +
+      return v1.makeValue(NodeUtils.toString(v1, false) +
                           NodeUtils.toString(v2, false));
 
     } else if (v1.isArray() && v2.isArray())
@@ -66,19 +61,21 @@ public class PlusOperator extends NumericOperator {
     return v1 + v2;
   }
 
-  private ArrayNode concatenateArrays(JsonNode v1, JsonNode v2) {
-    // .addAll is faster than many .add() calls
-    ArrayNode result = NodeUtils.mapper.createArrayNode();
-    result.addAll((ArrayNode) v1);
-    result.addAll((ArrayNode) v2);
-    return result;
+  private JsonValue concatenateArrays(JsonValue v1, JsonValue v2) {
+    JsonValue[] buffer = new JsonValue[v1.size() + v2.size()];
+    int pos = 0;
+    for (int ix = 0; ix < v1.size(); ix++)
+      buffer[pos++] = v1.get(ix);
+    for (int ix = 0; ix < v2.size(); ix++)
+      buffer[pos++] = v2.get(ix);
+    return v1.makeArray(buffer);
   }
 
-  private ObjectNode unionObjects(JsonNode v1, JsonNode v2) {
-    // .putAll is faster than many .set() calls
-    ObjectNode result = NodeUtils.mapper.createObjectNode();
-    result.putAll((ObjectNode) v2);
-    result.putAll((ObjectNode) v1); // v1 should overwrite v2
-    return result;
+  private JsonValue unionObjects(JsonValue v1, JsonValue v2) {
+    JsonObjectBuilder object = v1.makeObjectBuilder();
+    // FIXME: figure out how to do this efficiently
+    // result.putAll((ObjectNode) v2);
+    // result.putAll((ObjectNode) v1); // v1 should overwrite v2
+    return object.build();
   }
 }

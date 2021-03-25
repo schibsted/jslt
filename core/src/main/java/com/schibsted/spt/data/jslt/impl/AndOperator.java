@@ -15,8 +15,7 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.BooleanNode;
+import com.schibsted.spt.data.json.*;
 import com.schibsted.spt.data.jslt.JsltException;
 
 public class AndOperator extends AbstractOperator {
@@ -26,16 +25,16 @@ public class AndOperator extends AbstractOperator {
     super(left, right, "and", location);
   }
 
-  public JsonNode apply(Scope scope, JsonNode input) {
+  public JsonValue apply(Scope scope, JsonValue input) {
     boolean v1 = NodeUtils.isTrue(left.apply(scope, input));
     if (!v1)
-      return BooleanNode.FALSE;
+      return input.makeFalse();
 
     boolean v2 = NodeUtils.isTrue(right.apply(scope, input));
     return NodeUtils.toJson(v1 && v2);
   }
 
-  public JsonNode perform(JsonNode v1, JsonNode v2) {
+  public JsonValue perform(JsonValue v1, JsonValue v2) {
     throw new JsltException("Not implemented");
   }
 }

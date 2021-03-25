@@ -16,8 +16,7 @@ import static org.junit.Assert.fail;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.schibsted.spt.data.json.*;
 
 /**
  * JSON parsing test cases. Verifies that Jackson and JSLT produce the
@@ -25,7 +24,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 @RunWith(Parameterized.class)
 public class JsonParseTest {
-  private static ObjectMapper mapper = new ObjectMapper();
   private String json;
 
   public JsonParseTest(String json) {
@@ -36,13 +34,11 @@ public class JsonParseTest {
   public void check() {
     try {
       Expression expr = Parser.compileString(json);
-      JsonNode actual = expr.apply(null);
+      JsonValue actual = expr.apply(null);
 
-      JsonNode expected = mapper.readTree(json);
+      JsonValue expected = JsonIO.parseString(json);
 
       assertEquals("actual class " + actual.getClass() + ", expected class " + expected.getClass(), expected, actual);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
     } catch (JsltException e) {
       throw new RuntimeException("Parsing '" + json + "' failed", e);
     }
@@ -50,12 +46,12 @@ public class JsonParseTest {
 
   @Parameters
   public static Collection<Object[]> data() {
-    JsonNode json = TestUtils.loadFile("json-parse-tests.json");
-    JsonNode tests = json.get("tests");
+    JsonValue json = TestUtils.loadFile("json-parse-tests.json");
+    JsonValue tests = json.get("tests");
 
     List<Object[]> strings = new ArrayList();
     for (int ix = 0; ix < tests.size(); ix++)
-      strings.add(new Object[] { tests.get(ix).asText() });
+      strings.add(new Object[] { tests.get(ix).asString() });
     return strings;
   }
 }

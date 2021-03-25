@@ -38,22 +38,9 @@ import java.security.NoSuchAlgorithmException;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.BooleanNode;
-import com.fasterxml.jackson.databind.node.DoubleNode;
-import com.fasterxml.jackson.databind.node.IntNode;
-import com.fasterxml.jackson.databind.node.LongNode;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
+import com.schibsted.spt.data.json.*;
 import com.schibsted.spt.data.jslt.Function;
 import com.schibsted.spt.data.jslt.JsltException;
-
 
 /**
  * For now contains all the various function implementations. Should
@@ -151,7 +138,7 @@ public class BuiltinFunctions {
       super("number", 1, 2);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
       if (arguments.length == 1)
         return NodeUtils.number(arguments[0], true, null);
       else
@@ -167,14 +154,14 @@ public class BuiltinFunctions {
       super("round", 1, 1);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      JsonNode number = arguments[0];
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
+      JsonValue number = arguments[0];
       if (number.isNull())
-        return NullNode.instance;
+        return number;
       else if (!number.isNumber())
         throw new JsltException("round() cannot round a non-number: " + number);
 
-      return new LongNode(Math.round(number.doubleValue()));
+      return input.makeValue(Math.round(number.asDouble()));
     }
   }
 
@@ -186,14 +173,14 @@ public class BuiltinFunctions {
       super("floor", 1, 1);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      JsonNode number = arguments[0];
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
+      JsonValue number = arguments[0];
       if (number.isNull())
-        return NullNode.instance;
+        return number;
       else if (!number.isNumber())
         throw new JsltException("floor() cannot round a non-number: " + number);
 
-      return new LongNode((long) Math.floor(number.doubleValue()));
+      return input.makeValue((long) Math.floor(number.asDouble()));
     }
   }
 
@@ -205,14 +192,14 @@ public class BuiltinFunctions {
       super("ceiling", 1, 1);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      JsonNode number = arguments[0];
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
+      JsonValue number = arguments[0];
       if (number.isNull())
-        return NullNode.instance;
+        return number;
       else if (!number.isNumber())
         throw new JsltException("ceiling() cannot round a non-number: " + number);
 
-      return new LongNode((long) Math.ceil(number.doubleValue()));
+      return input.makeValue((long) Math.ceil(number.asDouble()));
     }
   }
 
@@ -225,8 +212,8 @@ public class BuiltinFunctions {
       super("random", 0, 0);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      return new DoubleNode(random.nextDouble());
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
+      return input.makeValue(random.nextDouble());
     }
   }
 
@@ -238,27 +225,27 @@ public class BuiltinFunctions {
       super("sum", 1, 1);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      JsonNode array = arguments[0];
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
+      JsonValue array = arguments[0];
       if (array.isNull())
-        return NullNode.instance;
+        return array;
       else if (!array.isArray())
         throw new JsltException("sum(): argument must be array, was " + array);
 
       double sum = 0.0;
       boolean integral = true;
       for (int ix = 0; ix < array.size(); ix++) {
-        JsonNode value = array.get(ix);
+        JsonValue value = array.get(ix);
         if (!value.isNumber())
           throw new JsltException("sum(): array must contain numbers, found " + value);
         integral &= value.isIntegralNumber();
 
-        sum += value.doubleValue();
+        sum += value.asDouble();
       }
       if (integral)
-        return new LongNode((long) sum);
+        return input.makeValue((long) sum);
       else
-        return new DoubleNode(sum);
+        return input.makeValue(sum);
     }
   }
 
@@ -270,24 +257,24 @@ public class BuiltinFunctions {
       super("modulo", 2, 2);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      JsonNode dividend = arguments[0];
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
+      JsonValue dividend = arguments[0];
       if (dividend.isNull())
-        return NullNode.instance;
+        return input.makeNull();
       else if (!dividend.isNumber())
         throw new JsltException("mod(): dividend cannot be a non-number: " + dividend);
 
-      JsonNode divisor = arguments[1];
+      JsonValue divisor = arguments[1];
       if (divisor.isNull())
-        return NullNode.instance;
+        return input.makeNull();
       else if (!divisor.isNumber())
         throw new JsltException("mod(): divisor cannot be a non-number: " + divisor);
 
       if (!dividend.isIntegralNumber() || !divisor.isIntegralNumber()) {
         throw new JsltException("mod(): operands must be integral types");
       } else {
-        long D = dividend.longValue();
-        long d = divisor.longValue();
+        long D = dividend.asLong();
+        long d = divisor.asLong();
         if (d == 0)
           throw new JsltException("mod(): cannot divide by zero");
 
@@ -299,7 +286,7 @@ public class BuiltinFunctions {
             r -= d;
         }
 
-        return new LongNode(r);
+        return input.makeValue(r);
       }
     }
   }
@@ -308,28 +295,17 @@ public class BuiltinFunctions {
 
   public static class HashInt extends AbstractFunction {
 
-    private static ObjectMapper mapper = new ObjectMapper()
-            .configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
-            .configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
-            ;
-    private static ObjectWriter writer = mapper.writer();
-
     public HashInt() {
       super("hash-int", 1, 1);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      JsonNode node = arguments[0];
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
+      JsonValue node = arguments[0];
       if (node.isNull())
-        return NullNode.instance;
-      try {
-        // https://stackoverflow.com/a/18993481/90580
-        final Object obj = mapper.treeToValue(node, Object.class);
-        String jsonString = writer.writeValueAsString(obj);
-        return new IntNode(jsonString.hashCode());
-      } catch (JsonProcessingException e) {
-        throw new JsltException("hash-int: can't process json" + e);
-      }
+        return node;
+
+      String jsonString = JsonIO.toStringWithSortedKeys(node);
+      return input.makeValue(jsonString.hashCode());
     }
   }
 
@@ -340,10 +316,10 @@ public class BuiltinFunctions {
       super("test", 2, 2);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
       // if data is missing then it doesn't match, end of story
       if (arguments[0].isNull())
-        return BooleanNode.FALSE;
+        return input.makeFalse();
 
       String string = NodeUtils.toString(arguments[0], false);
       String regexp = NodeUtils.toString(arguments[1], true);
@@ -352,7 +328,7 @@ public class BuiltinFunctions {
 
       Pattern p = getRegexp(regexp);
       java.util.regex.Matcher m = p.matcher(string);
-      return NodeUtils.toJson(m.find(0));
+      return input.makeValue(m.find(0));
     }
   }
 
@@ -370,7 +346,7 @@ public class BuiltinFunctions {
       super("capture", 2, 2);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
       // if data is missing then it doesn't match, end of story
       if (arguments[0].isNull())
         return arguments[0]; // null
@@ -386,19 +362,19 @@ public class BuiltinFunctions {
         cache.put(regexps, regex);
       }
 
-      ObjectNode node = NodeUtils.mapper.createObjectNode();
+      JsonObjectBuilder node = input.makeObjectBuilder();
       Matcher m = regex.matcher(string);
       if (m.find()) {
         for (String group : regex.getGroups()) {
           try {
-            node.put(group, m.group(group));
+            node.set(group, m.group(group));
           } catch (IllegalStateException e) {
             // this group had no match: do nothing
           }
         }
       }
 
-      return node;
+      return node.build();
     }
   }
 
@@ -442,7 +418,7 @@ public class BuiltinFunctions {
       super("split", 2, 2);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
       // if input string is missing then we're doing nothing
       if (arguments[0].isNull())
         return arguments[0]; // null
@@ -452,7 +428,11 @@ public class BuiltinFunctions {
       if (split == null)
         throw new JsltException("split() can't split on null");
 
-      return NodeUtils.toJson(string.split(split));
+      String[] parts = string.split(split);
+      JsonValue[] buffer = new JsonValue[parts.length];
+      for (int ix = 0; ix < parts.length; ix++)
+        buffer[ix] = input.makeValue(parts[ix]);
+      return input.makeArray(buffer);
     }
   }
 
@@ -464,13 +444,13 @@ public class BuiltinFunctions {
       super("lowercase", 1, 1);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
       // if input string is missing then we're doing nothing
       if (arguments[0].isNull())
         return arguments[0]; // null
 
       String string = NodeUtils.toString(arguments[0], false);
-      return new TextNode(string.toLowerCase());
+      return input.makeValue(string.toLowerCase());
     }
   }
 
@@ -482,13 +462,13 @@ public class BuiltinFunctions {
       super("uppercase", 1, 1);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
       // if input string is missing then we're doing nothing
       if (arguments[0].isNull())
         return arguments[0]; // null
 
       String string = NodeUtils.toString(arguments[0], false);
-      return new TextNode(string.toUpperCase());
+      return input.makeValue(string.toUpperCase());
     }
   }
 
@@ -507,7 +487,7 @@ public class BuiltinFunctions {
       }
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
       // if input string is missing then we're doing nothing
       if (arguments[0].isNull())
         return arguments[0]; // null
@@ -517,7 +497,7 @@ public class BuiltinFunctions {
       byte[] bytes = this.messageDigest.digest(message.getBytes(UTF_8));
       String string = Utils.printHexBinary(bytes);
 
-      return new TextNode(string);
+      return input.makeValue(string);
     }
   }
 
@@ -529,8 +509,8 @@ public class BuiltinFunctions {
       super("not", 1, 1);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      return NodeUtils.toJson(!NodeUtils.isTrue(arguments[0]));
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
+      return input.makeValue(!NodeUtils.isTrue(arguments[0]));
     }
   }
 
@@ -542,8 +522,8 @@ public class BuiltinFunctions {
       super("boolean", 1, 1);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      return NodeUtils.toJson(NodeUtils.isTrue(arguments[0]));
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
+      return input.makeValue(NodeUtils.isTrue(arguments[0]));
     }
   }
 
@@ -555,8 +535,8 @@ public class BuiltinFunctions {
       super("is-boolean", 1, 1);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      return NodeUtils.toJson(arguments[0].isBoolean());
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
+      return input.makeValue(arguments[0].isBoolean());
     }
   }
 
@@ -568,18 +548,18 @@ public class BuiltinFunctions {
       super("fallback", 2, 1024);
     }
 
-    public JsonNode call(Scope scope, JsonNode input,
+    public JsonValue call(Scope scope, JsonValue input,
                          ExpressionNode[] parameters) {
       // making this a macro means we can evaluate only the parameters
       // that are necessary to find a value, and leave the rest
       // untouched, giving better performance
 
       for (int ix = 0; ix < parameters.length; ix++) {
-        JsonNode value = parameters[ix].apply(scope, input);
+        JsonValue value = parameters[ix].apply(scope, input);
         if (NodeUtils.isValue(value))
           return value;
       }
-      return NullNode.instance;
+      return input.makeNull();
     }
   }
 
@@ -591,8 +571,8 @@ public class BuiltinFunctions {
       super("is-object", 1, 1);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      return NodeUtils.toJson(arguments[0].isObject());
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
+      return input.makeValue(arguments[0].isObject());
     }
   }
 
@@ -604,23 +584,23 @@ public class BuiltinFunctions {
       super("get-key", 2, 3);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
       String key = NodeUtils.toString(arguments[1], true);
       if (key == null)
-        return NullNode.instance;
+        return input.makeNull();
 
-      JsonNode obj = arguments[0];
+      JsonValue obj = arguments[0];
       if (obj.isObject()) {
-        JsonNode value = obj.get(key);
+        JsonValue value = obj.get(key);
         if (value == null) {
           if (arguments.length == 2)
-            return NullNode.instance;
+            return input.makeNull();
           else
             return arguments[2]; // fallback argument
         } else
           return value;
       } else if (obj.isNull())
-        return NullNode.instance;
+        return input.makeNull();
       else
         throw new JsltException("get-key: can't look up keys in " + obj);
     }
@@ -634,8 +614,8 @@ public class BuiltinFunctions {
       super("is-array", 1, 1);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      return NodeUtils.toJson(arguments[0].isArray());
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
+      return input.makeValue(arguments[0].isArray());
     }
   }
 
@@ -647,8 +627,8 @@ public class BuiltinFunctions {
       super("array", 1, 1);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      JsonNode value = arguments[0];
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
+      JsonValue value = arguments[0];
       if (value.isNull() || value.isArray())
         return value;
       else if (value.isObject())
@@ -666,25 +646,29 @@ public class BuiltinFunctions {
       super("flatten", 1, 1);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      JsonNode value = arguments[0];
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
+      JsonValue value = arguments[0];
       if (value.isNull())
         return value;
       else if (!value.isArray())
         throw new JsltException("flatten() cannot operate on " + value);
 
-      ArrayNode array = NodeUtils.mapper.createArrayNode();
-      flatten(array, value);
-      return array;
+      // FIXME: how to do this efficiently?
+      // ArrayNode array = NodeUtils.mapper.createArrayNode();
+      // flatten(array, value);
+      // return array;
+      return null;
     }
 
-    private void flatten(ArrayNode array, JsonNode current) {
+    private void flatten(JsonValue array, JsonValue current) {
       for (int ix = 0; ix < current.size(); ix++) {
-        JsonNode node = current.get(ix);
+        JsonValue node = current.get(ix);
         if (node.isArray())
           flatten(array, node);
-        else
-          array.add(node);
+
+        // FIXME
+        // else
+        //   array.add(node);
       }
     }
   }
@@ -697,19 +681,19 @@ public class BuiltinFunctions {
       super("all", 1, 1);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      JsonNode value = arguments[0];
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
+      JsonValue value = arguments[0];
       if (value.isNull())
         return value;
       else if (!value.isArray())
         throw new JsltException("all() requires an array, not " + value);
 
       for (int ix = 0; ix < value.size(); ix++) {
-        JsonNode node = value.get(ix);
+        JsonValue node = value.get(ix);
         if (!NodeUtils.isTrue(node))
-          return BooleanNode.FALSE;
+          return input.makeFalse();
       }
-      return BooleanNode.TRUE;
+      return input.makeTrue();
     }
 
   }
@@ -722,19 +706,19 @@ public class BuiltinFunctions {
       super("any", 1, 1);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      JsonNode value = arguments[0];
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
+      JsonValue value = arguments[0];
       if (value.isNull())
         return value;
       else if (!value.isArray())
         throw new JsltException("any() requires an array, not " + value);
 
       for (int ix = 0; ix < value.size(); ix++) {
-        JsonNode node = value.get(ix);
+        JsonValue node = value.get(ix);
         if (NodeUtils.isTrue(node))
-          return BooleanNode.TRUE;
+          return input.makeTrue();
       }
-      return BooleanNode.FALSE;
+      return input.makeFalse();
     }
 
   }
@@ -747,24 +731,24 @@ public class BuiltinFunctions {
       super("zip", 2, 2);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      JsonNode array1 = arguments[0];
-      JsonNode array2 = arguments[1];
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
+      JsonValue array1 = arguments[0];
+      JsonValue array2 = arguments[1];
       if (array1.isNull() || array2.isNull())
-        return NullNode.instance;
+        return input.makeNull();
       else if (!array1.isArray() || !array2.isArray())
         throw new JsltException("zip() requires arrays");
       else if (array1.size() != array2.size())
         throw new JsltException("zip() arrays were of unequal size");
 
-      ArrayNode array = NodeUtils.mapper.createArrayNode();
+      JsonValue[] buffer = new JsonValue[array1.size()];
       for (int ix = 0; ix < array1.size(); ix++) {
-        ArrayNode pair = NodeUtils.mapper.createArrayNode();
-        pair.add(array1.get(ix));
-        pair.add(array2.get(ix));
-        array.add(pair);
+        JsonValue[] pair = new JsonValue[] {
+          array1.get(ix), array2.get(ix)
+        };
+        buffer[ix] = input.makeArray(pair);
       }
-      return array;
+      return input.makeArray(buffer);
     }
 
   }
@@ -777,21 +761,21 @@ public class BuiltinFunctions {
       super("zip-with-index", 1, 1);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      JsonNode arrayIn = arguments[0];
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
+      JsonValue arrayIn = arguments[0];
       if (arrayIn.isNull())
-        return NullNode.instance;
+        return input.makeNull();
       else if (!arrayIn.isArray())
         throw new JsltException("zip-with-index() argument must be an array");
 
-      ArrayNode arrayOut = NodeUtils.mapper.createArrayNode();
+      JsonValue[] buffer = new JsonValue[arrayIn.size()];
       for (int ix = 0; ix < arrayIn.size(); ix++) {
-        ObjectNode pair = NodeUtils.mapper.createObjectNode();
-        pair.put("index", new IntNode(ix));
-        pair.put("value", arrayIn.get(ix));
-        arrayOut.add(pair);
+        buffer[ix] = input.makeObjectBuilder()
+          .set("index", input.makeValue(ix))
+          .set("value", arrayIn.get(ix))
+          .build();
       }
-      return arrayOut;
+      return input.makeArray(buffer);
     }
 
   }
@@ -804,19 +788,19 @@ public class BuiltinFunctions {
       super("index-of", 2, 2);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      JsonNode array = arguments[0];
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
+      JsonValue array = arguments[0];
       if (array.isNull())
-        return NullNode.instance;
+        return input.makeNull();
       else if (!array.isArray())
         throw new JsltException("index-of() first argument must be an array");
 
-      JsonNode value = arguments[1];
+      JsonValue value = arguments[1];
       for (int ix = 0; ix < array.size(); ix++) {
         if (EqualsComparison.equals(array.get(ix), value))
-          return new IntNode(ix);
+          return input.makeValue(ix);
       }
-      return new IntNode(-1);
+      return input.makeValue(-1);
     }
 
   }
@@ -829,10 +813,10 @@ public class BuiltinFunctions {
       super("starts-with", 2, 2);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
       String string = NodeUtils.toString(arguments[0], false);
       String prefix = NodeUtils.toString(arguments[1], false);
-      return NodeUtils.toJson(string.startsWith(prefix));
+      return input.makeValue(string.startsWith(prefix));
     }
   }
 
@@ -844,10 +828,10 @@ public class BuiltinFunctions {
       super("ends-with", 2, 2);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
       String string = NodeUtils.toString(arguments[0], false);
       String suffix = NodeUtils.toString(arguments[1], false);
-      return NodeUtils.toJson(string.endsWith(suffix));
+      return input.makeValue(string.endsWith(suffix));
     }
   }
 
@@ -859,17 +843,14 @@ public class BuiltinFunctions {
       super("from-json", 1, 2);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
       String json = NodeUtils.toString(arguments[0], true);
       if (json == null)
-        return NullNode.instance;
+        return input.makeNull();
 
       try {
-        JsonNode parsed = NodeUtils.mapper.readTree(json);
-        if (parsed == null) // if input is "", for example
-          return NullNode.instance;
-        return parsed;
-      } catch (Exception e) {
+        return JsonIO.parseString(json);
+      } catch (JsltException e) {
         if (arguments.length == 2)
           return arguments[1]; // return fallback on parse fail
         else
@@ -886,13 +867,8 @@ public class BuiltinFunctions {
       super("to-json", 1, 1);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      try {
-        String json = NodeUtils.mapper.writeValueAsString(arguments[0]);
-        return new TextNode(json);
-      } catch (Exception e) {
-        throw new JsltException("to-json can't serialize " + arguments[0] + ": " + e);
-      }
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
+      return input.makeValue(JsonIO.toString(arguments[0]));
     }
   }
 
@@ -904,10 +880,10 @@ public class BuiltinFunctions {
       super("replace", 3, 3);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
       String string = NodeUtils.toString(arguments[0], true);
       if (string == null)
-        return NullNode.instance;
+        return input.makeNull();
 
       String regexp = NodeUtils.toString(arguments[1], false);
       String sep = NodeUtils.toString(arguments[2], false);
@@ -934,14 +910,14 @@ public class BuiltinFunctions {
         pos = m.end();
       }
 
-      if (pos == 0 && arguments[0].isTextual())
+      if (pos == 0 && arguments[0].isString())
         // there were matches, so the string hasn't changed
         return arguments[0];
       else if (pos < string.length())
         // there was text remaining after the end of the last match. must copy
         bufix = copy(string, buf, bufix, pos, string.length());
 
-      return new TextNode(new String(buf, 0, bufix));
+      return input.makeValue(new String(buf, 0, bufix));
     }
   }
 
@@ -953,12 +929,12 @@ public class BuiltinFunctions {
       super("trim", 1, 1);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
       String string = NodeUtils.toString(arguments[0], true);
       if (string == null)
-        return NullNode.instance;
+        return input.makeNull();
 
-      return new TextNode(string.trim());
+      return input.makeValue(string.trim());
     }
   }
 
@@ -970,10 +946,10 @@ public class BuiltinFunctions {
       super("join", 2, 2);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      ArrayNode array = NodeUtils.toArray(arguments[0], true);
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
+      JsonValue array = NodeUtils.toArray(arguments[0], true);
       if (array == null)
-        return NullNode.instance;
+        return input.makeNull();
 
       String sep = NodeUtils.toString(arguments[1], false);
 
@@ -983,7 +959,7 @@ public class BuiltinFunctions {
           buf.append(sep);
         buf.append(NodeUtils.toString(array.get(ix), false));
       }
-      return new TextNode(buf.toString());
+      return input.makeValue(buf.toString());
     }
   }
 
@@ -995,34 +971,34 @@ public class BuiltinFunctions {
       super("contains", 2, 2);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
       if (arguments[1].isNull())
-        return BooleanNode.FALSE; // nothing is contained in null
+        return input.makeFalse(); // nothing is contained in null
 
       else if (arguments[1].isArray()) {
         for (int ix = 0; ix < arguments[1].size(); ix++)
           if (arguments[1].get(ix).equals(arguments[0]))
-            return BooleanNode.TRUE;
+            return input.makeTrue();
 
       } else if (arguments[1].isObject()) {
         String key = NodeUtils.toString(arguments[0], true);
         if (key == null)
-          return BooleanNode.FALSE;
+          return input.makeFalse();
 
-        return NodeUtils.toJson(arguments[1].has(key));
+        return input.makeValue(arguments[1].has(key));
 
-      } else if (arguments[1].isTextual()) {
+      } else if (arguments[1].isString()) {
         String sub = NodeUtils.toString(arguments[0], true);
         if (sub == null)
-          return BooleanNode.FALSE;
+          return input.makeFalse();
 
-        String str = arguments[1].asText();
-        return NodeUtils.toJson(str.indexOf(sub) != -1);
+        String str = arguments[1].asString();
+        return input.makeValue(str.indexOf(sub) != -1);
 
       } else
         throw new JsltException("Contains cannot operate on " + arguments[1]);
 
-      return BooleanNode.FALSE;
+      return input.makeFalse();
     }
   }
 
@@ -1034,12 +1010,10 @@ public class BuiltinFunctions {
       super("size", 1, 1);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      if (arguments[0].isArray() || arguments[0].isObject())
-        return new IntNode(arguments[0].size());
-
-      else if (arguments[0].isTextual())
-        return new IntNode(arguments[0].asText().length());
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
+      if (arguments[0].isArray() || arguments[0].isObject() ||
+          arguments[0].isString())
+        return input.makeValue(arguments[0].size());
 
       else if (arguments[0].isNull())
         return arguments[0];
@@ -1057,7 +1031,7 @@ public class BuiltinFunctions {
       super("error", 1, 1);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
       String msg = NodeUtils.toString(arguments[0], false);
       throw new JsltException("error: " + msg);
     }
@@ -1071,11 +1045,11 @@ public class BuiltinFunctions {
       super("string", 1, 1);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      if (arguments[0].isTextual())
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
+      if (arguments[0].isString())
         return arguments[0];
       else
-        return new TextNode(arguments[0].toString());
+        return input.makeValue(arguments[0].toString());
     }
   }
 
@@ -1087,8 +1061,8 @@ public class BuiltinFunctions {
       super("is-string", 1, 1);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      return NodeUtils.toJson(arguments[0].isTextual());
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
+      return input.makeValue(arguments[0].isString());
     }
   }
 
@@ -1100,8 +1074,8 @@ public class BuiltinFunctions {
       super("is-number", 1, 1);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      return NodeUtils.toJson(arguments[0].isNumber());
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
+      return input.makeValue(arguments[0].isNumber());
     }
   }
 
@@ -1113,8 +1087,8 @@ public class BuiltinFunctions {
       super("is-integer", 1, 1);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      return NodeUtils.toJson(arguments[0].isIntegralNumber());
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
+      return input.makeValue(arguments[0].isIntegralNumber());
     }
   }
 
@@ -1126,8 +1100,8 @@ public class BuiltinFunctions {
       super("is-decimal", 1, 1);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      return NodeUtils.toJson(arguments[0].isFloatingPointNumber());
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
+      return input.makeValue(arguments[0].isDecimalNumber());
     }
   }
 
@@ -1139,9 +1113,9 @@ public class BuiltinFunctions {
       super("now", 0, 0);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
       long ms = System.currentTimeMillis();
-      return NodeUtils.toJson( ms / 1000.0 );
+      return input.makeValue( ms / 1000.0 );
     }
   }
 
@@ -1153,13 +1127,13 @@ public class BuiltinFunctions {
       super("parse-time", 2, 3);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
       String text = NodeUtils.toString(arguments[0], true);
       if (text == null)
-        return NullNode.instance;
+        return input.makeNull();
 
       String formatstr = NodeUtils.toString(arguments[1], false);
-      JsonNode fallback = null;
+      JsonValue fallback = null;
       if (arguments.length > 2)
         fallback = arguments[2];
 
@@ -1171,7 +1145,7 @@ public class BuiltinFunctions {
         SimpleDateFormat format = new SimpleDateFormat(formatstr);
         format.setTimeZone(new SimpleTimeZone(0, "UTC"));
         Date time = format.parse(text);
-        return NodeUtils.toJson((double) (time.getTime() / 1000.0));
+        return input.makeValue((double) (time.getTime() / 1000.0));
       } catch (IllegalArgumentException e) {
         // thrown if format is bad
         throw new JsltException("parse-time: Couldn't parse format '" + formatstr + "': " + e.getMessage());
@@ -1196,10 +1170,10 @@ public class BuiltinFunctions {
       super("format-time", 2, 3);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      JsonNode number = NodeUtils.number(arguments[0], null);
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
+      JsonValue number = NodeUtils.number(arguments[0], null);
       if (number == null || number.isNull())
-        return NullNode.instance;
+        return input.makeNull();
 
       double timestamp = number.asDouble();
 
@@ -1221,7 +1195,7 @@ public class BuiltinFunctions {
         SimpleDateFormat format = new SimpleDateFormat(formatstr);
         format.setTimeZone(zone);
         String formatted = format.format(Math.round(timestamp * 1000));
-        return new TextNode(formatted);
+        return input.makeValue(formatted);
       } catch (IllegalArgumentException e) {
         // thrown if format is bad
         throw new JsltException("format-time: Couldn't parse format '" + formatstr + "': " + e.getMessage());
@@ -1236,7 +1210,7 @@ public class BuiltinFunctions {
       super("min", 2, 2);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
       // this works because null is the smallest of all values
       if (ComparisonOperator.compare(arguments[0], arguments[1], null) < 0)
         return arguments[0];
@@ -1252,9 +1226,9 @@ public class BuiltinFunctions {
       super("max", 2, 2);
     }
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
       if (arguments[0].isNull() || arguments[1].isNull())
-        return NullNode.instance;
+        return input.makeNull();
       else if (ComparisonOperator.compare(arguments[0], arguments[1], null) > 0)
         return arguments[0];
       else
@@ -1267,42 +1241,42 @@ public class BuiltinFunctions {
   public static class ParseUrl extends AbstractFunction {
     public ParseUrl() { super("parse-url", 1,1);}
 
-    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+    public JsonValue call(JsonValue input, JsonValue[] arguments) {
       if (arguments[0].isNull())
-        return NullNode.instance;
+        return input.makeNull();
 
-      String urlString = arguments[0].asText();
+      String urlString = arguments[0].asString();
 
       try {
-        URL aURL = new URL(arguments[0].asText());
-        final ObjectNode objectNode = NodeUtils.mapper.createObjectNode();
+        URL aURL = new URL(arguments[0].asString());
+        JsonObjectBuilder objectNode = input.makeObjectBuilder();
         if (aURL.getHost() != null && !aURL.getHost().isEmpty())
-          objectNode.put("host", aURL.getHost());
+          objectNode.set("host", aURL.getHost());
         if (aURL.getPort() != -1)
-          objectNode.put("port", aURL.getPort());
+          objectNode.set("port", input.makeValue(aURL.getPort()));
         if (!aURL.getPath().isEmpty())
-          objectNode.put("path", aURL.getPath());
+          objectNode.set("path", aURL.getPath());
         if (aURL.getProtocol() != null && !aURL.getProtocol().isEmpty())
-          objectNode.put("scheme", aURL.getProtocol());
+          objectNode.set("scheme", aURL.getProtocol());
         if (aURL.getQuery() != null && !aURL.getQuery().isEmpty()) {
-          objectNode.put("query", aURL.getQuery());
-          final ObjectNode queryParamsNode = NodeUtils.mapper.createObjectNode();
-          objectNode.set("parameters", queryParamsNode);
-          final String[] pairs = aURL.getQuery().split("&");
+          objectNode.set("query", aURL.getQuery());
+          JsonObjectBuilder queryParamsNode = input.makeObjectBuilder();
+          objectNode.set("parameters", queryParamsNode.build());
+          String[] pairs = aURL.getQuery().split("&");
           for (String pair : pairs) {
-            final int idx = pair.indexOf("=");
-            final String key = idx > 0 ? URLDecoder.decode(pair.substring(0, idx), "UTF-8") : pair;
-            if (!queryParamsNode.has(key)) queryParamsNode.set(key, NodeUtils.mapper.createArrayNode());
-            final String value = idx > 0 && pair.length() > idx + 1 ? URLDecoder.decode(pair.substring(idx + 1), "UTF-8") : null;
-            final ArrayNode valuesNode = (ArrayNode) queryParamsNode.get(key);
-            valuesNode.add(value);
+            int idx = pair.indexOf("=");
+            String key = idx > 0 ? URLDecoder.decode(pair.substring(0, idx), "UTF-8") : pair;
+            // if (!queryParamsNode.has(key)) queryParamsNode.set(key, NodeUtils.mapper.createArrayNode());
+            String value = idx > 0 && pair.length() > idx + 1 ? URLDecoder.decode(pair.substring(idx + 1), "UTF-8") : null;
+            //JsonValue valuesNode = queryParamsNode.get(key);
+            //valuesNode.add(value); // FIXME: no can do
           }
         }
         if(aURL.getRef() != null)
-          objectNode.put("fragment", aURL.getRef());
+          objectNode.set("fragment", aURL.getRef());
         if(aURL.getUserInfo() != null && !aURL.getUserInfo().isEmpty())
-          objectNode.put("userinfo", aURL.getUserInfo());
-        return objectNode;
+          objectNode.set("userinfo", aURL.getUserInfo());
+        return objectNode.build();
       } catch (MalformedURLException | UnsupportedEncodingException e) {
         throw new JsltException("Can't parse " + urlString, e);
       }

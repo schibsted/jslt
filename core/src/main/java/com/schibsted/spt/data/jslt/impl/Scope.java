@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.ArrayDeque;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.schibsted.spt.data.json.JsonValue;
 
 public class Scope {
   public static Scope getRoot(int stackFrameSize) {
@@ -30,7 +30,7 @@ public class Scope {
    * Creates an initialized scope with values for variables supplied
    * by client code into the JSLT expression.
    */
-  public static Scope makeScope(Map<String, JsonNode> variables,
+  public static Scope makeScope(Map<String, JsonValue> variables,
                                 int stackFrameSize,
                                 Map<String, Integer> parameterSlots) {
     Scope scope = new Scope(stackFrameSize);
@@ -40,32 +40,32 @@ public class Scope {
     return scope;
   }
 
-  private JsonNode[] globalStackFrame;
-  private Deque<JsonNode[]> localStackFrames;
+  private JsonValue[] globalStackFrame;
+  private Deque<JsonValue[]> localStackFrames;
   private static final int BITMASK = 0x10000000;
   private static final int INVERSE = 0xEFFFFFFF;
 
   public Scope(int stackFrameSize) {
-    this.globalStackFrame = new JsonNode[stackFrameSize];
+    this.globalStackFrame = new JsonValue[stackFrameSize];
     this.localStackFrames = new ArrayDeque();
   }
 
   public void enterFunction(int stackFrameSize) {
-    localStackFrames.push(new JsonNode[stackFrameSize]);
+    localStackFrames.push(new JsonValue[stackFrameSize]);
   }
 
   public void leaveFunction() {
     localStackFrames.pop();
   }
 
-  public JsonNode getValue(int slot) {
+  public JsonValue getValue(int slot) {
     if ((slot & BITMASK) != 0)
       return globalStackFrame[slot & INVERSE];
     else
       return localStackFrames.peek()[slot];
   }
 
-  public void setValue(int slot, JsonNode value) {
+  public void setValue(int slot, JsonValue value) {
     if ((slot & BITMASK) != 0)
       globalStackFrame[slot & INVERSE] = value;
     else

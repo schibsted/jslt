@@ -8,7 +8,7 @@ import static org.junit.Assert.fail;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.schibsted.spt.data.json.*;
 
 /**
  * Test cases for the function wrapper implementations.
@@ -49,9 +49,9 @@ public class FunctionWrapperTest extends TestBase {
 
     long before = System.currentTimeMillis();
 
-    JsonNode context = mapper.readTree("{}");
+    JsonValue context = JsonIO.parseString("{}");
     Expression expr = Parser.compileString(query, functions);
-    JsonNode actual = expr.apply(context);
+    JsonValue actual = expr.apply(context);
     long value = actual.asLong();
 
     long after = System.currentTimeMillis();
@@ -68,9 +68,9 @@ public class FunctionWrapperTest extends TestBase {
     );
     String query = "pow(2, 10)";
 
-    JsonNode context = mapper.readTree("{}");
+    JsonValue context = JsonIO.parseString("{}");
     Expression expr = Parser.compileString(query, functions);
-    JsonNode actual = expr.apply(context);
+    JsonValue actual = expr.apply(context);
 
     assertTrue(actual.asInt() == 1024);
   }

@@ -22,11 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.IntNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.schibsted.spt.data.json.*;
 import com.schibsted.spt.data.jslt.JsltException;
 import com.schibsted.spt.data.jslt.filters.JsonFilter;
 
@@ -54,8 +50,8 @@ public class ObjectComprehension extends AbstractNode {
     this.filter = filter;
   }
 
-  public JsonNode apply(Scope scope, JsonNode input) {
-    JsonNode sequence = loop.apply(scope, input);
+  public JsonValue apply(Scope scope, JsonValue input) {
+    JsonValue sequence = loop.apply(scope, input);
     if (sequence.isNull())
       return sequence;
     else if (sequence.isObject())
@@ -63,26 +59,26 @@ public class ObjectComprehension extends AbstractNode {
     else if (!sequence.isArray())
       throw new JsltException("Object comprehension can't loop over " + sequence, location);
 
-    ObjectNode object = NodeUtils.mapper.createObjectNode();
+    JsonObjectBuilder object = input.makeObjectBuilder();
     for (int ix = 0; ix < sequence.size(); ix++) {
-      JsonNode context = sequence.get(ix);
+      JsonValue context = sequence.get(ix);
 
       // must evaluate lets over again for each value because of context
       if (lets.length > 0)
         NodeUtils.evalLets(scope, context, lets);
 
       if (ifExpr == null || NodeUtils.isTrue(ifExpr.apply(scope, context))) {
-        JsonNode valueNode = value.apply(scope, context);
+        JsonValue valueNode = value.apply(scope, context);
         if (filter.filter(valueNode)) {
           // if there is no value, no need to evaluate the key
-          JsonNode keyNode = key.apply(scope, context);
-          if (!keyNode.isTextual())
+          JsonValue keyNode = key.apply(scope, context);
+          if (!keyNode.isString())
             throw new JsltException("Object comprehension must have string as key, not " + keyNode, location);
-          object.set(keyNode.asText(), valueNode);
+          object.set(keyNode.asString(), valueNode);
         }
       }
     }
-    return object;
+    return object.build();
   }
 
   public void prepare(PreparationContext ctx) {

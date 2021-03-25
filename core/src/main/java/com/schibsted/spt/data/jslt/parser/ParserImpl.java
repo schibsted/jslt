@@ -31,14 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.FileNotFoundException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.IntNode;
-import com.fasterxml.jackson.databind.node.LongNode;
-import com.fasterxml.jackson.databind.node.DoubleNode;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.BooleanNode;
+import com.schibsted.spt.data.json.*;
 import com.schibsted.spt.data.jslt.Module;
 import com.schibsted.spt.data.jslt.Callable;
 import com.schibsted.spt.data.jslt.Function;
@@ -242,6 +235,7 @@ public class ParserImpl {
   }
 
   private static ExpressionNode node2baseExpr(ParseContext ctx, SimpleNode node) {
+    JsonBuilder jsonBuilder = ctx.getJsonBuilder();
     if (node.id != JsltParserTreeConstants.JJTBASEEXPR)
       throw new JsltException("INTERNAL ERROR: Wrong type of node: " + node);
 
@@ -258,30 +252,24 @@ public class ParserImpl {
     int kind = token.kind;
 
     if (kind == JsltParserConstants.NULL)
-      return new LiteralExpression(NullNode.instance, loc);
+      return new LiteralExpression(jsonBuilder.makeNull(), loc);
 
     else if (kind == JsltParserConstants.INTEGER) {
-      JsonNode numberObj;
       long number = Long.parseLong(token.image);
-      if (number > Integer.MAX_VALUE || number < Integer.MIN_VALUE)
-        numberObj = new LongNode(number);
-      else
-        numberObj = new IntNode((int) number);
-
-      return new LiteralExpression(numberObj, loc);
+      return new LiteralExpression(jsonBuilder.makeValue(number), loc);
 
     } else if (kind == JsltParserConstants.DECIMAL) {
-      DoubleNode number = new DoubleNode(Double.parseDouble(token.image));
+      JsonValue number = jsonBuilder.makeValue(Double.parseDouble(token.image));
       return new LiteralExpression(number, loc);
 
     } else if (kind == JsltParserConstants.STRING)
-      return new LiteralExpression(new TextNode(makeString(ctx, token)), loc);
+      return new LiteralExpression(jsonBuilder.makeValue(makeString(ctx, token)), loc);
 
     else if (kind == JsltParserConstants.TRUE)
-      return new LiteralExpression(BooleanNode.TRUE, loc);
+      return new LiteralExpression(jsonBuilder.makeTrue(), loc);
 
     else if (kind == JsltParserConstants.FALSE)
-      return new LiteralExpression(BooleanNode.FALSE, loc);
+      return new LiteralExpression(jsonBuilder.makeFalse(), loc);
 
     else if (kind == JsltParserConstants.DOT ||
              kind == JsltParserConstants.VARIABLE ||

@@ -15,7 +15,7 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.schibsted.spt.data.json.JsonValue;
 
 /**
  * Fake scope used when optimizing away objects that are static, but
@@ -28,6 +28,6 @@ public class OptimizerScope extends Scope {
     super(0);
   }
 
-  public void setValue(int slot, JsonNode value) {
+  public void setValue(int slot, JsonValue value) {
   }
 }

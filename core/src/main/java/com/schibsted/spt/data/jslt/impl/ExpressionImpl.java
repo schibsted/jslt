@@ -19,10 +19,7 @@ import java.util.Map;
 import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.BooleanNode;
+import com.schibsted.spt.data.json.*;
 import com.schibsted.spt.data.jslt.Function;
 import com.schibsted.spt.data.jslt.Expression;
 
@@ -64,20 +61,21 @@ public class ExpressionImpl implements Expression {
     return actual != null;
   }
 
-  public JsonNode apply(Map<String, JsonNode> variables, JsonNode input) {
+  public JsonValue apply(Map<String, JsonValue> variables, JsonValue input) {
     Scope scope = Scope.makeScope(variables, stackFrameSize, parameterSlots);
     return apply(scope, input);
   }
 
-  public JsonNode apply(JsonNode input) {
+  public JsonValue apply(JsonValue input) {
     return apply(Scope.getRoot(stackFrameSize), input);
   }
 
-  public JsonNode apply(Scope scope, JsonNode input) {
+  public JsonValue apply(Scope scope, JsonValue input) {
+    // FIXME: do we need this?
     // Jackson 2.9.2 can parse to Java null. See unit test
     // QueryTest.testNullInput. so we have to handle that
     if (input == null)
-      input = NullNode.instance;
+      input = NullJValue.instance;
 
     // evaluate lets in global modules
     if (fileModules != null) {
@@ -115,7 +113,7 @@ public class ExpressionImpl implements Expression {
    * ExpressionImpl is a module. Called once during compilation.
    * The values are then remembered forever.
    */
-  public void evaluateLetsOnly(Scope scope, JsonNode input) {
+  public void evaluateLetsOnly(Scope scope, JsonValue input) {
     NodeUtils.evalLets(scope, input, lets);
   }
 

@@ -15,7 +15,7 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.schibsted.spt.data.json.JsonValue;
 
 public class UnequalsComparison extends AbstractOperator {
 
@@ -24,7 +24,7 @@ public class UnequalsComparison extends AbstractOperator {
     super(left, right, "!=", location);
   }
 
-  public JsonNode perform(JsonNode v1, JsonNode v2) {
+  public JsonValue perform(JsonValue v1, JsonValue v2) {
     return NodeUtils.toJson(! EqualsComparison.equals(v1, v2) );
   }
 

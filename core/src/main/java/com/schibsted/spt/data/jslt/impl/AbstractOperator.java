@@ -17,7 +17,7 @@ package com.schibsted.spt.data.jslt.impl;
 
 import java.util.List;
 import java.util.ArrayList;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.schibsted.spt.data.json.JsonValue;
 
 /**
  * Shared abstract superclass for comparison operators and others.
@@ -35,9 +35,9 @@ public abstract class AbstractOperator extends AbstractNode {
     this.operator = operator;
   }
 
-  public JsonNode apply(Scope scope, JsonNode input) {
-    JsonNode v1 = left.apply(scope, input);
-    JsonNode v2 = right.apply(scope, input);
+  public JsonValue apply(Scope scope, JsonValue input) {
+    JsonValue v1 = left.apply(scope, input);
+    JsonValue v2 = right.apply(scope, input);
     return perform(v1, v2);
   }
 
@@ -72,7 +72,7 @@ public abstract class AbstractOperator extends AbstractNode {
     return children;
   }
 
-  public abstract JsonNode perform(JsonNode v1, JsonNode v2);
+  public abstract JsonValue perform(JsonValue v1, JsonValue v2);
 
   public String toString() {
     String first = (left instanceof AbstractOperator) ? "(" + left + ")" : left.toString();

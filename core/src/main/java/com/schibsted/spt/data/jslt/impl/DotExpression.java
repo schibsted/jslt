@@ -17,8 +17,7 @@ package com.schibsted.spt.data.jslt.impl;
 
 import java.util.List;
 import java.util.Collections;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.NullNode;
+import com.schibsted.spt.data.json.JsonValue;
 
 public class DotExpression extends AbstractNode {
   private String key;
@@ -34,7 +33,7 @@ public class DotExpression extends AbstractNode {
     this.parent = parent;
   }
 
-  public JsonNode apply(Scope scope, JsonNode input) {
+  public JsonValue apply(Scope scope, JsonValue input) {
     // if there is no key we just return the input
     if (key == null)
       return input;
@@ -44,9 +43,9 @@ public class DotExpression extends AbstractNode {
       input = parent.apply(scope, input);
 
     // okay, do the keying
-    JsonNode value = input.get(key);
+    JsonValue value = input.get(key);
     if (value == null)
-      value = NullNode.instance;
+      value = input.makeNull();
     return value;
   }
 

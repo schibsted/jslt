@@ -15,7 +15,7 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.schibsted.spt.data.json.JsonValue;
 import com.schibsted.spt.data.jslt.JsltException;
 
 public abstract class ComparisonOperator extends AbstractOperator {
@@ -25,21 +25,21 @@ public abstract class ComparisonOperator extends AbstractOperator {
     super(left, right, operator, location);
   }
 
-  public abstract JsonNode perform(JsonNode v1, JsonNode v2);
+  public abstract JsonValue perform(JsonValue v1, JsonValue v2);
 
-  public double compare(JsonNode v1, JsonNode v2) {
+  public double compare(JsonValue v1, JsonValue v2) {
     return compare(v1, v2, location);
   }
 
-  public static double compare(JsonNode v1, JsonNode v2, Location location) {
+  public static double compare(JsonValue v1, JsonValue v2, Location location) {
     if (v1.isNumber() && v2.isNumber()) {
-      double n1 = NodeUtils.number(v1, location).doubleValue();
-      double n2 = NodeUtils.number(v2, location).doubleValue();
+      double n1 = NodeUtils.number(v1, location).asDouble();
+      double n2 = NodeUtils.number(v2, location).asDouble();
       return n1 - n2;
 
-    } else if (v1.isTextual() && v2.isTextual()) {
-      String s1 = v1.asText();
-      String s2 = v2.asText();
+    } else if (v1.isString() && v2.isString()) {
+      String s1 = v1.asString();
+      String s2 = v2.asString();
       return (double) s1.compareTo(s2);
 
     } else if (v1.isNull() || v2.isNull()) {

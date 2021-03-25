@@ -15,7 +15,7 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.schibsted.spt.data.json.JsonValue;
 
 public class EqualsComparison extends AbstractOperator {
 
@@ -24,13 +24,14 @@ public class EqualsComparison extends AbstractOperator {
     super(left, right, "==", location);
   }
 
-  public JsonNode perform(JsonNode v1, JsonNode v2) {
+  public JsonValue perform(JsonValue v1, JsonValue v2) {
     return NodeUtils.toJson(equals(v1, v2));
   }
 
-  public static boolean equals(JsonNode v1, JsonNode v2) {
+  public static boolean equals(JsonValue v1, JsonValue v2) {
     boolean result;
     if (v1.isNumber() && v2.isNumber()) {
+      // FIXME: COULD PUT THIS RIGHT IN NODE HIERARCHY NOW
       // unfortunately, comparison of numeric nodes in Jackson is
       // deliberately less helpful than what we need here. so we have
       // to develop our own support for it.
@@ -38,9 +39,9 @@ public class EqualsComparison extends AbstractOperator {
 
       if (v1.isIntegralNumber() && v2.isIntegralNumber())
         // if both are integers, then compare them as such
-        return v1.longValue() == v2.longValue();
+        return v1.asLong() == v2.asLong();
       else
-        return v1.doubleValue() == v2.doubleValue();
+        return v1.asDouble() == v2.asDouble();
     } else
       return v1.equals(v2);
   }

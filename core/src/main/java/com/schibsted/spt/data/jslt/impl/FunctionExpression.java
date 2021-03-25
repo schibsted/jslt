@@ -15,11 +15,7 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.IntNode;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.BooleanNode;
+import com.schibsted.spt.data.json.JsonValue;
 import com.schibsted.spt.data.jslt.Function;
 import com.schibsted.spt.data.jslt.JsltException;
 
@@ -45,21 +41,21 @@ public class FunctionExpression extends AbstractInvocationExpression {
       this.declared = (FunctionDeclaration) function;
   }
 
-  public JsonNode apply(Scope scope, JsonNode input) {
-    JsonNode[] params = new JsonNode[arguments.length];
+  public JsonValue apply(Scope scope, JsonValue input) {
+    JsonValue[] params = new JsonValue[arguments.length];
     for (int ix = 0; ix < params.length; ix++)
       params[ix] = arguments[ix].apply(scope, input);
 
     if (declared != null)
       return declared.call(scope, input, params);
     else {
-      JsonNode value = function.call(input, params);
+      JsonValue value = function.call(input, params);
 
       // if the user-implemented function returns Java null, silently
       // turn it into a JSON null. (the alternative is to throw an
       // exception.)
       if (value == null)
-        value = NullNode.instance;
+        value = input.makeNull();
 
       return value;
     }
@@ -76,7 +72,7 @@ public class FunctionExpression extends AbstractInvocationExpression {
         arguments.length == 2 &&
         (arguments[1] instanceof LiteralExpression)) {
 
-      JsonNode v = arguments[1].apply(null, null);
+      JsonValue v = arguments[1].apply(null, null);
       if (v.isArray() && v.size() > OPTIMIZE_ARRAY_CONTAINS_MIN) {
         // we use resolve to make sure all references are updated
         resolve(new OptimizedStaticContainsFunction(v));

@@ -3,9 +3,7 @@ package com.schibsted.spt.data.jslt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.NullNode;
+import com.schibsted.spt.data.json.*;
 import com.schibsted.spt.data.jslt.impl.FileSystemResourceResolver;
 import org.junit.Test;
 
@@ -20,7 +18,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 
 public class FileSystemResourceResolverTest {
-  private static final ObjectMapper mapper = new ObjectMapper();
 
   @Test
   public void testResolveImportsFromFilesystem() throws IOException {
@@ -28,7 +25,7 @@ public class FileSystemResourceResolverTest {
     Expression e = parse("./src/test/resources/import-from-fs/working1.jslt", resolver);
     assertEquals(
       readResource("import-from-fs/working1_expected_result.json"),
-      mapper.writerWithDefaultPrettyPrinter().writeValueAsString(e.apply(mapper.readTree("{}"))));
+      JsonIO.toString(e.apply(JsonIO.parseString("{}"))));
   }
 
   @Test
@@ -38,7 +35,7 @@ public class FileSystemResourceResolverTest {
     Expression e = parse("./src/test/resources/import-from-fs/working2.jslt", resolver);
     assertEquals(
       readResource("import-from-fs/working1_expected_result.json"),
-      mapper.writerWithDefaultPrettyPrinter().writeValueAsString(e.apply(mapper.readTree("{}"))));
+      JsonIO.toString(e.apply(JsonIO.parseString("{}"))));
   }
 
   @Test
@@ -59,8 +56,8 @@ public class FileSystemResourceResolverTest {
     );
     Expression e = parse("./src/test/resources/character-encoding-master.jslt", resolver);
 
-    JsonNode result = e.apply(NullNode.instance);
-    assertEquals("Hei på deg", result.asText());
+    JsonValue result = e.apply(NullJValue.instance);
+    assertEquals("Hei på deg", result.asString());
   }
 
   private Expression parse(String resource, ResourceResolver resolver) throws IOException {

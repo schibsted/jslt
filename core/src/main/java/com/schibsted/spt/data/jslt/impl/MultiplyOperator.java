@@ -15,11 +15,7 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.LongNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.DoubleNode;
+import com.schibsted.spt.data.json.*;
 import com.schibsted.spt.data.jslt.JsltException;
 
 public class MultiplyOperator extends NumericOperator {
@@ -29,18 +25,18 @@ public class MultiplyOperator extends NumericOperator {
     super(left, right, "*", location);
   }
 
-  public JsonNode perform(JsonNode v1, JsonNode v2) {
-    if (v1.isTextual() || v2.isTextual()) {
+  public JsonValue perform(JsonValue v1, JsonValue v2) {
+    if (v1.isString() || v2.isString()) {
       // if one operand is string: do string multiplication
 
       String str;
       int num;
-      if (v1.isTextual() && !v2.isTextual()) {
-        str = v1.asText();
-        num = v2.intValue();
-      } else if (v2.isTextual()) {
-        str = v2.asText();
-        num = v1.intValue();
+      if (v1.isString() && !v2.isString()) {
+        str = v1.asString();
+        num = v2.asInt();
+      } else if (v2.isString()) {
+        str = v2.asString();
+        num = v1.asInt();
       } else
         throw new JsltException("Can't multiply two strings!");
 
@@ -48,7 +44,7 @@ public class MultiplyOperator extends NumericOperator {
       for ( ; num > 0; num--)
         buf.append(str);
 
-      return new TextNode(buf.toString());
+      return v1.makeValue(buf.toString());
     } else
       // do numeric operation
       return super.perform(v1, v2);

@@ -15,12 +15,11 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.List;
 import java.util.HashMap;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.schibsted.spt.data.json.*;
 import com.schibsted.spt.data.jslt.Module;
 import com.schibsted.spt.data.jslt.Callable;
 import com.schibsted.spt.data.jslt.JsltException;
@@ -53,45 +52,46 @@ public class ExperimentalModule implements Module {
       super("group-by", 3, 3);
     }
 
-    public JsonNode call(Scope scope, JsonNode input,
-                         ExpressionNode[] parameters) {
+    public JsonValue call(Scope scope, JsonValue input,
+                          ExpressionNode[] parameters) {
       // this has to be a macro, because the second argument needs to be
       // evaluated in a special context
 
       // first find the array that we iterate over
-      JsonNode array = parameters[0].apply(scope, input);
+      JsonValue array = parameters[0].apply(scope, input);
       if (array.isNull())
-        return NullNode.instance;
+        return input.makeNull();
       else if (array.isObject())
         array = NodeUtils.convertObjectToArray(array);
       else if (!array.isArray())
         throw new JsltException("Can't group-by on " + array);
 
       // now start grouping
-      Map<JsonNode, ArrayNode> groups = new HashMap();
+      Map<JsonValue, List<JsonValue>> groups = new HashMap();
       for (int ix = 0; ix < array.size(); ix++) {
-        JsonNode groupInput = array.get(ix);
-        JsonNode key = parameters[1].apply(scope, groupInput);
-        JsonNode value = parameters[2].apply(scope, groupInput);
+        JsonValue groupInput = array.get(ix);
+        JsonValue key = parameters[1].apply(scope, groupInput);
+        JsonValue value = parameters[2].apply(scope, groupInput);
 
-        ArrayNode values = (ArrayNode) groups.get(key);
+        // FIXME: not quite convinced this is the way to do it
+        List<JsonValue> values = groups.get(key);
         if (values == null) {
-          values = NodeUtils.mapper.createArrayNode();
+          values = new ArrayList<>();
           groups.put(key, values);
         }
         values.add(value);
       }
 
       // grouping is done, build JSON output
-      ArrayNode result = NodeUtils.mapper.createArrayNode();
-      for (JsonNode key : groups.keySet()) {
-        ObjectNode group = NodeUtils.mapper.createObjectNode();
-        group.set("key", key);
-        group.set("values", groups.get(key));
-        result.add(group);
+      int ix = 0;
+      JsonValue[] buffer = new JsonValue[groups.size()];
+      for (JsonValue key : groups.keySet()) {
+        buffer[ix++] = input.makeObjectBuilder()
+          .set("key", key)
+          .set("values", input.makeArray(groups.get(key)))
+          .build();
       }
-
-      return result;
+      return input.makeArray(buffer);
     }
   }
 
