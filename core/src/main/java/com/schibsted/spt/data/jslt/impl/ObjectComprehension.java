@@ -74,7 +74,7 @@ public class ObjectComprehension extends AbstractNode {
           JsonValue keyNode = key.apply(scope, context);
           if (!keyNode.isString())
             throw new JsltException("Object comprehension must have string as key, not " + keyNode, location);
-          object.set(keyNode.asString(), valueNode);
+          object = object.set(keyNode.asString(), valueNode);
         }
       }
     }

@@ -16,6 +16,7 @@
 package com.schibsted.spt.data.jslt.impl;
 
 import com.schibsted.spt.data.json.JsonValue;
+import com.schibsted.spt.data.json.PairIterator;
 import com.schibsted.spt.data.json.JsonObjectBuilder;
 import com.schibsted.spt.data.jslt.JsltException;
 
@@ -73,9 +74,20 @@ public class PlusOperator extends NumericOperator {
 
   private JsonValue unionObjects(JsonValue v1, JsonValue v2) {
     JsonObjectBuilder object = v1.makeObjectBuilder();
-    // FIXME: figure out how to do this efficiently
-    // result.putAll((ObjectNode) v2);
-    // result.putAll((ObjectNode) v1); // v1 should overwrite v2
+
+    PairIterator it = v2.pairIterator();
+    while (it.hasNext()) {
+      it.next();
+      object = object.set(it.key(), it.value());
+    }
+
+    // FIXME: oooo - may end up with trouble here if too optimized
+    it = v1.pairIterator();
+    while (it.hasNext()) {
+      it.next();
+      object = object.set(it.key(), it.value());
+    }
+
     return object.build();
   }
 }

@@ -50,17 +50,24 @@ public class SmallJObject extends AbstractJsonValue {
 
   public boolean equals(Object other) {
     if (other instanceof JsonValue) {
-      JsonValue v = (JsonValue) other;
-      if (v.isObject() && v.size() == size()) {
-        throw new JsltException("OUCH");
-      }
-      return false;
+      return JValueUtils.equalObjects(this, (JsonValue) other);
     } else
       return false;
   }
 
   public String toString() {
-    throw new JsltException("OUCH");
+    StringBuilder buf = new StringBuilder();
+    buf.append("{");
+    for (int ix = 0; ix < nextIx; ix++) {
+      buf.append('"' + keys[ix] + '"');
+      buf.append(":");
+      buf.append(values[ix].toString());
+
+      if (ix+1 < nextIx)
+        buf.append(",");
+    }
+    buf.append("}");
+    return buf.toString();
   }
 
   // modifications

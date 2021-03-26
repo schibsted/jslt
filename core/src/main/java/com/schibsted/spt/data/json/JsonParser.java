@@ -5,7 +5,6 @@ import java.io.Reader;
 import java.io.IOException;
 import com.schibsted.spt.data.jslt.JsltException;
 
-// FIXME: try to make parser objects reusable
 public class JsonParser {
   private Reader source;
   private JsonEventHandler handler;
@@ -20,17 +19,23 @@ public class JsonParser {
   //   inputstream
   //   reader
 
-  // use reader as source interface, read into locally maintained buffer
-
-  public JsonParser(Reader source, JsonEventHandler handler) throws IOException {
-    this.source = source;
+  public JsonParser() throws IOException {
     this.buffer = new char[BUFFER_SIZE];
-    this.handler = handler;
     this.tmp = new char[BUFFER_SIZE]; // buffer used for string parsing
-    fillBuffer();
   }
 
-  public void parse() throws IOException {
+  public JsonValue parse(Reader source) throws IOException {
+    JsonBuilderHandler builder = new JsonBuilderHandler();
+    parse(source, builder);
+    return builder.get();
+  }
+
+  public void parse(Reader source, JsonEventHandler handler) throws IOException {
+    this.source = source;
+    this.handler = handler;
+    this.nextIx = 0;
+    fillBuffer();
+
     int pos = parse(0);
     if (pos != nextIx)
       throw new JsltException("Garbage at end: '" + new String(buffer, pos, nextIx - pos));
@@ -197,7 +202,7 @@ public class JsonParser {
   private int verify(int pos, String text) throws IOException {
     for (int ix = 0; ix < text.length(); ix++)
       if (buffer[pos + ix] != text.charAt(ix))
-        throw new JsltException("Expected " + text + " found sometehing else");
+        throw new JsltException("Expected " + text + " found something else");
 
     return pos + text.length();
   }
@@ -216,6 +221,7 @@ public class JsonParser {
   }
 
   private boolean isWhitespace(int ix) {
-    return buffer[ix] == ' ';
+    return buffer[ix] == ' ' || buffer[ix] == '\n' || buffer[ix] == '\r'
+      || buffer[ix] == '\t';
   }
 }

@@ -55,7 +55,7 @@ public class QueryTest extends TestBase {
     }
   }
 
-  @Parameters(name= "query: {1}")
+  @Parameters(name= "query: {1}, input: {0}")
   public static Collection<Object[]> data() {
     List<Object[]> strings = new ArrayList();
     strings.addAll(loadTests("query-tests.json"));

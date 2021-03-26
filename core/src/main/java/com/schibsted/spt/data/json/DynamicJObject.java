@@ -45,18 +45,7 @@ public class DynamicJObject extends AbstractJsonValue implements JsonObjectBuild
 
   public boolean equals(Object other) {
     if (other instanceof JsonValue) {
-      JsonValue v = (JsonValue) other;
-      if (v.isObject() && v.size() == size()) {
-        Iterator<String> it = v.getKeys();
-        while (it.hasNext()) {
-          String key = it.next();
-          JsonValue ov = v.get(key);
-          if (!ov.equals(values.get(key)))
-            return false;
-        }
-        return true;
-      }
-      return false;
+      return JValueUtils.equalObjects((JsonValue) other, this);
     } else
       return false;
   }

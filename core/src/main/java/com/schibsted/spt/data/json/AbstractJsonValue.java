@@ -138,7 +138,7 @@ public abstract class AbstractJsonValue implements JsonValue {
   }
 
   public JsonObjectBuilder makeObjectBuilder() {
-    return new DynamicJObject();
+    return new OptimizedObjectBuilder();
   }
 
   // ===== PAIR ITERATOR

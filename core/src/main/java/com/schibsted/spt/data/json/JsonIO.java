@@ -44,8 +44,8 @@ public class JsonIO {
     // }
     try {
       JsonBuilderHandler builder = new JsonBuilderHandler();
-      JsonParser parser = new JsonParser(new StringReader(json), builder);
-      parser.parse();
+      JsonParser parser = new JsonParser();
+      parser.parse(new StringReader(json), builder);
       return builder.get();
     } catch (IOException e) {
       throw new JsltException("impossible", e);

@@ -88,21 +88,21 @@ public class ObjectExpression extends AbstractNode {
         if (containsDynamicKeys && object.has(key))
           throw new JsltException("Duplicate key '" + key + "' in object", children[ix].getLocation());
 
-        object.set(key, value);
+        object = object.set(key, value);
       }
     }
 
     if (matcher != null)
-      evaluateMatcher(scope, input, object);
+      object = evaluateMatcher(scope, input, object);
 
     return object.build();
   }
 
-  private void evaluateMatcher(Scope scope, JsonValue input, JsonObjectBuilder object) {
+  private JsonObjectBuilder evaluateMatcher(Scope scope, JsonValue input, JsonObjectBuilder object) {
     // find the object to match against
     JsonValue context = contextQuery.apply(scope, input);
     if (context.isNull() && !context.isObject())
-      return; // no keys to match against
+      return object; // no keys to match against
 
     // then do the matching
     PairIterator it = context.pairIterator();
@@ -113,8 +113,9 @@ public class ObjectExpression extends AbstractNode {
         continue; // the template has defined this key, so skip
 
       JsonValue value = matcher.apply(scope, it.value());
-      object.set(key, value);
+      object = object.set(key, value);
     }
+    return object;
   }
 
   public void computeMatchContexts(DotExpression parent) {

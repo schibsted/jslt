@@ -8,6 +8,10 @@ public class StringJValue extends AbstractJsonValue {
     this.value = value;
   }
 
+  public boolean isSequence() {
+    return true;
+  }
+
   public boolean isString() {
     return true;
   }
