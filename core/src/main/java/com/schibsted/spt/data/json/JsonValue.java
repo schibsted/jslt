@@ -47,12 +47,6 @@ public interface JsonValue extends JsonBuilder {
 
   public Iterator<String> getKeys();
 
-  //public PairIterator pairIterator();
-
-  // interface PairIterator {
-  //   boolean hasNext();
-  //   String key();
-  //   JsonValue value();
-  // }
+  public PairIterator pairIterator();
 
 }

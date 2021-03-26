@@ -32,7 +32,13 @@ public class Benchmark {
     BufferedReader inf = new BufferedReader(new FileReader(args[1]));
     String line = inf.readLine();
     while (line != null) {
-      values.add(JsonIO.parseString(line));
+      try {
+        values.add(JsonIO.parseString(line));
+      } catch (JsltException e) {
+        System.out.println("Good JSONs: " + values.size());
+        System.out.println("BAD JSON: " + line);
+        throw e;
+      }
       line = inf.readLine();
     }
     System.out.println("JSON objects: " + values.size());

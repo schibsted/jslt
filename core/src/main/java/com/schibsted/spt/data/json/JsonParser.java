@@ -5,10 +5,12 @@ import java.io.Reader;
 import java.io.IOException;
 import com.schibsted.spt.data.jslt.JsltException;
 
+// FIXME: try to make parser objects reusable
 public class JsonParser {
   private Reader source;
   private JsonEventHandler handler;
   private char[] buffer;
+  private char[] tmp;
   private int nextIx;
   private static final int BUFFER_SIZE = 65368;
 
@@ -24,16 +26,27 @@ public class JsonParser {
     this.source = source;
     this.buffer = new char[BUFFER_SIZE];
     this.handler = handler;
+    this.tmp = new char[BUFFER_SIZE]; // buffer used for string parsing
     fillBuffer();
   }
 
   public void parse() throws IOException {
-    int pos = consumeWhitespace(0);
+    int pos = parse(0);
+    if (pos != nextIx)
+      throw new JsltException("Garbage at end: '" + new String(buffer, pos, nextIx - pos));
+  }
+
+  private int parse(int pos) throws IOException {
+    pos = consumeWhitespace(pos);
 
     // next character must be one of: { [ " digit t f n
     if (buffer[pos] == '"')
-      pos = parseString(pos);
-    else if (isDigit(pos))
+      pos = parseString(pos, false);
+    else if (buffer[pos] == '{')
+      pos = parseObject(pos);
+    else if (buffer[pos] == '[')
+      pos = parseArray(pos);
+    else if (isDigit(pos) || buffer[pos] == '-')
       pos = parseNumber(pos);
     else if (buffer[pos] == 't') {
       pos = verify(pos, "true");
@@ -47,29 +60,133 @@ public class JsonParser {
     } else
       throw new JsltException("ERROR at " + pos);
 
-    if (pos != nextIx)
-      throw new JsltException("Garbage at end");
+    return consumeWhitespace(pos);
   }
 
-  private int parseString(int pos) {
+  private int parseString(int pos, boolean isObjectKey) {
     pos++; // we already checked the '"'
-    int start = pos;
-    while (buffer[pos] != '"')
-      pos++;
-    handler.handleString(new String(buffer, start, pos - start));
+
+    int ix = 0;
+    // tmp: buffer allocated together with parser object and reused
+    while (buffer[pos] != '"') {
+      if (buffer[pos] == '\\') {
+        pos++;
+        if (buffer[pos] != '\\' && buffer[pos] != '"') {
+          throw new JsltException("Expected \\ or \"");
+        }
+      }
+      tmp[ix++] = buffer[pos++];
+    }
+
+    if (isObjectKey)
+      handler.handleKey(new String(tmp, 0, ix));
+    else
+      handler.handleString(new String(tmp, 0, ix));
     return ++pos;
   }
 
   private int parseNumber(int pos) {
-    // we already have code for this ...
+    // FIXME: we already have code for this ...
+    int sign = 1;
+    if (buffer[pos] == '-') {
+      sign = -1;
+      pos++;
+    }
+
     int start = pos++;
-    while (isDigit(pos))
+    while (pos < nextIx && isDigit(pos))
       pos++;
 
-    // FIXME: this is hardly optimal
-    handler.handleLong(Long.parseLong(new String(buffer, start, pos - start)));
+    long intPart = sign * Long.parseLong(new String(buffer, start, pos - start));
+    if (pos == nextIx || buffer[pos] != '.') {
+      // FIXME: we *don't* want to allocate a string
+      handler.handleLong(intPart);
+      return pos;
+    }
 
+    pos++; // step over the '.'
+    start = pos;
+    while (pos < nextIx && isDigit(pos))
+      pos++;
+
+    long decimalPart = sign * Long.parseLong(new String(buffer, start, pos - start));
+    int digits = pos - start;
+    double number = (decimalPart / Math.pow(10, digits)) + intPart;
+
+    if (buffer[pos] == 'E' || buffer[pos] == 'e') {
+      pos++;
+      int exponentSign = 1;
+      if (buffer[pos] == '-') {
+        exponentSign = -1;
+        pos++;
+      } else if (buffer[pos] == '+')
+        pos++;
+
+      start = pos;
+      while (pos < nextIx && isDigit(pos))
+        pos++;
+      int exp = Integer.parseInt(new String(buffer, start, pos - start));;
+      number = number * Math.pow(10, exp * exponentSign);
+    }
+
+    handler.handleDouble(number);
     return pos;
+  }
+
+  private int parseObject(int pos) throws IOException {
+    pos++; // step over the '{'
+    handler.startObject();
+
+    pos = consumeWhitespace(pos);
+    boolean first = true;
+    while (buffer[pos] != '}') {
+      if (first)
+        first = false;
+      else {
+        verifyAt(',', pos++);
+        pos = consumeWhitespace(pos);
+      }
+
+      verifyAt('"', pos);
+      pos = parseString(pos, true);
+
+      pos = consumeWhitespace(pos);
+      verifyAt(':', pos);
+
+      pos = parse(pos + 1);
+      pos = consumeWhitespace(pos);
+    }
+
+    handler.endObject();
+    return pos + 1; // step over '}'
+  }
+
+  private int parseArray(int pos) throws IOException {
+    pos++; // step over the '['
+    handler.startArray();
+
+    pos = consumeWhitespace(pos);
+    boolean first = true;
+    while (buffer[pos] != ']') {
+      if (first)
+        first = false;
+      else {
+        verifyAt(',', pos++);
+        pos = consumeWhitespace(pos);
+      }
+
+      pos = parse(pos);
+      pos = consumeWhitespace(pos);
+    }
+
+    handler.endArray();
+    return pos + 1; // step over ']'
+  }
+
+  private void verifyAt(char ch, int pos) {
+    if (buffer[pos] != ch)
+      throw new JsltException("Expected '\"' at " + pos + ", but got '" +
+                              buffer[pos] + "'");
   }
 
   private boolean isDigit(int pos) {

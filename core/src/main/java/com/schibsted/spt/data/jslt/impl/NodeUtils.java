@@ -102,7 +102,7 @@ public class NodeUtils {
   }
 
   public static JsonValue number(JsonValue value, boolean strict, Location loc,
-                                JsonValue fallback) {
+                                 JsonValue fallback) {
     // check what type this is
     if (value.isNumber())
       return value;
@@ -220,13 +220,15 @@ public class NodeUtils {
   public static JsonValue convertObjectToArray(JsonValue object) {
     int ix = 0;
     JsonValue[] buffer = new JsonValue[object.size()];
-    Iterator<String> it = object.getKeys();
+    PairIterator it = object.pairIterator();
     while (it.hasNext()) {
-      String key = it.next();
-      buffer[ix++] = object.makeObjectBuilder()
-        .set("key", object.makeValue(key))
-        .set("value", object.get(key))
-        .build();
+      it.next();
+
+      SmallJObject obj = new SmallJObject(2);
+      obj.set("key", object.makeValue(it.key()));
+      obj.set("value", it.value());
+
+      buffer[ix++] = obj;
     }
     return object.makeArray(buffer);
   }

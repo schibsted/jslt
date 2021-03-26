@@ -35,6 +35,10 @@ public class DynamicJObject extends AbstractJsonValue implements JsonObjectBuild
     return values.keySet().iterator();
   }
 
+  public PairIterator pairIterator() {
+    return new DynamicPairIterator();
+  }
+
   public int hashCode() {
     throw new NullPointerException();
   }
@@ -88,5 +92,32 @@ public class DynamicJObject extends AbstractJsonValue implements JsonObjectBuild
 
   public JsonValue build() {
     return this;
+  }
+
+  // ===== PAIR ITERATOR
+
+  class DynamicPairIterator implements PairIterator {
+    private Iterator<Map.Entry<String,JsonValue>> iterator;
+    private Map.Entry<String,JsonValue> entry;
+
+    public DynamicPairIterator() {
+      this.iterator = values.entrySet().iterator();
+    }
+
+    public boolean hasNext() {
+      return iterator.hasNext();
+    }
+
+    public String key() {
+      return entry.getKey();
+    }
+
+    public JsonValue value() {
+      return entry.getValue();
+    }
+
+    public void next() {
+      this.entry = iterator.next();
+    }
   }
 }

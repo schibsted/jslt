@@ -27,11 +27,11 @@ public class JsonTraversal {
 
   private static void traverseObject(JsonValue value, JsonEventHandler handler) {
     handler.startObject();
-    Iterator<String> it = value.getKeys();
+    PairIterator it = value.pairIterator();
     while (it.hasNext()) {
-      String key = it.next();
-      handler.handleKey(key);
-      traverse(value.get(key), handler);
+      it.next();
+      handler.handleKey(it.key());
+      traverse(it.value(), handler);
     }
     handler.endObject();
   }

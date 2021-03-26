@@ -1,6 +1,7 @@
 
 package com.schibsted.spt.data.json;
 
+import java.util.Map;
 import java.util.Iterator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.schibsted.spt.data.jslt.JsltException;
@@ -91,6 +92,14 @@ public class JacksonJsonValue extends AbstractJsonValue {
     return node.fieldNames();
   }
 
+  public PairIterator pairIterator() {
+    return new JacksonPairIterator();
+  }
+
+  public int hashCode() {
+    return node.hashCode();
+  }
+
   public boolean equals(Object other) {
     if (other instanceof JacksonJsonValue) {
       return ((JacksonJsonValue) other).node.equals(node);
@@ -103,5 +112,32 @@ public class JacksonJsonValue extends AbstractJsonValue {
 
   public String toString() {
     return node.toString();
+  }
+
+  // ===== PAIR ITERATOR
+
+  class JacksonPairIterator implements PairIterator {
+    private Iterator<Map.Entry<String,JsonNode>> iterator;
+    private Map.Entry<String,JsonNode> entry;
+
+    public JacksonPairIterator() {
+      this.iterator = node.fields();
+    }
+
+    public boolean hasNext() {
+      return iterator.hasNext();
+    }
+
+    public String key() {
+      return entry.getKey();
+    }
+
+    public JsonValue value() {
+      return new JacksonJsonValue(entry.getValue());
+    }
+
+    public void next() {
+      this.entry = iterator.next();
+    }
   }
 }

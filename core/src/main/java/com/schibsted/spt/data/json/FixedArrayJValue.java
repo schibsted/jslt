@@ -3,9 +3,11 @@ package com.schibsted.spt.data.json;
 
 public class FixedArrayJValue extends AbstractJsonValue {
   private JsonValue[] array;
+  private int size;
 
   public FixedArrayJValue(JsonValue[] array, int size) {
     this.array = array;
+    this.size = size;
   }
 
   public boolean isSequence() {
@@ -21,7 +23,7 @@ public class FixedArrayJValue extends AbstractJsonValue {
   }
 
   public int size() {
-    return array.length;
+    return size;
   }
 
   public int hashCode() {
@@ -32,7 +34,7 @@ public class FixedArrayJValue extends AbstractJsonValue {
     if (other instanceof JsonValue) {
       JsonValue v = (JsonValue) other;
       if (v.isArray() && v.size() == size()) {
-        for (int ix = 0; ix < size(); ix++) {
+        for (int ix = 0; ix < size; ix++) {
           JsonValue ov = v.get(ix);
           if (!ov.equals(array[ix]))
             return false;
@@ -47,7 +49,7 @@ public class FixedArrayJValue extends AbstractJsonValue {
   public String toString() {
     StringBuilder buf = new StringBuilder();
     buf.append("[");
-    for (int ix = 0; ix < array.length; ix++) {
+    for (int ix = 0; ix < size; ix++) {
       if (ix > 0)
         buf.append(",");
       buf.append(array[ix].toString());

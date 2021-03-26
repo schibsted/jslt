@@ -105,13 +105,14 @@ public class ObjectExpression extends AbstractNode {
       return; // no keys to match against
 
     // then do the matching
-    Iterator<String> it = context.getKeys();
+    PairIterator it = context.pairIterator();
     while (it.hasNext()) {
-      String key = it.next();
+      it.next();
+      String key = it.key();
       if (keys.contains(key))
         continue; // the template has defined this key, so skip
 
-      JsonValue value = matcher.apply(scope, context.get(key));
+      JsonValue value = matcher.apply(scope, it.value());
       object.set(key, value);
     }
   }

@@ -4,6 +4,7 @@ package com.schibsted.spt.data.json;
 import java.util.Collections;
 import java.util.List;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import com.schibsted.spt.data.jslt.JsltException;
 
 public abstract class AbstractJsonValue implements JsonValue {
@@ -86,6 +87,10 @@ public abstract class AbstractJsonValue implements JsonValue {
     return Collections.emptyIterator();
   }
 
+  public PairIterator pairIterator() {
+    return EMPTY_PAIR_ITERATOR;
+  }
+
   // ===== JsonBuilder
 
   public JsonValue makeValue(long value) {
@@ -136,4 +141,23 @@ public abstract class AbstractJsonValue implements JsonValue {
     return new DynamicJObject();
   }
 
+  // ===== PAIR ITERATOR
+
+  public static final PairIterator EMPTY_PAIR_ITERATOR = new PairIterator() {
+    public boolean hasNext() {
+      return false;
+    }
+
+    public String key() {
+      throw new NoSuchElementException();
+    }
+
+    public JsonValue value() {
+      throw new NoSuchElementException();
+    }
+
+    public void next() {
+      throw new NoSuchElementException();
+    }
+  };
 }
