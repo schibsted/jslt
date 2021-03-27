@@ -6,11 +6,10 @@ import java.io.IOException;
 import com.schibsted.spt.data.jslt.JsltException;
 
 public class JsonParser {
-  private Reader source;
+  private CharacterSource source;
   private JsonEventHandler handler;
   private char[] buffer;
   private char[] tmp;
-  private int nextIx;
   private static final int BUFFER_SIZE = 65368;
 
   // reasonable inputs:
@@ -19,53 +18,71 @@ public class JsonParser {
   //   inputstream
   //   reader
 
-  public JsonParser() throws IOException {
-    this.buffer = new char[BUFFER_SIZE];
-    this.tmp = new char[BUFFER_SIZE]; // buffer used for string parsing
+  public JsonParser() {
+    this(BUFFER_SIZE);
   }
 
+  public JsonParser(int bufferSize) {
+    this.buffer = new char[bufferSize];
+    this.tmp = new char[bufferSize]; // buffer used for string parsing
+  }
+
+  // not thread-safe, not re-entrant
   public JsonValue parse(Reader source) throws IOException {
     JsonBuilderHandler builder = new JsonBuilderHandler();
     parse(source, builder);
     return builder.get();
   }
 
+  // not thread-safe, not re-entrant
   public void parse(Reader source, JsonEventHandler handler) throws IOException {
-    this.source = source;
+    this.source = new ReaderCharacterSource(source, buffer);
     this.handler = handler;
-    this.nextIx = 0;
-    fillBuffer();
 
     int pos = parse(0);
-    if (pos != nextIx)
-      throw new JsltException("Garbage at end: '" + new String(buffer, pos, nextIx - pos));
+    this.source.confirmFinished(pos);
+  }
+
+  public JsonValue parse(String source) throws IOException {
+    JsonBuilderHandler builder = new JsonBuilderHandler();
+    parse(source, builder);
+    return builder.get();
+  }
+
+  public void parse(String source, JsonEventHandler handler) throws IOException {
+    this.source = new CharCharacterSource(source, buffer);
+    this.handler = handler;
+
+    int pos = parse(0);
+    this.source.confirmFinished(pos);
   }
 
   private int parse(int pos) throws IOException {
-    pos = consumeWhitespace(pos);
+    pos = source.consumeWhitespace(pos);
 
     // next character must be one of: { [ " digit t f n
-    if (buffer[pos] == '"')
+    char ch = source.charAt(pos);
+    if (ch == '"')
       pos = parseString(pos, false);
-    else if (buffer[pos] == '{')
+    else if (ch == '{')
       pos = parseObject(pos);
-    else if (buffer[pos] == '[')
+    else if (ch == '[')
       pos = parseArray(pos);
-    else if (isDigit(pos) || buffer[pos] == '-')
+    else if (isDigit(ch) || ch == '-')
       pos = parseNumber(pos);
-    else if (buffer[pos] == 't') {
-      pos = verify(pos, "true");
+    else if (ch == 't') {
+      pos = source.verify(pos, "true");
       handler.handleBoolean(true);
-    } else if (buffer[pos] == 'f') {
-      pos = verify(pos, "false");
+    } else if (ch == 'f') {
+      pos = source.verify(pos, "false");
       handler.handleBoolean(false);
-    } else if (buffer[pos] == 'n') {
-      pos = verify(pos, "null");
+    } else if (ch == 'n') {
+      pos = source.verify(pos, "null");
       handler.handleNull();
     } else
       throw new JsltException("ERROR at " + pos);
 
-    return consumeWhitespace(pos);
+    return source.consumeWhitespace(pos);
   }
 
   private int parseString(int pos, boolean isObjectKey) {
@@ -73,10 +90,10 @@ public class JsonParser {
 
     int ix = 0;
     // tmp: buffer allocated together with parser object and reused
-    while (buffer[pos] != '"') {
-      if (buffer[pos] == '\\') {
+    while (source.charAt(pos) != '"') {
+      if (source.charAt(pos) == '\\') {
         pos++;
-        char ch = buffer[pos++];
+        char ch = source.charAt(pos++);
         if (ch == 't')
           ch = '\t';
         else if (ch == 'n')
@@ -88,7 +105,7 @@ public class JsonParser {
 
         tmp[ix++] = ch;
       } else
-        tmp[ix++] = buffer[pos++];
+        tmp[ix++] = source.charAt(pos++);
     }
 
     if (isObjectKey)
@@ -101,44 +118,49 @@ public class JsonParser {
   private int parseNumber(int pos) {
     // FIXME: we already have code for this ...
     int sign = 1;
-    if (buffer[pos] == '-') {
+    if (source.charAt(pos) == '-') {
       sign = -1;
       pos++;
     }
 
-    int start = pos++;
-    while (pos < nextIx && isDigit(pos))
-      pos++;
+    long intPart = 0;
+    while (!source.atEnd(pos)) {
+      long digitValue = digitValue(source.charAt(pos));
+      if (digitValue == -1)
+        break;
 
-    long intPart = sign * Long.parseLong(new String(buffer, start, pos - start));
-    if (pos == nextIx || buffer[pos] != '.') {
-      // FIXME: we *don't* want to allocate a string
+      intPart = intPart * 10 + digitValue;
+      pos++;
+    }
+
+    intPart = sign * intPart;
+    if (source.atEnd(pos) || source.charAt(pos) != '.') {
       handler.handleLong(intPart);
       return pos;
     }
 
     pos++; // step over the '.'
-    start = pos;
-    while (pos < nextIx && isDigit(pos))
+    int start = pos;
+    while (!source.atEnd(pos) && isDigit(source.charAt(pos)))
       pos++;
 
-    long decimalPart = sign * Long.parseLong(new String(buffer, start, pos - start));
+    long decimalPart = sign * Long.parseLong(source.mkString(start, pos));
     int digits = pos - start;
     double number = (decimalPart / Math.pow(10, digits)) + intPart;
 
-    if (buffer[pos] == 'E' || buffer[pos] == 'e') {
+    if (!source.atEnd(pos) && (source.charAt(pos) == 'E' || source.charAt(pos) == 'e')) {
       pos++;
       int exponentSign = 1;
-      if (buffer[pos] == '-') {
+      if (source.charAt(pos) == '-') {
         exponentSign = -1;
         pos++;
-      } else if (buffer[pos] == '+')
+      } else if (source.charAt(pos) == '+')
         pos++;
 
       start = pos;
-      while (pos < nextIx && isDigit(pos))
+      while (!source.atEnd(pos) && isDigit(source.charAt(pos)))
         pos++;
-      int exp = Integer.parseInt(new String(buffer, start, pos - start));;
+      int exp = Integer.parseInt(source.mkString(start, pos));
       number = number * Math.pow(10, exp * exponentSign);
     }
 
@@ -150,24 +172,24 @@ public class JsonParser {
     pos++; // step over the '{'
     handler.startObject();
 
-    pos = consumeWhitespace(pos);
+    pos = source.consumeWhitespace(pos);
     boolean first = true;
-    while (buffer[pos] != '}') {
+    while (source.charAt(pos) != '}') {
       if (first)
         first = false;
       else {
-        verifyAt(',', pos++);
-        pos = consumeWhitespace(pos);
+        source.verifyAt(',', pos++);
+        pos = source.consumeWhitespace(pos);
       }
 
-      verifyAt('"', pos);
+      source.verifyAt('"', pos);
       pos = parseString(pos, true);
 
-      pos = consumeWhitespace(pos);
-      verifyAt(':', pos);
+      pos = source.consumeWhitespace(pos);
+      source.verifyAt(':', pos);
 
       pos = parse(pos + 1);
-      pos = consumeWhitespace(pos);
+      pos = source.consumeWhitespace(pos);
     }
 
     handler.endObject();
@@ -178,58 +200,163 @@ public class JsonParser {
     pos++; // step over the '['
     handler.startArray();
 
-    pos = consumeWhitespace(pos);
+    pos = source.consumeWhitespace(pos);
     boolean first = true;
-    while (buffer[pos] != ']') {
+    while (source.charAt(pos) != ']') {
       if (first)
         first = false;
       else {
-        verifyAt(',', pos++);
-        pos = consumeWhitespace(pos);
+        source.verifyAt(',', pos++);
+        pos = source.consumeWhitespace(pos);
       }
 
       pos = parse(pos);
-      pos = consumeWhitespace(pos);
+      pos = source.consumeWhitespace(pos);
     }
 
     handler.endArray();
     return pos + 1; // step over ']'
   }
 
-  private void verifyAt(char ch, int pos) {
-    if (buffer[pos] != ch)
-      throw new JsltException("Expected '\"' at " + pos + ", but got '" +
-                              buffer[pos] + "'");
-  }
-
-  private boolean isDigit(int pos) {
-    char ch = buffer[pos];
+  private boolean isDigit(char ch) {
     return ch >= '0' && ch <= '9';
   }
 
-  private int verify(int pos, String text) throws IOException {
-    for (int ix = 0; ix < text.length(); ix++)
-      if (buffer[pos + ix] != text.charAt(ix))
-        throw new JsltException("Expected " + text + " found something else");
-
-    return pos + text.length();
+  private long digitValue(char ch) {
+    long v = ch - '0';
+    if (v >= 0 && v <= 9)
+      return v;
+    else
+      return -1;
   }
 
-  private void fillBuffer() throws IOException {
-    int chars = source.read(buffer, nextIx, buffer.length - nextIx);
-    nextIx += chars;
+  private static boolean isWhitespace(char ch) {
+    return ch == ' ' || ch == '\n' || ch == '\r' || ch == '\t';
   }
 
-  private int consumeWhitespace(int ix) {
-    while (ix < nextIx && isWhitespace(ix))
-      ix++;
+  interface CharacterSource {
 
-    //if (ix ==
-    return ix;
+    public boolean atEnd(int pos);
+
+    public char charAt(int pos);
+
+    public String mkString(int start, int end);
+
+    public void verifyAt(char ch, int pos);
+
+    public int consumeWhitespace(int ix);
+
+    public void confirmFinished(int pos);
+
+    public int verify(int pos, String text) throws IOException;
   }
 
-  private boolean isWhitespace(int ix) {
-    return buffer[ix] == ' ' || buffer[ix] == '\n' || buffer[ix] == '\r'
-      || buffer[ix] == '\t';
+  private static class ReaderCharacterSource implements CharacterSource {
+    private Reader input;
+    private char[] buffer;
+    private int nextIx;
+
+    private ReaderCharacterSource(Reader input, char[] buffer) throws IOException {
+      this.input = input;
+      this.buffer = buffer;
+      fillBuffer();
+    }
+
+    private void fillBuffer() throws IOException {
+      int chars = input.read(buffer, nextIx, buffer.length - nextIx);
+      nextIx += chars;
+    }
+
+    public boolean atEnd(int pos) {
+      return pos >= nextIx;
+    }
+
+    public char charAt(int pos) {
+      return buffer[pos];
+    }
+
+    public String mkString(int start, int end) {
+      return new String(buffer, start, end - start);
+    }
+
+    public void verifyAt(char ch, int pos) {
+      if (buffer[pos] != ch)
+        throw new JsltException("Expected '" + ch + "' at " + pos + ", but got '" +
+                                buffer[pos] + "'");
+    }
+
+    public int consumeWhitespace(int ix) {
+      while (ix < nextIx && isWhitespace(buffer[ix]))
+        ix++;
+
+      return ix;
+    }
+
+    public void confirmFinished(int pos) {
+      if (pos != nextIx)
+        throw new JsltException("Garbage at end: '" + mkString(pos, nextIx));
+    }
+
+    public int verify(int pos, String text) throws IOException {
+      for (int ix = 0; ix < text.length(); ix++)
+        if (buffer[pos + ix] != text.charAt(ix))
+          throw new JsltException("Expected " + text + " found something else");
+
+      return pos + text.length();
+    }
+  }
+
+  private static class CharCharacterSource implements CharacterSource {
+    private char[] buffer;
+    private int end;
+
+    private CharCharacterSource(String input, char[] buffer) {
+      this.buffer = buffer;
+      this.end = input.length();
+      input.getChars(0, input.length(), buffer, 0);
+    }
+
+    private CharCharacterSource(char[] input, int end) {
+      this.buffer = input;
+      this.end = end;
+    }
+
+    public boolean atEnd(int pos) {
+      return pos >= end;
+    }
+
+    public char charAt(int pos) {
+      return buffer[pos];
+    }
+
+    public String mkString(int start, int end) {
+      return new String(buffer, start, end - start);
+    }
+
+    public void verifyAt(char ch, int pos) {
+      if (buffer[pos] != ch)
+        throw new JsltException("Expected '" + ch + "' at " + pos + ", but got '" +
+                                buffer[pos] + "'");
+    }
+
+    public int consumeWhitespace(int ix) {
+      while (ix < end && isWhitespace(buffer[ix]))
+        ix++;
+
+      return ix;
+    }
+
+    public void confirmFinished(int pos) {
+      if (pos != end)
+        throw new JsltException("Garbage at end: '" + mkString(pos, end));
+    }
+
+    public int verify(int pos, String text) throws IOException {
+      for (int ix = 0; ix < text.length(); ix++)
+        if (buffer[pos + ix] != text.charAt(ix))
+          throw new JsltException("Expected " + text + " found something else");
+
+      return pos + text.length();
+    }
   }
 }

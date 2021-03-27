@@ -51,18 +51,10 @@ public class JsonIO {
   }
 
   public static JsonValue parseString(String json) {
-    // try {
-    //   JsonNode node = mapper.readTree(json);
-    //   if (node == null)
-    //     node = NullNode.instance;
-    //   return new JacksonJsonValue(node);
-    // } catch (JsonProcessingException e) {
-    //   throw new JsltException("parsing failed", e);
-    // }
     try {
       JsonBuilderHandler builder = new JsonBuilderHandler();
       JsonParser parser = new JsonParser();
-      parser.parse(new StringReader(json), builder);
+      parser.parse(json, builder);
       return builder.get();
     } catch (IOException e) {
       throw new JsltException("impossible", e);
@@ -103,7 +95,7 @@ public class JsonIO {
 
     public JsonValue next() {
       try {
-        JsonValue value = parser.parse(new StringReader(nextLine));
+        JsonValue value = parser.parse(nextLine);
         nextLine = reader.readLine();
         return value;
       } catch (IOException e) {

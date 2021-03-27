@@ -44,7 +44,7 @@ public class JsonParseTest {
     }
   }
 
-  @Parameters
+  @Parameters(name= "input: {0}")
   public static Collection<Object[]> data() {
     JsonValue json = TestUtils.loadFile("json-parse-tests.json");
     JsonValue tests = json.get("tests");
