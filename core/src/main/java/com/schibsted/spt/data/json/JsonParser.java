@@ -76,11 +76,19 @@ public class JsonParser {
     while (buffer[pos] != '"') {
       if (buffer[pos] == '\\') {
         pos++;
-        if (buffer[pos] != '\\' && buffer[pos] != '"') {
+        char ch = buffer[pos++];
+        if (ch == 't')
+          ch = '\t';
+        else if (ch == 'n')
+          ch = '\n';
+        else if (ch == 'r')
+          ch = '\r';
+        else if (ch != '\\' && ch != '"')
           throw new JsltException("Expected \\ or \"");
-        }
-      }
-      tmp[ix++] = buffer[pos++];
+
+        tmp[ix++] = ch;
+      } else
+        tmp[ix++] = buffer[pos++];
     }
 
     if (isObjectKey)

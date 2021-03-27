@@ -3,7 +3,7 @@
 
 tests:
   -
-   input: {}
+   input: "{}"
    query: >
      let v = 1
      [for ([1,2,3,4])
@@ -12,7 +12,7 @@ tests:
    output: "[3,4,5,6]"
 
   -
-   input: {}
+   input: "{}"
    query: >
      let v = 1
      if ($v != .)
@@ -69,14 +69,14 @@ tests:
    output: "{\"1\" : \"hey\"}"
 
   -
-   input: {}
+   input: null
    query: >
      let foo = "something"
      $foo[4 : ]
    output: '"thing"'
 
   -
-   input: {}
+   input: null
    query: >
       let lookup = {
         "dk" : "Denmark",
@@ -160,7 +160,7 @@ tests:
         "a": "b"
       }
 
-  - input:
+  - input: null
     query: |
       { "a": "b" } | {
                         "type" : "Anonymized-View",
@@ -173,7 +173,7 @@ tests:
       }
 
   -
-    input:
+    input: null
     query: |
       {
         "bar": "baz",
@@ -194,7 +194,7 @@ tests:
           }
       }
 
-  - input:
+  - input: null
     query: |
       1 == 3 | {"a" : .}
     output: |
@@ -203,7 +203,7 @@ tests:
       pipe operator has lower precedence that equality operator so it should be interpreted
       as `(1 == 3) | {"a" : .}` and NOT as `1 == (3 | {"a" : .})` which would evaluate to `false`
 
-  - input:
+  - input: null
     query: |
       false or false | { "a" : .}
     output: |
@@ -214,7 +214,7 @@ tests:
       and NOT as `false or (false | {"a": .}` which would evaluate to `true`
 
 
-  - input:
+  - input: null
     query: |
       1 + 3 | . * 5
     output: |
@@ -223,7 +223,7 @@ tests:
       pipe operator has lower precedence than arithmetic operator so it should be interpreted as
       `(1 + 3) | (. * 5)` and NOT as `1 + ((3 | .) *5)`
 
-  - input:
+  - input: null
     query: |
       1 | [.,.] | {"a": ., "b": .}
     output: |
@@ -371,7 +371,7 @@ tests:
 
 # parse-url tests
 
-  - input:
+  - input: null
     query: parse-url("https://www.aftonbladet.se/nyheter/a/opyK1R/snosmocka-pa-ingang--kan-bli-20-centimeter?utm_source=aaaa&utm_campaign=bbbb&utm_medium=cccc&utm_content=dddd&utm_term=eeee")
     output: |
       {
@@ -390,7 +390,7 @@ tests:
     description: |
       missing port in url means missing `port` key in output
 
-  - input:
+  - input: null
     query: parse-url("http://example.org/#foo")
     output: |
       {
@@ -399,7 +399,7 @@ tests:
               "fragment": "foo",
               "scheme": "http"
       }
-  - input:
+  - input: null
     query: parse-url("http://example.com")
     output: |
       {
@@ -409,7 +409,7 @@ tests:
     description:
       - No path
       -
-  - input:
+  - input: null
     query: parse-url("http://example.com/")
     output: |
       {
@@ -421,7 +421,7 @@ tests:
       - If URL has an ending slash then it has a path
 
 
-  - input:
+  - input: null
     query: parse-url("https://www.example.com/?aa=1&aa=2&bb=&cc")
     output: |
       {
@@ -440,7 +440,7 @@ tests:
       - null parameter
       - parameter no equal sign
 
-  - input:
+  - input: null
     query: parse-url("ftp://username:password@host.com/")
     output: |
       {
@@ -452,7 +452,7 @@ tests:
     description: |
       - userinfo
 
-  - input:
+  - input: null
     query: parse-url("https://example.com:8443")
     output: |
       {

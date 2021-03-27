@@ -19,7 +19,9 @@ public class FixedArrayJValue extends AbstractJsonValue {
   }
 
   public JsonValue get(int ix) {
-    return array[ix];
+    if (ix >= 0 && ix < array.length)
+      return array[ix];
+    return NullJValue.instance;
   }
 
   public int size() {

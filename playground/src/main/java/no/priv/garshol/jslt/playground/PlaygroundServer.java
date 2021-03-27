@@ -13,13 +13,12 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.schibsted.spt.data.json.JsonIO;
+import com.schibsted.spt.data.json.JsonValue;
 import com.schibsted.spt.data.jslt.Parser;
 import com.schibsted.spt.data.jslt.Expression;
 
 public class PlaygroundServer {
-  private static ObjectMapper mapper = new ObjectMapper();
   private static String INDEX_HTML = "lambda.html";
 
   public static class JsltHandler extends AbstractHandler {
@@ -47,15 +46,15 @@ public class PlaygroundServer {
 
       if (request.getMethod().equals("POST")) {
         try {
-          JsonNode body = mapper.readTree(request.getReader());
-          JsonNode input = mapper.readTree(body.get("json").asText());
-          String jslt = body.get("jslt").asText();
+          JsonValue body = JsonIO.parse(request.getReader());
+          JsonValue input = JsonIO.parseString(body.get("json").asString());
+          String jslt = body.get("jslt").asString();
 
           Expression template = Parser.compileString(jslt);
-          JsonNode output = template.apply(input);
+          JsonValue output = template.apply(input);
           response.setStatus(HttpServletResponse.SC_OK);
 
-          response.getOutputStream().write(mapper.writerWithDefaultPrettyPrinter().writeValueAsBytes(output));
+          response.getOutputStream().write(JsonIO.toBytes(output));
 
         } catch (Exception e) {
           try (PrintStream ps = new PrintStream(response.getOutputStream())) {

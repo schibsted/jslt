@@ -3,6 +3,7 @@ package com.schibsted.spt.data.jslt.cli;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Iterator;
 import java.io.*;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.schibsted.spt.data.json.*;
@@ -28,20 +29,10 @@ public class Benchmark {
     }
     System.out.println("Expressions: " + expressions.size());
 
-    JsonParser parser = new JsonParser();
     List<JsonValue> values = new ArrayList<>();
-    BufferedReader inf = new BufferedReader(new FileReader(args[1]));
-    String line = inf.readLine();
-    while (line != null) {
-      try {
-        values.add(parser.parse(new StringReader(line)));
-      } catch (JsltException e) {
-        System.out.println("Good JSONs: " + values.size());
-        System.out.println("BAD JSON: " + line);
-        throw e;
-      }
-      line = inf.readLine();
-    }
+    Iterator<JsonValue> it = JsonIO.parseLines(new FileReader(args[1]));
+    while (it.hasNext())
+      values.add(it.next());
     System.out.println("JSON objects: " + values.size());
 
     System.out.println("Warmup ...");
