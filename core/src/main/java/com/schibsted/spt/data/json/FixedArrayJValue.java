@@ -53,7 +53,7 @@ public class FixedArrayJValue extends AbstractJsonValue {
     buf.append("[");
     for (int ix = 0; ix < size; ix++) {
       if (ix > 0)
-        buf.append(",");
+        buf.append(',');
       buf.append(array[ix].toString());
     }
     buf.append("]");

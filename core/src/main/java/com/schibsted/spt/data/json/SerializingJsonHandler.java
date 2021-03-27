@@ -100,6 +100,7 @@ public class SerializingJsonHandler implements JsonEventHandler {
       addArrayComma();
       out.write("[");
       firstStack[++stackPos] = true;
+      arrayStack[stackPos] = true;
     } catch (IOException e) {
       throw new JsltException("output error", e);
     }
@@ -116,7 +117,7 @@ public class SerializingJsonHandler implements JsonEventHandler {
 
   private void addArrayComma() throws IOException {
     if (stackPos >= 0) {
-      if (arrayStack[stackPos] && firstStack[stackPos])
+      if (arrayStack[stackPos] && !firstStack[stackPos])
         out.write(",");
       else
         firstStack[stackPos] = false;

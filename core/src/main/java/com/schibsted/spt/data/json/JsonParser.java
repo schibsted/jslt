@@ -100,8 +100,15 @@ public class JsonParser {
           ch = '\n';
         else if (ch == 'r')
           ch = '\r';
-        else if (ch != '\\' && ch != '"')
-          throw new JsltException("Expected \\ or \"");
+        else if (ch == 'b')
+          ch = '\b';
+        else if (ch == 'f')
+          ch = '\f';
+        else if (ch == 'u') {
+          ch = parseUnicodeEscape(pos);
+          pos += 4;
+        } else if (ch != '\\' && ch != '"' && ch != '/')
+          throw new JsltException("Expected \\ or \" or /");
 
         tmp[ix++] = ch;
       } else
@@ -115,6 +122,24 @@ public class JsonParser {
     return ++pos;
   }
 
+  private char parseUnicodeEscape(int pos) {
+    // INV: pos now points to first hex digit
+    int number = 0;
+    for (int ix = 0; ix < 4; ix++) {
+      char ch = source.charAt(pos + ix);
+      if (ch >= '0' && ch <= '9')
+        number = (number * 16) + (ch - '0');
+      else if (ch >= 'A' && ch <= 'F')
+        number = (number * 16) + (ch - 'A') + 10;
+      else if (ch >= 'a' && ch <= 'f')
+        number = (number * 16) + (ch - 'a') + 10;
+      else
+        throw new JsltException("Bad unicode escape: '" + ch + "' at " + pos);
+    }
+    return (char) number;
+  }
+
+  // FIXME: this will accept things it shouldn't!!!!
   private int parseNumber(int pos) {
     // FIXME: we already have code for this ...
     int sign = 1;
@@ -132,21 +157,23 @@ public class JsonParser {
       intPart = intPart * 10 + digitValue;
       pos++;
     }
+    intPart = intPart * sign;
 
-    intPart = sign * intPart;
-    if (source.atEnd(pos) || source.charAt(pos) != '.') {
-      handler.handleLong(intPart);
-      return pos;
+    double number = 0;
+    boolean decimal = false;
+    if (!source.atEnd(pos) && source.charAt(pos) == '.') {
+      pos++; // step over the '.'
+      int start = pos;
+      while (!source.atEnd(pos) && isDigit(source.charAt(pos)))
+        pos++;
+
+      long decimalPart = sign * Long.parseLong(source.mkString(start, pos));
+      int digits = pos - start;
+      number = (decimalPart / Math.pow(10, digits)) + intPart;
+      decimal = true;
+    } else {
+      number = intPart;
     }
-
-    pos++; // step over the '.'
-    int start = pos;
-    while (!source.atEnd(pos) && isDigit(source.charAt(pos)))
-      pos++;
-
-    long decimalPart = sign * Long.parseLong(source.mkString(start, pos));
-    int digits = pos - start;
-    double number = (decimalPart / Math.pow(10, digits)) + intPart;
 
     if (!source.atEnd(pos) && (source.charAt(pos) == 'E' || source.charAt(pos) == 'e')) {
       pos++;
@@ -157,14 +184,18 @@ public class JsonParser {
       } else if (source.charAt(pos) == '+')
         pos++;
 
-      start = pos;
+      int start = pos;
       while (!source.atEnd(pos) && isDigit(source.charAt(pos)))
         pos++;
       int exp = Integer.parseInt(source.mkString(start, pos));
       number = number * Math.pow(10, exp * exponentSign);
+      handler.handleDouble(number);
+    } else {
+      if (decimal)
+        handler.handleDouble(number);
+      else
+        handler.handleLong(intPart);
     }
-
-    handler.handleDouble(number);
     return pos;
   }
 

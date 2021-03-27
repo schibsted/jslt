@@ -83,7 +83,7 @@ public class SmallJObject extends AbstractJsonValue {
     private int ix;
 
     public boolean hasNext() {
-      return ix < nextIx;
+      return ix+1 < nextIx;
     }
 
     public String next() {
@@ -101,7 +101,7 @@ public class SmallJObject extends AbstractJsonValue {
     private int ix;
 
     public boolean hasNext() {
-      return ix < keys.length;
+      return ix+1 < nextIx;
     }
 
     public String key() {
