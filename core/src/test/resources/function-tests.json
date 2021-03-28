@@ -1224,7 +1224,7 @@
    },
    {
       "query" : "hash-int([1,2]) == hash-int([2,1])",
-      "input" : "",
+      "input" : "null",
       "output" : "false"
    },
    {

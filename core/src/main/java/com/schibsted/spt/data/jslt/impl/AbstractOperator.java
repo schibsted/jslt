@@ -18,6 +18,7 @@ package com.schibsted.spt.data.jslt.impl;
 import java.util.List;
 import java.util.ArrayList;
 import com.schibsted.spt.data.json.JsonValue;
+import com.schibsted.spt.data.json.NullJValue;
 
 /**
  * Shared abstract superclass for comparison operators and others.
@@ -54,7 +55,7 @@ public abstract class AbstractOperator extends AbstractNode {
     // if the two operands are literals we can just evaluate the
     // result right now and be done with it
     if (left instanceof LiteralExpression && right instanceof LiteralExpression)
-      return new LiteralExpression(apply(null, null), location);
+      return new LiteralExpression(apply(null, NullJValue.instance), location);
     else
       return this;
   }
