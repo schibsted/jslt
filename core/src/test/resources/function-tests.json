@@ -83,11 +83,6 @@
       "query" : "boolean([])"
    },
    {
-      "query" : "from-json(.)",
-      "output" : "null",
-      "input" : " \"\" "
-   },
-   {
       "output" : "true",
       "input" : "{}",
       "query" : "boolean([\"furdle\"])"

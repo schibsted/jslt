@@ -27,6 +27,11 @@
     "query": " from-json(\"[1,2,\") ",
     "input": "{}"
   },
+   {
+      "query" : "from-json(.)",
+      "error" : "parse",
+      "input" : " \"\" "
+   },
   {
     "error": "null",
     "query": "capture(\"blurgh\", null)",

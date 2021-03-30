@@ -1,6 +1,7 @@
 
 package com.schibsted.spt.data.json;
 
+import java.math.BigInteger;
 import com.schibsted.spt.data.jslt.JsltException;
 
 public class JsonBuilderHandler implements JsonEventHandler {
@@ -16,6 +17,10 @@ public class JsonBuilderHandler implements JsonEventHandler {
 
   public void handleLong(long value) {
     newValue(new LongJValue(value));
+  }
+
+  public void handleBigInteger(BigInteger value) {
+    newValue(new BigIntegerJValue(value));
   }
 
   public void handleDouble(double value) {

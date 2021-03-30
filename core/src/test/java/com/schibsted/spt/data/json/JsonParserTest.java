@@ -1,6 +1,8 @@
 
 package com.schibsted.spt.data.json;
 
+import java.math.BigInteger;
+
 import org.junit.Test;
 import static org.junit.Assert.fail;
 import static org.junit.Assert.assertTrue;
@@ -91,6 +93,13 @@ public class JsonParserTest {
       array[ix] = new LongJValue(ix);
     FixedArrayJValue big = new FixedArrayJValue(array, array.length);
     assertEquals(big, load(big.toString()));
+  }
+
+  @Test
+  public void testBigInteger() {
+    BigIntegerJValue v = new BigIntegerJValue(new BigInteger("124274772478237237823782728372873000000012347427427378238238283"));
+    JsonValue v2 = load(v.toString());
+    assertEquals(v, v2);
   }
 
   // ===== UTILITIES

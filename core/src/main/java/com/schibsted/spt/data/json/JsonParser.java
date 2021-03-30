@@ -3,6 +3,7 @@ package com.schibsted.spt.data.json;
 
 import java.io.Reader;
 import java.io.IOException;
+import java.math.BigInteger;
 import com.schibsted.spt.data.jslt.JsltException;
 
 public class JsonParser {
@@ -148,22 +149,36 @@ public class JsonParser {
       pos++;
     }
 
+    int start = pos;
     long intPart = 0;
     while (!source.atEnd(pos)) {
       long digitValue = digitValue(source.charAt(pos));
       if (digitValue == -1)
         break;
 
+      if (pos - start == 19) {
+        break;
+      }
+
       intPart = intPart * 10 + digitValue;
       pos++;
     }
     intPart = intPart * sign;
 
+    // this is a bigint
+    if (pos - start == 19) {
+      while (!source.atEnd(pos) && isDigit(source.charAt(pos)))
+        pos++;
+
+      handler.handleBigInteger(new BigInteger(source.mkString(start, pos)));
+      return pos;
+    }
+
     double number = 0;
     boolean decimal = false;
     if (!source.atEnd(pos) && source.charAt(pos) == '.') {
       pos++; // step over the '.'
-      int start = pos;
+      start = pos;
       while (!source.atEnd(pos) && isDigit(source.charAt(pos)))
         pos++;
 
@@ -184,7 +199,7 @@ public class JsonParser {
       } else if (source.charAt(pos) == '+')
         pos++;
 
-      int start = pos;
+      start = pos;
       while (!source.atEnd(pos) && isDigit(source.charAt(pos)))
         pos++;
       int exp = Integer.parseInt(source.mkString(start, pos));

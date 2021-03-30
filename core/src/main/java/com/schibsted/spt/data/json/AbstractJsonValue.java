@@ -115,7 +115,7 @@ public abstract class AbstractJsonValue implements JsonValue {
   }
 
   public JsonValue makeArray(List<JsonValue> values) {
-    return null;
+    return new ListArrayJValue(values);
   }
 
   public NullJValue makeNull() {

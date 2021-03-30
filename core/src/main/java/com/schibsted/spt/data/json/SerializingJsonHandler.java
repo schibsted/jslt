@@ -3,6 +3,7 @@ package com.schibsted.spt.data.json;
 
 import java.io.Writer;
 import java.io.IOException;
+import java.math.BigInteger;
 import com.schibsted.spt.data.jslt.JsltException;
 
 public class SerializingJsonHandler implements JsonEventHandler {
@@ -31,6 +32,15 @@ public class SerializingJsonHandler implements JsonEventHandler {
     try {
       addArrayComma();
       out.write("" + value);
+    } catch (IOException e) {
+      throw new JsltException("output error", e);
+    }
+  }
+
+  public void handleBigInteger(BigInteger value) {
+    try {
+      addArrayComma();
+      out.write(value.toString());
     } catch (IOException e) {
       throw new JsltException("output error", e);
     }

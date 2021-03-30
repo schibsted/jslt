@@ -17,4 +17,19 @@ public class BigIntegerJValue extends AbstractJsonValue {
   public boolean isIntegralNumber() {
     return true;
   }
+
+  public int hashCode() {
+    return value.hashCode();
+  }
+
+  public boolean equals(Object other) {
+    if (other instanceof BigIntegerJValue) {
+      return ((BigIntegerJValue) other).value.equals(value);
+    } else
+      return false;
+  }
+
+  public String toString() {
+    return value.toString();
+  }
 }

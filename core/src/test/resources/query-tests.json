@@ -593,7 +593,7 @@
       "output" : "false"
    },
    {
-      "input" : "",
+      "input" : "null",
       "query" : ".foo",
       "output" : "null"
    },
@@ -633,7 +633,7 @@
       "input" : "[1,2,3,4,5]"
    },
    {
-      "output" : "[{\"key\" : \"foo\", \"value\" : 1},  {\"key\" : \"bar\", \"value\" : 2}]",
+      "output" : "[{\"key\" : \"bar\", \"value\" : 2}, {\"key\" : \"foo\", \"value\" : 1}]",
       "input" : "{\"foo\":1,\"bar\":2}",
       "query" : "[for (.) let v = . $v]"
    },
@@ -693,7 +693,7 @@
       "output" : "false"
    },
    {
-      "output" : "[{\"key\" : \"foo\", \"value\" : 1},  {\"key\" : \"bar\", \"value\" : 2}]",
+      "output" : "[{\"key\" : \"bar\", \"value\" : 2}, {\"key\" : \"foo\", \"value\" : 1}]",
       "query" : "[for (.) .]",
       "input" : "{\"foo\":1,\"bar\":2}"
    },

@@ -72,6 +72,6 @@ public class FunctionWrapperTest extends TestBase {
     Expression expr = Parser.compileString(query, functions);
     JsonValue actual = expr.apply(context);
 
-    assertTrue(actual.asInt() == 1024);
+    assertEquals(actual.asDouble(), 1024.0, 0.000001);
   }
 }

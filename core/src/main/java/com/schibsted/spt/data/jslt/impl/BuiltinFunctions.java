@@ -20,9 +20,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SimpleTimeZone;
@@ -653,22 +655,18 @@ public class BuiltinFunctions {
       else if (!value.isArray())
         throw new JsltException("flatten() cannot operate on " + value);
 
-      // FIXME: how to do this efficiently?
-      // ArrayNode array = NodeUtils.mapper.createArrayNode();
-      // flatten(array, value);
-      // return array;
-      return null;
+      List<JsonValue> array = new ArrayList<>();
+      flatten(array, value);
+      return new ListArrayJValue(array);
     }
 
-    private void flatten(JsonValue array, JsonValue current) {
+    private void flatten(List<JsonValue> array, JsonValue current) {
       for (int ix = 0; ix < current.size(); ix++) {
         JsonValue node = current.get(ix);
         if (node.isArray())
           flatten(array, node);
-
-        // FIXME
-        // else
-        //   array.add(node);
+        else
+          array.add(node);
       }
     }
   }
@@ -1260,17 +1258,19 @@ public class BuiltinFunctions {
           objectNode.set("scheme", aURL.getProtocol());
         if (aURL.getQuery() != null && !aURL.getQuery().isEmpty()) {
           objectNode.set("query", aURL.getQuery());
+
+          Map<String, List<String>> params = parseParams(aURL.getQuery());
+
           JsonObjectBuilder queryParamsNode = input.makeObjectBuilder();
-          objectNode.set("parameters", queryParamsNode.build());
-          String[] pairs = aURL.getQuery().split("&");
-          for (String pair : pairs) {
-            int idx = pair.indexOf("=");
-            String key = idx > 0 ? URLDecoder.decode(pair.substring(0, idx), "UTF-8") : pair;
-            // if (!queryParamsNode.has(key)) queryParamsNode.set(key, NodeUtils.mapper.createArrayNode());
-            String value = idx > 0 && pair.length() > idx + 1 ? URLDecoder.decode(pair.substring(idx + 1), "UTF-8") : null;
-            //JsonValue valuesNode = queryParamsNode.get(key);
-            //valuesNode.add(value); // FIXME: no can do
+          for (Map.Entry<String, List<String>> entry : params.entrySet()) {
+            List<String> values = entry.getValue();
+            JsonValue[] buf = new JsonValue[values.size()];
+            int ix = 0;
+            for (String v : values)
+              buf[ix++] = v != null ? new StringJValue(v) : NullJValue.instance;
+            queryParamsNode.set(entry.getKey(), new FixedArrayJValue(buf, buf.length));
           }
+          objectNode.set("parameters", queryParamsNode.build());
         }
         if(aURL.getRef() != null)
           objectNode.set("fragment", aURL.getRef());
@@ -1280,6 +1280,24 @@ public class BuiltinFunctions {
       } catch (MalformedURLException | UnsupportedEncodingException e) {
         throw new JsltException("Can't parse " + urlString, e);
       }
+    }
+
+    private Map<String, List<String>> parseParams(String query) throws MalformedURLException, UnsupportedEncodingException {
+      Map<String, List<String>> params = new HashMap<>();
+
+      for (String pair : query.split("&")) {
+        int idx = pair.indexOf("=");
+        String key = idx > 0 ? URLDecoder.decode(pair.substring(0, idx), "UTF-8") : pair;
+
+        List<String> values = params.get(key);
+        if (values == null) {
+          values = new ArrayList<>();
+          params.put(key, values);
+        }
+        String value = idx > 0 && pair.length() > idx + 1 ? URLDecoder.decode(pair.substring(idx + 1), "UTF-8") : null;
+        values.add(value);
+      }
+      return params;
     }
   }
 

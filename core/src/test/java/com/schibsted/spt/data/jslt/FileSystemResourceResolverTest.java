@@ -24,8 +24,8 @@ public class FileSystemResourceResolverTest {
     FileSystemResourceResolver resolver = new FileSystemResourceResolver();
     Expression e = parse("./src/test/resources/import-from-fs/working1.jslt", resolver);
     assertEquals(
-      readResource("import-from-fs/working1_expected_result.json"),
-      JsonIO.toString(e.apply(JsonIO.parseString("{}"))));
+      JsonIO.parseString(readResource("import-from-fs/working1_expected_result.json")),
+      e.apply(JsonIO.parseString("{}")));
   }
 
   @Test
@@ -34,8 +34,8 @@ public class FileSystemResourceResolverTest {
       new FileSystemResourceResolver(new File("src/test/resources/import-from-fs"));
     Expression e = parse("./src/test/resources/import-from-fs/working2.jslt", resolver);
     assertEquals(
-      readResource("import-from-fs/working1_expected_result.json"),
-      JsonIO.toString(e.apply(JsonIO.parseString("{}"))));
+      JsonIO.parseString(readResource("import-from-fs/working1_expected_result.json")),
+      e.apply(JsonIO.parseString("{}")));
   }
 
   @Test
