@@ -22,17 +22,17 @@ public class Benchmark {
       System.exit(1);
     }
 
-    List<Expression> expressions = new ArrayList<>();
+    List<ExpressionMeta> expressions = new ArrayList<>();
     File root = new File(args[0]);
-    for (String jsltFile : root.list()) {
-      expressions.add(Parser.compile(new File(root, jsltFile)));
-    }
+    for (String jsltFile : root.list())
+      expressions.add(new ExpressionMeta(Parser.compile(new File(root, jsltFile)), jsltFile.indexOf("filter") != -1));
     System.out.println("Expressions: " + expressions.size());
 
-    List<JsonValue> values = new ArrayList<>();
-    Iterator<JsonValue> it = JsonIO.parseLines(new FileReader(args[1]));
-    while (it.hasNext())
-      values.add(it.next());
+    List<byte[]> values = new ArrayList<>();
+    BufferedReader reader = new BufferedReader(new FileReader(args[1]));
+    String line = reader.readLine();
+    while (line != null)
+      values.add(line.getBytes());
     System.out.println("JSON objects: " + values.size());
 
     System.out.println("Warmup ...");
@@ -45,14 +45,27 @@ public class Benchmark {
     System.out.println("Time: " + duration);
   }
 
-  private static void run(List<Expression> expressions, List<JsonValue> values, int times) {
+  private static JsonParser parser = new JsonParser();
+  private static void run(List<ExpressionMeta> expressions, List<byte[]> values, int times) throws IOException {
     for (int ix = 0; ix < times; ix++) {
-      for (Expression expr : expressions) {
-        for (JsonValue value : values) {
-          expr.apply(value);
+      for (byte[] value : values) {
+        JsonValue v = parser.parse(value);
+        for (ExpressionMeta expr : expressions) {
+          JsonValue v2 = expr.expr.apply(v);
+          if (expr.isFilter)
+            JsonIO.toBytes(v2);
         }
       }
     }
   }
 
+  static class ExpressionMeta {
+    Expression expr;
+    boolean isFilter;
+
+    ExpressionMeta(Expression expr, boolean isFilter) {
+      this.expr = expr;
+      this.isFilter = isFilter;
+    }
+  }
 }
