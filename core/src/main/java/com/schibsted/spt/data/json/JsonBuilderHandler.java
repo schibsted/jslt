@@ -6,9 +6,24 @@ import com.schibsted.spt.data.jslt.JsltException;
 
 public class JsonBuilderHandler implements JsonEventHandler {
   private StackItem current;
+  private static LongJValue[] longCache;
+  private static StringJValue EMPTY_STRING = new StringJValue("");
+
+  static {
+    longCache = new LongJValue[34];
+    for (int ix = 0; ix < longCache.length; ix++)
+      longCache[ix] = new LongJValue(ix - 1);
+  }
 
   public JsonValue get() {
     return current.value;
+  }
+
+  public void handleString(char[] buffer, int start, int length) {
+    if (length > 0)
+      newValue(new StringJValue(new String(buffer, start, length)));
+    else
+      newValue(EMPTY_STRING);
   }
 
   public void handleString(String value) {
@@ -16,7 +31,10 @@ public class JsonBuilderHandler implements JsonEventHandler {
   }
 
   public void handleLong(long value) {
-    newValue(new LongJValue(value));
+    if (value >= -1 && value <= 31)
+      newValue(longCache[(int) value + 1]);
+    else
+      newValue(new LongJValue(value));
   }
 
   public void handleBigInteger(BigInteger value) {

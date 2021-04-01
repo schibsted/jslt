@@ -3,7 +3,7 @@ package com.schibsted.spt.data.json;
 
 import java.util.Iterator;
 
-public interface JsonValue extends JsonBuilder {
+public interface JsonValue extends JsonBuilder, Iterable {
 
   // array or string
   public boolean isSequence();
@@ -48,5 +48,8 @@ public interface JsonValue extends JsonBuilder {
   public Iterator<String> getKeys();
 
   public PairIterator pairIterator();
+
+  // over array children
+  public Iterator<JsonValue> iterator();
 
 }

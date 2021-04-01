@@ -1,6 +1,7 @@
 
 package com.schibsted.spt.data.json;
 
+import java.util.List;
 import java.util.Iterator;
 import java.io.File;
 import java.io.Reader;
@@ -11,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -50,6 +52,27 @@ public class JsonIO {
     }
   }
 
+  // makes a JSON array of the list
+  public static byte[] toBytes(List<JsonValue> values) {
+    try {
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      OutputStreamWriter osw = new OutputStreamWriter(baos, StandardCharsets.UTF_8);
+      osw.write('[');
+
+      for (int ix = 0; ix < values.size(); ix++) {
+        JsonTraversal.traverse(values.get(ix), new SerializingJsonHandler(osw));
+        if (ix+1 < values.size())
+          osw.write(',');
+      }
+
+      osw.write(']');
+      osw.flush();
+      return baos.toByteArray();
+    } catch (IOException e) {
+      throw new JsltException("impossible error", e);
+    }
+  }
+
   public static JsonValue parseString(String json) {
     try {
       JsonBuilderHandler builder = new JsonBuilderHandler();
@@ -67,6 +90,12 @@ public class JsonIO {
 
   public static JsonValue parse(File file) throws IOException {
     try (InputStreamReader in = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8)) {
+      return parse(in);
+    }
+  }
+
+  public static JsonValue parse(byte[] data) throws IOException {
+    try (InputStreamReader in = new InputStreamReader(new ByteArrayInputStream(data), StandardCharsets.UTF_8)) {
       return parse(in);
     }
   }

@@ -2,6 +2,7 @@
 package com.schibsted.spt.data.json;
 
 import java.util.List;
+import java.util.Iterator;
 
 public class ListArrayJValue extends AbstractJsonValue {
   private List<JsonValue> array;
@@ -26,6 +27,10 @@ public class ListArrayJValue extends AbstractJsonValue {
 
   public int size() {
     return array.size();
+  }
+
+  public Iterator<JsonValue> iterator() {
+    return array.iterator();
   }
 
   public int hashCode() {

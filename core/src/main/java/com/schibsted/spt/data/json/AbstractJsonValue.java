@@ -91,6 +91,10 @@ public abstract class AbstractJsonValue implements JsonValue {
     return EMPTY_PAIR_ITERATOR;
   }
 
+  public Iterator<JsonValue> iterator() {
+    return Collections.emptyIterator();
+  }
+
   // ===== JsonBuilder
 
   public JsonValue makeValue(long value) {

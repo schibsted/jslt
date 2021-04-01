@@ -1,6 +1,8 @@
 
 package com.schibsted.spt.data.json;
 
+import java.util.Iterator;
+
 public class FixedArrayJValue extends AbstractJsonValue {
   private JsonValue[] array;
   private int size;
@@ -26,6 +28,10 @@ public class FixedArrayJValue extends AbstractJsonValue {
 
   public int size() {
     return size;
+  }
+
+  public Iterator<JsonValue> iterator() {
+    return new ValueIterator();
   }
 
   public int hashCode() {
@@ -58,5 +64,23 @@ public class FixedArrayJValue extends AbstractJsonValue {
     }
     buf.append("]");
     return buf.toString();
+  }
+
+  // ===== VALUE ITERATOR
+
+  class ValueIterator implements Iterator {
+    private int ix;
+
+    public boolean hasNext() {
+      return ix < size;
+    }
+
+    public JsonValue next() {
+      return array[ix++];
+    }
+
+    public void remove() {
+      throw new UnsupportedOperationException();
+    }
   }
 }

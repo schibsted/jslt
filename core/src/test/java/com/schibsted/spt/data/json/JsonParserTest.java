@@ -2,6 +2,7 @@
 package com.schibsted.spt.data.json;
 
 import java.math.BigInteger;
+import java.io.IOException;
 
 import org.junit.Test;
 import static org.junit.Assert.fail;
@@ -99,6 +100,14 @@ public class JsonParserTest {
   public void testBigInteger() {
     BigIntegerJValue v = new BigIntegerJValue(new BigInteger("124274772478237237823782728372873000000012347427427378238238283"));
     JsonValue v2 = load(v.toString());
+    assertEquals(v, v2);
+  }
+
+  @Test
+  public void testByteParsing() throws IOException {
+    byte[] bytes = "[1,2,3]".getBytes();
+    JsonValue v = JsonIO.parse(bytes);
+    JsonValue v2 = load("[1,2,3]");
     assertEquals(v, v2);
   }
 

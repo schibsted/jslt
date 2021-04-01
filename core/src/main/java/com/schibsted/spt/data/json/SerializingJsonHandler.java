@@ -28,6 +28,15 @@ public class SerializingJsonHandler implements JsonEventHandler {
     }
   }
 
+  public void handleString(char[] buffer, int start, int len) {
+    try {
+      addArrayComma();
+      out.write(buffer, start, len);
+    } catch (IOException e) {
+      throw new JsltException("output error", e);
+    }
+  }
+
   public void handleLong(long value) {
     try {
       addArrayComma();

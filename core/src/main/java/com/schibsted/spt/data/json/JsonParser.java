@@ -4,6 +4,11 @@ package com.schibsted.spt.data.json;
 import java.io.Reader;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.StandardCharsets;
+import java.nio.charset.CoderResult;
+import java.nio.charset.CharsetDecoder;
 import com.schibsted.spt.data.jslt.JsltException;
 
 public class JsonParser {
@@ -12,6 +17,9 @@ public class JsonParser {
   private char[] buffer;
   private char[] tmp;
   private static final int BUFFER_SIZE = 65368;
+
+  private CharsetDecoder decoder;
+  private CharBuffer bufferObj;
 
   // reasonable inputs:
   //   string from a line parser
@@ -56,6 +64,34 @@ public class JsonParser {
 
     int pos = parse(0);
     this.source.confirmFinished(pos);
+  }
+
+  public JsonValue parse(char[] data, int start, int end) throws IOException {
+    JsonBuilderHandler builder = new JsonBuilderHandler();
+    this.source = new CharCharacterSource(data, end);
+    this.handler = handler;
+
+    int pos = parse(start);
+    this.source.confirmFinished(pos);
+    return builder.get();
+  }
+
+  public JsonValue parse(byte[] data) throws IOException {
+    if (decoder == null) {
+      decoder = StandardCharsets.UTF_8.newDecoder();
+      bufferObj = CharBuffer.wrap(buffer);
+    }
+    ByteBuffer dataObj = ByteBuffer.wrap(data);
+    CoderResult result = decoder.decode(dataObj, bufferObj, true);
+
+    JsonBuilderHandler builder = new JsonBuilderHandler();
+    this.source = new CharCharacterSource(buffer, bufferObj.position());
+    bufferObj.rewind();
+    this.handler = builder;
+
+    int pos = parse(0);
+    this.source.confirmFinished(pos);
+    return builder.get();
   }
 
   private int parse(int pos) throws IOException {
@@ -119,7 +155,7 @@ public class JsonParser {
     if (isObjectKey)
       handler.handleKey(new String(tmp, 0, ix));
     else
-      handler.handleString(new String(tmp, 0, ix));
+      handler.handleString(tmp, 0, ix);
     return ++pos;
   }
 

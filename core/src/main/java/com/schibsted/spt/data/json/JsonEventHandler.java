@@ -5,6 +5,8 @@ import java.math.BigInteger;
 
 public interface JsonEventHandler {
 
+  public void handleString(char[] buffer, int start, int end);
+
   public void handleString(String value);
 
   public void handleLong(long value);
