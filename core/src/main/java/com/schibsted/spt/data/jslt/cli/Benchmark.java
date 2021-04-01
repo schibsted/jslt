@@ -46,6 +46,7 @@ public class Benchmark {
   }
 
   private static JsonParser parser = new JsonParser();
+  private static JsonWriter writer = new JsonWriter();
   private static void run(List<ExpressionMeta> expressions, List<byte[]> values, int times) throws IOException {
     for (int ix = 0; ix < times; ix++) {
       for (byte[] value : values) {
@@ -53,7 +54,7 @@ public class Benchmark {
         for (ExpressionMeta expr : expressions) {
           JsonValue v2 = expr.expr.apply(v);
           if (expr.isFilter)
-            JsonIO.toBytes(v2);
+            writer.toBytes(v2);
         }
       }
     }

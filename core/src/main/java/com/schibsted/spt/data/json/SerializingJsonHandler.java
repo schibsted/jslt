@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import com.schibsted.spt.data.jslt.JsltException;
 
-public class SerializingJsonHandler implements JsonEventHandler {
+public final class SerializingJsonHandler implements JsonEventHandler {
   private Writer out;
   private boolean[] firstStack;
   private boolean[] arrayStack;
@@ -22,7 +22,9 @@ public class SerializingJsonHandler implements JsonEventHandler {
   public void handleString(String value) {
     try {
       addArrayComma();
-      out.write('"' + value + '"');
+      out.write('"');
+      out.write(value);
+      out.write('"');
     } catch (IOException e) {
       throw new JsltException("output error", e);
     }
@@ -31,7 +33,9 @@ public class SerializingJsonHandler implements JsonEventHandler {
   public void handleString(char[] buffer, int start, int len) {
     try {
       addArrayComma();
+      out.write('"');
       out.write(buffer, start, len);
+      out.write('"');
     } catch (IOException e) {
       throw new JsltException("output error", e);
     }
@@ -64,19 +68,25 @@ public class SerializingJsonHandler implements JsonEventHandler {
     }
   }
 
+  private static char[] falseBuf = "false".toCharArray();
+  private static char[] trueBuf = "true".toCharArray();
   public void handleBoolean(boolean value) {
     try {
       addArrayComma();
-      out.write("" + value);
+      if (value)
+        out.write(trueBuf, 0, 4);
+      else
+        out.write(falseBuf, 0, 5);
     } catch (IOException e) {
       throw new JsltException("output error", e);
     }
   }
 
+  private static char[] nullBuf = "null".toCharArray();
   public void handleNull() {
     try {
       addArrayComma();
-      out.write("null");
+      out.write(nullBuf, 0, 4);
     } catch (IOException e) {
       throw new JsltException("output error", e);
     }
@@ -85,7 +95,7 @@ public class SerializingJsonHandler implements JsonEventHandler {
   public void startObject() {
     try {
       addArrayComma();
-      out.write("{");
+      out.write('{');
       firstStack[++stackPos] = true;
     } catch (IOException e) {
       throw new JsltException("output error", e);
@@ -97,9 +107,9 @@ public class SerializingJsonHandler implements JsonEventHandler {
       if (firstStack[stackPos])
         firstStack[stackPos] = false;
       else
-        out.write(",");
+        out.write(',');
       handleString(key);
-      out.write(":");
+      out.write(':');
     } catch (IOException e) {
       throw new JsltException("output error", e);
     }
@@ -107,7 +117,7 @@ public class SerializingJsonHandler implements JsonEventHandler {
 
   public void endObject() {
     try {
-      out.write("}");
+      out.write('}');
       stackPos--;
     } catch (IOException e) {
       throw new JsltException("output error", e);
@@ -117,7 +127,7 @@ public class SerializingJsonHandler implements JsonEventHandler {
   public void startArray() {
     try {
       addArrayComma();
-      out.write("[");
+      out.write('[');
       firstStack[++stackPos] = true;
       arrayStack[stackPos] = true;
     } catch (IOException e) {
@@ -127,7 +137,7 @@ public class SerializingJsonHandler implements JsonEventHandler {
 
   public void endArray() {
     try {
-      out.write("]");
+      out.write(']');
       stackPos--;
     } catch (IOException e) {
       throw new JsltException("output error", e);
@@ -137,7 +147,7 @@ public class SerializingJsonHandler implements JsonEventHandler {
   private void addArrayComma() throws IOException {
     if (stackPos >= 0) {
       if (arrayStack[stackPos] && !firstStack[stackPos])
-        out.write(",");
+        out.write(',');
       else
         firstStack[stackPos] = false;
     }
