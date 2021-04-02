@@ -40,4 +40,8 @@ public class DoubleJValue extends AbstractJsonValue {
     } else
       return false;
   }
+
+  public void traverse(JsonEventHandler handler) {
+    handler.handleDouble(value);
+  }
 }

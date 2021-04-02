@@ -67,6 +67,15 @@ public class DynamicJObject extends AbstractJsonValue implements JsonObjectBuild
     return buf.toString();
   }
 
+  public void traverse(JsonEventHandler handler) {
+    handler.startObject();
+    for (Map.Entry<String, JsonValue> entry : values.entrySet()) {
+      handler.handleKey(entry.getKey());
+      entry.getValue().traverse(handler);
+    }
+    handler.endObject();
+  }
+
   // ===== JsonObjectBuilder
 
   public JsonObjectBuilder set(String key, JsonValue value) {

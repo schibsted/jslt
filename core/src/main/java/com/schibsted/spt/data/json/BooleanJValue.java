@@ -35,4 +35,8 @@ public class BooleanJValue extends AbstractJsonValue {
     } else
       return false;
   }
+
+  public void traverse(JsonEventHandler handler) {
+    handler.handleBoolean(value);
+  }
 }

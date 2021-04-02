@@ -31,7 +31,7 @@ public class JsonIO {
   public static String toStringWithSortedKeys(JsonValue value) {
     // FIXME: no actual sorting of keys
     StringWriter buf = new StringWriter();
-    JsonTraversal.traverse(value, new SerializingJsonHandler(buf));
+    value.traverse(new SerializingJsonHandler(buf));
     return buf.toString();
   }
 
@@ -44,7 +44,7 @@ public class JsonIO {
     try {
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
       OutputStreamWriter osw = new OutputStreamWriter(baos, StandardCharsets.UTF_8);
-      JsonTraversal.traverse(value, new SerializingJsonHandler(osw));
+      value.traverse(new SerializingJsonHandler(osw));
       osw.flush();
       return baos.toByteArray();
     } catch (IOException e) {
@@ -60,7 +60,7 @@ public class JsonIO {
       osw.write('[');
 
       for (int ix = 0; ix < values.size(); ix++) {
-        JsonTraversal.traverse(values.get(ix), new SerializingJsonHandler(osw));
+        values.get(ix).traverse(new SerializingJsonHandler(osw));
         if (ix+1 < values.size())
           osw.write(',');
       }

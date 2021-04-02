@@ -20,7 +20,7 @@ public class JsonWriter {
 
   public byte[] toBytes(JsonValue value) {
     try {
-      JsonTraversal.traverse(value, handler);
+      value.traverse(handler);
       osw.flush();
       byte[] buf = baos.toByteArray();
       baos.reset();

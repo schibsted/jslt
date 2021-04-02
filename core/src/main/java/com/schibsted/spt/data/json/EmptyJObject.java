@@ -49,4 +49,9 @@ public class EmptyJObject extends AbstractJsonValue {
   public String toString() {
     return "{}";
   }
+
+  public void traverse(JsonEventHandler handler) {
+    handler.startObject();
+    handler.endObject();
+  }
 }

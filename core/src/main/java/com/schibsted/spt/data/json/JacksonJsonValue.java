@@ -114,6 +114,10 @@ public class JacksonJsonValue extends AbstractJsonValue {
     return node.toString();
   }
 
+  public void traverse(JsonEventHandler handler) {
+    throw new UnsupportedOperationException();
+  }
+
   // ===== PAIR ITERATOR
 
   class JacksonPairIterator implements PairIterator {

@@ -50,4 +50,8 @@ public class LongJValue extends AbstractJsonValue {
     } else
       return false;
   }
+
+  public void traverse(JsonEventHandler handler) {
+    handler.handleLong(value);
+  }
 }

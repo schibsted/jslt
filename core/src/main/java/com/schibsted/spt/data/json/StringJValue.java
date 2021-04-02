@@ -24,6 +24,10 @@ public class StringJValue extends AbstractJsonValue {
     return value.length();
   }
 
+  public void traverse(JsonEventHandler handler) {
+    handler.handleString(value);
+  }
+
   public String toString() {
     return '"' + value + '"';
   }

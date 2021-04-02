@@ -44,9 +44,6 @@ public class ArraySlicer extends AbstractNode {
       return sequence.makeNull();
 
     int size = sequence.size();
-    if (sequence.isString())
-      size = sequence.asString().length();
-
     int leftix = resolveIndex(scope, left, input, size, 0);
     if (!colon) {
       if (sequence.isArray()) {

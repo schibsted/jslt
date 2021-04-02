@@ -64,4 +64,11 @@ public class ListArrayJValue extends AbstractJsonValue {
     buf.append("]");
     return buf.toString();
   }
+
+  public void traverse(JsonEventHandler handler) {
+    handler.startArray();
+    for (int ix = 0; ix < array.size(); ix++)
+      array.get(ix).traverse(handler);
+    handler.endArray();
+  }
 }

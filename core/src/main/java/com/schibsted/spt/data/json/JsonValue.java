@@ -52,4 +52,5 @@ public interface JsonValue extends JsonBuilder, Iterable {
   // over array children
   public Iterator<JsonValue> iterator();
 
+  public void traverse(JsonEventHandler handler);
 }

@@ -44,6 +44,15 @@ public class SmallJObject extends AbstractJsonValue {
     return new SmallPairIterator();
   }
 
+  public void traverse(JsonEventHandler handler) {
+    handler.startObject();
+    for (int ix = 0; ix < nextIx; ix++) {
+      handler.handleKey(keys[ix]);
+      values[ix].traverse(handler);
+    }
+    handler.endObject();
+  }
+
   public int hashCode() {
     throw new JsltException("OUCH");
   }

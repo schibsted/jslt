@@ -32,4 +32,8 @@ public class BigIntegerJValue extends AbstractJsonValue {
   public String toString() {
     return value.toString();
   }
+
+  public void traverse(JsonEventHandler handler) {
+    handler.handleBigInteger(value);
+  }
 }

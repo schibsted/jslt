@@ -26,4 +26,8 @@ public class NullJValue extends AbstractJsonValue {
     } else
       return false;
   }
+
+  public void traverse(JsonEventHandler handler) {
+    handler.handleNull();
+  }
 }
