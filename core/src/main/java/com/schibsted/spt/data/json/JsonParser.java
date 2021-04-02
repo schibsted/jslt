@@ -46,10 +46,7 @@ public class JsonParser {
   // not thread-safe, not re-entrant
   public void parse(Reader source, JsonEventHandler handler) throws IOException {
     this.source = new ReaderCharacterSource(source, buffer);
-    this.handler = handler;
-
-    int pos = parse(0);
-    this.source.confirmFinished(pos);
+    startParsing(handler);
   }
 
   public JsonValue parse(String source) throws IOException {
@@ -60,19 +57,13 @@ public class JsonParser {
 
   public void parse(String source, JsonEventHandler handler) throws IOException {
     this.source = new CharCharacterSource(source, buffer);
-    this.handler = handler;
-
-    int pos = parse(0);
-    this.source.confirmFinished(pos);
+    startParsing(handler);
   }
 
   public JsonValue parse(char[] data, int start, int end) throws IOException {
     JsonBuilderHandler builder = new JsonBuilderHandler();
     this.source = new CharCharacterSource(data, end);
-    this.handler = handler;
-
-    int pos = parse(start);
-    this.source.confirmFinished(pos);
+    startParsing(handler);
     return builder.get();
   }
 
@@ -87,11 +78,13 @@ public class JsonParser {
     JsonBuilderHandler builder = new JsonBuilderHandler();
     this.source = new CharCharacterSource(buffer, bufferObj.position());
     bufferObj.rewind();
-    this.handler = builder;
-
-    int pos = parse(0);
-    this.source.confirmFinished(pos);
+    startParsing(builder);
     return builder.get();
+  }
+
+  private void startParsing(JsonEventHandler handler) throws IOException {
+    this.handler = handler;
+    this.source.confirmFinished(parse(0));
   }
 
   private int parse(int pos) throws IOException {
