@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import com.schibsted.spt.data.jslt.JsltException;
 
 public class JsonBuilderHandler implements JsonEventHandler {
+  private JsonValue value;
   private StackItem current;
   private static LongJValue[] longCache;
   private static StringJValue EMPTY_STRING = new StringJValue("");
@@ -16,7 +17,7 @@ public class JsonBuilderHandler implements JsonEventHandler {
   }
 
   public JsonValue get() {
-    return current.value;
+    return value;
   }
 
   public void handleString(char[] buffer, int start, int length) {
@@ -64,7 +65,7 @@ public class JsonBuilderHandler implements JsonEventHandler {
   public void endObject() {
     JsonValue value = current.object.build();
     if (current.parent == null)
-      current.value = value;
+      this.value = value;
     else {
       current = current.parent;
       newValue(value);
@@ -78,7 +79,7 @@ public class JsonBuilderHandler implements JsonEventHandler {
   public void endArray() {
     JsonValue value = new FixedArrayJValue(current.array, current.arrayPos);
     if (current.parent == null)
-      current.value = value;
+      this.value = value;
     else {
       current = current.parent;
       newValue(value);
@@ -87,7 +88,7 @@ public class JsonBuilderHandler implements JsonEventHandler {
 
   private void newValue(JsonValue value) {
     if (current == null)
-      current = new StackItem(value);
+      this.value = value;
     else if (current.key != null) {
       current.object.set(current.key, value);
       current.key = null;
@@ -98,17 +99,12 @@ public class JsonBuilderHandler implements JsonEventHandler {
   }
 
   private static class StackItem {
-    JsonValue value;
     StackItem parent;
 
     JsonValue[] array;
     int arrayPos;
     JsonObjectBuilder object;
     String key;
-
-    StackItem(JsonValue value) {
-      this.value = value;
-    }
 
     StackItem(StackItem parent, JsonObjectBuilder object) {
       this.parent = parent;
