@@ -31,8 +31,10 @@ public class Benchmark {
     List<byte[]> values = new ArrayList<>();
     BufferedReader reader = new BufferedReader(new FileReader(args[1]));
     String line = reader.readLine();
-    while (line != null)
+    while (line != null) {
       values.add(line.getBytes());
+      line = reader.readLine();
+    }
     System.out.println("JSON objects: " + values.size());
 
     System.out.println("Warmup ...");
@@ -42,7 +44,7 @@ public class Benchmark {
     long start = System.currentTimeMillis();
     run(expressions, values, ITERATIONS);
     long duration = System.currentTimeMillis() - start;
-    System.out.println("Time: " + duration);
+    System.out.println("Time: " + duration + ", iterations: " + ITERATIONS);
   }
 
   private static JsonParser parser = new JsonParser();
@@ -53,7 +55,7 @@ public class Benchmark {
         JsonValue v = parser.parse(value);
         for (ExpressionMeta expr : expressions) {
           JsonValue v2 = expr.expr.apply(v);
-          if (expr.isFilter)
+          if (!expr.isFilter)
             writer.toBytes(v2);
         }
       }

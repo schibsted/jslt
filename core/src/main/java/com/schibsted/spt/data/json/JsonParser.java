@@ -11,7 +11,7 @@ import java.nio.charset.CoderResult;
 import java.nio.charset.CharsetDecoder;
 import com.schibsted.spt.data.jslt.JsltException;
 
-public class JsonParser {
+public final class JsonParser {
   private Reader reader;
   private JsonEventHandler handler;
   private char[] buffer;
@@ -312,10 +312,6 @@ public class JsonParser {
       return -1;
   }
 
-  private static boolean isWhitespace(char ch) {
-    return ch == ' ' || ch == '\n' || ch == '\r' || ch == '\t';
-  }
-
   private void fillBuffer() throws IOException {
     int chars = reader.read(buffer, bufEnd, buffer.length - bufEnd);
     bufEnd += chars;
@@ -332,10 +328,18 @@ public class JsonParser {
   }
 
   public int consumeWhitespace(int ix) {
-    while (ix < bufEnd && isWhitespace(buffer[ix]))
+    while (ix < bufEnd) {
+      char ch = buffer[ix];
+      if (ch != ' ' && ch != '\n' && ch != '\r' && ch != '\t')
+        break;
       ix++;
+    }
 
     return ix;
+  }
+
+  private static boolean isWhitespace(char ch) {
+    return ch == ' ' || ch == '\n' || ch == '\r' || ch == '\t';
   }
 
   public int verify(int pos, String text) throws IOException {
@@ -349,131 +353,5 @@ public class JsonParser {
   public void confirmFinished(int pos) {
     if (pos != bufEnd)
       throw new JsltException("Garbage at end: '" + mkString(pos, bufEnd));
-  }
-
-  interface CharacterSource {
-
-    public boolean atEnd(int pos);
-
-    public char charAt(int pos);
-
-    public String mkString(int start, int end);
-
-    public void verifyAt(char ch, int pos);
-
-    public int consumeWhitespace(int ix);
-
-    public void confirmFinished(int pos);
-
-    public int verify(int pos, String text) throws IOException;
-  }
-
-  private static class ReaderCharacterSource implements CharacterSource {
-    private Reader input;
-    private char[] buffer;
-    private int nextIx;
-
-    private ReaderCharacterSource(Reader input, char[] buffer) throws IOException {
-      this.input = input;
-      this.buffer = buffer;
-      fillBuffer();
-    }
-
-    private void fillBuffer() throws IOException {
-      int chars = input.read(buffer, nextIx, buffer.length - nextIx);
-      nextIx += chars;
-    }
-
-    public boolean atEnd(int pos) {
-      return pos >= nextIx;
-    }
-
-    public char charAt(int pos) {
-      return buffer[pos];
-    }
-
-    public String mkString(int start, int end) {
-      return new String(buffer, start, end - start);
-    }
-
-    public void verifyAt(char ch, int pos) {
-      if (buffer[pos] != ch)
-        throw new JsltException("Expected '" + ch + "' at " + pos + ", but got '" +
-                                buffer[pos] + "'");
-    }
-
-    public int consumeWhitespace(int ix) {
-      while (ix < nextIx && isWhitespace(buffer[ix]))
-        ix++;
-
-      return ix;
-    }
-
-    public void confirmFinished(int pos) {
-      if (pos != nextIx)
-        throw new JsltException("Garbage at end: '" + mkString(pos, nextIx));
-    }
-
-    public int verify(int pos, String text) throws IOException {
-      for (int ix = 0; ix < text.length(); ix++)
-        if (buffer[pos + ix] != text.charAt(ix))
-          throw new JsltException("Expected " + text + " found something else");
-
-      return pos + text.length();
-    }
-  }
-
-  private static class CharCharacterSource implements CharacterSource {
-    private char[] buffer;
-    private int end;
-
-    private CharCharacterSource(String input, char[] buffer) {
-      this.buffer = buffer;
-      this.end = input.length();
-      input.getChars(0, input.length(), buffer, 0);
-    }
-
-    private CharCharacterSource(char[] input, int end) {
-      this.buffer = input;
-      this.end = end;
-    }
-
-    public boolean atEnd(int pos) {
-      return pos >= end;
-    }
-
-    public char charAt(int pos) {
-      return buffer[pos];
-    }
-
-    public String mkString(int start, int end) {
-      return new String(buffer, start, end - start);
-    }
-
-    public void verifyAt(char ch, int pos) {
-      if (buffer[pos] != ch)
-        throw new JsltException("Expected '" + ch + "' at " + pos + ", but got '" +
-                                buffer[pos] + "'");
-    }
-
-    public int consumeWhitespace(int ix) {
-      while (ix < end && isWhitespace(buffer[ix]))
-        ix++;
-
-      return ix;
-    }
-
-    public void confirmFinished(int pos) {
-      if (pos != end)
-        throw new JsltException("Garbage at end: '" + mkString(pos, end));
-    }
-
-    public int verify(int pos, String text) throws IOException {
-      for (int ix = 0; ix < text.length(); ix++)
-        if (buffer[pos + ix] != text.charAt(ix))
-          throw new JsltException("Expected " + text + " found something else");
-
-      return pos + text.length();
-    }
   }
 }
