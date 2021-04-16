@@ -23,7 +23,7 @@ public class PlaygroundServer {
   private static String INDEX_HTML = "lambda.html";
 
   public static class JsltHandler extends AbstractHandler {
-    public void handle​(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
+    public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
       if (!target.equals("/jslt"))
         return;
 
