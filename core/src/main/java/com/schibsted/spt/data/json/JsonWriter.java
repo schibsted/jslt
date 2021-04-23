@@ -8,25 +8,15 @@ import java.nio.charset.StandardCharsets;
 import com.schibsted.spt.data.jslt.JsltException;
 
 public class JsonWriter {
-  private ByteArrayOutputStream baos;
-  private OutputStreamWriter osw;
-  private SerializingJsonHandler handler;
+  private UTF8SerializingHandler handler;
 
   public JsonWriter() {
-    this.baos = new ByteArrayOutputStream();
-    this.osw = new OutputStreamWriter(baos, StandardCharsets.UTF_8);
-    this.handler = new SerializingJsonHandler(osw);
+    this.handler = new UTF8SerializingHandler();
   }
 
   public byte[] toBytes(JsonValue value) {
-    try {
-      value.traverse(handler);
-      osw.flush();
-      byte[] buf = baos.toByteArray();
-      baos.reset();
-      return buf;
-    } catch (IOException e) {
-      throw new JsltException("impossible error", e);
-    }
+    handler.reset();
+    value.traverse(handler);
+    return handler.toByteArray();
   }
 }
