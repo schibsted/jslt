@@ -73,6 +73,7 @@ public final class UTF8SerializingHandler implements JsonEventHandler {
     addArrayComma();
     writeAscii('{');
     firstStack[++stackPos] = true;
+    arrayStack[stackPos] = false;
   }
 
   public void handleKey(String key) {
@@ -110,6 +111,12 @@ public final class UTF8SerializingHandler implements JsonEventHandler {
     }
   }
 
+  public byte[] toByteArray() {
+    byte[] out = new byte[pos];
+    System.arraycopy(buffer, 0, out, 0, pos);
+    return out;
+  }
+
   // ===== INTERNAL I/O METHODS
 
   private void writeAscii(char ch) {
@@ -129,7 +136,12 @@ public final class UTF8SerializingHandler implements JsonEventHandler {
   private void writeString(String str) {
     for (int ix = 0; ix < str.length(); ix++) {
       char ch = str.charAt(ix);
-      if (ch <= 0x7F)
+      if (ch == '"' || ch == '\\') {
+        buffer[pos++] = (byte) '\\';
+        buffer[pos++] = (byte) ch;
+      } else if (ch <= 0x1F)
+        escapeControl(ch);
+      else if (ch <= 0x7F)
         buffer[pos++] = (byte) ch;
       else
         writeEncoded(ch);
@@ -158,9 +170,32 @@ public final class UTF8SerializingHandler implements JsonEventHandler {
     }
   }
 
-  public byte[] toByteArray() {
-    byte[] out = new byte[pos];
-    System.arraycopy(buffer, 0, out, 0, pos);
-    return out;
+  // 0x00 - 0x1F
+  private void escapeControl(char ch) {
+    buffer[pos++] = (byte) '\\';
+    if (ch == 0x0A)
+      buffer[pos++] = (byte) 'n';
+    else if (ch == 0x0D)
+      buffer[pos++] = (byte) 'r';
+    else if (ch == 0x08)
+      buffer[pos++] = (byte) 'b';
+    else if (ch == 0x09)
+      buffer[pos++] = (byte) 't';
+    else if (ch == 0x0C)
+      buffer[pos++] = (byte) 'f';
+    else {
+      buffer[pos++] = (byte) 'u';
+      buffer[pos++] = (byte) '0';
+      buffer[pos++] = (byte) '0';
+      buffer[pos++] = (byte) hexDigit(ch >> 4);
+      buffer[pos++] = (byte) hexDigit(ch & 0x000F);
+    }
+  }
+
+  private char hexDigit(int ch) {
+    if (ch < 10)
+      return (char) (ch + '0');
+    else
+      return (char) ((ch - 10) + 'A');
   }
 }
