@@ -25,6 +25,7 @@ public final class UTF8SerializingHandler implements JsonEventHandler {
   }
 
   public void handleString(String value) {
+    ensure(value.length() * 6 + 1);
     addArrayComma();
     writeAscii('"');
     writeString(value);
@@ -32,6 +33,7 @@ public final class UTF8SerializingHandler implements JsonEventHandler {
   }
 
   public void handleString(char[] buffer, int start, int len) {
+    ensure(len * 6 + 1);
     addArrayComma();
     writeAscii('"');
     writeString(buffer, start, len);
@@ -39,16 +41,20 @@ public final class UTF8SerializingHandler implements JsonEventHandler {
   }
 
   public void handleLong(long value) {
+    ensure(21);
     addArrayComma();
     writeAscii("" + value);
   }
 
   public void handleBigInteger(BigInteger value) {
+    String str = value.toString();
+    ensure(str.length() + 1);
     addArrayComma();
-    writeAscii(value.toString());
+    writeAscii(str);
   }
 
   public void handleDouble(double value) {
+    ensure(21);
     addArrayComma();
     writeAscii("" + value);
   }
@@ -56,6 +62,7 @@ public final class UTF8SerializingHandler implements JsonEventHandler {
   private static char[] falseBuf = "false".toCharArray();
   private static char[] trueBuf = "true".toCharArray();
   public void handleBoolean(boolean value) {
+    ensure(6);
     addArrayComma();
     if (value)
       writeAscii(trueBuf, 0, 4);
@@ -65,18 +72,23 @@ public final class UTF8SerializingHandler implements JsonEventHandler {
 
   private static char[] nullBuf = "null".toCharArray();
   public void handleNull() {
+    ensure(5);
     addArrayComma();
     writeAscii(nullBuf, 0, 4);
   }
 
   public void startObject() {
+    ensure(2);
     addArrayComma();
     writeAscii('{');
+    if (stackPos + 1 == firstStack.length)
+      growStack();
     firstStack[++stackPos] = true;
     arrayStack[stackPos] = false;
   }
 
   public void handleKey(String key) {
+    ensure(key.length() + 2);
     if (firstStack[stackPos])
       firstStack[stackPos] = false;
     else
@@ -86,18 +98,23 @@ public final class UTF8SerializingHandler implements JsonEventHandler {
   }
 
   public void endObject() {
+    ensure(1);
     writeAscii('}');
     stackPos--;
   }
 
   public void startArray() {
+    ensure(2);
     addArrayComma();
     writeAscii('[');
+    if (stackPos + 1 == firstStack.length)
+      growStack();
     firstStack[++stackPos] = true;
     arrayStack[stackPos] = true;
   }
 
   public void endArray() {
+    ensure(1);
     writeAscii(']');
     stackPos--;
   }
@@ -118,6 +135,14 @@ public final class UTF8SerializingHandler implements JsonEventHandler {
   }
 
   // ===== INTERNAL I/O METHODS
+
+  private void ensure(int minLength) {
+    if (minLength + pos >= buffer.length) {
+      byte[] tmp = new byte[buffer.length * 2];
+      System.arraycopy(buffer, 0, tmp, 0, buffer.length);
+      buffer = tmp;
+    }
+  }
 
   private void writeAscii(char ch) {
     buffer[pos++] = (byte) ch;
@@ -197,5 +222,15 @@ public final class UTF8SerializingHandler implements JsonEventHandler {
       return (char) (ch + '0');
     else
       return (char) ((ch - 10) + 'A');
+  }
+
+  private void growStack() {
+    boolean[] tmp = new boolean[firstStack.length * 2];
+    System.arraycopy(firstStack, 0, tmp, 0, firstStack.length);
+    firstStack = tmp;
+
+    tmp = new boolean[arrayStack.length * 2];
+    System.arraycopy(arrayStack, 0, tmp, 0, arrayStack.length);
+    arrayStack = tmp;
   }
 }

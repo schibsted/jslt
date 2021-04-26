@@ -96,7 +96,10 @@ public final class SerializingJsonHandler implements JsonEventHandler {
     try {
       addArrayComma();
       out.write('{');
+      if (stackPos + 1 == firstStack.length)
+        growStack();
       firstStack[++stackPos] = true;
+      arrayStack[stackPos] = false;
     } catch (IOException e) {
       throw new JsltException("output error", e);
     }
@@ -128,6 +131,8 @@ public final class SerializingJsonHandler implements JsonEventHandler {
     try {
       addArrayComma();
       out.write('[');
+      if (stackPos + 1 == firstStack.length)
+        growStack();
       firstStack[++stackPos] = true;
       arrayStack[stackPos] = true;
     } catch (IOException e) {
@@ -151,5 +156,15 @@ public final class SerializingJsonHandler implements JsonEventHandler {
       else
         firstStack[stackPos] = false;
     }
+  }
+
+  private void growStack() {
+    boolean[] tmp = new boolean[firstStack.length * 2];
+    System.arraycopy(firstStack, 0, tmp, 0, firstStack.length);
+    firstStack = tmp;
+
+    tmp = new boolean[arrayStack.length * 2];
+    System.arraycopy(arrayStack, 0, tmp, 0, arrayStack.length);
+    arrayStack = tmp;
   }
 }
