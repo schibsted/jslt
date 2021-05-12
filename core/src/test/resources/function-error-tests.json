@@ -118,6 +118,11 @@
     "input": "{}"
   },
   {
+    "error": "regular expression",
+    "query": "test(\"blurgh\", .)",
+    "input": "\"\\\\\""
+  },
+  {
     "error": "Couldn't parse format",
     "query": "parse-time(\"1973-12-25 05:22:33\", \"yyyy-MM-dd gnugugg HH:mm:ssz\", null)",
     "input": "{}"

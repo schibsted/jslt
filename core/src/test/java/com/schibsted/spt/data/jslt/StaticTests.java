@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 
 import org.junit.Test;
 import org.junit.Ignore;
+import static org.junit.Assert.fail;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 import java.math.BigInteger;
@@ -341,4 +342,51 @@ public class StaticTests extends TestBase {
     assertEquals(desired, result);
   }
 
+  @Test
+  public void testTestFunctionCompileFail()  throws IOException {
+    // we want to verify that this function fails at compile-time
+    // not at runtime
+    try {
+      Parser.compileString("test(., \"\\\\\")");
+      fail("Accepted static, invalid regular expression");
+    } catch (JsltException e) {
+      assertTrue(e.getMessage().indexOf("regular expression") != -1);
+    }
+  }
+
+  @Test
+  public void testCaptureFunctionCompileFail()  throws IOException {
+    // we want to verify that this function fails at compile-time
+    // not at runtime
+    try {
+      Parser.compileString("capture(., \"\\\\\")");
+      fail("Accepted static, invalid regular expression");
+    } catch (JsltException e) {
+      assertTrue(e.getMessage().indexOf("regular expression") != -1);
+    }
+  }
+
+  @Test
+  public void testSplitFunctionCompileFail()  throws IOException {
+    // we want to verify that this function fails at compile-time
+    // not at runtime
+    try {
+      Parser.compileString("split(., \"\\\\\")");
+      fail("Accepted static, invalid regular expression");
+    } catch (JsltException e) {
+      assertTrue(e.getMessage().indexOf("regular expression") != -1);
+    }
+  }
+
+  @Test
+  public void testReplaceFunctionCompileFail()  throws IOException {
+    // we want to verify that this function fails at compile-time
+    // not at runtime
+    try {
+      Parser.compileString("replace(., \"\\\\\", \"something\")");
+      fail("Accepted static, invalid regular expression");
+    } catch (JsltException e) {
+      assertTrue(e.getMessage().indexOf("regular expression") != -1);
+    }
+  }
 }

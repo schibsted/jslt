@@ -30,6 +30,7 @@ import java.util.TimeZone;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.security.MessageDigest;
@@ -335,7 +336,7 @@ public class BuiltinFunctions {
 
   // ===== TEST
 
-  public static class Test extends AbstractFunction {
+  public static class Test extends AbstractRegexpFunction {
     public Test() {
       super("test", 2, 2);
     }
@@ -363,7 +364,7 @@ public class BuiltinFunctions {
   // names of the named groups are. so we have to use regexps to
   // parse the regexps. (lots of swearing omitted.)
 
-  public static class Capture extends AbstractFunction {
+  public static class Capture extends AbstractRegexpFunction {
     static Map<String, JstlPattern> cache = new BoundedCache(1000);
 
     public Capture() {
@@ -436,7 +437,18 @@ public class BuiltinFunctions {
 
   // ===== SPLIT
 
-  public static class Split extends AbstractFunction {
+  private static abstract class AbstractRegexpFunction extends AbstractFunction
+      implements RegexpFunction {
+      AbstractRegexpFunction(String name, int min, int max) {
+          super(name, min, max);
+      }
+
+      public int regexpArgumentNumber() {
+          return 1;
+      }
+  }
+
+  public static class Split extends AbstractRegexpFunction {
 
     public Split() {
       super("split", 2, 2);
@@ -898,7 +910,7 @@ public class BuiltinFunctions {
 
   // ===== REPLACE
 
-  public static class Replace extends AbstractFunction {
+  public static class Replace extends AbstractRegexpFunction {
 
     public Replace() {
       super("replace", 3, 3);
@@ -1314,10 +1326,14 @@ public class BuiltinFunctions {
   // shared regexp cache
   static Map<String, Pattern> cache = new BoundedCache(1000);
 
-  private synchronized static Pattern getRegexp(String regexp) {
+  synchronized static Pattern getRegexp(String regexp) {
     Pattern p = cache.get(regexp);
     if (p == null) {
-      p = Pattern.compile(regexp);
+      try {
+        p = Pattern.compile(regexp);
+      } catch (PatternSyntaxException e) {
+        throw new JsltException("Syntax error in regular expression '" + regexp + "'", e);
+      }
       cache.put(regexp, p);
     }
     return p;

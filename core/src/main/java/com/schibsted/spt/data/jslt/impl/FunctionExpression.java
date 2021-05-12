@@ -83,6 +83,19 @@ public class FunctionExpression extends AbstractInvocationExpression {
       }
     }
 
+    // ensure compile-time evaluation of static regular expressions
+    if (function instanceof RegexpFunction) {
+      int ix = ((RegexpFunction) function).regexpArgumentNumber();
+      if (arguments[ix] instanceof LiteralExpression) {
+        String r = NodeUtils.toString(arguments[ix].apply(null, null), true);
+        if (r == null)
+          throw new JsltException("Regexp cannot be null");
+
+        // will fill in cache, and throw correct exception
+        BuiltinFunctions.getRegexp(r);
+      }
+    }
+
     return this;
   }
 }
