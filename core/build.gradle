@@ -8,13 +8,14 @@ plugins {
 }
 // apply plugin: 'jacoco' (fails in JDK 11 on Travis)
 
+
 repositories {
     mavenLocal()
     mavenCentral()
 }
 
 dependencies {
-    compileOnly 'com.fasterxml.jackson.core:jackson-databind:2.13.2'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.2'
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.2'
@@ -37,16 +38,6 @@ check {
 
 // ===========================================================================
 // javacc integration
-
-sourceSets {
-    main {
-        java {
-            java.srcDirs
-        }
-    }
-}
-
-
 javacc {
     javaCCVersion = '7.0.10'
     configs {
@@ -84,6 +75,7 @@ sourceSets {
         }
     }
 }
+
 javadoc {
     source = sourceSets.javadoc.allJava
 }
@@ -102,9 +94,39 @@ artifacts {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            customizePom(pom)
             groupId group
             version version
+
+            pom {
+                name = 'JSLT'
+                description = project.description
+                url = 'https://github.com/schibsted/jslt'
+                organization {
+                    name = 'Schibsted ASA'
+                    url = 'https://github.com/schibsted/'
+                }
+                issueManagement {
+                    system = 'GitHub'
+                    url = 'https://github.com/schibsted/jslt/issues'
+                }
+                licenses {
+                    license {
+                        name = 'Apache License 2.0'
+                        url = 'https://github.com/schibsted/jslt/blob/master/LICENSE'
+                        distribution = 'repo'
+                    }
+                }
+                developers {
+                    developer {
+                        name = 'Schibsted'
+                    }
+                }
+                scm {
+                    url = 'https://github.com/schibsted/jslt'
+                    connection = 'scm:git:git://github.com/schibsted/jslt.git'
+                    developerConnection = 'scm:git:ssh://git@github.com:schibsted/jslt.git'
+                }
+            }
 
             from components.java
 
@@ -143,55 +165,11 @@ publishing {
 signing {
     setRequired {
         // signing is only required if the artifacts are to be published
-        gradle.taskGraph.allTasks.any { it.equals( PublishToMavenRepository) }
+        gradle.taskGraph.allTasks.any { it.equals(PublishToMavenRepository) }
     }
     sign publishing.publications.mavenJava
 }
 
-def customizePom(pom) {
-    pom.withXml {
-        def root = asNode()
-
-        // eliminate test-scoped dependencies (no need in maven central POMs)
-        root.dependencies.removeAll { dep ->
-            dep.scope == "test"
-        }
-
-        // add all items necessary for maven central publication
-        root.children().last() + {
-            resolveStrategy = Closure.DELEGATE_FIRST
-
-            description project.description
-            name 'JSLT'
-            url 'https://github.com/schibsted/jslt'
-            organization {
-                name 'Schibsted ASA'
-                url 'https://github.com/schibsted/'
-            }
-            issueManagement {
-                system 'GitHub'
-                url 'https://github.com/schibsted/jslt/issues'
-            }
-            licenses {
-                license {
-                    name 'Apache License 2.0'
-                    url 'https://github.com/schibsted/jslt/blob/master/LICENSE'
-                    distribution 'repo'
-                }
-            }
-            scm {
-                url 'https://github.com/schibsted/jslt'
-                connection 'scm:git:git://github.com/schibsted/jslt.git'
-                developerConnection 'scm:git:ssh://git@github.com:schibsted/jslt.git'
-            }
-            developers {
-                developer {
-                    name 'Schibsted'
-                }
-            }
-        }
-    }
-}
 
 model {
     tasks.generatePomFileForMavenJavaPublication {
