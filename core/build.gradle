@@ -1,41 +1,38 @@
-
 plugins {
-  id 'com.github.johnrengelman.shadow' version '1.2.4'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'com.intershop.gradle.javacc' version '4.0.1'
+    id 'java'
+    id 'com.jfrog.artifactory'
+    id 'maven-publish'
+    id 'signing'
 }
-
-apply plugin: 'java'
-apply plugin: 'com.jfrog.artifactory'
-apply plugin: 'maven-publish'
-apply plugin: 'maven'
-apply plugin: 'signing'
 // apply plugin: 'jacoco' (fails in JDK 11 on Travis)
 
 repositories {
-  mavenLocal()
-  jcenter()
-  mavenCentral()
+    mavenLocal()
+    mavenCentral()
 }
 
 dependencies {
-  compile 'com.fasterxml.jackson.core:jackson-databind:2.12.0'
+    compileOnly 'com.fasterxml.jackson.core:jackson-databind:2.13.2'
 
-  testCompile 'junit:junit:4.13.1'
-  testCompile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.12.0'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.2'
 }
 
 ext {
-  timestamp = new Date().format('yyyyMMddHHmm')
-  gitrev = "git log -1 HEAD --pretty=tformat:%h".execute().text.trim()
+    timestamp = new Date().format('yyyyMMddHHmm')
+    gitrev = "git log -1 HEAD --pretty=tformat:%h".execute().text.trim()
 }
 
 group 'com.schibsted.spt.data'
-version "0.1.11"
+version "0.1.12"
 project.description "A JSON query and transformation language"
 
 check {
-  doLast {
-    println 'Test report in build/reports/tests/test/index.html'
-  }
+    doLast {
+        println 'Test report in build/reports/tests/test/index.html'
+    }
 }
 
 // ===========================================================================
@@ -44,22 +41,31 @@ check {
 sourceSets {
     main {
         java {
-            srcDirs 'src/main/java'
-            srcDirs 'build/javacc'
+            java.srcDirs
         }
     }
 }
 
-task jjtree (type: Exec) {
-  commandLine 'java', '-cp', 'javacc.jar', 'jjtree', '-OUTPUT_DIRECTORY=build/javacc/com/schibsted/spt/data/jslt/parser', 'src/main/javacc/jslt.jj'
+
+javacc {
+    javaCCVersion = '7.0.10'
+    configs {
+        jsltParser {
+            inputFile = file('src/main/jjtree/jslt.jjt')
+            packageName = 'com/schibsted/spt/data/jslt/parser'
+            jdkVersion = targetCompatibility
+            jjtree {
+                staticParam = false;
+                trackTokens = true;
+            }
+            buildParser = true;
+            buildTokenManager = true;
+            sanityCheck = true;
+            unicodeInput = true;
+        }
+    }
 }
 
-
-task javacc (type: Exec) {
-  commandLine 'java', '-cp', 'javacc.jar', 'javacc', '-OUTPUT_DIRECTORY=build/javacc/com/schibsted/spt/data/jslt/parser', 'build/javacc/com/schibsted/spt/data/jslt/parser/jslt.jj.jj'
-}
-compileJava.dependsOn 'javacc'
-javacc.dependsOn 'jjtree'
 
 // ===========================================================================
 // Sonatype Maven central publishing
@@ -77,9 +83,9 @@ sourceSets {
             srcDirs 'src/main/java'
         }
     }
- }
+}
 javadoc {
-  source = sourceSets.javadoc.allJava
+    source = sourceSets.javadoc.allJava
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
@@ -98,7 +104,6 @@ publishing {
         mavenJava(MavenPublication) {
             customizePom(pom)
             groupId group
-            artifactId 'jslt'
             version version
 
             from components.java
@@ -120,19 +125,6 @@ publishing {
                     extension = 'pom.asc'
                 }
             }
-            // create the signed artifacts
-            project.tasks.signArchives.signatureFiles.each {
-                artifact(it) {
-                    def matcher = it.file =~ /-(sources|javadoc)\.jar\.asc$/
-                    if (matcher.find()) {
-                        classifier = matcher.group(1)
-                    } else {
-                        classifier = null
-                    }
-                    extension = 'jar.asc'
-                }
-            }
-
         }
     }
     repositories {
@@ -141,11 +133,19 @@ publishing {
             credentials {
                 // these are stored in a secret gradle.properties that is not
                 // in the repo, so we need a fallback
-                username ((project.hasProperty('sonatypeUsername')) ? sonatypeUsername : "no username")
-                password ((project.hasProperty('sonatypePassword')) ? sonatypePassword : "no password")
+                username((project.hasProperty('sonatypeUsername')) ? sonatypeUsername : "no username")
+                password((project.hasProperty('sonatypePassword')) ? sonatypePassword : "no password")
             }
         }
     }
+}
+
+signing {
+    setRequired {
+        // signing is only required if the artifacts are to be published
+        gradle.taskGraph.allTasks.any { it.equals( PublishToMavenRepository) }
+    }
+    sign publishing.publications.mavenJava
 }
 
 def customizePom(pom) {
@@ -213,7 +213,7 @@ model {
 }
 
 test {
-  testLogging {
-    showStandardStreams = true
-  }
+    testLogging {
+        showStandardStreams = true
+    }
 }

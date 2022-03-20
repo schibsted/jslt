@@ -1,19 +1,18 @@
 
 plugins {
-  id 'com.github.johnrengelman.shadow' version '1.2.4'
+  id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
 apply plugin: 'java'
 
 repositories {
   mavenLocal()
-  jcenter()
   mavenCentral()
 }
 
 dependencies {
-  compile project(':core')
-  compile 'org.eclipse.jetty:jetty-server:9.4.29.v20200521'
+  compileOnly project(':core')
+  compileOnly 'org.eclipse.jetty:jetty-server:9.4.45.v20220203'
 }
 
 group 'com.schibsted.spt.data'
