@@ -136,17 +136,6 @@ publishing {
             artifact(javadocJar) {
                 classifier = 'javadoc'
             }
-
-            // create the sign pom artifact
-            pom.withXml {
-                def pomFile = file("${project.buildDir}/generated-pom.xml")
-                writeTo(pomFile)
-                def pomAscFile = signing.sign(pomFile).signatureFiles[0]
-                artifact(pomAscFile) {
-                    classifier = null
-                    extension = 'pom.asc'
-                }
-            }
         }
     }
     repositories {
@@ -163,10 +152,7 @@ publishing {
 }
 
 signing {
-    setRequired {
-        // signing is only required if the artifacts are to be published
-        gradle.taskGraph.allTasks.any { it.equals(PublishToMavenRepository) }
-    }
+    required { gradle.taskGraph.hasTask("publish") }
     sign publishing.publications.mavenJava
 }
 
@@ -177,21 +163,10 @@ model {
     }
 }
 
-signing {
-    sign configurations.archives
-}
-
-model {
-    tasks.publishMavenJavaPublicationToMavenLocal {
-        dependsOn project.tasks.signArchives
-    }
-    tasks.publishMavenJavaPublicationToMavenRepository {
-        dependsOn project.tasks.signArchives
-    }
-}
 
 test {
     testLogging {
         showStandardStreams = true
     }
+    jvmArgs '-Duser.language=en'
 }
