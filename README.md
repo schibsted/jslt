@@ -158,6 +158,8 @@ things) some of the ways Schibsted uses JSLT.
 
 [Apache Camel JSLT component](https://camel.apache.org/components/latest/jslt-component.html).
 
+[How Willhaben.at uses JSLT with Kafka Connect](https://tech.willhaben.at/kafka-connect-custom-single-message-transform-using-jslt-2fc57ae98395)
+
 [IBM Cloud Pak for Business Automation](https://www.ibm.com/docs/en/cloud-paks/cp-biz-automation/21.0.x?topic=specification-event-selectors-transformers).
 
 [Pincette event sourcing framework uses JSLT](https://github.com/json-event-sourcing/pincette-jes).
