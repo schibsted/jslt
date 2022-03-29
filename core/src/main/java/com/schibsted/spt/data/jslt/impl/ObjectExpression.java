@@ -15,21 +15,13 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import java.util.Set;
-import java.util.Map;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Arrays;
-import java.util.ArrayList;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.schibsted.spt.data.jslt.JsltException;
 import com.schibsted.spt.data.jslt.filters.JsonFilter;
+
+import java.util.*;
 
 public class ObjectExpression extends AbstractNode {
   private LetExpression[] lets;

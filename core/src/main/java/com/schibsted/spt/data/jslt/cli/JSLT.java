@@ -15,13 +15,13 @@
 
 package com.schibsted.spt.data.jslt.cli;
 
-import java.io.File;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.schibsted.spt.data.jslt.Parser;
 import com.schibsted.spt.data.jslt.Expression;
-import com.schibsted.spt.data.jslt.impl.ExpressionImpl;
+import com.schibsted.spt.data.jslt.Parser;
+
+import java.io.File;
 
 public class JSLT {
 

@@ -15,37 +15,14 @@
 
 package com.schibsted.spt.data.jslt.parser;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.List;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.io.File;
-import java.io.Reader;
-import java.io.FileReader;
-import java.io.StringReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.FileNotFoundException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.IntNode;
-import com.fasterxml.jackson.databind.node.LongNode;
-import com.fasterxml.jackson.databind.node.DoubleNode;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.BooleanNode;
-import com.schibsted.spt.data.jslt.Module;
-import com.schibsted.spt.data.jslt.Callable;
-import com.schibsted.spt.data.jslt.Function;
-import com.schibsted.spt.data.jslt.Expression;
-import com.schibsted.spt.data.jslt.JsltException;
+import com.fasterxml.jackson.databind.node.*;
+import com.schibsted.spt.data.jslt.*;
 import com.schibsted.spt.data.jslt.impl.*;
-import com.schibsted.spt.data.jslt.filters.JsonFilter;
+
+import java.io.IOException;
+import java.io.Reader;
+import java.util.*;
 
 public class ParserImpl {
 

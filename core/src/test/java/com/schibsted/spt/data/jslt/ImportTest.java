@@ -1,8 +1,9 @@
 
 package com.schibsted.spt.data.jslt;
 
-import java.util.Collections;
 import org.junit.Test;
+
+import java.util.Collections;
 
 /**
  * Test cases for imports.

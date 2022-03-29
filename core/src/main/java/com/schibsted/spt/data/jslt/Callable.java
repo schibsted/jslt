@@ -15,8 +15,6 @@
 
 package com.schibsted.spt.data.jslt;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 /**
  * Common interface for macros and functions.
  */

@@ -15,10 +15,11 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import java.util.Map;
-import com.schibsted.spt.data.jslt.Module;
 import com.schibsted.spt.data.jslt.Callable;
 import com.schibsted.spt.data.jslt.Function;
+import com.schibsted.spt.data.jslt.Module;
+
+import java.util.Map;
 
 /**
  * In-memory module.

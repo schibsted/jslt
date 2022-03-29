@@ -15,16 +15,15 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import java.util.Map;
-import java.util.List;
-import java.util.Arrays;
-import java.util.ArrayList;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.BooleanNode;
-import com.schibsted.spt.data.jslt.Function;
 import com.schibsted.spt.data.jslt.Expression;
+import com.schibsted.spt.data.jslt.Function;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Wrapper class that translates an external Expression to an

@@ -15,8 +15,9 @@
 
 package com.schibsted.spt.data.jslt;
 
-import java.lang.reflect.Method;
 import com.schibsted.spt.data.jslt.impl.FunctionWrapper;
+
+import java.lang.reflect.Method;
 
 /**
  * Useful methods for working with Functions.

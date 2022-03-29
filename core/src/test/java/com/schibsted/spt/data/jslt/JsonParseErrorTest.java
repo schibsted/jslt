@@ -1,26 +1,17 @@
 
 package com.schibsted.spt.data.jslt;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
+import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import org.junit.Test;
-import static org.junit.Assert.fail;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.junit.Assert.fail;
 
 /**
  * JSON parsing test cases that are supposed to cause syntax error.

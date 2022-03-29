@@ -2,7 +2,6 @@
 package com.schibsted.spt.data.jslt;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.IntNode;
 
 public class TestNullFunction implements Function {
 

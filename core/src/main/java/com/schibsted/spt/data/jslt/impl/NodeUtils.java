@@ -15,23 +15,14 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import java.math.BigInteger;
-import java.io.IOException;
-import java.util.Map;
-import java.util.Iterator;
-import java.util.Collections;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.IntNode;
-import com.fasterxml.jackson.databind.node.LongNode;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.BooleanNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.DoubleNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.BigIntegerNode;
+import com.fasterxml.jackson.databind.node.*;
 import com.schibsted.spt.data.jslt.JsltException;
+
+import java.math.BigInteger;
+import java.util.Iterator;
+import java.util.Map;
 
 public class NodeUtils {
   public static final ObjectMapper mapper = new ObjectMapper();

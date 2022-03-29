@@ -15,10 +15,11 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import java.util.List;
-import java.util.Collections;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.NullNode;
+
+import java.util.Collections;
+import java.util.List;
 
 public class DotExpression extends AbstractNode {
   private String key;

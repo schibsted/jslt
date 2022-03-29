@@ -1,14 +1,14 @@
 
 package com.schibsted.spt.data.jslt;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import org.junit.Test;
+
 import java.util.Collection;
 import java.util.Collections;
-import org.junit.Test;
-import static org.junit.Assert.fail;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Test cases for the function wrapper implementations.

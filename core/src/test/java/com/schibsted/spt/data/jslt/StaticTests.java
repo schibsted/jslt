@@ -1,34 +1,25 @@
 
 package com.schibsted.spt.data.jslt;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Collections;
-import java.io.IOException;
-import java.io.StringReader;
-import java.nio.charset.StandardCharsets;
-
-import org.junit.Test;
-import org.junit.Ignore;
-import static org.junit.Assert.fail;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
-import java.math.BigInteger;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.IntNode;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.fasterxml.jackson.databind.node.FloatNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.BigIntegerNode;
-
-import com.schibsted.spt.data.jslt.Module;
-import com.schibsted.spt.data.jslt.impl.ModuleImpl;
+import com.fasterxml.jackson.databind.node.*;
+import com.schibsted.spt.data.jslt.filters.TrueJsonFilter;
 import com.schibsted.spt.data.jslt.impl.ClasspathResourceResolver;
-import com.schibsted.spt.data.jslt.filters.*;
+import com.schibsted.spt.data.jslt.impl.ModuleImpl;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import static org.junit.Assert.*;
 
 /**
  * Tests that cannot be expressed in JSON.
