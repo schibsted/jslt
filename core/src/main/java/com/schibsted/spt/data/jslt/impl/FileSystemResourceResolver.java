@@ -4,7 +4,12 @@ package com.schibsted.spt.data.jslt.impl;
 import com.schibsted.spt.data.jslt.JsltException;
 import com.schibsted.spt.data.jslt.ResourceResolver;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;

@@ -3,7 +3,12 @@ package com.schibsted.spt.data.jslt;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.*;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.BigIntegerNode;
+import com.fasterxml.jackson.databind.node.FloatNode;
+import com.fasterxml.jackson.databind.node.IntNode;
+import com.fasterxml.jackson.databind.node.NullNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.schibsted.spt.data.jslt.filters.TrueJsonFilter;
 import com.schibsted.spt.data.jslt.impl.ClasspathResourceResolver;
 import com.schibsted.spt.data.jslt.impl.ModuleImpl;
@@ -19,7 +24,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Tests that cannot be expressed in JSON.

@@ -16,13 +16,59 @@
 package com.schibsted.spt.data.jslt.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.*;
-import com.schibsted.spt.data.jslt.*;
-import com.schibsted.spt.data.jslt.impl.*;
+import com.fasterxml.jackson.databind.node.BooleanNode;
+import com.fasterxml.jackson.databind.node.DoubleNode;
+import com.fasterxml.jackson.databind.node.IntNode;
+import com.fasterxml.jackson.databind.node.LongNode;
+import com.fasterxml.jackson.databind.node.NullNode;
+import com.fasterxml.jackson.databind.node.TextNode;
+import com.schibsted.spt.data.jslt.Callable;
+import com.schibsted.spt.data.jslt.Expression;
+import com.schibsted.spt.data.jslt.Function;
+import com.schibsted.spt.data.jslt.JsltException;
+import com.schibsted.spt.data.jslt.Module;
+import com.schibsted.spt.data.jslt.impl.AndOperator;
+import com.schibsted.spt.data.jslt.impl.ArrayExpression;
+import com.schibsted.spt.data.jslt.impl.ArraySlicer;
+import com.schibsted.spt.data.jslt.impl.BiggerComparison;
+import com.schibsted.spt.data.jslt.impl.BiggerOrEqualComparison;
+import com.schibsted.spt.data.jslt.impl.DivideOperator;
+import com.schibsted.spt.data.jslt.impl.DotExpression;
+import com.schibsted.spt.data.jslt.impl.EqualsComparison;
+import com.schibsted.spt.data.jslt.impl.ExpressionImpl;
+import com.schibsted.spt.data.jslt.impl.ExpressionNode;
+import com.schibsted.spt.data.jslt.impl.ForExpression;
+import com.schibsted.spt.data.jslt.impl.FunctionDeclaration;
+import com.schibsted.spt.data.jslt.impl.FunctionExpression;
+import com.schibsted.spt.data.jslt.impl.IfExpression;
+import com.schibsted.spt.data.jslt.impl.JstlFile;
+import com.schibsted.spt.data.jslt.impl.LetExpression;
+import com.schibsted.spt.data.jslt.impl.LiteralExpression;
+import com.schibsted.spt.data.jslt.impl.Location;
+import com.schibsted.spt.data.jslt.impl.Macro;
+import com.schibsted.spt.data.jslt.impl.MacroExpression;
+import com.schibsted.spt.data.jslt.impl.MatcherExpression;
+import com.schibsted.spt.data.jslt.impl.MinusOperator;
+import com.schibsted.spt.data.jslt.impl.MultiplyOperator;
+import com.schibsted.spt.data.jslt.impl.ObjectComprehension;
+import com.schibsted.spt.data.jslt.impl.ObjectExpression;
+import com.schibsted.spt.data.jslt.impl.OrOperator;
+import com.schibsted.spt.data.jslt.impl.PairExpression;
+import com.schibsted.spt.data.jslt.impl.ParseContext;
+import com.schibsted.spt.data.jslt.impl.PipeOperator;
+import com.schibsted.spt.data.jslt.impl.PlusOperator;
+import com.schibsted.spt.data.jslt.impl.SmallerComparison;
+import com.schibsted.spt.data.jslt.impl.SmallerOrEqualsComparison;
+import com.schibsted.spt.data.jslt.impl.UnequalsComparison;
+import com.schibsted.spt.data.jslt.impl.VariableExpression;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ParserImpl {
 

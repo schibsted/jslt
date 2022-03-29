@@ -24,8 +24,19 @@ import com.schibsted.spt.data.jslt.impl.PreparationContext;
 import com.schibsted.spt.data.jslt.parser.JsltParser;
 import com.schibsted.spt.data.jslt.parser.ParserImpl;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Parses JSLT expressions to Expression objects for evaluating them.

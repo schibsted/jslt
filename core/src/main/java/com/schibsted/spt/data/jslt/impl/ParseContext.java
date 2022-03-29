@@ -15,11 +15,20 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import com.schibsted.spt.data.jslt.*;
+import com.schibsted.spt.data.jslt.Callable;
+import com.schibsted.spt.data.jslt.Function;
+import com.schibsted.spt.data.jslt.JsltException;
+import com.schibsted.spt.data.jslt.Module;
+import com.schibsted.spt.data.jslt.ResourceResolver;
 import com.schibsted.spt.data.jslt.filters.DefaultJsonFilter;
 import com.schibsted.spt.data.jslt.filters.JsonFilter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Class to encapsulate context information like available functions,
