@@ -1,18 +1,18 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import java.io.File;
-import java.io.Reader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.nio.file.Path;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-
 import com.schibsted.spt.data.jslt.JsltException;
 import com.schibsted.spt.data.jslt.ResourceResolver;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 
 public final class FileSystemResourceResolver implements ResourceResolver {
   private File rootPath; // can be null

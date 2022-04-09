@@ -15,8 +15,6 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import java.util.Map;
-import java.util.HashMap;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.schibsted.spt.data.jslt.Function;
 import com.schibsted.spt.data.jslt.JsltException;

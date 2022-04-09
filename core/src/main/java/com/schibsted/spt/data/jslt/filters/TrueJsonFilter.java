@@ -16,7 +16,6 @@
 package com.schibsted.spt.data.jslt.filters;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.schibsted.spt.data.jslt.impl.NodeUtils;
 
 /**
  * Accepts all JSON values.

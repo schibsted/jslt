@@ -16,7 +16,6 @@
 package com.schibsted.spt.data.jslt;
 
 import java.util.Map;
-import java.util.List;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,12 +28,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.FileNotFoundException;
-import com.fasterxml.jackson.databind.node.IntNode;
-import com.fasterxml.jackson.databind.node.DoubleNode;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.schibsted.spt.data.jslt.parser.*;
 import com.schibsted.spt.data.jslt.impl.*;
 import com.schibsted.spt.data.jslt.filters.*;

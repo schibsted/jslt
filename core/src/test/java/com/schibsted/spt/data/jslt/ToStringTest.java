@@ -1,15 +1,8 @@
 
 package com.schibsted.spt.data.jslt;
 
-import java.io.IOException;
 import org.junit.Test;
-import org.junit.Ignore;
-import static org.junit.Assert.fail;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.NullNode;
 
 /**
  * Verifying that toString works as it should.
