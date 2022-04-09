@@ -15,10 +15,11 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import java.util.List;
-import java.util.Arrays;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class ArrayExpression extends AbstractNode {
   private ExpressionNode[] children;

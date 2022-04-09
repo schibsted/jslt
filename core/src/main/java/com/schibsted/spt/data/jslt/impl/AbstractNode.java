@@ -15,8 +15,8 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import java.util.List;
 import java.util.Collections;
+import java.util.List;
 
 public abstract class AbstractNode implements ExpressionNode {
   protected Location location;

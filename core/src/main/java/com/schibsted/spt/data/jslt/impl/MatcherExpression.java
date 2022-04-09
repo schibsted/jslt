@@ -15,9 +15,10 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import java.util.List;
-import java.util.Collections;
 import com.fasterxml.jackson.databind.JsonNode;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Represents the '* - ... : .'

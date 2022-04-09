@@ -16,10 +16,10 @@
 package com.schibsted.spt.data.jslt.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.schibsted.spt.data.jslt.JsltException;
-import com.schibsted.spt.data.jslt.Module;
 import com.schibsted.spt.data.jslt.Callable;
 import com.schibsted.spt.data.jslt.Function;
+import com.schibsted.spt.data.jslt.JsltException;
+import com.schibsted.spt.data.jslt.Module;
 
 /**
  * Represents a JSLT source code file loaded separately.
