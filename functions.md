@@ -526,6 +526,22 @@ trim(false)        => "false"
 trim(null)         => null
 ```
 
+### _uuid(long, long) -> string_
+
+Generates a formatted UUID string with dashes.
+If no parameter are passed, a random UUID version 4 will be generated.
+If two parameter are passed, a UUID version 1 is generated based on two long values where the first parameter represents the MSB (most significant bytes) and the second parameter the LSB (least significant bytes) of the UUID.
+If both parameter are null a NIL UUID (00000000-0000-0000-0000-000000000000 is generated)
+
+Examples:
+
+```
+uuid()                       => "b02c39c0-6f8f-4250-97cd-78500af36e27"
+uuid(1234567890, 1234567890) => "00000000-4996-102d-8000-0000499602d2"
+uuid(0, 0)                   => "00000000-0000-1000-8000-000000000000"
+uuid(null, null)             => "00000000-0000-0000-0000-000000000000"
+```
+
 <!-- BOOLEAN ================================================================-->
 
 ## Boolean functions

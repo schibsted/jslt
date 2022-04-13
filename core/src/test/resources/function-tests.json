@@ -1143,6 +1143,41 @@
       "output": "\"a\""
    },
    {
+      "query": "uuid(9223372036854775807, 9223372036854775807)",
+      "input" : "null",
+      "output": "\"7fffffff-ffff-1fff-bfff-ffffffffffff\""
+   },
+   {
+      "query": "uuid(-9223372036854775808, -9223372036854775808)",
+      "input" : "null",
+      "output": "\"80000000-0000-1000-8000-000000000000\""
+   },
+   {
+      "query": "uuid(0, 0)",
+      "input" : "null",
+      "output": "\"00000000-0000-1000-8000-000000000000\""
+   },
+   {
+      "query": "uuid(null, 9223372036854775807)",
+      "input" : "null",
+      "output": "\"00000000-0000-1000-bfff-ffffffffffff\""
+   },
+   {
+      "query": "uuid(9223372036854775807, null)",
+      "input" : "null",
+      "output": "\"7fffffff-ffff-1fff-8000-000000000000\""
+   },
+   {
+      "query": "uuid(1234567890, 1234567890)",
+      "input" : "null",
+      "output": "\"00000000-4996-102d-8000-0000499602d2\""
+   },
+   {
+      "query": "uuid(null, null)",
+      "input" : "null",
+      "output": "\"00000000-0000-0000-0000-000000000000\""
+   },
+   {
       "query": "min(1, 2)",
       "input" : "null",
       "output": "1"
