@@ -49,7 +49,7 @@ public class StaticTests extends TestBase {
     String given = "[{\"html\": \"<h3>hello</h3>\"}]";
     String expected = "[{\"title\":\"hello\"}]";
     String actual = expr.apply(mapper.readTree(given)).toString();
-      assertEquals(expected,actual);
+    assertEquals(expected,actual);
   }
 
   @Test
@@ -95,25 +95,25 @@ public class StaticTests extends TestBase {
   @Test
   public void testJavaExtensionFunction() {
     check("{}", "test()", "42", Collections.EMPTY_MAP,
-            Collections.singleton(new TestFunction()));
+          Collections.singleton(new TestFunction()));
   }
 
   @Test
   public void testJavaExtensionFunctionNull() {
     check("{}", "test()", "null", Collections.EMPTY_MAP,
-            Collections.singleton(new TestNullFunction()));
+          Collections.singleton(new TestNullFunction()));
   }
 
   @Test
   public void testJavaExtensionFunctionNullInExpression() {
     check("{}", "test() or 42", "true", Collections.EMPTY_MAP,
-            Collections.singleton(new TestNullFunction()));
+          Collections.singleton(new TestNullFunction()));
   }
 
   @Test
   public void testJavaExtensionFunctionNullInExpression2() {
     check("{}", "lowercase(test())", "null", Collections.EMPTY_MAP,
-            Collections.singleton(new TestNullFunction()));
+          Collections.singleton(new TestNullFunction()));
   }
 
   @Test
@@ -124,9 +124,9 @@ public class StaticTests extends TestBase {
 
     assertTrue(now1.isDouble());
     assertTrue("now1 (" + now1 + ") << now2 (" + now2 + ")",
-            (now1.asDouble() * 1000) < (now2 + delta));
+               (now1.asDouble() * 1000) < (now2 + delta));
     assertTrue("now1 (" + now1 + ") >> now2 (" + now2 + ")",
-            (now1.asDouble() * 1000) > (now2 - delta));
+               (now1.asDouble() * 1000) > (now2 - delta));
   }
 
   @Test
@@ -155,8 +155,7 @@ public class StaticTests extends TestBase {
     assertTrue(actual.booleanValue());
   }
 
-  @Test
-  @Ignore // this takes a while to run, so we don't usually do it
+  @Test @Ignore // this takes a while to run, so we don't usually do it
   public void testRegexpCache() {
     // generate lots and lots of regular expressions, and see if we
     // manage to blow up the cache
@@ -187,15 +186,15 @@ public class StaticTests extends TestBase {
       // generate simple expression
       int kind = (int) (Math.random() * 4);
 
-      switch (kind) {
-        case 0:
-          return "[A-Za-z0-9]+";
-        case 1:
-          return makeRandomString(10);
-        case 2:
-          return "\\d+";
-        case 3:
-          return "20\\d\\d-[01]\\d-[0123]\\d";
+      switch(kind) {
+      case 0:
+        return "[A-Za-z0-9]+";
+      case 1:
+        return makeRandomString(10);
+      case 2:
+        return "\\d+";
+      case 3:
+        return "20\\d\\d-[01]\\d-[0123]\\d";
       }
     }
 
@@ -219,11 +218,11 @@ public class StaticTests extends TestBase {
     modules.put("the test module", module);
 
     StringReader jslt = new StringReader(
-            "import \"the test module\" as t t:test()"
+      "import \"the test module\" as t t:test()"
     );
     Expression expr = new Parser(jslt)
-            .withNamedModules(modules)
-            .compile();
+      .withNamedModules(modules)
+      .compile();
 
     JsonNode result = expr.apply(null);
     assertEquals(new IntNode(42), result);
@@ -235,14 +234,14 @@ public class StaticTests extends TestBase {
     String filter = " . != null ";
 
     StringReader jslt = new StringReader(
-            "{ \"foo\" : null, \"bar\" : \"\" }"
+      "{ \"foo\" : null, \"bar\" : \"\" }"
     );
     Expression expr = new Parser(jslt)
-            .withObjectFilter(filter)
-            .compile();
+      .withObjectFilter(filter)
+      .compile();
 
     JsonNode desired = mapper.readTree(
-            "{ \"bar\" : \"\" }"
+      "{ \"bar\" : \"\" }"
     );
 
     JsonNode result = expr.apply(null);
@@ -255,14 +254,14 @@ public class StaticTests extends TestBase {
     String filter = " . != \"\" ";
 
     StringReader jslt = new StringReader(
-            "{ \"foo\" : null, \"bar\" : \"\" }"
+      "{ \"foo\" : null, \"bar\" : \"\" }"
     );
     Expression expr = new Parser(jslt)
-            .withObjectFilter(filter)
-            .compile();
+      .withObjectFilter(filter)
+      .compile();
 
     JsonNode desired = mapper.readTree(
-            "{ \"foo\" : null }"
+      "{ \"foo\" : null }"
     );
 
     JsonNode result = expr.apply(null);
@@ -275,18 +274,18 @@ public class StaticTests extends TestBase {
     String filter = " . != \"\" ";
 
     StringReader jslt = new StringReader(
-            "{for (.) .key : .value }"
+      "{for (.) .key : .value }"
     );
     Expression expr = new Parser(jslt)
-            .withObjectFilter(filter)
-            .compile();
+      .withObjectFilter(filter)
+      .compile();
 
     JsonNode input = mapper.readTree(
-            "{ \"foo\" : null, \"bar\" : \"\" }"
+      "{ \"foo\" : null, \"bar\" : \"\" }"
     );
 
     JsonNode desired = mapper.readTree(
-            "{ \"foo\" : null }"
+      "{ \"foo\" : null }"
     );
 
     JsonNode result = expr.apply(input);
@@ -296,18 +295,18 @@ public class StaticTests extends TestBase {
   @Test
   public void testTrueObjectFilter() throws IOException {
     StringReader jslt = new StringReader(
-            "{for (.) .key : .value }"
+      "{for (.) .key : .value }"
     );
     Expression expr = new Parser(jslt)
-            .withObjectFilter(new TrueJsonFilter())
-            .compile();
+      .withObjectFilter(new TrueJsonFilter())
+      .compile();
 
     JsonNode input = mapper.readTree(
-            "{ \"foo\" : null, \"bar\" : \"\" }"
+      "{ \"foo\" : null, \"bar\" : \"\" }"
     );
 
     JsonNode desired = mapper.readTree(
-            "{ \"foo\" : null, \"bar\" : \"\" }"
+      "{ \"foo\" : null, \"bar\" : \"\" }"
     );
 
     JsonNode result = expr.apply(input);
@@ -339,15 +338,15 @@ public class StaticTests extends TestBase {
   public void testClasspathResolverCharEncoding() {
     ClasspathResourceResolver r = new ClasspathResourceResolver(StandardCharsets.ISO_8859_1);
     Expression expr = new Parser(r.resolve("character-encoding-master.jslt"))
-            .withResourceResolver(r)
-            .compile();
+      .withResourceResolver(r)
+      .compile();
 
     JsonNode result = expr.apply(NullNode.instance);
     assertEquals("Hei på deg", result.asText());
   }
 
   @Test
-  public void testPipeOperatorAndObjectMatcher() throws IOException {
+  public void testPipeOperatorAndObjectMatcher()  throws IOException {
     Expression expr = Parser.compileString("{\"bar\": \"baz\",\"foo\":{ \"a\": \"b\" } | {\"type\" : \"Anonymized-View\",* : .}}");
 
 
@@ -360,7 +359,7 @@ public class StaticTests extends TestBase {
   }
 
   @Test
-  public void testTestFunctionCompileFail() throws IOException {
+  public void testTestFunctionCompileFail()  throws IOException {
     // we want to verify that this function fails at compile-time
     // not at runtime
     try {
@@ -372,7 +371,7 @@ public class StaticTests extends TestBase {
   }
 
   @Test
-  public void testCaptureFunctionCompileFail() throws IOException {
+  public void testCaptureFunctionCompileFail()  throws IOException {
     // we want to verify that this function fails at compile-time
     // not at runtime
     try {
@@ -384,7 +383,7 @@ public class StaticTests extends TestBase {
   }
 
   @Test
-  public void testSplitFunctionCompileFail() throws IOException {
+  public void testSplitFunctionCompileFail()  throws IOException {
     // we want to verify that this function fails at compile-time
     // not at runtime
     try {
@@ -396,7 +395,7 @@ public class StaticTests extends TestBase {
   }
 
   @Test
-  public void testReplaceFunctionCompileFail() throws IOException {
+  public void testReplaceFunctionCompileFail()  throws IOException {
     // we want to verify that this function fails at compile-time
     // not at runtime
     try {
