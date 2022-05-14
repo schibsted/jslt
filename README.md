@@ -11,7 +11,7 @@ JSLT can be used as:
  * a filter/check language to test JSON objects (`starts-with(.foo.bar[0], "http://")`) ,
  * a transformation language to convert between JSON formats.
 
-Here is an example transform:
+An example transform:
 
 ```
 {
