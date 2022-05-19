@@ -95,6 +95,7 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             groupId group
+            artifactId 'jslt'
             version version
 
             pom {
