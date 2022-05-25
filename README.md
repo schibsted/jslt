@@ -156,6 +156,8 @@ things) some of the ways Schibsted uses JSLT.
 
 [Visual Studio syntax highlighter](https://marketplace.visualstudio.com/items?itemName=jarno-rajala.jslt-lang) for JSLT.
 
+[IntelliJ JSLT plugin](https://github.com/fuchsst/jslt-intellij-plugin).
+
 [Apache Camel JSLT component](https://camel.apache.org/components/latest/jslt-component.html).
 
 [How Willhaben.at uses JSLT with Kafka Connect](https://tech.willhaben.at/kafka-connect-custom-single-message-transform-using-jslt-2fc57ae98395)
