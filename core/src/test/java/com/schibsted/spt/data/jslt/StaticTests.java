@@ -2,11 +2,16 @@
 package com.schibsted.spt.data.jslt;
 
 import java.util.Map;
+import java.util.List;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.nio.charset.StandardCharsets;
 
 import org.junit.Test;
@@ -387,6 +392,42 @@ public class StaticTests extends TestBase {
       fail("Accepted static, invalid regular expression");
     } catch (JsltException e) {
       assertTrue(e.getMessage().indexOf("regular expression") != -1);
+    }
+  }
+
+  @Test
+  public void sha256ConcurrencyTest() throws Exception {
+    int threads = 32;
+    ExecutorService service = Executors.newFixedThreadPool(threads);
+    List<Exception> exceptionsThrown = Collections.synchronizedList(new ArrayList());
+
+    for (int i = 0; i < threads; i++) {
+      service.submit(() -> {
+        String input = "[{\"a\":null,\"b\":\"b\"}]";
+
+        String expression = "\n"
+            + "  {\n"
+            + "    \"a\": .a,\n"
+            + "    \"b\": .b,\n"
+            + "    \"c\": sha256-hex(random()),\n"
+            + "  }\n";
+
+        try {
+          JsonNode jsonInputEvent = mapper.readTree(input);
+          Expression expr = Parser.compileString(expression);
+          for (int ix = 0; ix < 1000; ix++)
+            expr.apply(jsonInputEvent);
+
+        } catch (Exception e) {
+          exceptionsThrown.add(e);
+        }
+      });
+    }
+    service.shutdown();
+    service.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+
+    if (!exceptionsThrown.isEmpty()) {
+      throw exceptionsThrown.get(0);
     }
   }
 }

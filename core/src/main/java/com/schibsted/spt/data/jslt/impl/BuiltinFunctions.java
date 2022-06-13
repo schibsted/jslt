@@ -506,19 +506,12 @@ public class BuiltinFunctions {
     }
   }
 
-
   // ===== SHA256
 
   public static class Sha256 extends AbstractFunction {
-    final MessageDigest messageDigest;
 
     public Sha256() {
       super("sha256-hex", 1, 1);
-      try {
-        messageDigest = MessageDigest.getInstance("SHA-256");
-      } catch (NoSuchAlgorithmException e) {
-        throw new JsltException("sha256-hex: could not find sha256 algorithm " + e);
-      }
     }
 
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
@@ -528,7 +521,14 @@ public class BuiltinFunctions {
 
       String message = NodeUtils.toString(arguments[0], false);
 
-      byte[] bytes = this.messageDigest.digest(message.getBytes(UTF_8));
+      MessageDigest messageDigest;
+      try {
+        messageDigest = MessageDigest.getInstance("SHA-256");
+      } catch (NoSuchAlgorithmException e) {
+        throw new JsltException("sha256-hex: could not find sha256 algorithm " + e);
+      }
+
+      byte[] bytes = messageDigest.digest(message.getBytes(UTF_8));
       String string = Utils.printHexBinary(bytes);
 
       return new TextNode(string);
