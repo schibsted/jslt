@@ -15,8 +15,9 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import java.util.List;
 import com.fasterxml.jackson.databind.JsonNode;
+
+import java.util.List;
 
 /**
  * Internal interface for the parts of a compiled JSLT expression.

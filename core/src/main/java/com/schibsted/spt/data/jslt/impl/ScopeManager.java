@@ -15,11 +15,12 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import java.util.Map;
+import com.schibsted.spt.data.jslt.JsltException;
+
+import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
-import java.util.ArrayDeque;
-import com.schibsted.spt.data.jslt.JsltException;
+import java.util.Map;
 
 /**
  * Keeps track of declared variables and maps them to their slots in

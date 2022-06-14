@@ -1,11 +1,8 @@
 
 package com.schibsted.spt.data.jslt;
 
-import java.util.Map;
-import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Collection;
 
 import org.junit.Test;
@@ -15,11 +12,9 @@ import org.junit.runners.Parameterized.Parameters;
 
 import static org.junit.Assert.fail;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.NullNode;
 
 /**
  * Checks that JSLT queries produce certain runtime errors.

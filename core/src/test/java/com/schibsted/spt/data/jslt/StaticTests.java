@@ -30,7 +30,6 @@ import com.fasterxml.jackson.databind.node.FloatNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.BigIntegerNode;
 
-import com.schibsted.spt.data.jslt.Module;
 import com.schibsted.spt.data.jslt.impl.ModuleImpl;
 import com.schibsted.spt.data.jslt.impl.ClasspathResourceResolver;
 import com.schibsted.spt.data.jslt.filters.*;

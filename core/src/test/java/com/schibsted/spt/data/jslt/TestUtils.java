@@ -1,13 +1,14 @@
 
 package com.schibsted.spt.data.jslt;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 public class TestUtils {
   private static ObjectMapper jsonMapper = new ObjectMapper();

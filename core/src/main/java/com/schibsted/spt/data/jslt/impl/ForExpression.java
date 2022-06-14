@@ -15,13 +15,14 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import java.util.List;
-import java.util.Arrays;
-import java.util.ArrayList;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.NullNode;
 import com.schibsted.spt.data.jslt.JsltException;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ForExpression extends AbstractNode {
   private ExpressionNode valueExpr;

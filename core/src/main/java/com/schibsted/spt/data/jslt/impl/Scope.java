@@ -16,7 +16,6 @@
 package com.schibsted.spt.data.jslt.impl;
 
 import java.util.Map;
-import java.util.Collections;
 import java.util.Deque;
 import java.util.ArrayDeque;
 import com.fasterxml.jackson.databind.JsonNode;
