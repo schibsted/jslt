@@ -51,6 +51,12 @@ function send() {
   }
   http.send(JSON.stringify(data));
 }
+
+function sendOnControlEnter (e) {
+  if ((e.ctrlKey || e.metaKey) && (e.keyCode == 13 || e.keyCode == 10)) {
+    send()
+  }
+}
 </script>
 
 <title>JSLT demo playground</title>
@@ -60,7 +66,8 @@ function send() {
 <a href="https://github.com/schibsted/jslt">JSLT</a>
 transforms.
 Please <a href="https://github.com/schibsted/jslt/issues"
->report any issues</a>.</p>
+>report any issues</a>.<br>
+To run a transform either click on Run button or press Ctrl/Command + Enter in a textarea.</p>
 
 <h2>Result</h2>
 
@@ -74,7 +81,7 @@ Please <a href="https://github.com/schibsted/jslt/issues"
 
 <h2>JSLT</h2>
 
-<textarea id="jslt" name="jslt" cols=80 rows=20>
+<textarea id="jslt" name="jslt" cols=80 rows=20 onkeydown="sendOnControlEnter(event)">
 let idparts = split(.id, "-")
 let xxx = [for ($idparts) "x" * size(.)]
 
@@ -87,7 +94,7 @@ let xxx = [for ($idparts) "x" * size(.)]
 
 <h2>Input</h2>
 
-<textarea id="input" name="input" cols=80 rows=20>
+<textarea id="input" name="input" cols=80 rows=20 onkeydown="sendOnControlEnter(event)">
 {
   "schema" : "http://schemas.schibsted.io/thing/pulse-simple.json#1.json",
   "id" : "w23q7ca1-8729-24923-922b-1c0517ddffjf1",
