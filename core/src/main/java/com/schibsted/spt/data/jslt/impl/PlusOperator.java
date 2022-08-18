@@ -77,8 +77,8 @@ public class PlusOperator extends NumericOperator {
   private ObjectNode unionObjects(JsonNode v1, JsonNode v2) {
     // .putAll is faster than many .set() calls
     ObjectNode result = NodeUtils.mapper.createObjectNode();
-    result.putAll((ObjectNode) v2);
-    result.putAll((ObjectNode) v1); // v1 should overwrite v2
+    result.setAll((ObjectNode) v2);
+    result.setAll((ObjectNode) v1); // v1 should overwrite v2
     return result;
   }
 }
