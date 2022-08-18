@@ -93,7 +93,7 @@ public class ObjectExpression extends AbstractNode {
         if (containsDynamicKeys && object.has(key))
           throw new JsltException("Duplicate key '" + key + "' in object", children[ix].getLocation());
 
-        object.put(key, value);
+        object.set(key, value);
       }
     }
 
@@ -117,7 +117,7 @@ public class ObjectExpression extends AbstractNode {
         continue; // the template has defined this key, so skip
 
       JsonNode value = matcher.apply(scope, pair.getValue());
-      object.put(pair.getKey(), value);
+      object.set(pair.getKey(), value);
     }
   }
 
