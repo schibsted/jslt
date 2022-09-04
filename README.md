@@ -71,7 +71,7 @@ To include JSLT in your project, depend on:
 <dependency>
   <groupId>com.schibsted.spt.data</groupId>
   <artifactId>jslt</artifactId>
-  <version>0.1.12</version>
+  <version>0.1.13</version>
 </dependency>
 ```
 

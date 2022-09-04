@@ -27,7 +27,7 @@ ext {
 }
 
 group 'com.schibsted.spt.data'
-version "0.1.12"
+version "0.1.13"
 project.description "A JSON query and transformation language"
 
 check {
