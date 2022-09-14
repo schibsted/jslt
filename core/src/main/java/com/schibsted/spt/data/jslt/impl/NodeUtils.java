@@ -150,10 +150,13 @@ public class NodeUtils {
     if (number.length() == 0)
       return null;
 
+    int sign = 1;
     int pos = 0;
     if (number.charAt(0) == '-') {
       pos = 1;
+      sign = -1;
     }
+    int intStart = pos;
 
     int endInteger = scanDigits(number, pos);
     if (endInteger == pos)
@@ -169,7 +172,7 @@ public class NodeUtils {
 
     // since there's stuff after the initial integer it must be either
     // the decimal part or the exponent
-    long intPart = Long.parseLong(number.substring(0, endInteger));
+    long intPart = Long.parseLong(number.substring(intStart, endInteger));
     pos = endInteger;
     double value = intPart;
 
@@ -182,11 +185,7 @@ public class NodeUtils {
       long decimalPart = Long.parseLong(number.substring(endInteger + 1, endDecimal));
       int digits = endDecimal - endInteger - 1;
 
-      // if intPart is negative we can't add a positive decimalPart to it
-      if (intPart < 0)
-        decimalPart = decimalPart * -1;
-
-      value = (decimalPart / Math.pow(10, digits)) + intPart;
+      value = (intPart + (decimalPart / Math.pow(10, digits))) * sign;
       pos = endDecimal;
 
       // if there's nothing more, then this is it
@@ -204,11 +203,11 @@ public class NodeUtils {
     if (pos == number.length())
       return null;
     ch = number.charAt(pos);
-    int sign = 1;
+    int signExp = 1;
     if (ch == '+')
       pos++;
     else if (ch == '-') {
-      sign = -1;
+      signExp = -1;
       pos++;
     }
 
@@ -216,7 +215,7 @@ public class NodeUtils {
     if (endExponent != number.length() || endExponent == pos)
       return null;
 
-    int exponent = Integer.parseInt(number.substring(pos)) * sign;
+    int exponent = Integer.parseInt(number.substring(pos)) * signExp;
     return new DoubleNode(value * Math.pow(10, exponent));
   }
 
