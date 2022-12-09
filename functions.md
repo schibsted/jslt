@@ -858,3 +858,7 @@ parse-url("https://www.example.com/?aa=1&aa=2&bb=&cc").parameters.cc =>  [null]
 parse-url("ftp://username:password@host.com/").userinfo => "username:password"
 parse-url("https://example.com:8443").port => 8443
 ```
+
+## Implementing extension functions
+
+Documented [extensions.md](here).

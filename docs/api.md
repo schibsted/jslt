@@ -67,3 +67,7 @@ a normal variable, although the value comes from outside the JSLT:
   ...
 }
 ```
+
+## Implementing extension functions
+
+Documented [../extensions.md](here).
