@@ -738,6 +738,11 @@
       "output" : "1E1"
    },
    {
+      "query" : "number(\"-1E-1\")",
+      "input" : "{}",
+      "output" : "-0.1"
+   },
+   {
       "query" : "number(\"1.111E2\")",
       "input" : "{}",
       "output" : "111.1"

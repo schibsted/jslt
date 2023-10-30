@@ -174,7 +174,7 @@ public class NodeUtils {
     // the decimal part or the exponent
     long intPart = Long.parseLong(number.substring(intStart, endInteger));
     pos = endInteger;
-    double value = intPart;
+    double value = intPart * sign;
 
     if (number.charAt(pos) == '.') {
       pos += 1;
