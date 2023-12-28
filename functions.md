@@ -861,4 +861,4 @@ parse-url("https://example.com:8443").port => 8443
 
 ## Implementing extension functions
 
-Documented [extensions.md](extensions.md).
+Documented [here](extensions.md).
