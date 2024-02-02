@@ -17,7 +17,7 @@ You can set the filter like this:
 ```
 Expression e = new Parser(reader)
   .withObjectFilter(filter)
-  .parse();
+  .compile();
 ```
 
 The filter can be either a string containing JSLT. The JSLT expression
