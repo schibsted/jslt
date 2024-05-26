@@ -104,6 +104,7 @@ public class BuiltinFunctions {
     functions.put("from-json", new BuiltinFunctions.FromJson());
     functions.put("to-json", new BuiltinFunctions.ToJson());
     functions.put("replace", new BuiltinFunctions.Replace());
+    functions.put("replace-regexp", new BuiltinFunctions.ReplaceRegexp());
     functions.put("trim", new BuiltinFunctions.Trim());
     functions.put("uuid", new BuiltinFunctions.Uuid());
 
@@ -958,6 +959,32 @@ public class BuiltinFunctions {
         bufix = copy(string, buf, bufix, pos, string.length());
 
       return new TextNode(new String(buf, 0, bufix));
+    }
+  }
+
+  // ===== REPLACE-REGEXP
+
+  public static class ReplaceRegexp extends AbstractRegexpFunction {
+
+    public ReplaceRegexp() {
+      super("replace-regexp", 3, 3);
+    }
+
+    public JsonNode call(JsonNode input, JsonNode[] arguments) {
+      int args = null == arguments ? 0 : arguments.length;
+      if (args != 3) {
+        throw new JsltException("ReplaceRegexp requires 3 arguments, only " + args + " provided!");
+      }
+
+      String string = NodeUtils.toString(arguments[0], true);
+      if (string == null)
+        return NullNode.instance;
+
+      String regexp = NodeUtils.toString(arguments[1], false);
+      String replacement = NodeUtils.toString(arguments[2], false);
+      String result = !string.matches(regexp) ? string : string.replaceAll(regexp, replacement);
+
+      return new TextNode(result);
     }
   }
 
