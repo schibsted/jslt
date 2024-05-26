@@ -523,10 +523,10 @@ If the `regexp` does not match the input,`out` corresponds to `value`.
 Examples:
 
 ```
-replace-regexp("2019-12-31", "([0-9][0-9][0-9][0-9])-([0-9][0-9])-([0-9][0-9])", "$2/$3/$1")
+replace-regexp("2019-12-31", "(\\d{4})-(\\d{2})-(\\d{2})", "$2/$3/$1")
    => "12/31/2019"
-replace-regexp("2019-12-31", "(?<year>[0-9][0-9][0-9][0-9])-(?<month>[0-9][0-9])-(?<day>[0-9][0-9])",
-   => "${day}.${month}.${year}") => "31.12.2019"
+replace-regexp("2019-12-31", "(?<year>\\d{4})-(?<month>\\d{2})-(?<day>\\d{2})", "${day}.${month}.${year}")
+   => "31.12.2019"
 replace-regexp("2019-12-31", "([a-z]+)", "$1")
    => "2019-12-31"
 ```
