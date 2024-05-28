@@ -1228,6 +1228,21 @@
       "output": "null"
    },
    {
+      "query": "min(99)",
+      "input" : "null",
+      "output": "99"
+   },
+   {
+      "query": "min([99])",
+      "input" : "null",
+      "output": "99"
+   },
+   {
+      "query": "min([-99, 37, -234])",
+      "input" : "null",
+      "output": "-234"
+   },
+   {
       "query": "max(1, 2)",
       "input" : "null",
       "output": "2"
@@ -1245,7 +1260,22 @@
    {
       "query": "max(null, 0)",
       "input" : "null",
-      "output": "null"
+      "output": "0"
+   },
+   {
+      "query": "max(99)",
+      "input" : "null",
+      "output": "99"
+   },
+   {
+      "query": "max([99])",
+      "input" : "null",
+      "output": "99"
+   },
+   {
+      "query": "max([99, 37, -234])",
+      "input" : "null",
+      "output": "99"
    },
    {
       "query" : "hash-int(.)",
