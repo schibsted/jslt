@@ -72,7 +72,7 @@ fallback(null, [], {}, "value")                        => "value"
 
 ### _min(args) -> value_
 
-`args` can be 1 or more items of the same kind, such as numbers, characters or Strings.
+`args` can be `null`, 1 or more items of the same kind, such as numbers, characters or Strings.
 It can even be an array of items of the same kind.
 
 Returns the lowest item, or `null`.
@@ -91,7 +91,7 @@ max([5,6,7,8]) -> 5
 
 ### _max(args) -> value_
 
-`args` can be 1 or more items of the same kind, such as numbers, characters or Strings.
+`args` can be `null`, 1 or more items of the same kind, such as numbers, characters or Strings.
 It can even be an array of items of the same kind.
 
 Returns the largest item.

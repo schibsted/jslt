@@ -1292,7 +1292,7 @@ public class BuiltinFunctions {
 
   public static class Min extends AbstractFunction {
     public Min() {
-      super("min", 1, 1_000);
+      super("min", 0, 1_000);
     }
 
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
@@ -1306,6 +1306,9 @@ public class BuiltinFunctions {
           return minNode;
         }
         JsonNode nodes = minNode;
+        if (nodes.isEmpty()) {
+          return NullNode.instance;
+        }
         minNode = nodes.get(0);
         if (1 == nodes.size()) {
           return minNode;
@@ -1332,7 +1335,7 @@ public class BuiltinFunctions {
 
   public static class Max extends AbstractFunction {
     public Max() {
-      super("max", 1, 1_000);
+      super("max", 0, 1_000);
     }
 
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
@@ -1346,6 +1349,9 @@ public class BuiltinFunctions {
           return maxNode;
         }
         JsonNode nodes = maxNode;
+        if (nodes.isEmpty()) {
+          return NullNode.instance;
+        }
         maxNode = nodes.get(0);
         if (1 == nodes.size()) {
           return maxNode;
