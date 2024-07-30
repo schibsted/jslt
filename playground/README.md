@@ -1,4 +1,3 @@
-
 # JSLT Playground
 
 To build the playground yourself, simply do:
@@ -13,6 +12,13 @@ To run it, give this command:
 
 ```
 java -cp playground/build/libs/playground-0.0.1-all.jar no.priv.garshol.jslt.playground.PlaygroundServer 9999 &
+```
+
+or use Docker
+
+```
+docker build -t jslt .
+docker run -p 9999:9999 jslt
 ```
 
 Then go to `http://localhost:9999/jslt` and you'll have the playground
