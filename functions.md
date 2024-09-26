@@ -161,6 +161,8 @@ number(23)    => 23
 number("23")  => 23
 number("023") => 23
 number(23.0)  => 23.0
+number(.23)   =>  0.23
+number(-.23)  => -0.23
 number(null)  => null
 number("ab")  => error
 ```

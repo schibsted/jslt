@@ -150,6 +150,14 @@ public class NodeUtils {
     if (number.length() == 0)
       return null;
 
+    if (number.startsWith("-.")) {
+      number = "-0." + number.substring(2);
+    }
+
+    if (number.startsWith(".")) {
+      number = "0" + number;
+    }
+
     int sign = 1;
     int pos = 0;
     if (number.charAt(0) == '-') {

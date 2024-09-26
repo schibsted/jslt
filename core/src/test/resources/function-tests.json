@@ -838,6 +838,16 @@
       "output" : "-0.513"
    },
    {
+      "query" : "number(\"-.513\")",
+      "input" : "{}",
+      "output" : "-0.513"
+   },
+   {
+      "query" : "number(\".513\")",
+      "input" : "{}",
+      "output" : "0.513"
+   },
+   {
       "input" : "{}",
       "output" : "2",
       "query" : "size({\"foo\" : 2, \"bar\" : 24})"
