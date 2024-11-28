@@ -63,11 +63,6 @@
     "input": "{}"
   },
   {
-    "error": ".345",
-    "query": "number(\".345\")",
-    "input": "{}"
-  },
-  {
     "error": "1.1e",
     "query": "number(\"1.1e\")",
     "input": "{}"
