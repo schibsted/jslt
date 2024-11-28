@@ -211,6 +211,21 @@
       "query" : "index-of(\"abc\", \"b\")",
       "input" : "null",
       "error" : "must be an array"
+   },
+   {
+    "query" : "parse-url(\"invalid-url\")",
+    "input" : "null",
+    "error" : "Can't parse invalid-url"
+   },
+   {
+    "query" : "parse-url(\"invalid-url\", true)",
+    "input" : "null",
+    "error" : "Can't parse invalid-url"
+   },
+   {
+    "query" : "parse-url(\"https://google.com\", 1)",
+    "input" : "null",
+    "error" : "throwOnFailure argument must be a boolean value"
    }
 ]
 }
