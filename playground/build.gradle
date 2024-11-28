@@ -13,9 +13,9 @@ repositories {
 dependencies {
   implementation project(':core')
   implementation 'org.eclipse.jetty:jetty-server:9.4.45.v20220203'
-  implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.2'
+  implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.1'
 }
 
 group 'com.schibsted.spt.data'
-version '0.0.1'
+version '0.1.14'
 project.description 'JSLT demo playground implementation'
