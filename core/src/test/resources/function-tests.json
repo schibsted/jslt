@@ -763,6 +763,16 @@
       "output" : "-10.0"
    },
    {
+      "query" : "number(\".1E2\")",
+      "input" : "{}",
+      "output" : "10.0"
+   },
+   {
+      "query" : "number(\"-.1E2\")",
+      "input" : "{}",
+      "output" : "-10.0"
+   },
+   {
       "query" : "number(\"0.1e-2\")",
       "input" : "{}",
       "output" : "0.001"

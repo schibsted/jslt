@@ -152,19 +152,21 @@ if it is a string that cannot be parsed, then the `fallback` value is
 returned.
 
 The number format supported is the same as in JSON literals, except
-that leading zeroes are allowed.
+that leading zeroes are allowed, and it's allowed to omit the zero
+before the period.
 
 Examples:
 
 ```
-number(23)    => 23
-number("23")  => 23
-number("023") => 23
-number(23.0)  => 23.0
-number(.23)   =>  0.23
-number(-.23)  => -0.23
-number(null)  => null
-number("ab")  => error
+number(23)      => 23
+number("23")    => 23
+number("023")   => 23
+number(23.0)    => 23.0
+number(".23")   =>  0.23
+number("-.23")  => -0.23
+number(null)    => null
+number("ab")    => error
+number("ab", 0) => 0
 ```
 
 ### _round(float) -> integer_
