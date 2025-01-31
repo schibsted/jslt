@@ -14,6 +14,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.nio.charset.StandardCharsets;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.Test;
 import org.junit.Ignore;
 import static org.junit.Assert.fail;
@@ -30,7 +31,6 @@ import com.fasterxml.jackson.databind.node.FloatNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.BigIntegerNode;
 
-import com.schibsted.spt.data.jslt.Module;
 import com.schibsted.spt.data.jslt.impl.ModuleImpl;
 import com.schibsted.spt.data.jslt.impl.ClasspathResourceResolver;
 import com.schibsted.spt.data.jslt.filters.*;
@@ -40,6 +40,22 @@ import com.schibsted.spt.data.jslt.filters.*;
  */
 public class StaticTests extends TestBase {
   private static ObjectMapper mapper = new ObjectMapper();
+
+  @Test
+  public void testFunctionDefAboveArray() throws JsonProcessingException {
+    Expression expr = Parser.compileString(
+            "def remove_html(text)\n" +
+                    "  replace($text, \"</?h3\\\\s?[^>]*>\", \"\")\n" +
+                    "\n" +
+                    "[for (.) {\n" +
+                    "  \"title\" : remove_html(.html)\n" +
+                    "}]"
+    );
+    String given = "[{\"html\": \"<h3>hello</h3>\"}]";
+    String expected = "[{\"title\":\"hello\"}]";
+    String actual = expr.apply(mapper.readTree(given)).toString();
+    assertEquals(expected,actual);
+  }
 
   @Test
   public void testExceptionWithNoLocation() {
