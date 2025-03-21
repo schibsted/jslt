@@ -1,6 +1,6 @@
 plugins {
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
-    id 'com.intershop.gradle.javacc' version '4.0.1'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'com.intershop.gradle.javacc' version '5.0.1'
     id 'java'
     id 'com.jfrog.artifactory'
     id 'maven-publish'
@@ -15,10 +15,10 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.4.2'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.3'
 
     testImplementation 'junit:junit:4.13.2'
-    testImplementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.2'
+    testImplementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.18.3'
 }
 
 ext {
@@ -27,7 +27,7 @@ ext {
 }
 
 group 'com.schibsted.spt.data'
-version "0.1.14"
+version "0.1.15"
 project.description "A JSON query and transformation language"
 
 check {
@@ -62,7 +62,7 @@ javacc {
 // Sonatype Maven central publishing
 
 task sourceJar(type: Jar) {
-    classifier "sources"
+    archiveClassifier = "sources"
     from sourceSets.main.allJava
 }
 
@@ -81,7 +81,7 @@ javadoc {
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier "javadoc"
+    archiveClassifier = "javadoc"
     from javadoc.destinationDir
 }
 
@@ -131,12 +131,8 @@ publishing {
 
             from components.java
 
-            artifact(sourceJar) {
-                classifier = 'sources'
-            }
-            artifact(javadocJar) {
-                classifier = 'javadoc'
-            }
+            artifact(sourceJar)
+            artifact(javadocJar)
         }
     }
     repositories {
