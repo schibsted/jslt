@@ -1,6 +1,6 @@
 
 plugins {
-  id 'com.github.johnrengelman.shadow' version '7.1.2'
+  id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 apply plugin: 'java'
@@ -12,8 +12,9 @@ repositories {
 
 dependencies {
   implementation project(':core')
-  implementation 'org.eclipse.jetty:jetty-server:9.4.45.v20220203'
-  implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.2'
+  implementation 'org.eclipse.jetty:jetty-server:12.0.18'
+  implementation 'jakarta.servlet:jakarta.servlet-api:5.0.0'
+  implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.3'
 }
 
 group 'com.schibsted.spt.data'
