@@ -16,5 +16,5 @@ apply plugin: 'signing'
 
 compileJava.options.encoding = "UTF-8"
 compileTestJava.options.encoding = "UTF-8"
-sourceCompatibility = 19
-targetCompatibility = 19
+sourceCompatibility = 21
+targetCompatibility = 21
