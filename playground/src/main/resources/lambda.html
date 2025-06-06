@@ -1,99 +1,134 @@
-<style>
-  .button {
-    background-color: #4CAF50; /* Green */
-    border: none;
-    color: white;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-  }
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <meta http-equiv='X-UA-Compatible' content='ie=edge'>
 
-  pre {
-    background-color: #E3E3E3;
-    font-family: "Lucida Console", Monaco, "Courier New", monospace;
-    font-size: 14pt
-  }
+  <title>JSLT demo playground</title>
+  <style>
+      .button {
+            background-color: #4CAF50; /* Green */
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+      }
 
-  #jslt, #input {
-    font-family: "Lucida Console", Monaco, "Courier New", monospace;
-    font-size: 14pt
-  }
+      body {
+            font-family: 'Arial', 'Helvetica', sans-serif;
+            font-size: 14px;
+            margin-left: 36pt;
+            margin-right: 36pt;
+            margin-top: 48pt;
+      }
+  </style>
+</head>
 
-  body {
-    font-family: "Arial", "Helvetica", sans-serif;
-    margin-left: 36pt;
-    margin-right: 36pt;
-    margin-top: 48pt;
-  }
-</style>
-<script>
-function send() {
-  var out = document.getElementById('result');
-  out.firstChild.nodeValue = '...wait...';
+<body>
+  <script type='application/javascript'>
+    //<![CDATA[
+    function send() {
+        window.resultEditorView.docView.dom.innerText = '... wait ...';
 
-  var input = document.getElementById('input').value
-  var jslt = document.getElementById('jslt').value
-  var data = {"json" : input, "jslt" : jslt }
+        const http = new XMLHttpRequest();
+        const url = 'jslt';
 
-  var http = new XMLHttpRequest();
-  var url = "jslt-demo";
-  //var url = "http://localhost:9999/jslt";
-  http.open("POST", url, true);
-  http.setRequestHeader("Content-type", "application/json");
+        http.open('POST', url, true);
+        http.setRequestHeader('Content-type', 'application/json');
 
-  http.onreadystatechange = function() {
-    if (http.readyState == 4 && http.status == 200) {
-      var out = document.getElementById('result');
-      out.firstChild.nodeValue = http.responseText;
+        http.onreadystatechange = function () {
+            if (http.readyState === 4 && http.status === 200) {
+                window.resultEditorView.docView.dom.innerText = http.responseText;
+            }
+        }
+
+        const json = window.jsonEditorView.state.sliceDoc();
+        const jslt = window.jstlEditorView.state.sliceDoc();
+
+        const data = {json, jslt};
+        http.send(JSON.stringify(data));
     }
-  }
-  http.send(JSON.stringify(data));
-}
-</script>
+    //]]>
+  </script>
 
-<title>JSLT demo playground</title>
-<h1>JSLT demo playground</h1>
+  <h1>JSLT demo playground</h1>
 
-<p>Here you can play with
-<a href="https://github.com/schibsted/jslt">JSLT</a>
-transforms.
-Please <a href="https://github.com/schibsted/jslt/issues"
->report any issues</a>.</p>
+  <p>
+      Here you can play with <a href='https://github.com/schibsted/jslt'>JSLT</a> transforms.
+      Please <a href='https://github.com/schibsted/jslt/issues'>report any issues</a>.
+  </p>
 
-<h2>Result</h2>
+  <h2>Input</h2>
 
-<pre id="result">
+  <div id='jsonEditor'></div>
 
-  Transform result will appear here
+  <h2>JSLT</h2>
 
-</pre>
+  <div id='jsltEditor'></div>
 
-<p><input type=submit value="Run!" class=button onclick="send()">
+  <p><input id='submit' type='submit' value='Run!' class='button' onclick='send ()'></p>
 
-<h2>JSLT</h2>
+  <h2>Result</h2>
 
-<textarea id="jslt" name="jslt" cols=80 rows=20>
-let idparts = split(.id, "-")
-let xxx = [for ($idparts) "x" * size(.)]
+  <div id='resultEditor'></div>
+
+  <script type="importmap">
+      {
+          "imports": {
+            "@codemirror/": "https://deno.land/x/codemirror_esm@v6.0.1/esm/"
+          }
+      }
+  </script>
+
+  <script async="" type='module'>
+  //<![CDATA[
+    import {
+        basicSetup,
+        EditorView,
+    } from '@codemirror/codemirror/dist/index.js';
+    import { javascript } from '@codemirror/lang-javascript/dist/index.js';
+    import { json } from '@codemirror/lang-json/dist/index.js';
+    import { oneDark } from '@codemirror/theme-one-dark/dist/index.js';
+
+    window.jsonEditor = document.getElementById('jsonEditor');
+    window.jstlEditor = document.getElementById('jsltEditor');
+    window.resultEditor = document.getElementById('resultEditor');
+
+    window.jsonEditorView = new EditorView({
+        doc: JSON.stringify({
+            schema: 'http://schemas.schibsted.io/thing/pulse-simple.json#1.json',
+            id: 'w23q7ca1-8729-24923-922b-1c0517ddffjf1',
+            published: '2017-05-04T09:13:29+02:00',
+            type: 'View',
+            environmentId: 'urn:schibsted.com:environment:uuid',
+            url: 'http://www.aftenposten.no/'
+        }, undefined, '  '),
+        extensions: [basicSetup, json(), oneDark],
+        parent: window.jsonEditor,
+    });
+
+    window.jstlEditorView = new EditorView({
+        doc: `let idparts = split (.id, "-")
+let xxx = [for ($idparts) "x" * size (.)]
 
 {
-  "id" : join($xxx, "-"),
+  "id" : join ($xxx, "-"),
   "type" : "Anonymized-View",
   * : .
-}
-</textarea>
+}`,
+        extensions: [basicSetup, javascript(), oneDark],
+        parent: window.jstlEditor,
+    });
 
-<h2>Input</h2>
-
-<textarea id="input" name="input" cols=80 rows=20>
-{
-  "schema" : "http://schemas.schibsted.io/thing/pulse-simple.json#1.json",
-  "id" : "w23q7ca1-8729-24923-922b-1c0517ddffjf1",
-  "published" : "2017-05-04T09:13:29+02:00",
-  "type" : "View",
-  "environmentId" : "urn:schibsted.com:environment:uuid",
-  "url" : "http://www.aftenposten.no/"
-}
-</textarea>
+    window.resultEditorView = new EditorView({
+        doc: 'Transform result will appear here',
+        extensions: [basicSetup, json(), oneDark],
+        parent: window.resultEditor,
+    });
+    //]]>
+  </script>
+</body>
+</html>
