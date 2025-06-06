@@ -1,6 +1,6 @@
 plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.2'
-    id 'com.intershop.gradle.javacc' version '4.0.1'
+    id 'com.intershop.gradle.javacc' version '4.1.3'
     id 'java'
     id 'com.jfrog.artifactory'
     id 'maven-publish'
@@ -15,10 +15,10 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.4.2'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.1'
 
     testImplementation 'junit:junit:4.13.2'
-    testImplementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.2'
+    testImplementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.17.1'
 }
 
 ext {
@@ -61,7 +61,7 @@ javacc {
 // ===========================================================================
 // Sonatype Maven central publishing
 
-task sourceJar(type: Jar) {
+tasks.register('sourceJar', Jar) {
     classifier "sources"
     from sourceSets.main.allJava
 }
@@ -80,7 +80,8 @@ javadoc {
     source = sourceSets.javadoc.allJava
 }
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
+tasks.register('javadocJar', Jar) {
+    dependsOn javadoc
     classifier "javadoc"
     from javadoc.destinationDir
 }
