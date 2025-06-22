@@ -69,13 +69,13 @@ TOKEN :
   < DEF: "def" > |
   < IMPORT: "import" > |
   < AS: "as" > |
-  < IDENT: (["A"-"Z"] | ["a"-"z"] | ["0"-"9"] | "_" | "-")+ > |
-  < PIDENT:
-    (["A"-"Z"] | ["a"-"z"] | ["0"-"9"] | "_" | "-")+
-    ":"
-    (["A"-"Z"] | ["a"-"z"] | ["0"-"9"] | "_" | "-")+
-  > |
-  < VARIABLE: "$" (["A"-"Z"] | ["a"-"z"] | ["0"-"9"] | "_" | "-")+ >
+    // Define a private token fragment for all valid identifier characters,
+    // including the common Latin Unicode letters.
+    < #IDENT_CHARS: ["A"-"Z", "a"-"z", "0"-"9", "_", "-", "\u00C0"-"\u00D6", "\u00D8"-"\u00F6", "\u00F8"-"\u017F"] > |
+
+  < IDENT: (<IDENT_CHARS>)+ > |
+  < PIDENT: (<IDENT_CHARS>)+ ":" (<IDENT_CHARS>)+ > |
+  < VARIABLE: "$" (<IDENT_CHARS>)+ >
 }
 
 // http://www.engr.mun.ca/~theo/JavaCC-FAQ/javacc-faq-moz.htm#tth_sEc3.15
