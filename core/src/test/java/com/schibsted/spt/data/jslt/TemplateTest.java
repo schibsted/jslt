@@ -373,7 +373,7 @@ public class TemplateTest extends TestBase {
   }
 
   @Test
-  public void asciiCharParsing() {
+  public void testUnicodeIdentifierParsing() {
     String input = """
             {
               "mypropé" : "w23q7ca1-8729-24923-922b-1c0517ddffjf1",
@@ -388,7 +388,7 @@ public class TemplateTest extends TestBase {
             """;
     String result = """
             {
-              "id" : "w23q7ca1-8729-24923-922b-1c0517ddffjf1" ,
+              "id" : "w23q7ca1-8729-24923-922b-1c0517ddffjf1",
               "type" : "Anonymized-View"
             }
             """;
