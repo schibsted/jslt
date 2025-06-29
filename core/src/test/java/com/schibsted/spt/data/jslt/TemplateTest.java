@@ -374,24 +374,9 @@ public class TemplateTest extends TestBase {
 
   @Test
   public void testUnicodeIdentifierParsing() {
-    String input = """
-            {
-              "mypropé" : "w23q7ca1-8729-24923-922b-1c0517ddffjf1",
-              "type" : "View"
-            }
-            """;
-    String jslt = """
-            {
-              "id" : .mypropé,
-              "type" : "Anonymized-View"
-            }
-            """;
-    String result = """
-            {
-              "id" : "w23q7ca1-8729-24923-922b-1c0517ddffjf1",
-              "type" : "Anonymized-View"
-            }
-            """;
+    String input = " {\"mypropé\" : \"w23q7ca1-8729-24923-922b-1c0517ddffjf1\", \"type\" : \"View\"} ";
+    String jslt = "{\"id\" : .mypropé, \"type\" : \"Anonymized-View\"} ";
+    String result = "{\"id\" : \"w23q7ca1-8729-24923-922b-1c0517ddffjf1\",\"type\" : \"Anonymized-View\"} ";
     check(input, jslt, result);
   }
 
