@@ -69,13 +69,11 @@ TOKEN :
   < DEF: "def" > |
   < IMPORT: "import" > |
   < AS: "as" > |
-  < IDENT: (["A"-"Z"] | ["a"-"z"] | ["0"-"9"] | "_" | "-")+ > |
-  < PIDENT:
-    (["A"-"Z"] | ["a"-"z"] | ["0"-"9"] | "_" | "-")+
-    ":"
-    (["A"-"Z"] | ["a"-"z"] | ["0"-"9"] | "_" | "-")+
-  > |
-  < VARIABLE: "$" (["A"-"Z"] | ["a"-"z"] | ["0"-"9"] | "_" | "-")+ >
+  < #IDENT_CHARS: ["A"-"Z", "a"-"z", "0"-"9", "_", "-", "\u0080"-"\uffff"] > |
+
+  < IDENT: (<IDENT_CHARS>)+ > |
+  < PIDENT: (<IDENT_CHARS>)+ ":" (<IDENT_CHARS>)+ > |
+  < VARIABLE: "$" (<IDENT_CHARS>)+ >
 }
 
 // http://www.engr.mun.ca/~theo/JavaCC-FAQ/javacc-faq-moz.htm#tth_sEc3.15

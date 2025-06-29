@@ -1,15 +1,7 @@
 
 package com.schibsted.spt.data.jslt;
 
-import java.io.IOException;
 import org.junit.Test;
-import static org.junit.Assert.fail;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.NullNode;
 
 /**
  * Test cases verifying templates.
@@ -378,6 +370,14 @@ public class TemplateTest extends TestBase {
     check(load("user-external.json"),
           load("user-external2cdp.jslt"),
           load("cdp.json"));
+  }
+
+  @Test
+  public void testUnicodeIdentifierParsing() {
+    String input = " {\"mypropé\" : \"w23q7ca1-8729-24923-922b-1c0517ddffjf1\", \"type\" : \"View\"} ";
+    String jslt = "{\"id\" : .mypropé, \"type\" : \"Anonymized-View\"} ";
+    String result = "{\"id\" : \"w23q7ca1-8729-24923-922b-1c0517ddffjf1\",\"type\" : \"Anonymized-View\"} ";
+    check(input, jslt, result);
   }
 
 }
