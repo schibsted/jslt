@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.SimpleTimeZone;
@@ -1291,15 +1292,42 @@ public class BuiltinFunctions {
 
   public static class Min extends AbstractFunction {
     public Min() {
-      super("min", 2, 2);
+      super("min", 0, 1_000);
     }
 
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      // this works because null is the smallest of all values
-      if (ComparisonOperator.compare(arguments[0], arguments[1], null) < 0)
-        return arguments[0];
-      else
-        return arguments[1];
+      if (null == arguments || arguments.length == 0) {
+        return NullNode.instance;
+      }
+
+      JsonNode minNode = arguments[0];
+      if (1 == arguments.length) {
+        if (!minNode.isArray()) {
+          return minNode;
+        }
+        JsonNode nodes = minNode;
+        if (nodes.isEmpty()) {
+          return NullNode.instance;
+        }
+        minNode = nodes.get(0);
+        if (1 == nodes.size()) {
+          return minNode;
+        }
+        Iterator<JsonNode> it = nodes.elements();
+        minNode = it.next();
+        while (it.hasNext()) {
+          JsonNode node = it.next();
+          minNode = ComparisonOperator.compare(minNode, node, null) < 0 ? minNode : node;
+        }
+
+        return minNode;
+      }
+
+      for (JsonNode node : arguments) {
+        minNode = ComparisonOperator.compare(minNode, node, null) < 0 ? minNode : node;
+      }
+
+      return minNode;
     }
   }
 
@@ -1307,16 +1335,42 @@ public class BuiltinFunctions {
 
   public static class Max extends AbstractFunction {
     public Max() {
-      super("max", 2, 2);
+      super("max", 0, 1_000);
     }
 
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
-      if (arguments[0].isNull() || arguments[1].isNull())
+      if (null == arguments || arguments.length == 0) {
         return NullNode.instance;
-      else if (ComparisonOperator.compare(arguments[0], arguments[1], null) > 0)
-        return arguments[0];
-      else
-        return arguments[1];
+      }
+
+      JsonNode maxNode = arguments[0];
+      if (1 == arguments.length) {
+        if (!maxNode.isArray()) {
+          return maxNode;
+        }
+        JsonNode nodes = maxNode;
+        if (nodes.isEmpty()) {
+          return NullNode.instance;
+        }
+        maxNode = nodes.get(0);
+        if (1 == nodes.size()) {
+          return maxNode;
+        }
+        Iterator<JsonNode> it = nodes.elements();
+        maxNode = it.next();
+        while (it.hasNext()) {
+          JsonNode node = it.next();
+          maxNode = ComparisonOperator.compare(maxNode, node, null) > 0 ? maxNode : node;
+        }
+
+        return maxNode;
+      }
+
+      for (JsonNode node : arguments) {
+        maxNode = ComparisonOperator.compare(maxNode, node, null) > 0 ? maxNode : node;
+      }
+
+      return maxNode;
     }
   }
 
