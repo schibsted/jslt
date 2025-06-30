@@ -372,6 +372,11 @@ tests:
 # parse-url tests
 
   - input:
+    query: parse-url(null)
+    output: |
+      null
+
+  - input:
     query: parse-url("https://www.aftonbladet.se/nyheter/a/opyK1R/snosmocka-pa-ingang--kan-bli-20-centimeter?utm_source=aaaa&utm_campaign=bbbb&utm_medium=cccc&utm_content=dddd&utm_term=eeee")
     output: |
       {
@@ -399,6 +404,7 @@ tests:
               "fragment": "foo",
               "scheme": "http"
       }
+
   - input:
     query: parse-url("http://example.com")
     output: |
@@ -409,6 +415,7 @@ tests:
     description:
       - No path
       -
+
   - input:
     query: parse-url("http://example.com/")
     output: |
@@ -419,7 +426,6 @@ tests:
       }
     description:
       - If URL has an ending slash then it has a path
-
 
   - input:
     query: parse-url("https://www.example.com/?aa=1&aa=2&bb=&cc")
@@ -459,4 +465,37 @@ tests:
         "host": "example.com",
         "port": 8443,
         "scheme": "https"
+      }
+
+# parse-url tests with throwOnFailure set to true should behave as above
+
+  - input:
+    query: parse-url("https://example.com:8443", true)
+    output: |
+      {
+        "host": "example.com",
+        "port": 8443,
+        "scheme": "https"
+      }
+
+# parse-url tests with throwOnFailure set to false should behave as above for good cases
+
+  - input:
+    query: parse-url("https://example.com:8443", false)
+    output: |
+      {
+        "host": "example.com",
+        "port": 8443,
+        "scheme": "https"
+      }
+
+# parse-url tests with throwOnFailure set to false should return an error object for bad cases
+
+  - input:
+    query: parse-url("this-is-an-invalid-url", false)
+    output: |
+      {
+        "error": "java.net.MalformedURLException",
+        "message": "no protocol: this-is-an-invalid-url",
+        "input": "this-is-an-invalid-url"
       }
