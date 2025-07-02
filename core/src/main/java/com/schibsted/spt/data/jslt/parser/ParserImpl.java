@@ -503,7 +503,13 @@ public class ParserImpl {
         result[pos++] = ch;
       else {
         ch = string.charAt(++ix);
-
+        // special Regexp characters, s. https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html,
+        // "Predefined character classes".
+        if ("dDhHsSvVwW".contains(String.valueOf(ch))) {
+          result[pos++] = '\\';
+          result[pos++] = ch;
+          continue;
+        }
         switch (ch) {
         case '\\': result[pos++] = ch; break;
         case '"': result[pos++] = ch; break;
