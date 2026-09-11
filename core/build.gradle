@@ -16,7 +16,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'tools.jackson.core:jackson-databind:3.2.0'
+    implementation 'tools.jackson.core:jackson-databind:3.1.5'
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'tools.jackson.dataformat:jackson-dataformat-yaml:3.2.0'
