@@ -21,14 +21,14 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 import java.math.BigInteger;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.IntNode;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.fasterxml.jackson.databind.node.FloatNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.BigIntegerNode;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.IntNode;
+import tools.jackson.databind.node.NullNode;
+import tools.jackson.databind.node.StringNode;
+import tools.jackson.databind.node.FloatNode;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.BigIntegerNode;
 
 import com.schibsted.spt.data.jslt.Module;
 import com.schibsted.spt.data.jslt.impl.ModuleImpl;
@@ -58,26 +58,22 @@ public class StaticTests extends TestBase {
     Expression expr = Parser.compileString("{\"a\":1, \"b\":2}");
     JsonNode actual = expr.apply(null);
 
-    Iterator<String> it = actual.fieldNames();
+    Iterator<String> it = actual.propertyNames().iterator();
     assertEquals("a", it.next());
     assertEquals("b", it.next());
   }
 
   @Test
   public void testRandomFunction() {
-    try {
-      JsonNode context = mapper.readTree("{}");
+    JsonNode context = mapper.readTree("{}");
 
-      Expression expr = Parser.compileString("random()");
+    Expression expr = Parser.compileString("random()");
 
-      for (int ix = 0; ix < 10; ix++) {
-        JsonNode actual = expr.apply(context);
-        assertTrue(actual.isNumber());
-        double value = actual.doubleValue();
-        assertTrue(value > 0.0 && value < 1.0);
-      }
-    } catch (IOException e) {
-      throw new RuntimeException(e);
+    for (int ix = 0; ix < 10; ix++) {
+      JsonNode actual = expr.apply(context);
+      assertTrue(actual.isNumber());
+      double value = actual.doubleValue();
+      assertTrue(value > 0.0 && value < 1.0);
     }
   }
 
@@ -152,7 +148,7 @@ public class StaticTests extends TestBase {
 
     for (int ix = 0; ix < 10000000; ix++) {
       String r = generateRegexp();
-      JsonNode regexp = new TextNode(r);
+      JsonNode regexp = new StringNode(r);
       expr.apply(regexp);
     }
   }
@@ -307,7 +303,7 @@ public class StaticTests extends TestBase {
     Expression expr = Parser.compileString("{\"a\":1, \"b\":2,}");
     JsonNode actual = expr.apply(null);
 
-    Iterator<String> it = actual.fieldNames();
+    Iterator<String> it = actual.propertyNames().iterator();
     assertEquals("a", it.next());
     assertEquals("b", it.next());
   }

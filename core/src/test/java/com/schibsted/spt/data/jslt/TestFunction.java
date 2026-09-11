@@ -1,8 +1,8 @@
 
 package com.schibsted.spt.data.jslt;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.IntNode;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.IntNode;
 
 public class TestFunction implements Function {
 

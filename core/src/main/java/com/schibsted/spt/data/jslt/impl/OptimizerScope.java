@@ -15,7 +15,7 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 
 /**
  * Fake scope used when optimizing away objects that are static, but

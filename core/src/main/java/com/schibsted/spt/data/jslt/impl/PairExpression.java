@@ -18,7 +18,7 @@ package com.schibsted.spt.data.jslt.impl;
 import java.util.List;
 import java.util.Arrays;
 import java.util.Collections;
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 import com.schibsted.spt.data.jslt.JsltException;
 
 /**

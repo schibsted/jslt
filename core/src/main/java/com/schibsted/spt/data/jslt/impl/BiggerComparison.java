@@ -15,7 +15,7 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 import com.schibsted.spt.data.jslt.JsltException;
 
 public class BiggerComparison extends ComparisonOperator {

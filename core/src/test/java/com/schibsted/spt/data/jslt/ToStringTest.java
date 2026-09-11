@@ -8,8 +8,8 @@ import static org.junit.Assert.fail;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.NullNode;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.NullNode;
 
 /**
  * Verifying that toString works as it should.

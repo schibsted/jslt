@@ -18,9 +18,9 @@ package com.schibsted.spt.data.jslt.impl;
 import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.NullNode;
+import tools.jackson.databind.node.ArrayNode;
 import com.schibsted.spt.data.jslt.JsltException;
 
 public class ForExpression extends AbstractNode {

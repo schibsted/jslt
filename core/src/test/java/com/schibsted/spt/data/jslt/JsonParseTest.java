@@ -16,8 +16,8 @@ import static org.junit.Assert.fail;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * JSON parsing test cases. Verifies that Jackson and JSLT produce the
@@ -41,8 +41,6 @@ public class JsonParseTest {
       JsonNode expected = mapper.readTree(json);
 
       assertEquals("actual class " + actual.getClass() + ", expected class " + expected.getClass(), expected, actual);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
     } catch (JsltException e) {
       throw new RuntimeException("Parsing '" + json + "' failed", e);
     }

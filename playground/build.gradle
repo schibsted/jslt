@@ -13,7 +13,7 @@ repositories {
 dependencies {
   implementation project(':core')
   implementation 'org.eclipse.jetty:jetty-server:9.4.57.v20241219'
-  implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.2'
+  implementation 'tools.jackson.core:jackson-databind:3.0.3'
 }
 
 group 'com.schibsted.spt.data'

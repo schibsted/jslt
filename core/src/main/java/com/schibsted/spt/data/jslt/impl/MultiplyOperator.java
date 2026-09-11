@@ -15,11 +15,11 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.LongNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.DoubleNode;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.LongNode;
+import tools.jackson.databind.node.StringNode;
+import tools.jackson.databind.node.NullNode;
+import tools.jackson.databind.node.DoubleNode;
 import com.schibsted.spt.data.jslt.JsltException;
 
 public class MultiplyOperator extends NumericOperator {
@@ -48,7 +48,7 @@ public class MultiplyOperator extends NumericOperator {
       for ( ; num > 0; num--)
         buf.append(str);
 
-      return new TextNode(buf.toString());
+      return new StringNode(buf.toString());
     } else
       // do numeric operation
       return super.perform(v1, v2);

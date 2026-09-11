@@ -17,8 +17,8 @@ import static org.junit.Assert.fail;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
 
 /**
  * Test cases verifying queries against an input.
@@ -83,22 +83,33 @@ public class QueryTest extends TestBase {
         // this works because we load the same file in QueryErrorTest
         continue;
 
-      strings.add(new Object[] {
-          test.get("input").asText(),
-          test.get("query").asText(),
-          test.get("output").asText(),
-          toMap(test.get("variables"))
-        });
+      try {
+        strings.add(new Object[] {
+            toJsonString(test.get("input")),
+            toJsonString(test.get("query")),
+            toJsonString(test.get("output")),
+            toMap(test.get("variables"))
+          });
+      } catch (Exception e) {
+        throw new RuntimeException("Error loading test: " + test, e);
+      }
     }
     return strings;
   }
 
+  private static String toJsonString(JsonNode node) throws Exception {
+    if (node.isTextual()) {
+      return node.asText();
+    } else {
+      return mapper.writeValueAsString(node);
+    }
+  }
+  
   private static Map<String, JsonNode> toMap(JsonNode json) {
     Map<String, JsonNode> variables = new HashMap();
     if (json != null) {
-      Iterator<String> it = json.fieldNames();
-      while (it.hasNext()) {
-        String field = it.next();
+      Collection<String> jsonCollect = json.propertyNames();
+      for (String field : jsonCollect) {
         variables.put(field, json.get(field));
       }
     }

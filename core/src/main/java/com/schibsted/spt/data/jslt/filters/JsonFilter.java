@@ -15,7 +15,7 @@
 
 package com.schibsted.spt.data.jslt.filters;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 
 /**
  * A filter that can approve/disapprove a JSON value. Used to

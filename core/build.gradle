@@ -16,10 +16,10 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.4.2'
+    implementation 'tools.jackson.core:jackson-databind:3.0.3'
 
     testImplementation 'junit:junit:4.13.2'
-    testImplementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.2'
+    testImplementation 'tools.jackson.dataformat:jackson-dataformat-yaml:3.0.3'
 }
 
 ext {

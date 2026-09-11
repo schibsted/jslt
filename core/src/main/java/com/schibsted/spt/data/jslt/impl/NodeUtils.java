@@ -20,17 +20,17 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Iterator;
 import java.util.Collections;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.IntNode;
-import com.fasterxml.jackson.databind.node.LongNode;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.BooleanNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.DoubleNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.BigIntegerNode;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.IntNode;
+import tools.jackson.databind.node.LongNode;
+import tools.jackson.databind.node.NullNode;
+import tools.jackson.databind.node.BooleanNode;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.DoubleNode;
+import tools.jackson.databind.node.StringNode;
+import tools.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.BigIntegerNode;
 import com.schibsted.spt.data.jslt.JsltException;
 
 public class NodeUtils {
@@ -234,11 +234,11 @@ public class NodeUtils {
 
   public static ArrayNode convertObjectToArray(JsonNode object) {
     ArrayNode array = mapper.createArrayNode();
-    Iterator<Map.Entry<String, JsonNode>> it = object.fields();
+    Iterator<Map.Entry<String, JsonNode>> it = object.properties().iterator();
     while (it.hasNext()) {
       Map.Entry<String, JsonNode> item = it.next();
       ObjectNode element = NodeUtils.mapper.createObjectNode();
-      element.set("key", new TextNode(item.getKey()));
+      element.set("key", new StringNode(item.getKey()));
       element.set("value", item.getValue());
       array.add(element);
     }

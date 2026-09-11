@@ -39,21 +39,21 @@ import java.security.NoSuchAlgorithmException;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.BooleanNode;
-import com.fasterxml.jackson.databind.node.DoubleNode;
-import com.fasterxml.jackson.databind.node.IntNode;
-import com.fasterxml.jackson.databind.node.LongNode;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.MapperFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectWriter;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.BooleanNode;
+import tools.jackson.databind.node.DoubleNode;
+import tools.jackson.databind.node.IntNode;
+import tools.jackson.databind.node.LongNode;
+import tools.jackson.databind.node.NullNode;
+import tools.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.StringNode;
 import com.schibsted.spt.data.jslt.Function;
 import com.schibsted.spt.data.jslt.JsltException;
 
@@ -332,7 +332,7 @@ public class BuiltinFunctions {
         final Object obj = mapper.treeToValue(node, Object.class);
         String jsonString = writer.writeValueAsString(obj);
         return new IntNode(jsonString.hashCode());
-      } catch (JsonProcessingException e) {
+      } catch (JacksonException e) {
         throw new JsltException("hash-int: can't process json" + e);
       }
     }
@@ -486,7 +486,7 @@ public class BuiltinFunctions {
         return arguments[0]; // null
 
       String string = NodeUtils.toString(arguments[0], false);
-      return new TextNode(string.toLowerCase());
+      return new StringNode(string.toLowerCase());
     }
   }
 
@@ -504,7 +504,7 @@ public class BuiltinFunctions {
         return arguments[0]; // null
 
       String string = NodeUtils.toString(arguments[0], false);
-      return new TextNode(string.toUpperCase());
+      return new StringNode(string.toUpperCase());
     }
   }
 
@@ -533,7 +533,7 @@ public class BuiltinFunctions {
       byte[] bytes = messageDigest.digest(message.getBytes(UTF_8));
       String string = Utils.printHexBinary(bytes);
 
-      return new TextNode(string);
+      return new StringNode(string);
     }
   }
 
@@ -905,7 +905,7 @@ public class BuiltinFunctions {
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
       try {
         String json = NodeUtils.mapper.writeValueAsString(arguments[0]);
-        return new TextNode(json);
+        return new StringNode(json);
       } catch (Exception e) {
         throw new JsltException("to-json can't serialize " + arguments[0] + ": " + e);
       }
@@ -957,7 +957,7 @@ public class BuiltinFunctions {
         // there was text remaining after the end of the last match. must copy
         bufix = copy(string, buf, bufix, pos, string.length());
 
-      return new TextNode(new String(buf, 0, bufix));
+      return new StringNode(new String(buf, 0, bufix));
     }
   }
 
@@ -974,7 +974,7 @@ public class BuiltinFunctions {
       if (string == null)
         return NullNode.instance;
 
-      return new TextNode(string.trim());
+      return new StringNode(string.trim());
     }
   }
 
@@ -1015,7 +1015,7 @@ public class BuiltinFunctions {
         throw new JsltException("Build-in UUID function must be called with either none or two parameters.");
       }
 
-      return new TextNode(uuid);
+      return new StringNode(uuid);
     }
   }
 
@@ -1041,7 +1041,7 @@ public class BuiltinFunctions {
           buf.append(sep);
         buf.append(NodeUtils.toString(array.get(ix), false));
       }
-      return new TextNode(buf.toString());
+      return new StringNode(buf.toString());
     }
   }
 
@@ -1133,7 +1133,7 @@ public class BuiltinFunctions {
       if (arguments[0].isTextual())
         return arguments[0];
       else
-        return new TextNode(arguments[0].toString());
+        return new StringNode(arguments[0].toString());
     }
   }
 
@@ -1279,7 +1279,7 @@ public class BuiltinFunctions {
         SimpleDateFormat format = new SimpleDateFormat(formatstr);
         format.setTimeZone(zone);
         String formatted = format.format(Math.round(timestamp * 1000));
-        return new TextNode(formatted);
+        return new StringNode(formatted);
       } catch (IllegalArgumentException e) {
         // thrown if format is bad
         throw new JsltException("format-time: Couldn't parse format '" + formatstr + "': " + e.getMessage());

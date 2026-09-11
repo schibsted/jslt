@@ -17,8 +17,8 @@ package com.schibsted.spt.data.jslt.impl;
 
 import java.util.Set;
 import java.util.HashSet;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.BooleanNode;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.BooleanNode;
 
 /**
  * An optimized version of contains(a, b) which is used when b is an

@@ -3,9 +3,9 @@ package com.schibsted.spt.data.jslt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.NullNode;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.NullNode;
 import com.schibsted.spt.data.jslt.impl.FileSystemResourceResolver;
 import org.junit.Test;
 

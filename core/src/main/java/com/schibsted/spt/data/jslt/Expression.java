@@ -16,7 +16,7 @@
 package com.schibsted.spt.data.jslt;
 
 import java.util.Map;
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 
 /**
  * Represents a compiled JSLT expression.

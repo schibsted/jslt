@@ -17,7 +17,7 @@ package com.schibsted.spt.data.jslt.impl;
 
 import java.util.List;
 import java.util.ArrayList;
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 
 /**
  * Shared abstract superclass for comparison operators and others.

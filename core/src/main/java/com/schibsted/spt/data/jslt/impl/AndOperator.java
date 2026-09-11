@@ -15,8 +15,8 @@
 
 package com.schibsted.spt.data.jslt.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.BooleanNode;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.BooleanNode;
 import com.schibsted.spt.data.jslt.JsltException;
 
 public class AndOperator extends AbstractOperator {

@@ -22,12 +22,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.IntNode;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.IntNode;
+import tools.jackson.databind.node.NullNode;
+import tools.jackson.databind.node.StringNode;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ObjectNode;
 import com.schibsted.spt.data.jslt.JsltException;
 import com.schibsted.spt.data.jslt.filters.JsonFilter;
 
@@ -110,7 +110,7 @@ public class ObjectExpression extends AbstractNode {
       return; // no keys to match against
 
     // then do the matching
-    Iterator<Map.Entry<String, JsonNode>> it = context.fields();
+    Iterator<Map.Entry<String, JsonNode>> it = context.properties().iterator();
     while (it.hasNext()) {
       Map.Entry<String, JsonNode> pair = it.next();
       if (keys.contains(pair.getKey()))

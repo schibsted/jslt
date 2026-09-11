@@ -17,10 +17,10 @@ package com.schibsted.spt.data.jslt.impl;
 
 import java.util.Map;
 import java.util.HashMap;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.NullNode;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ObjectNode;
 import com.schibsted.spt.data.jslt.Module;
 import com.schibsted.spt.data.jslt.Callable;
 import com.schibsted.spt.data.jslt.JsltException;

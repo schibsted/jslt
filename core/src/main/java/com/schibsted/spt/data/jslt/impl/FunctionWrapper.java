@@ -20,14 +20,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.HashMap;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.IntNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.fasterxml.jackson.databind.node.LongNode;
-import com.fasterxml.jackson.databind.node.FloatNode;
-import com.fasterxml.jackson.databind.node.DoubleNode;
-import com.fasterxml.jackson.databind.node.BooleanNode;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.NullNode;
+import tools.jackson.databind.node.IntNode;
+import tools.jackson.databind.node.StringNode;
+import tools.jackson.databind.node.LongNode;
+import tools.jackson.databind.node.FloatNode;
+import tools.jackson.databind.node.DoubleNode;
+import tools.jackson.databind.node.BooleanNode;
 import com.schibsted.spt.data.jslt.Function;
 import com.schibsted.spt.data.jslt.JsltException;
 
@@ -173,7 +173,7 @@ public class FunctionWrapper implements Function {
       if (node == null)
         return NullNode.instance;
       else
-        return new TextNode((String) node);
+        return new StringNode((String) node);
     }
   }
 

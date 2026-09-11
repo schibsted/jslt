@@ -17,9 +17,9 @@ import static org.junit.Assert.fail;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.NullNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.NullNode;
 
 /**
  * Checks that JSLT queries produce certain runtime errors.
@@ -64,11 +64,20 @@ public class QueryErrorTest extends TestBase {
     return strings;
   }
 
+  private static String toJsonString(JsonNode node) throws Exception {
+    if (node.isTextual()) {
+      return node.asText();
+    } else {
+      return mapper.writeValueAsString(node);
+    }
+  }
+
   private static Collection<Object[]> loadTests(String resource) {
     JsonNode json = TestUtils.loadFile(resource);
     JsonNode tests = json.get("tests");
 
     List<Object[]> strings = new ArrayList();
+
     for (int ix = 0; ix < tests.size(); ix++) {
       JsonNode test = tests.get(ix);
       if (!test.has("error"))
@@ -76,11 +85,15 @@ public class QueryErrorTest extends TestBase {
         // this works because we load the same file in QueryTest
         continue;
 
-      strings.add(new Object[] {
-          test.get("input").asText(),
-          test.get("query").asText(),
-          test.get("error").asText()
-        });
+      try {
+        strings.add(new Object[] {
+            toJsonString(test.get("input")),
+            toJsonString(test.get("query")),
+            toJsonString(test.get("error"))
+          });
+      } catch (Exception e) {
+        throw new RuntimeException("Error loading test: " + test, e);
+      }
     }
     return strings;
   }
