@@ -75,6 +75,14 @@ comparison moves to the next key.
 The order of the types is `null`, booleans, numbers, strings, arrays,
 objects.
 
+The value ordering used by the sorting must be the same as that
+implemented by `<` and the other operators. (See
+[ComparisonOperator](https://github.com/schibsted/jslt/blob/master/core/src/main/java/com/schibsted/spt/data/jslt/impl/ComparisonOperator.java#L34).)
+
+The comparison operator is a partial order, and perhaps it's OK that
+it remains so. The sorting operator must be either the same, or a
+superset.
+
 # Use case solutions
 
 ## Original motivation

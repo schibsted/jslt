@@ -63,7 +63,7 @@ An example transform:
 | `7 < 5`        | Comparators |
 | `7 < 5 and .foo == "yes"` | Boolean operators |
 
-## Using the library
+## Dependencies
 
 To include JSLT in your project, depend on:
 
@@ -71,11 +71,19 @@ To include JSLT in your project, depend on:
 <dependency>
   <groupId>com.schibsted.spt.data</groupId>
   <artifactId>jslt</artifactId>
-  <version>0.1.14</version>
+  <version>0.1.15</version>
 </dependency>
 ```
 
-At runtime JSLT depends on Jackson, and nothing else.
+At runtime JSLT depends on Jackson, and nothing else. Versions up to
+and including 0.1.15 depend on Jackson 2, but 0.1.16 (not yet
+released) and higher depend on Jackson 3. Serious bugs in 0.1.15 will
+be fixed, but no new features will be developed in the Jackson 2
+series.
+
+The project uses Java 11.
+
+## Using the library
 
 To transform one `JsonNode` into another, do:
 

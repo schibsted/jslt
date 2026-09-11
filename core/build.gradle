@@ -1,10 +1,11 @@
 plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.2'
-    id 'com.intershop.gradle.javacc' version '4.0.1'
+    id 'com.intershop.gradle.javacc' version '6.1.0'
     id 'java'
-    id 'com.jfrog.artifactory'
+    id 'java-library'
     id 'maven-publish'
     id 'signing'
+    id 'com.vanniktech.maven.publish' version '0.37.0'
 }
 // apply plugin: 'jacoco' (fails in JDK 11 on Travis)
 
@@ -26,9 +27,9 @@ ext {
     gitrev = "git log -1 HEAD --pretty=tformat:%h".execute().text.trim()
 }
 
-group 'com.schibsted.spt.data'
-version "0.1.14"
-project.description "A JSON query and transformation language"
+group = 'com.schibsted.spt.data'
+version = "0.1.15"
+project.description = "A JSON query and transformation language"
 
 check {
     doLast {
@@ -44,7 +45,7 @@ javacc {
         jsltParser {
             inputFile = file('src/main/jjtree/jslt.jjt')
             packageName = 'com/schibsted/spt/data/jslt/parser'
-            jdkVersion = targetCompatibility
+            jdkVersion = java.targetCompatibility
             jjtree {
                 staticParam = false;
                 trackTokens = true;
@@ -61,11 +62,6 @@ javacc {
 // ===========================================================================
 // Sonatype Maven central publishing
 
-task sourceJar(type: Jar) {
-    classifier "sources"
-    from sourceSets.main.allJava
-}
-
 // declaring this separately to avoid including javacc-generated sources
 // because javadoc fail on those
 sourceSets {
@@ -76,98 +72,61 @@ sourceSets {
     }
 }
 
-javadoc {
-    source = sourceSets.javadoc.allJava
+// make javadoc shut up about things it doesn't like
+javadoc.options.addStringOption('Xdoclint:none', '-quiet')
+
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier "javadoc"
-    from javadoc.destinationDir
+mavenPublishing {
+  coordinates(group, "jslt", version)
+
+  pom {
+      name = 'JSLT'
+      description = project.description
+      url = 'https://github.com/schibsted/jslt'
+      organization {
+          name = 'Schibsted ASA'
+          url = 'https://github.com/schibsted/'
+      }
+      issueManagement {
+          system = 'GitHub'
+          url = 'https://github.com/schibsted/jslt/issues'
+      }
+      licenses {
+          license {
+              name = 'Apache License 2.0'
+              url = 'https://github.com/schibsted/jslt/blob/master/LICENSE'
+              distribution = 'repo'
+          }
+      }
+      developers {
+          developer {
+              name = 'Schibsted'
+          }
+      }
+      scm {
+          url = 'https://github.com/schibsted/jslt'
+          connection = 'scm:git:git://github.com/schibsted/jslt.git'
+          developerConnection = 'scm:git:ssh://git@github.com:schibsted/jslt.git'
+      }
+  }
+
+  publishToMavenCentral()
+
+  signAllPublications()
 }
 
-artifacts {
-    archives jar
-    archives sourceJar
-    archives javadocJar
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            groupId group
-            artifactId 'jslt'
-            version version
-
-            pom {
-                name = 'JSLT'
-                description = project.description
-                url = 'https://github.com/schibsted/jslt'
-                organization {
-                    name = 'Schibsted ASA'
-                    url = 'https://github.com/schibsted/'
-                }
-                issueManagement {
-                    system = 'GitHub'
-                    url = 'https://github.com/schibsted/jslt/issues'
-                }
-                licenses {
-                    license {
-                        name = 'Apache License 2.0'
-                        url = 'https://github.com/schibsted/jslt/blob/master/LICENSE'
-                        distribution = 'repo'
-                    }
-                }
-                developers {
-                    developer {
-                        name = 'Schibsted'
-                    }
-                }
-                scm {
-                    url = 'https://github.com/schibsted/jslt'
-                    connection = 'scm:git:git://github.com/schibsted/jslt.git'
-                    developerConnection = 'scm:git:ssh://git@github.com:schibsted/jslt.git'
-                }
-            }
-
-            from components.java
-
-            artifact(sourceJar) {
-                classifier = 'sources'
-            }
-            artifact(javadocJar) {
-                classifier = 'javadoc'
-            }
-        }
-    }
-    repositories {
-        maven {
-            url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
-            credentials {
-                // these are stored in a secret gradle.properties that is not
-                // in the repo, so we need a fallback
-                username((project.hasProperty('sonatypeUsername')) ? sonatypeUsername : "no username")
-                password((project.hasProperty('sonatypePassword')) ? sonatypePassword : "no password")
-            }
-        }
-    }
-}
+def signingKey = findProperty("signing.secretKey")
+def signingPassword = findProperty("signing.password")
 
 signing {
-    required { gradle.taskGraph.hasTask("publish") }
-    sign publishing.publications.mavenJava
+    useInMemoryPgpKeys(signingKey, signingPassword)
+    sign publishing.publications.withType(MavenPublication)
 }
 
-
-model {
-    tasks.generatePomFileForMavenJavaPublication {
-        destination = file("$buildDir/generated-pom.xml")
-    }
-}
-
-
-test {
-    testLogging {
-        showStandardStreams = true
-    }
-    jvmArgs '-Duser.language=en'
+tasks.withType(GenerateModuleMetadata).configureEach {
+    mustRunAfter('plainJavadocJar')
 }
