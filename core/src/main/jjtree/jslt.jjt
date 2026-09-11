@@ -104,25 +104,25 @@ void Module() :
 void Expr() :
 {}
 {
-    OrExpr() (PipeOperator() OrExpr())*
+    OrExpr() (LOOKAHEAD(2) PipeOperator() OrExpr())*
 }
 
 void OrExpr() :
 {}
 {
-  AndExpr() (<OR> OrExpr())?
+  AndExpr() (LOOKAHEAD(2) <OR> OrExpr())?
 }
 
 void AndExpr() :
 {}
 {
-  ComparativeExpr() (<AND> AndExpr())?
+  ComparativeExpr() (LOOKAHEAD(2) <AND> AndExpr())?
 }
 
 void ComparativeExpr() :
 {}
 {
-  AdditiveExpr() (Comparator() AdditiveExpr())?
+  AdditiveExpr() (LOOKAHEAD(2) Comparator() AdditiveExpr())?
 }
 
 // not necessary, but makes the tree easier to traverse
@@ -143,7 +143,7 @@ void PipeOperator() :
 void AdditiveExpr() :
 {}
 {
-  MultiplicativeExpr() (AdditiveOperator() MultiplicativeExpr())*
+  MultiplicativeExpr() (LOOKAHEAD(2) AdditiveOperator() MultiplicativeExpr())*
 }
 
 // not necessary, but makes the tree easier to traverse
@@ -156,7 +156,7 @@ void AdditiveOperator() :
 void MultiplicativeExpr() :
 {}
 {
-  BaseExpr() (MultiplicativeOperator() BaseExpr())*
+  BaseExpr() (LOOKAHEAD(2) MultiplicativeOperator() BaseExpr())*
 }
 
 // not necessary, but makes the tree easier to traverse
@@ -169,26 +169,25 @@ void MultiplicativeOperator() :
 void BaseExpr() :
 {}
 {
-  (LOOKAHEAD(2)
+  LOOKAHEAD(2)
    <NULL> | <INTEGER> | <DECIMAL> | <STRING> | <TRUE> | <FALSE> |
    Chainable() | Parenthesis() | IfStatement() |
    Array() |
    (LOOKAHEAD(2)  Object() | ObjectComprehension())
-  )
 }
 
 void Chainable() :
 {}
 {
   (FunctionCall() | <VARIABLE> | <DOT> (<IDENT> | <STRING>)?)
-  (ChainLink())?
+  (LOOKAHEAD(2) ChainLink())?
 }
 
 void ChainLink() :
 {}
 {
   (DotKey() | ArraySlicing())
-  (ChainLink())?
+  (LOOKAHEAD(2) ChainLink())?
 }
 
 void Parenthesis() :
@@ -280,7 +279,7 @@ void IfStatement() :
   <IF> <LPAREN> Expr() <RPAREN>
     (Let())*
     Expr()
-    (ElseBranch())?
+    (LOOKAHEAD(2) ElseBranch())?
 }
 
 // not necessary, but makes it easier to walk the parse tree
