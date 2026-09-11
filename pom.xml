@@ -15,7 +15,7 @@ This file is only here to enable the Github dependency graph.
   <version>0.1.14</version>
 
   <properties>
-    <jackson-version>3.0.3</jackson-version>
+    <jackson-version>3.1.5</jackson-version>
   </properties>
 
   <dependencies>
