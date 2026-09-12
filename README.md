@@ -168,6 +168,10 @@ things) some of the ways Schibsted uses JSLT.
 
 [Apache Camel JSLT component](https://camel.apache.org/components/latest/jslt-component.html).
 
+[JavaScript port](https://github.com/amkraev697642/jslt-js) for Node.js and browsers
+([npm](https://www.npmjs.com/package/jslt-js)). It passes all conformance
+fixtures and is the only full JavaScript implementation of this language as of Jul 2026.
+
 JSLT is also integrated in [Apache NiFi](https://nifi.apache.org/) [as a processor](https://nifi.apache.org/docs/nifi-docs/components/org.apache.nifi/nifi-jslt-nar/1.20.0/org.apache.nifi.processors.jslt.JSLTTransformJSON/index.html).
 
 [How Willhaben.at uses JSLT with Kafka Connect](https://tech.willhaben.at/kafka-connect-custom-single-message-transform-using-jslt-2fc57ae98395)

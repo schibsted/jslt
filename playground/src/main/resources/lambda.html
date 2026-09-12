@@ -8,6 +8,11 @@
     text-decoration: none;
     display: inline-block;
     font-size: 16px;
+    margin-right: 8px;
+  }
+
+  .button-js {
+    background-color: #1976D2;
   }
 
   pre {
@@ -28,10 +33,14 @@
     margin-top: 48pt;
   }
 </style>
+<script src="https://unpkg.com/jslt-js@latest/dist/jslt-bundle.js"></script>
 <script>
+function setResult(text) {
+  document.getElementById('result').firstChild.nodeValue = text;
+}
+
 function send() {
-  var out = document.getElementById('result');
-  out.firstChild.nodeValue = '...wait...';
+  setResult('...wait...');
 
   var input = document.getElementById('input').value
   var jslt = document.getElementById('jslt').value
@@ -45,11 +54,32 @@ function send() {
 
   http.onreadystatechange = function() {
     if (http.readyState == 4 && http.status == 200) {
-      var out = document.getElementById('result');
-      out.firstChild.nodeValue = http.responseText;
+      setResult(http.responseText);
     }
   }
   http.send(JSON.stringify(data));
+}
+
+function runInJs() {
+  setResult('...wait...');
+
+  if (typeof JSLT === 'undefined') {
+    setResult('jslt-js failed to load. Check your network connection.');
+    return;
+  }
+
+  try {
+    var inputJson = document.getElementById('input').value;
+    var jsltSource = document.getElementById('jslt').value;
+    var input = (inputJson.trim() === '')
+      ? JSLT.fromJS(null)
+      : JSLT.readTree(inputJson);
+    var expr = JSLT.compile(jsltSource, 'playground.jslt');
+    var result = JSLT.toJS(expr.applyInput(input));
+    setResult(JSON.stringify(result, null, 2));
+  } catch (e) {
+    setResult(e.stack || e.message || String(e));
+  }
 }
 </script>
 
@@ -62,6 +92,11 @@ transforms.
 Please <a href="https://github.com/schibsted/jslt/issues"
 >report any issues</a>.</p>
 
+<p><strong>Run in JS</strong> executes transforms in your browser via
+<a href="https://github.com/amkraev697642/jslt-js">jslt-js</a>
+(no Java server required). <strong>Run (Java server)</strong> uses the
+original playground backend when available.</p>
+
 <h2>Result</h2>
 
 <pre id="result">
@@ -70,7 +105,10 @@ Please <a href="https://github.com/schibsted/jslt/issues"
 
 </pre>
 
-<p><input type=submit value="Run!" class=button onclick="send()">
+<p>
+  <input type=submit value="Run in JS" class="button button-js" onclick="runInJs()">
+  <input type=submit value="Run (Java server)" class=button onclick="send()">
+</p>
 
 <h2>JSLT</h2>
 
