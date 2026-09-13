@@ -138,6 +138,7 @@ public class BuiltinFunctions {
   public static Map<String, Macro> macros = new HashMap();
   static {
     macros.put("fallback", new BuiltinFunctions.Fallback());
+    macros.put("filter", new BuiltinFunctions.Filter());
   }
 
   private static abstract class AbstractMacro extends AbstractCallable implements Macro {
@@ -596,6 +597,33 @@ public class BuiltinFunctions {
           return value;
       }
       return NullNode.instance;
+    }
+  }
+
+  // ===== FILTER
+
+  public static class Filter extends AbstractMacro {
+
+    public Filter() {
+      super("filter", 2, 2);
+    }
+
+    public JsonNode call(Scope scope, JsonNode input,
+                         ExpressionNode[] parameters) {
+      JsonNode array = parameters[0].apply(scope, input);
+      if (array.isNull())
+        return NullNode.instance;
+      if (!array.isArray())
+        throw new JsltException("filter() argument is not an array: " + array);
+
+      ArrayNode result = NodeUtils.mapper.createArrayNode();
+      for (int ix = 0; ix < array.size(); ix++) {
+        JsonNode element = array.get(ix);
+        JsonNode test = parameters[1].apply(scope, element);
+        if (NodeUtils.isTrue(test))
+          result.add(element);
+      }
+      return result;
     }
   }
 

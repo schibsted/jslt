@@ -58,6 +58,24 @@ if (not(is-array(.things)))
   error("'things' is not an array")
 ```
 
+### _filter(array, expr) -> array_
+
+Returns a new array containing only the elements of _array_ for which
+_expr_ evaluates to a truthy value. _expr_ is evaluated with each
+element as the context node (`.`).
+
+If _array_ is `null` the result is `null`. If _array_ is empty the
+result is `[]`.
+
+Examples:
+
+```
+filter([1, 2, 3, 4, 5], . > 3)                          => [4, 5]
+filter(.items, .active)                                  => [{...}, ...]
+size(filter(.items, .active))                            => 2
+[for (filter(.items, .active)) .id]                      => [...]
+```
+
 ### _fallback(arg1, arg2, ...) -> value_
 
 Returns the first argument that has a value. That is, the first

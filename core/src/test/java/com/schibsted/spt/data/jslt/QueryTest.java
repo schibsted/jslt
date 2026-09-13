@@ -67,6 +67,7 @@ public class QueryTest extends TestBase {
     strings.addAll(loadTests("query-tests.yaml"));
     strings.addAll(loadTests("function-tests.json"));
     strings.addAll(loadTests("experimental-tests.json"));
+    strings.addAll(loadTests("filter-tests.json"));
     strings.addAll(loadTests("function-declaration-tests.yaml"));
     return strings;
   }
