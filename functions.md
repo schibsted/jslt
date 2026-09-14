@@ -846,10 +846,42 @@ format-time(null, "yyyy-MM-dd")                  => null
 
 ## Miscellaneous functions
 
-### _parse-url(url) -> object_
+### _parse-url(url, throwOnFailure?) -> object_
 
 Parses `url` and returns an object with keys [`scheme`, `userinfo`, `host`, `port` `path`, `query`, `parameters`, `fragment` ]
 
+If the optional `throwOnFailure` argument is not specified invalid URLs will generate an exception. If `throwOnFailure` is set to `false` the `parse-url` returns
+an object indicating an error occurred.
+
+#### Example of valid URL response
+
+```json
+{
+  "host": "example.com",
+  "port": 8080,
+  "path": "/examples/",
+  "scheme": "https",
+  "query": "x=1&y=",
+  "parameters": {
+    "x": ["1"],
+    "y": [null]
+  },
+  "fragment": "footer",
+  "userinfo": "myname:mypwd"
+}
+```
+
+#### Example of invalid URL response with throwOnFailure=false
+
+```json
+{
+  "error": "java.net.MalformedURLException",
+  "message": "no protocol: this-is-an-invalid-url",
+  "input": "this-is-an-invalid-url"
+}
+```
+
+#### Examples
 ```
 parse-url("http://example.com").scheme => "http"
 parse-url("http://example.com").host => "example.com"
@@ -861,6 +893,10 @@ parse-url("https://www.example.com/?aa=1&aa=2&bb=&cc").parameters.bb =>  [null]
 parse-url("https://www.example.com/?aa=1&aa=2&bb=&cc").parameters.cc =>  [null]
 parse-url("ftp://username:password@host.com/").userinfo => "username:password"
 parse-url("https://example.com:8443").port => 8443
+
+parse-url("this-is-an-invalid-url", false).error => "java.net.MalformedURLException"
+parse-url("this-is-an-invalid-url", false).message => "no protocol: this-is-an-invalid-url"
+parse-url("this-is-an-invalid-url", false).input => "this-is-an-invalid-url"
 ```
 
 ## Implementing extension functions

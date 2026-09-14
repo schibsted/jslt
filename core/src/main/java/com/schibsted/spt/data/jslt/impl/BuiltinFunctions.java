@@ -1323,7 +1323,7 @@ public class BuiltinFunctions {
   // ===== PARSE-URL
 
   public static class ParseUrl extends AbstractFunction {
-    public ParseUrl() { super("parse-url", 1,1);}
+    public ParseUrl() { super("parse-url", 1, 2); }
 
     public JsonNode call(JsonNode input, JsonNode[] arguments) {
       if (arguments[0].isNull())
@@ -1331,8 +1331,20 @@ public class BuiltinFunctions {
 
       String urlString = arguments[0].asText();
 
+      // Second argument (throwOnFailure) is optional and defaults to true
+      boolean throwOnFailure = true;
+      if (!(arguments.length < 2)) {
+        JsonNode arg1 = arguments[1];
+        if (arg1.isBoolean()) {
+          throwOnFailure = arg1.asBoolean();
+        } else {
+          throw new JsltException("throwOnFailure argument must be a boolean value");
+        }
+      }
+
       try {
-        URL aURL = new URL(arguments[0].asText());
+
+        URL aURL = new URL(urlString);
         final ObjectNode objectNode = NodeUtils.mapper.createObjectNode();
         if (aURL.getHost() != null && !aURL.getHost().isEmpty())
           objectNode.put("host", aURL.getHost());
@@ -1361,8 +1373,17 @@ public class BuiltinFunctions {
         if(aURL.getUserInfo() != null && !aURL.getUserInfo().isEmpty())
           objectNode.put("userinfo", aURL.getUserInfo());
         return objectNode;
-      } catch (MalformedURLException | UnsupportedEncodingException e) {
-        throw new JsltException("Can't parse " + urlString, e);
+      } catch (Exception e) {
+        if (throwOnFailure) {
+          throw new JsltException("Can't parse " + urlString, e);
+        } else {
+          final ObjectNode errorNode = NodeUtils.mapper.createObjectNode();
+          final Class errorClass = e.getClass();
+          errorNode.put("error", errorClass.getName());
+          errorNode.put("message", e.getMessage());
+          errorNode.put("input", urlString);
+          return errorNode;
+        }
       }
     }
   }
