@@ -1,0 +1,36 @@
+{
+    "description" : "Tests for the filter() macro.",
+    "tests" :
+[
+   {
+      "query" : "filter([{\"a\":1,\"active\":true},{\"a\":2,\"active\":false}], .active)",
+      "input" : "{}",
+      "output" : "[{\"a\":1,\"active\":true}]"
+   },
+   {
+      "query" : "filter([1, 2, 3, 4, 5], . > 3)",
+      "input" : "{}",
+      "output" : "[4, 5]"
+   },
+   {
+      "query" : "filter(null, .active)",
+      "input" : "{}",
+      "output" : "null"
+   },
+   {
+      "query" : "filter([], .active)",
+      "input" : "{}",
+      "output" : "[]"
+   },
+   {
+      "query" : "[for (filter([{\"id\":1,\"ok\":true},{\"id\":2,\"ok\":false}], .ok)) .id]",
+      "input" : "{}",
+      "output" : "[1]"
+   },
+   {
+      "query" : "size(filter([{\"active\":true},{\"active\":false},{\"active\":true}], .active))",
+      "input" : "{}",
+      "output" : "2"
+   }
+]
+}
