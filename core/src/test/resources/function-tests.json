@@ -1148,6 +1148,21 @@
       "output": "\"\""
    },
    {
+      "query": "replace-regexp(., \"(\\d{4})-(\\d{2})-(\\d{2})\", \"$2/$3/$1\")",
+      "input" : "\"2019-12-31\"",
+      "output": "\"12/31/2019\""
+   },
+   {
+      "query": "replace-regexp(., \"(?<year>\\d{4})-(?<month>\\d{2})-(?<day>\\d{2})\", \"${day}.${month}.${year}\")",
+      "input" : "\"2019-12-31\"",
+      "output": "\"31.12.2019\""
+   },
+   {
+      "query": "replace-regexp(., \"([a-z]+)\", \"$1\")",
+      "input" : "\"2019-12-31\"",
+      "output" : "\"2019-12-31\""
+   },
+   {
       "query": "trim(.)",
       "input" : "\"some text\"",
       "output": "\"some text\""

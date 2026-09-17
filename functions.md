@@ -514,6 +514,27 @@ replace("abc def ghi", "[a-z]", "x")  => "xxx xxx xxx"
 replace("abc def ghi", "[a-z]+", "x") => "x x x"
 ```
 
+### _replace-regexp(value, regexp, out) -> string_
+
+Replaces the string in `value` that matches `regexp` with `out`. 
+If `value` is not a string, it's converted to a string, except
+if it is `null`. `regexp` and `out` must be strings.
+
+It is an error for `regexp` ever to match an empty string.
+
+If the `regexp` does not match the input,`out` corresponds to `value`.
+
+Examples:
+
+```
+replace-regexp("2019-12-31", "(\\d{4})-(\\d{2})-(\\d{2})", "$2/$3/$1")
+   => "12/31/2019"
+replace-regexp("2019-12-31", "(?<year>\\d{4})-(?<month>\\d{2})-(?<day>\\d{2})", "${day}.${month}.${year}")
+   => "31.12.2019"
+replace-regexp("2019-12-31", "([a-z]+)", "$1")
+   => "2019-12-31"
+```
+
 ### _trim(string) -> string_
 
 Removes leading and trailing whitespace in the input string. If the
