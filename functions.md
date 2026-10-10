@@ -70,30 +70,42 @@ fallback(.not_existing_key, .another_not_existing, 1)  => 1
 fallback(null, [], {}, "value")                        => "value"
 ```
 
-### _min(arg1, arg2) -> value_
+### _min(args) -> value_
 
-Returns the argument that compares as the smallest. If one argument is
-`null` the result is `null`.
+`args` can be `null`, 1 or more items of the same kind, such as numbers, characters or Strings.
+It can even be an array of items of the same kind.
 
-Examples:
-
-```
-min(10, 1)    -> 1
-min("a", "b") -> "a"
-min(10, null) -> null
-```
-
-### _max(arg1, arg2) -> value_
-
-Returns the argument that compares as the largest. If one argument is
-`null` the result is `null`.
+Returns the lowest item, or `null`.
+`null` is considered the lowest value, regardless of the other items.
 
 Examples:
 
 ```
-max(10, 1)    -> 10
-max("a", "b") -> "b"
-max(10, null) -> null
+min(10, 1)     -> 1
+min("a", "b")  -> "a"
+min(10, null)  -> null
+min(10)        -> 10
+min([7])       -> 7
+max([5,6,7,8]) -> 5
+```
+
+### _max(args) -> value_
+
+`args` can be `null`, 1 or more items of the same kind, such as numbers, characters or Strings.
+It can even be an array of items of the same kind.
+
+Returns the largest item.
+`null` is considered the lowest value, regardless of the other items.
+
+Examples:
+
+```
+max(10, 1)     -> 10
+max("a", "b")  -> "b"
+max(10, null)  -> 10
+max(17)        -> 17
+max([26])      -> 26
+max([1,2,3,4]) -> 4
 ```
 
 <!-- NUMERIC ===============================================================-->
