@@ -16,10 +16,10 @@ repositories {
 }
 
 dependencies {
-    implementation 'tools.jackson.core:jackson-databind:3.2.2'
+    implementation 'tools.jackson.core:jackson-databind:3.3.0'
 
     testImplementation 'junit:junit:4.13.2'
-    testImplementation 'tools.jackson.dataformat:jackson-dataformat-yaml:3.2.2'
+    testImplementation 'tools.jackson.dataformat:jackson-dataformat-yaml:3.3.0'
 }
 
 ext {
@@ -28,7 +28,7 @@ ext {
 }
 
 group = 'com.schibsted.spt.data'
-version = "0.1.15"
+version = "0.2.0"
 project.description = "A JSON query and transformation language"
 
 check {

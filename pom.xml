@@ -12,10 +12,10 @@ This file is only here to enable the Github dependency graph.
   <!-- The Basics -->
   <groupId>com.schibsted.spt.data</groupId>
   <artifactId>jslt</artifactId>
-  <version>0.1.14</version>
+  <version>0.2.0</version>
 
   <properties>
-    <jackson-version>3.0.3</jackson-version>
+    <jackson-version>3.3.0</jackson-version>
   </properties>
 
   <dependencies>
