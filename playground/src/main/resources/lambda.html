@@ -38,8 +38,8 @@ function send() {
   var data = {"json" : input, "jslt" : jslt }
 
   var http = new XMLHttpRequest();
-  var url = "jslt-demo";
-  //var url = "http://localhost:9999/jslt";
+  var url = "jslt";
+
   http.open("POST", url, true);
   http.setRequestHeader("Content-type", "application/json");
 
