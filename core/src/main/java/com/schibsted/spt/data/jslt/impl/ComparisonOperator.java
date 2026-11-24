@@ -40,7 +40,7 @@ public abstract class ComparisonOperator extends AbstractOperator {
     } else if (v1.isTextual() && v2.isTextual()) {
       String s1 = v1.asText();
       String s2 = v2.asText();
-      return (double) s1.compareTo(s2);
+      return s1.compareTo(s2);
 
     } else if (v1.isNull() || v2.isNull()) {
       // null is equal to itself, and considered the smallest of all
