@@ -60,6 +60,7 @@ public class QueryErrorTest extends TestBase {
     List<Object[]> strings = new ArrayList();
     strings.addAll(loadTests("query-error-tests.json"));
     strings.addAll(loadTests("function-error-tests.json"));
+    strings.addAll(loadTests("filter-error-tests.json"));
     strings.addAll(loadTests("function-declaration-tests.yaml"));
     return strings;
   }

@@ -1,0 +1,11 @@
+{
+    "description" : "Error tests for the filter() macro.",
+    "tests" :
+[
+   {
+      "query" : "filter(42, .active)",
+      "input" : "{}",
+      "error" : "filter() argument is not an array"
+   }
+]
+}
