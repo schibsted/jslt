@@ -25,7 +25,7 @@ needs to return `true` for the object values that should be included.
 So to get the default behaviour you would set the filter to:
 
 ```
-. == null or . == {} or . == []
+. == null or . == {} or . == [] or not(.) == false
 ```
 
 If you simply want no object keys to ever be omitted, set it to:
